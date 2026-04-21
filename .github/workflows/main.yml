@@ -1,0 +1,45 @@
+name: Aggregate News
+
+on:
+  schedule:
+    # Runs every 2 hours at :05 past the hour
+    - cron: '5 * * * *'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+  push:
+    branches: [main]
+    paths:
+      - 'aggregate.py'
+      - 'template.html'
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run aggregator
+        run: python aggregate.py
+
+      - name: Commit updated index.html
+        run: |
+          git config user.name "Sentinel Bot"
+          git config user.email "bot@sentinelreview.noreply"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-update: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
