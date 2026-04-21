@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sentinel Review — National Security Intelligence</title>
+<meta name="description" content="Authoritative national security news, analysis, and intelligence briefings for policy makers and defense professionals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Source+Sans+3:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-deep: #070F1E;
+    --navy-mid: #0D1F3C;
+    --navy-light: #162B52;
+    --navy-subtle: #1E3A68;
+    --gold: #B8882A;
+    --gold-bright: #D4A43A;
+    --gold-pale: #E8C97A;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE6D6;
+    --white: #FAFAF8;
+    --gray-light: #D8D4CC;
+    --gray-mid: #9A9690;
+    --red-alert: #C0392B;
+    --text-dark: #1A1410;
+    --text-mid: #3A3530;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--text-dark); overflow-x: hidden; }
+
+  /* TOP BAR */
+  .top-bar { background: var(--navy-deep); color: var(--gray-light); font-size: 11px; letter-spacing: 0.08em; font-family: 'Courier Prime', monospace; padding: 7px 0; border-bottom: 1px solid var(--gold); }
+  .top-bar .inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .top-bar .date-info { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .top-bar .date-info span { opacity: 0.7; }
+  .top-bar .classification { color: var(--gold-pale); font-weight: 700; letter-spacing: 0.15em; font-size: 10px; border: 1px solid var(--gold); padding: 2px 8px; }
+  .top-bar .links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .top-bar .links a { color: var(--gray-light); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+  .top-bar .links a:hover { opacity: 1; color: var(--gold-pale); }
+
+  /* MASTHEAD */
+  .masthead { background: var(--navy-deep); padding: 28px 0 20px; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -20%, rgba(184,136,42,0.12) 0%, transparent 60%); }
+  .masthead .inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+  .logo-block { text-align: center; flex: 1; }
+  .logo-eyebrow { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .logo-title { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
+  .logo-title .accent { color: var(--gold); }
+  .logo-tagline { font-size: 11px; letter-spacing: 0.2em; color: var(--gray-mid); text-transform: uppercase; margin-top: 8px; display: block; }
+  .masthead-aside { width: 200px; display: flex; flex-direction: column; gap: 10px; }
+  .masthead-aside.left { align-items: flex-start; }
+  .masthead-aside.right { align-items: flex-end; }
+  .threat-meter { border: 1px solid rgba(184,136,42,0.4); padding: 10px 14px; width: 180px; }
+  .threat-meter .label { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.18em; color: var(--gray-mid); text-transform: uppercase; margin-bottom: 8px; }
+  .threat-levels { display: flex; gap: 4px; }
+  .threat-level { flex: 1; height: 14px; background: rgba(255,255,255,0.08); }
+  .threat-level.active-low { background: #2E7D32; }
+  .threat-level.active-med { background: #E65100; }
+  .threat-text { font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--gold-pale); margin-top: 6px; letter-spacing: 0.1em; }
+
+  /* NAV */
+  .main-nav { background: var(--navy-mid); border-top: 2px solid var(--gold); border-bottom: 1px solid rgba(184,136,42,0.2); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+  .main-nav .inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-links { display: flex; flex-wrap: wrap; }
+  .nav-links a { display: block; padding: 15px 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-light); text-decoration: none; transition: all 0.2s; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold-pale); border-bottom-color: var(--gold); }
+  .live-indicator { display: flex; align-items: center; gap: 8px; font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--gold-pale); letter-spacing: 0.1em; }
+  .live-dot { width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* TICKER */
+  .ticker { background: var(--red-alert); padding: 8px 0; overflow: hidden; }
+  .ticker .inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 16px; }
+  .ticker-label { background: var(--navy-deep); color: var(--gold-pale); font-family: 'Courier Prime', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; padding: 3px 10px; white-space: nowrap; flex-shrink: 0; }
+  .ticker-track { overflow: hidden; flex: 1; }
+  .ticker-content { display: inline-flex; gap: 60px; white-space: nowrap; animation: ticker-scroll 60s linear infinite; font-size: 12px; font-weight: 600; color: white; letter-spacing: 0.04em; }
+  @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .ticker-item::before { content: '▶ '; font-size: 8px; padding-right: 10px; }
+
+  /* LAYOUT */
+  .page-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+  /* HERO */
+  .hero { padding: 36px 0 0; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 340px; border: 1px solid var(--navy-mid); }
+  .hero-main { position: relative; background: var(--navy-deep); overflow: hidden; min-height: 420px; display: flex; align-items: flex-end; }
+  .hero-main::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #0D1F3C 0%, #162B52 40%, #0A1628 100%); }
+  .hero-main::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(184,136,42,0.03) 40px, rgba(184,136,42,0.03) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(184,136,42,0.03) 40px, rgba(184,136,42,0.03) 41px); }
+  .hero-geo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.07; }
+  .hero-geo svg { width: 100%; height: 100%; }
+  .hero-text { position: relative; z-index: 2; padding: 40px; background: linear-gradient(to top, rgba(7,15,30,0.98) 0%, rgba(7,15,30,0.7) 60%, transparent 100%); width: 100%; }
+  .hero-category { display: inline-block; background: var(--red-alert); color: white; font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.2em; padding: 3px 10px; margin-bottom: 14px; text-transform: uppercase; }
+  .hero-headline { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 12px; }
+  .hero-deck { font-size: 15px; color: var(--gray-light); line-height: 1.6; margin-bottom: 20px; max-width: 700px; }
+  .hero-byline { font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--gold); letter-spacing: 0.1em; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .hero-byline span { opacity: 0.6; }
+
+  .hero-sidebar { background: var(--white); border-left: 3px solid var(--gold); display: flex; flex-direction: column; }
+  .sidebar-label { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin: 20px 24px 10px; display: flex; align-items: center; gap: 8px; }
+  .sidebar-label::after { content: ''; flex: 1; height: 1px; background: var(--gold); opacity: 0.3; }
+  .sidebar-story-item { padding: 14px 0; border-bottom: 1px solid var(--cream-dark); cursor: pointer; transition: background 0.2s; }
+  .sidebar-story-item:hover { background: rgba(184,136,42,0.05); }
+  .s-tag { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+  .s-headline { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--text-dark); line-height: 1.3; }
+  .s-time { font-size: 11px; color: var(--gray-mid); margin-top: 5px; font-family: 'Courier Prime', monospace; }
+
+  /* SECTION LABELS */
+  .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .section-label h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--navy-deep); white-space: nowrap; }
+  .section-label .line { flex: 1; height: 1px; background: linear-gradient(to right, var(--navy-mid), transparent); }
+  .section-label .meta { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; white-space: nowrap; }
+
+  /* NEWS GRID */
+  .news-section { padding: 40px 0; }
+  .news-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--gray-light); border: 1px solid var(--gray-light); }
+  .news-card { background: var(--white); padding: 24px; position: relative; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; height: 100%; display: flex; flex-direction: column; }
+  .news-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 1; }
+  .news-card .card-tag { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .news-card .card-headline { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--text-dark); line-height: 1.35; margin-bottom: 10px; }
+  .news-card .card-excerpt { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin-bottom: 14px; flex: 1; }
+  .news-card .card-meta { font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--gray-mid); display: flex; justify-content: space-between; border-top: 1px solid var(--cream-dark); padding-top: 12px; margin-top: auto; gap: 10px; }
+  .news-card .card-meta span:first-child { color: var(--navy-subtle); font-weight: 700; }
+  .card-featured { }
+  .card-featured .card-headline { font-size: 22px; }
+
+  /* REGIONAL */
+  .regional-section { background: var(--navy-mid); padding: 48px 0; }
+  .regional-section .section-label h2 { color: var(--gold-pale); }
+  .regional-section .section-label .line { background: linear-gradient(to right, rgba(184,136,42,0.4), transparent); }
+  .regions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .region-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(184,136,42,0.15); padding: 20px; cursor: pointer; transition: all 0.2s; height: 100%; }
+  .region-card:hover { background: rgba(184,136,42,0.08); border-color: rgba(184,136,42,0.4); }
+  .region-name { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(184,136,42,0.2); }
+  .region-story { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gray-light); line-height: 1.45; margin-bottom: 10px; }
+  .region-count { font-size: 11px; color: var(--gray-mid); font-family: 'Courier Prime', monospace; }
+
+  /* NEWSLETTER */
+  .newsletter-section { background: linear-gradient(135deg, var(--gold) 0%, #8B6520 100%); padding: 56px 0; position: relative; overflow: hidden; }
+  .newsletter-section::before { content: 'SUBSCRIBE'; position: absolute; font-family: 'Playfair Display', serif; font-size: 200px; font-weight: 900; color: rgba(0,0,0,0.06); right: -40px; top: -40px; line-height: 1; pointer-events: none; white-space: nowrap; }
+  .newsletter-grid { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; }
+  .newsletter-copy .eyebrow { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.25em; color: var(--navy-deep); text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; }
+  .newsletter-copy h2 { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 900; color: var(--navy-deep); line-height: 1.15; margin-bottom: 16px; }
+  .newsletter-copy p { font-size: 15px; color: var(--navy-mid); line-height: 1.7; margin-bottom: 20px; }
+  .form-card { background: var(--navy-deep); padding: 40px; border: 1px solid rgba(184,136,42,0.3); }
+  .form-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); margin-bottom: 8px; }
+  .form-card p { font-size: 13px; color: var(--gray-mid); margin-bottom: 24px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .form-group input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(184,136,42,0.3); color: var(--white); padding: 10px 14px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: var(--gold); }
+  .subscribe-btn { width: 100%; background: var(--gold); border: none; color: var(--navy-deep); padding: 14px; font-family: 'Courier Prime', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .subscribe-btn:hover { background: var(--gold-bright); }
+
+  /* FOOTER */
+  .footer { background: var(--navy-deep); border-top: 2px solid var(--gold); padding: 56px 0 24px; }
+  .footer-grid { display: grid; grid-template-columns: 280px 1fr 1fr; gap: 48px; margin-bottom: 48px; max-width: 1280px; margin-left: auto; margin-right: auto; padding: 0 24px; }
+  .footer-brand .logo-text { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--white); margin-bottom: 12px; }
+  .footer-brand .logo-text span { color: var(--gold); }
+  .footer-brand p { font-size: 12px; color: var(--gray-mid); line-height: 1.7; margin-bottom: 20px; }
+  .footer-col h4 { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(184,136,42,0.2); }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 8px; }
+  .footer-col ul li a { font-size: 13px; color: var(--gray-mid); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
+  .footer-col ul li a:hover { color: var(--gold-pale); }
+  .footer-col ul li a::before { content: '›'; color: var(--gold); opacity: 0.5; }
+  .footer-bottom { border-top: 1px solid rgba(184,136,42,0.15); padding-top: 20px; max-width: 1280px; margin: 0 auto; padding-left: 24px; padding-right: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .footer-bottom p { font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--gray-mid); letter-spacing: 0.08em; }
+  .auto-notice { background: rgba(184,136,42,0.08); border: 1px solid rgba(184,136,42,0.2); padding: 12px 16px; font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--gold-pale); letter-spacing: 0.08em; text-align: center; margin: 10px auto; max-width: 1280px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-sidebar { border-left: none; border-top: 3px solid var(--gold); }
+    .news-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .regions-grid { grid-template-columns: repeat(2, 1fr); }
+    .newsletter-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .masthead-aside { display: none; }
+  }
+  @media (max-width: 640px) {
+    .logo-title { font-size: 34px; }
+    .news-grid-3 { grid-template-columns: 1fr; }
+    .regions-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-headline { font-size: 24px; }
+    .newsletter-copy h2 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="inner">
+    <div class="date-info">
+      <span class="classification">UNCLASSIFIED // PUBLIC RELEASE</span>
+      <span id="current-date"></span>
+    </div>
+    <div class="links">
+      <a href="#newsletter">Daily Briefing</a>
+      <a href="#regions">Regional Watch</a>
+      <a href="#newsletter">Subscribe</a>
+    </div>
+  </div>
+</div>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="inner">
+    <div class="masthead-aside left">
+      <div class="threat-meter">
+        <div class="label">National Threat Level</div>
+        <div class="threat-levels">
+          <div class="threat-level active-low"></div>
+          <div class="threat-level active-low"></div>
+          <div class="threat-level active-med"></div>
+          <div class="threat-level active-med"></div>
+          <div class="threat-level"></div>
+        </div>
+        <div class="threat-text">ELEVATED — SUBSTANTIAL</div>
+      </div>
+    </div>
+    <div class="logo-block">
+      <span class="logo-eyebrow">Washington, D.C. · Est. 2025</span>
+      <div class="logo-title">The <span class="accent">Sentinel</span> Review</div>
+      <span class="logo-tagline">National Security Intelligence &amp; Policy Analysis</span>
+    </div>
+    <div class="masthead-aside right">
+      <div class="threat-meter">
+        <div class="label" style="text-align:right;">Last Updated</div>
+        <div class="threat-text" style="text-align:right;">April 20, 2026 at 10:27 PM UTC</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN NAV -->
+<nav class="main-nav">
+  <div class="inner">
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#news">Latest</a>
+      <a href="#regions">Regional</a>
+      <a href="#newsletter">Briefing</a>
+    </div>
+    <div class="live-indicator">
+      <span class="live-dot"></span>
+      <span>LIVE FEED</span>
+    </div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="inner">
+    <div class="ticker-label">⚡ BREAKING</div>
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span class="ticker-item">CISA Issues Emergency Cyber Directive on Chinese APT Activity</span>
+        <span class="ticker-item">Pentagon Reviews Indo-Pacific Force Posture Amid Taiwan Tensions</span>
+        <span class="ticker-item">NATO Allies Pledge Increased Defense Spending at Brussels Summit</span>
+        <span class="ticker-item">Iran Advances Uranium Enrichment Beyond JCPOA Limits</span>
+        <span class="ticker-item">STRATCOM Warns Congress on Adversary Nuclear Modernization</span>
+        <span class="ticker-item">CISA Issues Emergency Cyber Directive on Chinese APT Activity</span>
+        <span class="ticker-item">Pentagon Reviews Indo-Pacific Force Posture Amid Taiwan Tensions</span>
+        <span class="ticker-item">NATO Allies Pledge Increased Defense Spending at Brussels Summit</span>
+        <span class="ticker-item">Iran Advances Uranium Enrichment Beyond JCPOA Limits</span>
+        <span class="ticker-item">STRATCOM Warns Congress on Adversary Nuclear Modernization</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="page-wrap">
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="hero-geo">
+          <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="400" cy="250" r="200" fill="none" stroke="#B8882A" stroke-width="0.5"/>
+            <circle cx="400" cy="250" r="150" fill="none" stroke="#B8882A" stroke-width="0.5"/>
+            <circle cx="400" cy="250" r="100" fill="none" stroke="#B8882A" stroke-width="0.5"/>
+            <line x1="200" y1="250" x2="600" y2="250" stroke="#B8882A" stroke-width="0.5"/>
+            <line x1="400" y1="50" x2="400" y2="450" stroke="#B8882A" stroke-width="0.5"/>
+            <path d="M100,180 Q200,170 300,165 Q350,150 380,160 L380,200 Q300,195 200,200 Q150,210 100,200 Z" fill="#B8882A" opacity="0.3"/>
+            <path d="M410,160 Q500,165 570,165 L570,210 Q500,205 410,200 Z" fill="#B8882A" opacity="0.3"/>
+            <path d="M440,215 Q510,220 550,215 L550,270 Q510,265 440,260 Z" fill="#B8882A" opacity="0.3"/>
+            <circle cx="480" cy="180" r="5" fill="#C0392B" opacity="0.8"/>
+            <circle cx="480" cy="180" r="10" fill="none" stroke="#C0392B" stroke-width="1" opacity="0.5">
+              <animate attributeName="r" from="5" to="20" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="530" cy="290" r="4" fill="#C0392B" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="hero-text">
+          <span class="hero-category">⚡ Cyber</span>
+            <h1 class="hero-headline">CISA Issues Emergency Cyber Directive on Chinese APT Activity</h1>
+            <p class="hero-deck">The Cybersecurity and Infrastructure Security Agency has issued a rare emergency directive following detection of advanced persistent threat activity linked to Chinese state actors.</p>
+            <div class="hero-byline">
+              <strong><a href="https://example.com/1" target="_blank" rel="noopener" style="color: var(--gold-pale); text-decoration: none;">Read at CISA →</a></strong>
+              <span>•</span>
+              <span>April 20, 2026 · 09:57 PM UTC</span>
+              <span>•</span>
+              <span>30m ago</span>
+            </div>
+        </div>
+      </div>
+      <div class="hero-sidebar">
+        <div class="sidebar-label">Top Stories</div>
+        <a href="https://example.com/2" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="sidebar-story-item" style="padding: 12px 24px;">
+            <div class="s-tag">Indo-Pacific</div>
+            <div class="s-headline">Pentagon Reviews Indo-Pacific Force Posture Amid Taiwan Tensions</div>
+            <div class="s-time">2h ago · Defense News</div>
+          </div>
+        </a>
+        <a href="https://example.com/3" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="sidebar-story-item" style="padding: 12px 24px;">
+            <div class="s-tag">Europe / NATO</div>
+            <div class="s-headline">NATO Allies Pledge Increased Defense Spending at Brussels Summit</div>
+            <div class="s-time">4h ago · Defense One</div>
+          </div>
+        </a>
+        <a href="https://example.com/4" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="sidebar-story-item" style="padding: 12px 24px;">
+            <div class="s-tag">Middle East</div>
+            <div class="s-headline">Iran Advances Uranium Enrichment Beyond JCPOA Limits</div>
+            <div class="s-time">6h ago · Foreign Policy</div>
+          </div>
+        </a>
+        <a href="https://example.com/5" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="sidebar-story-item" style="padding: 12px 24px;">
+            <div class="s-tag">Nuclear</div>
+            <div class="s-headline">STRATCOM Warns Congress on Adversary Nuclear Modernization</div>
+            <div class="s-time">8h ago · Breaking Defense</div>
+          </div>
+        </a>
+        <a href="https://example.com/6" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="sidebar-story-item" style="padding: 12px 24px;">
+            <div class="s-tag">Defense Policy</div>
+            <div class="s-headline">Senate Passes NDAA with Key Cyber Provisions</div>
+            <div class="s-time">10h ago · War on the Rocks</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST NEWS -->
+  <section class="news-section" id="news">
+    <div class="section-label">
+      <h2>Latest Intelligence</h2>
+      <div class="line"></div>
+      <div class="meta">Auto-Updated Every 2 Hours</div>
+    </div>
+    <div class="news-grid-3">
+      <a href="https://example.com/7" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card card-featured">
+          <div class="card-tag">🛡️ Homeland</div>
+          <div class="card-headline">FBI Releases Domestic Threat Assessment</div>
+          <div class="card-excerpt">Q2 assessment highlights elevated threat environment.</div>
+          <div class="card-meta"><span>Lawfare</span><span>12h ago</span></div>
+        </div>
+      </a>
+      <a href="https://example.com/8" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card">
+          <div class="card-tag">🏴 Europe / NATO</div>
+          <div class="card-headline">Russia Suspends New START Information Exchanges</div>
+          <div class="card-excerpt">Moscow cites alleged US violations in announcing indefinite suspension.</div>
+          <div class="card-meta"><span>Atlantic Council</span><span>14h ago</span></div>
+        </div>
+      </a>
+      <a href="https://example.com/9" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card">
+          <div class="card-tag">🏴 Europe / NATO</div>
+          <div class="card-headline">Ukraine Strikes Russian Weapons Factory in Kursk Region</div>
+          <div class="card-excerpt">Long-range attack confirms new Ukrainian strike capability.</div>
+          <div class="card-meta"><span>Defense One</span><span>16h ago</span></div>
+        </div>
+      </a>
+      <a href="https://example.com/10" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card">
+          <div class="card-tag">🌍 Middle East</div>
+          <div class="card-headline">Saudi Arabia Requests Accelerated F-35 Deliveries</div>
+          <div class="card-excerpt">Gulf partner cites growing Iran proxy activity in Red Sea corridor.</div>
+          <div class="card-meta"><span>Breaking Defense</span><span>18h ago</span></div>
+        </div>
+      </a>
+      <a href="https://example.com/11" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card">
+          <div class="card-tag">🏴 Europe / NATO</div>
+          <div class="card-headline">Baltic States Invoke NATO Article 4 Consultations</div>
+          <div class="card-excerpt">GPS jamming incidents in NATO airspace prompt rare invocation.</div>
+          <div class="card-meta"><span>Stars and Stripes</span><span>20h ago</span></div>
+        </div>
+      </a>
+      <a href="https://example.com/12" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="news-card">
+          <div class="card-tag">🌏 Indo-Pacific</div>
+          <div class="card-headline">SOUTHCOM Warns of PRC Infrastructure Expansion in Latin America</div>
+          <div class="card-excerpt">Dual-use port and logistics investments raise strategic concerns.</div>
+          <div class="card-meta"><span>CSIS</span><span>1d ago</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- REGIONAL WATCH -->
+<section class="regional-section" id="regions">
+  <div class="page-wrap">
+    <div class="section-label">
+      <h2>Regional Security Watch</h2>
+      <div class="line"></div>
+    </div>
+    <div class="regions-grid">
+      <a href="https://example.com/2" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="region-card">
+          <div class="region-name">🌏 Indo-Pacific</div>
+          <div class="region-story">Pentagon Reviews Indo-Pacific Force Posture Amid Taiwan Tensions</div>
+          <div class="region-count">2 stories tracked</div>
+        </div>
+      </a>
+      <a href="https://example.com/4" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="region-card">
+          <div class="region-name">🌍 Middle East</div>
+          <div class="region-story">Iran Advances Uranium Enrichment Beyond JCPOA Limits</div>
+          <div class="region-count">2 stories tracked</div>
+        </div>
+      </a>
+      <a href="https://example.com/3" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="region-card">
+          <div class="region-name">🏴 Europe / NATO</div>
+          <div class="region-story">NATO Allies Pledge Increased Defense Spending at Brussels Summit</div>
+          <div class="region-count">4 stories tracked</div>
+        </div>
+      </a>
+      <a href="https://example.com/5" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="region-card">
+          <div class="region-name">⚛️ Nuclear</div>
+          <div class="region-story">STRATCOM Warns Congress on Adversary Nuclear Modernization</div>
+          <div class="region-count">1 story tracked</div>
+        </div>
+      </a>
+      <a href="https://example.com/1" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="region-card">
+          <div class="region-name">🔐 Cyber</div>
+          <div class="region-story">CISA Issues Emergency Cyber Directive on Chinese APT Activity</div>
+          <div class="region-count">1 story tracked</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section" id="newsletter">
+  <div class="newsletter-grid">
+    <div class="newsletter-copy">
+      <div class="eyebrow">Daily Intelligence Briefing</div>
+      <h2>The Morning Brief. Delivered at 6 AM EST.</h2>
+      <p>The Sentinel Review tracks national security developments across dozens of primary sources every hour, so you don't have to. Subscribe to get the essential stories, curated analysis, and policy implications delivered to your inbox every morning.</p>
+      <p style="font-family: 'Courier Prime', monospace; font-size: 12px; letter-spacing: 0.1em;">NO SPAM · NO ADS · UNSUBSCRIBE ANY TIME</p>
+    </div>
+    <div class="form-card">
+      <h3>Subscribe to The Sentinel</h3>
+      <p>Free access for government and military personnel.</p>
+      <form name="newsletter" method="POST" data-netlify="true" onsubmit="event.preventDefault(); alert('Thank you for subscribing! (Connect this to Netlify Forms to activate — see README.)')">
+        <input type="hidden" name="form-name" value="newsletter">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="you@agency.gov" required>
+        </div>
+        <div class="form-group">
+          <label>Organization (Optional)</label>
+          <input type="text" name="organization" placeholder="Department / Agency">
+        </div>
+        <button type="submit" class="subscribe-btn">✦ Subscribe — Free Access</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="auto-notice">
+    📡 AUTOMATED AGGREGATION — This site curates headlines from 12+ trusted national security sources. All stories link to original publishers. Last updated: April 20, 2026 at 10:27 PM UTC
+  </div>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-text">The <span>Sentinel</span> Review</div>
+      <p>Authoritative national security news aggregation and intelligence curation for policy makers and defense professionals.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Our Sources</h4>
+      <ul>
+        <li><a href="https://www.defensenews.com" target="_blank" rel="noopener">Defense News</a></li>
+        <li><a href="https://breakingdefense.com" target="_blank" rel="noopener">Breaking Defense</a></li>
+        <li><a href="https://www.twz.com" target="_blank" rel="noopener">The War Zone</a></li>
+        <li><a href="https://warontherocks.com" target="_blank" rel="noopener">War on the Rocks</a></li>
+        <li><a href="https://www.defenseone.com" target="_blank" rel="noopener">Defense One</a></li>
+        <li><a href="https://www.csis.org" target="_blank" rel="noopener">CSIS</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>More Sources</h4>
+      <ul>
+        <li><a href="https://www.atlanticcouncil.org" target="_blank" rel="noopener">Atlantic Council</a></li>
+        <li><a href="https://foreignpolicy.com" target="_blank" rel="noopener">Foreign Policy</a></li>
+        <li><a href="https://www.cisa.gov" target="_blank" rel="noopener">CISA</a></li>
+        <li><a href="https://www.stripes.com" target="_blank" rel="noopener">Stars and Stripes</a></li>
+        <li><a href="https://www.lawfaremedia.org" target="_blank" rel="noopener">Lawfare</a></li>
+        <li><a href="https://www.justsecurity.org" target="_blank" rel="noopener">Just Security</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 The Sentinel Review · Washington, D.C.</p>
+    <p>All content links to original sources. Fair use for news aggregation.</p>
+  </div>
+</footer>
+
+<script>
+  const now = new Date();
+  document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+</body>
+</html>
