@@ -2,9 +2,8 @@ name: Aggregate News
 
 on:
   schedule:
-    # Runs every 2 hours at :05 past the hour
     - cron: '5 * * * *'
-  workflow_dispatch:  # Allows manual trigger from GitHub UI
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -32,7 +31,7 @@ jobs:
       - name: Run aggregator
         run: python aggregate.py
 
-- name: Commit updated files
+      - name: Commit updated files
         run: |
           git config user.name "Sentinel Bot"
           git config user.email "bot@sentinelreview.noreply"
