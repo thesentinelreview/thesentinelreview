@@ -32,11 +32,11 @@ jobs:
       - name: Run aggregator
         run: python aggregate.py
 
-      - name: Commit updated index.html
+- name: Commit updated files
         run: |
           git config user.name "Sentinel Bot"
           git config user.email "bot@sentinelreview.noreply"
-          git add index.html
+          git add index.html feed.xml
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
