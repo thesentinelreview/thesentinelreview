@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 The Sentinel Review — Automated News Aggregator
-Pulls RSS feeds from national security sources and generates index.html.
+Pulls RSS feeds from national security sources and generates index.html + feed.xml.
 """
 
 import feedparser
@@ -13,7 +13,7 @@ from dateutil import parser as date_parser
 from pathlib import Path
 
 # ============================================================
-# CONFIGURATION — Edit feeds, categories, and limits here
+# CONFIGURATION
 # ============================================================
 
 FEEDS = [
@@ -32,51 +32,19 @@ FEEDS = [
 ]
 
 CATEGORIES = {
-    "Cyber": {
-        "icon": "🔐",
-        "keywords": ["cyber", "ransomware", "hack", "hacker", "cisa", "exploit", "vulnerability",
-                     "malware", "phishing", "zero-day", "breach", "encryption", "apt", "ddos"]
-    },
-    "Indo-Pacific": {
-        "icon": "🌏",
-        "keywords": ["china", "taiwan", "prc ", " pla ", "indo-pacific", "japan", "korea", "beijing",
-                     "xi jinping", "south china sea", "philippines", "quad"]
-    },
-    "Middle East": {
-        "icon": "🌍",
-        "keywords": ["iran", "israel", "saudi", "yemen", "gaza", "syria", "iraq", "centcom",
-                     "hezbollah", "houthi", "tehran", "jerusalem", "hamas", "red sea"]
-    },
-    "Europe / NATO": {
-        "icon": "🏴",
-        "keywords": ["nato", "russia", "ukraine", "europe", "putin", "kyiv", "moscow", "kremlin",
-                     "baltic", "poland", " eu ", "brussels", "zelensky"]
-    },
-    "Nuclear": {
-        "icon": "⚛️",
-        "keywords": ["nuclear", "missile", "icbm", "warhead", "nonproliferation", "iaea",
-                     "stratcom", "hypersonic", "new start"]
-    },
-    "Homeland": {
-        "icon": "🛡️",
-        "keywords": ["dhs", "fbi", "border", "terrorism", "domestic", "homeland", "extremism", "cbp"]
-    },
-    "Defense Policy": {
-        "icon": "🏛️",
-        "keywords": ["pentagon", "dod", "ndaa", "f-35", "army", "navy", "marine", "air force",
-                     "joint chiefs", "secdef", "congress", "hegseth", "austin"]
-    },
-    "Intelligence": {
-        "icon": "🕵️",
-        "keywords": ["cia", "nsa", "dni", "intelligence community", "odni", "espionage", "spy",
-                     "classified", "fisa"]
-    },
+    "Cyber":          {"icon": "🔐", "keywords": ["cyber", "ransomware", "hack", "hacker", "cisa", "exploit", "vulnerability", "malware", "phishing", "zero-day", "breach", "encryption", "apt", "ddos"]},
+    "Indo-Pacific":   {"icon": "🌏", "keywords": ["china", "taiwan", "prc ", " pla ", "indo-pacific", "japan", "korea", "beijing", "xi jinping", "south china sea", "philippines", "quad"]},
+    "Middle East":    {"icon": "🌍", "keywords": ["iran", "israel", "saudi", "yemen", "gaza", "syria", "iraq", "centcom", "hezbollah", "houthi", "tehran", "jerusalem", "hamas", "red sea"]},
+    "Europe / NATO":  {"icon": "🏴", "keywords": ["nato", "russia", "ukraine", "europe", "putin", "kyiv", "moscow", "kremlin", "baltic", "poland", " eu ", "brussels", "zelensky"]},
+    "Nuclear":        {"icon": "⚛️", "keywords": ["nuclear", "missile", "icbm", "warhead", "nonproliferation", "iaea", "stratcom", "hypersonic", "new start"]},
+    "Homeland":       {"icon": "🛡️", "keywords": ["dhs", "fbi", "border", "terrorism", "domestic", "homeland", "extremism", "cbp"]},
+    "Defense Policy": {"icon": "🏛️", "keywords": ["pentagon", "dod", "ndaa", "f-35", "army", "navy", "marine", "air force", "joint chiefs", "secdef", "congress", "hegseth", "austin"]},
+    "Intelligence":   {"icon": "🕵️", "keywords": ["cia", "nsa", "dni", "intelligence community", "odni", "espionage", "spy", "classified", "fisa"]},
 }
 
 DEFAULT_CATEGORY_NAME = "National Security"
 DEFAULT_CATEGORY_ICON = "📍"
 
-# Content limits
 MAX_PER_FEED = 15
 MAX_HERO_SIDEBAR = 5
 MAX_NEWS_GRID = 6
@@ -200,13 +168,59 @@ def esc(text):
     return html.escape(str(text))
 
 
+def xml_esc(text):
+    return (str(text)
+            .replace('&', '&amp;')
+            .replace('<', '&lt;')
+            .replace('>', '&gt;')
+            .replace('"', '&quot;')
+            .replace("'", '&apos;'))
+
+
 # ============================================================
-# RENDERERS — Each builds HTML for one section of the template
+# RSS FEED GENERATOR
+# ============================================================
+
+def generate_rss(stories, site_url="https://example.com", max_items=30):
+    now_rfc822 = datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S +0000')
+    items_xml = []
+    for s in stories[:max_items]:
+        pub = s['pub_date'].strftime('%a, %d %b %Y %H:%M:%S +0000')
+        icon = get_category_icon(s['category'])
+        tweet_title = f"{icon} {s['title']} | {s['source']}"
+        items_xml.append(f'''    <item>
+      <title>{xml_esc(tweet_title)}</title>
+      <link>{xml_esc(s['link'])}</link>
+      <guid isPermaLink="true">{xml_esc(s['link'])}</guid>
+      <pubDate>{pub}</pubDate>
+      <category>{xml_esc(s['category'])}</category>
+      <source url="{xml_esc(s['link'])}">{xml_esc(s['source'])}</source>
+      <description>{xml_esc(s['summary'])}</description>
+    </item>''')
+
+    return f'''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Sentinel Review — National Security Feed</title>
+    <link>{xml_esc(site_url)}</link>
+    <atom:link href="{xml_esc(site_url)}/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Automated national security news aggregation. Updated every hour.</description>
+    <language>en-us</language>
+    <lastBuildDate>{now_rfc822}</lastBuildDate>
+    <generator>The Sentinel Review Aggregator</generator>
+{chr(10).join(items_xml)}
+  </channel>
+</rss>
+'''
+
+
+# ============================================================
+# RENDERERS
 # ============================================================
 
 def render_ticker(stories):
     items = stories[:MAX_TICKER]
-    doubled = items + items  # for seamless loop scroll
+    doubled = items + items
     return '\n        '.join(
         f'<span class="ticker-item">{esc(s["title"])}</span>' for s in doubled
     )
@@ -303,7 +317,6 @@ def main():
         print("⚠️  No stories fetched — check RSS feeds and network.")
         sys.exit(1)
 
-    # Category breakdown
     from collections import Counter
     cat_counts = Counter(s['category'] for s in stories)
     for cat, n in cat_counts.most_common():
@@ -327,7 +340,14 @@ def main():
     out_path = Path(__file__).parent / 'index.html'
     out_path.write_text(template, encoding='utf-8')
 
+    # Generate RSS feed for syndication (Make.com, Zapier, X bots, etc.)
+    # IMPORTANT: Change SITE_URL below to your actual domain
+    SITE_URL = "https://thesentinelreview.com"  # ← CHANGE THIS
+    rss_path = Path(__file__).parent / 'feed.xml'
+    rss_path.write_text(generate_rss(stories, site_url=SITE_URL), encoding='utf-8')
+
     print(f"\n✓ index.html generated — site is ready to deploy.")
+    print(f"✓ feed.xml generated — {min(len(stories), 30)} items for syndication.")
 
 
 if __name__ == '__main__':
