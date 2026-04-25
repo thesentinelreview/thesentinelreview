@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Apr 2026 10:31:06 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Apr 2026 14:32:10 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 Digest of Recent Articles on Just Security (Apr. 19-24, 2026) | Just Security</title>
+      <link>https://www.justsecurity.org/136731/digest-recent-articles-just-security-apr-19-24-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-apr-19-24-2026</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/136731/digest-recent-articles-just-security-apr-19-24-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-apr-19-24-2026</guid>
+      <pubDate>Sat, 25 Apr 2026 11:21:45 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.justsecurity.org/136731/digest-recent-articles-just-security-apr-19-24-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-apr-19-24-2026">Just Security</source>
+      <description>U.S.-Israel-Iran War • Russia-Ukraine War • Reflections on International Law • FISA Section 702 • Immigration • Counterterrorism • Bosnia • Georgia • Tech Governance • U.S. Boat Strikes • Trump Executive Actions The post Digest of Recent Articles on Just Security (Apr. 19-24,…</description>
+    </item>
     <item>
       <title>🌍 U.S. Floats Punishing NATO Members for Refusing to Join Iran War | Foreign Policy</title>
       <link>https://foreignpolicy.com/2026/04/24/us-pentagon-email-nato-spain-uk-falkland-islands-iran/</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/atlantic-council-front-page-event-with-u-s-trade-rep-jamieson-greer-cited-in-bloomberg-on-the-issue-of-transshipment-under-the-usmca/">Atlantic Council</source>
       <description>Read full article here The post Atlantic Council Front Page event with U.S. Trade Rep. Jamieson Greer cited in Bloomberg on the issue of transshipment under the USMCA appeared first on Atlantic Council.</description>
-    </item>
-    <item>
-      <title>🏴 ‘Clear divide’ in military readiness for countries on NATO’s eastern flank: Report | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/04/clear-divide-in-military-readiness-for-countries-on-natos-eastern-flank-report/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/04/clear-divide-in-military-readiness-for-countries-on-natos-eastern-flank-report/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:24:00 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://breakingdefense.com/2026/04/clear-divide-in-military-readiness-for-countries-on-natos-eastern-flank-report/">Breaking Defense</source>
-      <description>“We further found that sustainment in [many Eastern Flank countries] is the real and serious gap: maintenance capabilities, logistical limitations stemming from poor transportation infrastructure …,” one of the authors of the report told Breaking Defense.</description>
     </item>
   </channel>
 </rss>
