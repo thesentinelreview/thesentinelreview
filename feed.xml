@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Apr 2026 14:32:10 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Apr 2026 18:05:19 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 The Poverty of the DOJ Indictment of the Southern Poverty Law Center | Just Security</title>
+      <link>https://www.justsecurity.org/137171/indictment-southern-poverty-law-center-splc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=indictment-southern-poverty-law-center-splc</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/137171/indictment-southern-poverty-law-center-splc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=indictment-southern-poverty-law-center-splc</guid>
+      <pubDate>Sat, 25 Apr 2026 16:35:57 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/137171/indictment-southern-poverty-law-center-splc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=indictment-southern-poverty-law-center-splc">Just Security</source>
+      <description>Weissmann, former head of the DOJ Fraud Section, discusses conspicuous gaps in the indictment. The post The Poverty of the DOJ Indictment of the Southern Poverty Law Center appeared first on Just Security.</description>
+    </item>
     <item>
       <title>🌍 Digest of Recent Articles on Just Security (Apr. 19-24, 2026) | Just Security</title>
       <link>https://www.justsecurity.org/136731/digest-recent-articles-just-security-apr-19-24-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-apr-19-24-2026</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/chhangani-quoted-in-the-banker-article-explaining-that-new-pakistani-laws-now-allow-registered-virtual-asset-service-providers-to-hold-bank-accounts-in-the-country/">Atlantic Council</source>
       <description>Read full article here The post Chhangani quoted in The Banker article explaining that new Pakistani laws now allow registered Virtual Asset Service Providers to hold bank accounts in the country appeared first on Atlantic Council.</description>
-    </item>
-    <item>
-      <title>📍 Atlantic Council Front Page event with U.S. Trade Rep. Jamieson Greer cited in Bloomberg on the issue of transshipment under the USMCA | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/atlantic-council-front-page-event-with-u-s-trade-rep-jamieson-greer-cited-in-bloomberg-on-the-issue-of-transshipment-under-the-usmca/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/insight-impact/in-the-news/atlantic-council-front-page-event-with-u-s-trade-rep-jamieson-greer-cited-in-bloomberg-on-the-issue-of-transshipment-under-the-usmca/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:24:08 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/atlantic-council-front-page-event-with-u-s-trade-rep-jamieson-greer-cited-in-bloomberg-on-the-issue-of-transshipment-under-the-usmca/">Atlantic Council</source>
-      <description>Read full article here The post Atlantic Council Front Page event with U.S. Trade Rep. Jamieson Greer cited in Bloomberg on the issue of transshipment under the USMCA appeared first on Atlantic Council.</description>
     </item>
   </channel>
 </rss>
