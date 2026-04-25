@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Apr 2026 22:10:18 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Apr 2026 00:01:38 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 U.S. Floats Punishing NATO Members for Refusing to Join Iran War | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/04/24/us-pentagon-email-nato-spain-uk-falkland-islands-iran/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/04/24/us-pentagon-email-nato-spain-uk-falkland-islands-iran/</guid>
+      <pubDate>Fri, 24 Apr 2026 21:23:11 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://foreignpolicy.com/2026/04/24/us-pentagon-email-nato-spain-uk-falkland-islands-iran/">Foreign Policy</source>
+      <description>An internal Pentagon email suggests suspending Spain from the alliance and reviewing Britain’s claim to the Falkland Islands.</description>
+    </item>
     <item>
       <title>📍 Space Force picks firms to develop Golden Dome’s space-based interceptors | Defense One</title>
       <link>https://www.defenseone.com/threats/2026/04/space-force-picks-firms-develop-golden-domes-space-based-interceptors/413118/</link>
@@ -268,15 +277,6 @@
       <category>Europe / NATO</category>
       <source url="https://breakingdefense.com/2026/04/clear-divide-in-military-readiness-for-countries-on-natos-eastern-flank-report/">Breaking Defense</source>
       <description>“We further found that sustainment in [many Eastern Flank countries] is the real and serious gap: maintenance capabilities, logistical limitations stemming from poor transportation infrastructure …,” one of the authors of the report told Breaking Defense.</description>
-    </item>
-    <item>
-      <title>📍 CBDC tracker cited in Reuters article reporting India’s CBDC tests | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/cbdc-tracker-cited-in-reuters-article-reporting-indias-cbdc-tests/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/insight-impact/in-the-news/cbdc-tracker-cited-in-reuters-article-reporting-indias-cbdc-tests/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:02:06 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/cbdc-tracker-cited-in-reuters-article-reporting-indias-cbdc-tests/">Atlantic Council</source>
-      <description>Read full article here The post CBDC tracker cited in Reuters article reporting India’s CBDC tests appeared first on Atlantic Council.</description>
     </item>
   </channel>
 </rss>
