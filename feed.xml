@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2026 14:33:42 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Apr 2026 18:06:19 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Carrier Tracker As of April 26, 2026 | The War Zone</title>
+      <link>https://www.twz.com/sea/carrier-tracker-as-of-april-26-2026</link>
+      <guid isPermaLink="true">https://www.twz.com/sea/carrier-tracker-as-of-april-26-2026</guid>
+      <pubDate>Sun, 26 Apr 2026 13:35:43 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.twz.com/sea/carrier-tracker-as-of-april-26-2026">The War Zone</source>
+      <description>The U.S. now has three carrier strike groups in the U.S. Central Command area of responsibility for the first time in more than two decades. The post Carrier Tracker As of April 26, 2026 appeared first on The War Zone.</description>
+    </item>
     <item>
       <title>📍 Fool’s Gold: Speaker Johnson’s Section 702 proposal would place no limits on backdoor searches | Just Security</title>
       <link>https://www.justsecurity.org/137206/johnson-section-702-warrant/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=johnson-section-702-warrant</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/news/your-military/2026/04/24/threes-company-trio-of-us-carriers-operating-in-middle-east-for-first-time-in-decades/">Defense News</source>
       <description>Three U.S. aircraft carriers are operating in Central Command&apos;s area of responsibility for the first time since 2003.</description>
-    </item>
-    <item>
-      <title>📍 Papal Politics, Past and Present | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/04/24/pope-leo-iran-war-trump-vance-catholic-church-peace/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/04/24/pope-leo-iran-war-trump-vance-catholic-church-peace/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:25:35 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/04/24/pope-leo-iran-war-trump-vance-catholic-church-peace/">Foreign Policy</source>
-      <description>Despite more colorful medieval precedents, Pope Leo’s clash with Trump reflects the Vatican’s postwar peace advocacy.</description>
     </item>
   </channel>
 </rss>
