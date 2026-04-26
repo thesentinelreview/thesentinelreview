@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2026 22:12:22 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Apr 2026 23:34:28 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 National Defence Strategy 2026: views in The Strategist | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/national-defence-strategy-2026-views-in-the-strategist/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/national-defence-strategy-2026-views-in-the-strategist/</guid>
+      <pubDate>Sun, 26 Apr 2026 20:00:55 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.aspistrategist.org.au/national-defence-strategy-2026-views-in-the-strategist/">ASPI Strategist</source>
+      <description>The world is a more dangerous place than it was two years ago. The priorities outlined in Australia’s new National Defence Strategy (NDS) and its accompanying spending plan, the Integrated Investment Program (IIP), reflect this. ...</description>
+    </item>
     <item>
       <title>⚛️ Rare Video Appears To Show A Soviet Su-7 Jet Dropping A Nuclear Bomb | The War Zone</title>
       <link>https://www.twz.com/air/rare-video-appears-to-show-a-soviet-su-7-jet-dropping-a-nuclear-bomb</link>
@@ -52,6 +61,15 @@
       <category>Middle East</category>
       <source url="https://www.justsecurity.org/136731/digest-recent-articles-just-security-apr-19-24-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-apr-19-24-2026">Just Security</source>
       <description>U.S.-Israel-Iran War • Russia-Ukraine War • Reflections on International Law • FISA Section 702 • Immigration • Counterterrorism • Bosnia • Georgia • Tech Governance • U.S. Boat Strikes • Trump Executive Actions The post Digest of Recent Articles on Just Security (Apr. 19-24,…</description>
+    </item>
+    <item>
+      <title>📍 On Anzac Day, reflect on wars of the past – and steel ourselves for wars of the future | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/on-anzac-day-reflect-on-wars-of-the-past-and-steel-ourselves-for-wars-of-the-future/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/on-anzac-day-reflect-on-wars-of-the-past-and-steel-ourselves-for-wars-of-the-future/</guid>
+      <pubDate>Sat, 25 Apr 2026 08:00:26 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.aspistrategist.org.au/on-anzac-day-reflect-on-wars-of-the-past-and-steel-ourselves-for-wars-of-the-future/">ASPI Strategist</source>
+      <description>Anzac Day signifies tragedy. It speaks to futility and loss, the death of young Australians in their prime. We try to make sense of this ‘senseless loss’ by honouring their courage and extolling Anzac values. We ...</description>
     </item>
     <item>
       <title>🌍 U.S. Floats Punishing NATO Members for Refusing to Join Iran War | Foreign Policy</title>
@@ -259,24 +277,6 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/threats/2026/04/us-navy-ordered-shoot-and-kill-suspected-iranian-mine-laying-boats-amid-ceasefire/413093/">Defense One</source>
       <description>Hegseth says U.S. has &quot;all the time in the world&quot; as the number of interdicted vessels grows.</description>
-    </item>
-    <item>
-      <title>📍 Italy forgoes $14 billion deficit spending on defense amid wobbling economy | Defense News</title>
-      <link>https://www.defensenews.com/global/europe/2026/04/24/italy-forgoes-14-billion-deficit-spending-on-defense-amid-wobbling-economy/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/04/24/italy-forgoes-14-billion-deficit-spending-on-defense-amid-wobbling-economy/</guid>
-      <pubDate>Fri, 24 Apr 2026 15:16:48 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/global/europe/2026/04/24/italy-forgoes-14-billion-deficit-spending-on-defense-amid-wobbling-economy/">Defense News</source>
-      <description>“Today we have other priorities. I have the priority of energy costs and the priority of responding to the needs of citizens,&quot; said the prime minister.</description>
-    </item>
-    <item>
-      <title>🌍 Why Are the Saudis Sitting Out the War With Iran? | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/04/24/saudi-arabia-israel-united-states-iran-war/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/04/24/saudi-arabia-israel-united-states-iran-war/</guid>
-      <pubDate>Fri, 24 Apr 2026 15:04:39 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://foreignpolicy.com/2026/04/24/saudi-arabia-israel-united-states-iran-war/">Foreign Policy</source>
-      <description>A more active approach would help cement Riyadh’s regional clout.</description>
     </item>
   </channel>
 </rss>
