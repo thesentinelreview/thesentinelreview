@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2026 10:32:34 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Apr 2026 14:33:42 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Fool’s Gold: Speaker Johnson’s Section 702 proposal would place no limits on backdoor searches | Just Security</title>
+      <link>https://www.justsecurity.org/137206/johnson-section-702-warrant/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=johnson-section-702-warrant</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/137206/johnson-section-702-warrant/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=johnson-section-702-warrant</guid>
+      <pubDate>Sun, 26 Apr 2026 12:52:31 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/137206/johnson-section-702-warrant/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=johnson-section-702-warrant">Just Security</source>
+      <description>&quot;Members can recognize the Johnson proposal for what it is: a transparent attempt to preserve the status quo rather than answer the bipartisan calls for needed reform.&quot; The post Fool’s Gold: Speaker Johnson’s Section 702 proposal would place no limits on backdoor searches…</description>
+    </item>
     <item>
       <title>📍 The Poverty of the DOJ Indictment of the Southern Poverty Law Center | Just Security</title>
       <link>https://www.justsecurity.org/137171/indictment-southern-poverty-law-center-splc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=indictment-southern-poverty-law-center-splc</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/04/24/pope-leo-iran-war-trump-vance-catholic-church-peace/">Foreign Policy</source>
       <description>Despite more colorful medieval precedents, Pope Leo’s clash with Trump reflects the Vatican’s postwar peace advocacy.</description>
-    </item>
-    <item>
-      <title>📍 Chhangani quoted in The Banker article explaining that new Pakistani laws now allow registered Virtual Asset Service Providers to hold bank accounts in the country | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/chhangani-quoted-in-the-banker-article-explaining-that-new-pakistani-laws-now-allow-registered-virtual-asset-service-providers-to-hold-bank-accounts-in-the-country/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/insight-impact/in-the-news/chhangani-quoted-in-the-banker-article-explaining-that-new-pakistani-laws-now-allow-registered-virtual-asset-service-providers-to-hold-bank-accounts-in-the-country/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:25:32 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/chhangani-quoted-in-the-banker-article-explaining-that-new-pakistani-laws-now-allow-registered-virtual-asset-service-providers-to-hold-bank-accounts-in-the-country/">Atlantic Council</source>
-      <description>Read full article here The post Chhangani quoted in The Banker article explaining that new Pakistani laws now allow registered Virtual Asset Service Providers to hold bank accounts in the country appeared first on Atlantic Council.</description>
     </item>
   </channel>
 </rss>
