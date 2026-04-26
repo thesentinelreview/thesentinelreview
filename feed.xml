@@ -4,9 +4,9 @@
     <title>The Sentinel Review — National Security Feed</title>
     <link>https://thesentinelreview.com</link>
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
-    <description>Automated national security news aggregation. Updated every hour.</description>
+    <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2026 21:57:26 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Apr 2026 22:12:22 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>⚛️ Rare Video Appears To Show A Soviet Su-7 Jet Dropping A Nuclear Bomb | The War Zone</title>
@@ -144,6 +144,15 @@
       <description>The service pledged it would demonstrate an “initial capability” for the orbital missile killers by 2028.</description>
     </item>
     <item>
+      <title>🌏 The Staged Death of China’s Military-Civil Fusion | The Diplomat</title>
+      <link>https://thediplomat.com/2026/04/the-staged-death-of-chinas-military-civil-fusion/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/04/the-staged-death-of-chinas-military-civil-fusion/</guid>
+      <pubDate>Sat, 25 Apr 2026 03:27:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://thediplomat.com/2026/04/the-staged-death-of-chinas-military-civil-fusion/">The Diplomat</source>
+      <description>Military-civil fusion became a major irritant in China-U.S. relations, so Beijing stopped talking about it. But it didn&apos;t stop pursuing the strategy.</description>
+    </item>
+    <item>
       <title>📍 Can Africa Follow Asia’s Development Model? | Foreign Policy</title>
       <link>https://foreignpolicy.com/2026/04/24/how-africa-works-joe-studwell-review-development-economics-asia/</link>
       <guid isPermaLink="true">https://foreignpolicy.com/2026/04/24/how-africa-works-joe-studwell-review-development-economics-asia/</guid>
@@ -268,15 +277,6 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/04/24/saudi-arabia-israel-united-states-iran-war/">Foreign Policy</source>
       <description>A more active approach would help cement Riyadh’s regional clout.</description>
-    </item>
-    <item>
-      <title>📍 How to Rebuild Hungarian Democracy | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/04/24/hungary-democracy-peter-magyar-viktor-orban-illiberalism-courts-public-media-corruption-eu/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/04/24/hungary-democracy-peter-magyar-viktor-orban-illiberalism-courts-public-media-corruption-eu/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:54:21 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/04/24/hungary-democracy-peter-magyar-viktor-orban-illiberalism-courts-public-media-corruption-eu/">Foreign Policy</source>
-      <description>Peter Magyar must avoid reproducing the very abuses he seeks to dismantle.</description>
     </item>
   </channel>
 </rss>
