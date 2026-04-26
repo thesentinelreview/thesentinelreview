@@ -31,15 +31,16 @@ FEEDS = [
     {"name": "Lawfare",           "url": "https://www.lawfaremedia.org/feed",                                   "source_tag": "Lawfare"},
     {"name": "Just Security",     "url": "https://www.justsecurity.org/feed/",                                  "source_tag": "Just Security"},
 
-    # === 8 new sources ===
+    # === New sources confirmed working ===
     {"name": "RAND Commentary",   "url": "https://www.rand.org/pubs/commentary.xml",                            "source_tag": "RAND"},
-    {"name": "Brookings",         "url": "https://www.brookings.edu/topic/foreign-policy/feed/",                "source_tag": "Brookings"},
-    {"name": "CFR",               "url": "https://www.cfr.org/feeds/expert-briefs",                             "source_tag": "CFR"},
-    {"name": "Hudson Institute",  "url": "https://www.hudson.org/feed",                                         "source_tag": "Hudson"},
     {"name": "The Diplomat",      "url": "https://thediplomat.com/feed/",                                       "source_tag": "The Diplomat"},
     {"name": "Bellingcat",        "url": "https://www.bellingcat.com/feed/",                                    "source_tag": "Bellingcat"},
-    {"name": "Carnegie",          "url": "https://carnegieendowment.org/rss/solr/?fa=pubs",                     "source_tag": "Carnegie"},
-    {"name": "RUSI",              "url": "https://www.rusi.org/rss/commentary.xml",                             "source_tag": "RUSI"},
+
+    # === New sources (replacements for broken feeds) ===
+    {"name": "Brookings",         "url": "https://www.brookings.edu/feeds/rss/research/",                       "source_tag": "Brookings"},
+    {"name": "Foreign Affairs",   "url": "https://www.foreignaffairs.com/rss.xml",                              "source_tag": "Foreign Affairs"},
+    {"name": "38 North",          "url": "https://www.38north.org/feed/",                                       "source_tag": "38 North"},
+    {"name": "ASPI Strategist",   "url": "https://www.aspistrategist.org.au/feed/",                             "source_tag": "ASPI Strategist"},
 ]
 
 CATEGORIES = {
