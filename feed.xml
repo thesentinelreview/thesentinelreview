@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every hour.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Apr 2026 18:06:19 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Apr 2026 19:25:15 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>⚛️ Rare Video Appears To Show A Soviet Su-7 Jet Dropping A Nuclear Bomb | The War Zone</title>
+      <link>https://www.twz.com/air/rare-video-appears-to-show-a-soviet-su-7-jet-dropping-a-nuclear-bomb</link>
+      <guid isPermaLink="true">https://www.twz.com/air/rare-video-appears-to-show-a-soviet-su-7-jet-dropping-a-nuclear-bomb</guid>
+      <pubDate>Sun, 26 Apr 2026 14:08:53 +0000</pubDate>
+      <category>Nuclear</category>
+      <source url="https://www.twz.com/air/rare-video-appears-to-show-a-soviet-su-7-jet-dropping-a-nuclear-bomb">The War Zone</source>
+      <description>During one very unusual Cold War drill, a Soviet Su-7 Fitter attack jet delivered a live tactical nuclear weapon in an end-to-end test. The post Rare Video Appears To Show A Soviet Su-7 Jet Dropping A Nuclear Bomb appeared first on The War Zone.</description>
+    </item>
     <item>
       <title>📍 Carrier Tracker As of April 26, 2026 | The War Zone</title>
       <link>https://www.twz.com/sea/carrier-tracker-as-of-april-26-2026</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/04/24/hungary-democracy-peter-magyar-viktor-orban-illiberalism-courts-public-media-corruption-eu/">Foreign Policy</source>
       <description>Peter Magyar must avoid reproducing the very abuses he seeks to dismantle.</description>
-    </item>
-    <item>
-      <title>📍 Three’s company: Trio of US carriers operating in Middle East for first time in decades | Defense News</title>
-      <link>https://www.defensenews.com/news/your-military/2026/04/24/threes-company-trio-of-us-carriers-operating-in-middle-east-for-first-time-in-decades/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/04/24/threes-company-trio-of-us-carriers-operating-in-middle-east-for-first-time-in-decades/</guid>
-      <pubDate>Fri, 24 Apr 2026 14:47:39 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/news/your-military/2026/04/24/threes-company-trio-of-us-carriers-operating-in-middle-east-for-first-time-in-decades/">Defense News</source>
-      <description>Three U.S. aircraft carriers are operating in Central Command&apos;s area of responsibility for the first time since 2003.</description>
     </item>
   </channel>
 </rss>
