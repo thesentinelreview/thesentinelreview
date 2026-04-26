@@ -45,7 +45,22 @@
   .top-bar .links { display: flex; gap: 20px; flex-wrap: wrap; }
   .top-bar .links a { color: var(--gray-light); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
   .top-bar .links a:hover { opacity: 1; color: var(--gold-pale); }
-
+.logo-image-link {
+  display: inline-block;
+  text-decoration: none;
+}
+.logo-image {
+  display: block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .logo-image {
+    max-width: 320px;
+  }
+}
   /* MASTHEAD */
   .masthead { background: var(--navy-deep); padding: 28px 0 20px; position: relative; overflow: hidden; }
   .masthead::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -20%, rgba(184,136,42,0.12) 0%, transparent 60%); }
@@ -54,7 +69,7 @@
   .logo-eyebrow { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; display: block; }
   .logo-title { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
   .logo-title .accent { color: var(--gold); }
-  .logo-tagline { font-size: 11px; letter-spacing: 0.2em; color: var(--gray-mid); text-transform: uppercase; margin-top: 8px; display: block; }
+  
   .masthead-aside { width: 200px; display: flex; flex-direction: column; gap: 10px; }
   .masthead-aside.left { align-items: flex-start; }
   .masthead-aside.right { align-items: flex-end; }
@@ -281,14 +296,15 @@
       </div>
     </div>
     <div class="logo-block">
-      <span class="logo-eyebrow">Washington, D.C. · Est. 2025</span>
-      <div class="logo-title">The <span class="accent">Sentinel</span> Review</div>
-      <span class="logo-tagline">National Security Intelligence &amp; Policy Analysis</span>
-    </div>
+  <span class="logo-eyebrow">Washington, D.C. · Est. 2025</span>
+  <a href="/" class="logo-image-link" aria-label="The Sentinel Review — Home">
+    <img src="/logo-horizontal.png" alt="The Sentinel Review" class="logo-image">
+  </a>
+</div>
     <div class="masthead-aside right">
       <div class="threat-meter">
         <div class="label" style="text-align:right;">Last Updated</div>
-        <div class="threat-text" style="text-align:right;">April 26, 2026 at 07:25 PM UTC</div>
+        <div class="threat-text" style="text-align:right;">April 26, 2026 at 08:34 PM UTC</div>
       </div>
     </div>
   </div>
@@ -363,7 +379,7 @@
               <span>•</span>
               <span>April 26, 2026 · 02:08 PM UTC</span>
               <span>•</span>
-              <span>1h ago</span>
+              <span>2h ago</span>
             </div>
         </div>
       </div>
@@ -373,14 +389,14 @@
           <div class="sidebar-story-item" style="padding: 12px 24px;">
             <div class="s-tag">National Security</div>
             <div class="s-headline">Carrier Tracker As of April 26, 2026</div>
-            <div class="s-time">1h ago · The War Zone</div>
+            <div class="s-time">2h ago · The War Zone</div>
           </div>
         </a>
         <a href="https://www.justsecurity.org/137206/johnson-section-702-warrant/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=johnson-section-702-warrant" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
           <div class="sidebar-story-item" style="padding: 12px 24px;">
             <div class="s-tag">National Security</div>
             <div class="s-headline">Fool’s Gold: Speaker Johnson’s Section 702 proposal would place no limits on backdoor searches</div>
-            <div class="s-time">6h ago · Just Security</div>
+            <div class="s-time">7h ago · Just Security</div>
           </div>
         </a>
         <a href="https://www.justsecurity.org/137171/indictment-southern-poverty-law-center-splc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=indictment-southern-poverty-law-center-splc" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
@@ -437,7 +453,7 @@
           <div class="card-tag">📍 National Security</div>
           <div class="card-headline">The Planet Is Doing Better Than You Think</div>
           <div class="card-excerpt">Apocalyptic headlines overlook conservation and biodiversity successes.</div>
-          <div class="card-meta"><span>Foreign Policy</span><span>1d ago</span></div>
+          <div class="card-meta"><span>Foreign Policy</span><span>2d ago</span></div>
         </div>
       </a>
       <a href="https://breakingdefense.com/2026/04/satellites-at-the-center-inside-the-pentagons-next-gen-space-architecture/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
@@ -445,7 +461,7 @@
           <div class="card-tag">🔐 Cyber</div>
           <div class="card-headline">Satellites at the center: Inside the Pentagon’s next-gen space architecture</div>
           <div class="card-excerpt">From emerging data networks to missile tracking and cyber resilience, Breaking Defense’s latest eBook brings together essential reporting on the evolving role of satellites in national security.</div>
-          <div class="card-meta"><span>Breaking Defense</span><span>1d ago</span></div>
+          <div class="card-meta"><span>Breaking Defense</span><span>2d ago</span></div>
         </div>
       </a>
       <a href="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-189" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
@@ -453,7 +469,7 @@
           <div class="card-tag">📍 National Security</div>
           <div class="card-headline">Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week</div>
           <div class="card-excerpt">Another week! The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</div>
-          <div class="card-meta"><span>The War Zone</span><span>1d ago</span></div>
+          <div class="card-meta"><span>The War Zone</span><span>2d ago</span></div>
         </div>
       </a>
       <a href="https://www.twz.com/news-features/u-s-efforts-to-prevent-iranian-mine-laying-in-strait-of-hormuz-underway" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
@@ -549,7 +565,7 @@
 <!-- FOOTER -->
 <footer class="footer">
   <div class="auto-notice">
-    📡 AUTOMATED AGGREGATION — This site curates headlines from 12+ trusted national security sources. All stories link to original publishers. Last updated: April 26, 2026 at 07:25 PM UTC
+    📡 AUTOMATED AGGREGATION — This site curates headlines from 12+ trusted national security sources. All stories link to original publishers. Last updated: April 26, 2026 at 08:34 PM UTC
   </div>
   <div class="footer-grid">
     <div class="footer-brand">
