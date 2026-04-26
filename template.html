@@ -45,7 +45,22 @@
   .top-bar .links { display: flex; gap: 20px; flex-wrap: wrap; }
   .top-bar .links a { color: var(--gray-light); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
   .top-bar .links a:hover { opacity: 1; color: var(--gold-pale); }
-
+.logo-image-link {
+  display: inline-block;
+  text-decoration: none;
+}
+.logo-image {
+  display: block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .logo-image {
+    max-width: 320px;
+  }
+}
   /* MASTHEAD */
   .masthead { background: var(--navy-deep); padding: 28px 0 20px; position: relative; overflow: hidden; }
   .masthead::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -20%, rgba(184,136,42,0.12) 0%, transparent 60%); }
@@ -54,7 +69,7 @@
   .logo-eyebrow { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; display: block; }
   .logo-title { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
   .logo-title .accent { color: var(--gold); }
-  .logo-tagline { font-size: 11px; letter-spacing: 0.2em; color: var(--gray-mid); text-transform: uppercase; margin-top: 8px; display: block; }
+  
   .masthead-aside { width: 200px; display: flex; flex-direction: column; gap: 10px; }
   .masthead-aside.left { align-items: flex-start; }
   .masthead-aside.right { align-items: flex-end; }
@@ -281,10 +296,11 @@
       </div>
     </div>
     <div class="logo-block">
-      <span class="logo-eyebrow">Washington, D.C. · Est. 2025</span>
-      <div class="logo-title">The <span class="accent">Sentinel</span> Review</div>
-      <span class="logo-tagline">National Security Intelligence &amp; Policy Analysis</span>
-    </div>
+  <span class="logo-eyebrow">Washington, D.C. · Est. 2025</span>
+  <a href="/" class="logo-image-link" aria-label="The Sentinel Review — Home">
+    <img src="/logo-horizontal.png" alt="The Sentinel Review" class="logo-image">
+  </a>
+</div>
     <div class="masthead-aside right">
       <div class="threat-meter">
         <div class="label" style="text-align:right;">Last Updated</div>
