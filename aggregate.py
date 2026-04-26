@@ -17,6 +17,7 @@ from pathlib import Path
 # ============================================================
 
 FEEDS = [
+    # === Original 12 sources ===
     {"name": "Defense News",      "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                 "source_tag": "Defense News"},
     {"name": "Breaking Defense",  "url": "https://breakingdefense.com/feed/",                                   "source_tag": "Breaking Defense"},
     {"name": "The War Zone",      "url": "https://www.twz.com/feed",                                            "source_tag": "The War Zone"},
@@ -29,6 +30,16 @@ FEEDS = [
     {"name": "Stars and Stripes", "url": "https://www.stripes.com/rss",                                         "source_tag": "Stars and Stripes"},
     {"name": "Lawfare",           "url": "https://www.lawfaremedia.org/feed",                                   "source_tag": "Lawfare"},
     {"name": "Just Security",     "url": "https://www.justsecurity.org/feed/",                                  "source_tag": "Just Security"},
+
+    # === 8 new sources ===
+    {"name": "RAND Commentary",   "url": "https://www.rand.org/pubs/commentary.xml",                            "source_tag": "RAND"},
+    {"name": "Brookings",         "url": "https://www.brookings.edu/topic/foreign-policy/feed/",                "source_tag": "Brookings"},
+    {"name": "CFR",               "url": "https://www.cfr.org/feeds/expert-briefs",                             "source_tag": "CFR"},
+    {"name": "Hudson Institute",  "url": "https://www.hudson.org/feed",                                         "source_tag": "Hudson"},
+    {"name": "The Diplomat",      "url": "https://thediplomat.com/feed/",                                       "source_tag": "The Diplomat"},
+    {"name": "Bellingcat",        "url": "https://www.bellingcat.com/feed/",                                    "source_tag": "Bellingcat"},
+    {"name": "Carnegie",          "url": "https://carnegieendowment.org/rss/solr/?fa=pubs",                     "source_tag": "Carnegie"},
+    {"name": "RUSI",              "url": "https://www.rusi.org/rss/commentary.xml",                             "source_tag": "RUSI"},
 ]
 
 CATEGORIES = {
@@ -205,7 +216,7 @@ def generate_rss(stories, site_url="https://example.com", max_items=30):
     <title>The Sentinel Review — National Security Feed</title>
     <link>{xml_esc(site_url)}</link>
     <atom:link href="{xml_esc(site_url)}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>Automated national security news aggregation. Updated every hour.</description>
+    <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
     <lastBuildDate>{now_rfc822}</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
@@ -341,7 +352,6 @@ def main():
     out_path = Path(__file__).parent / 'index.html'
     out_path.write_text(template, encoding='utf-8')
 
-    # Generate RSS feed for syndication (Make.com, Zapier, etc.)
     SITE_URL = "https://thesentinelreview.com"
     rss_path = Path(__file__).parent / 'feed.xml'
     rss_path.write_text(generate_rss(stories, site_url=SITE_URL), encoding='utf-8')
