@@ -1,0 +1,32 @@
+name: Daily Briefing
+
+on:
+  schedule:
+    # 7:00 AM ET = 11:00 UTC (during EST/winter)
+    # During EDT/summer, this fires at 6:00 AM ET — acceptable tradeoff vs. running two cron lines
+    - cron: '0 11 * * *'
+  workflow_dispatch:  # allow manual triggering
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Send briefing
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          BRIEFING_MODE: send  # change to "draft" to test without sending
+        run: python generate_briefing.py
