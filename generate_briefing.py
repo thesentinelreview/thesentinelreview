@@ -162,11 +162,13 @@ def render_briefing_html(stories, briefing_date):
     date_str = briefing_date.strftime("%A, %B %d, %Y")
 
     # Inline CSS — email clients require it; external stylesheets often stripped
+    # Centering: Gmail desktop ignores align="center" alone — use margin: 0 auto on the inner table
+    # plus align="center" attribute for older clients (Outlook, etc.)
     html_parts = [f"""
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f3ee; padding: 32px 16px; font-family: 'Source Sans 3', Helvetica, Arial, sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="background-color: #f5f3ee; padding: 32px 16px; font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; margin: 0 auto;">
   <tr>
-    <td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; max-width: 600px;">
+    <td align="center" style="text-align: center;">
+      <table width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="background-color: #ffffff; max-width: 600px; margin: 0 auto;">
 
         <!-- Masthead -->
         <tr>
