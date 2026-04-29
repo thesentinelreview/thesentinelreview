@@ -278,13 +278,20 @@ def post_to_buttondown(api_key, payload):
     """POST a new email to Buttondown's API."""
     url = f"{BUTTONDOWN_API_BASE}/emails"
     data = json.dumps(payload).encode("utf-8")
+
+    headers = {
+        "Authorization": f"Token {api_key}",
+        "Content-Type": "application/json",
+    }
+    # Buttondown requires this header to confirm intent the first time
+    # an API key is used to send a live (non-draft) email.
+    if payload.get("status") == "about_to_send":
+        headers["X-Buttondown-Live-Dangerously"] = "true"
+
     req = urllib.request.Request(
         url,
         data=data,
-        headers={
-            "Authorization": f"Token {api_key}",
-            "Content-Type": "application/json",
-        },
+        headers=headers,
         method="POST",
     )
     try:
