@@ -28,5 +28,5 @@ jobs:
       - name: Send briefing
         env:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
-          BRIEFING_MODE: draft  # change to "draft" to test without sending
+          BRIEFING_MODE: send  # change to "draft" to test without sending
         run: python generate_briefing.py
