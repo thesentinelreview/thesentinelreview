@@ -2,9 +2,10 @@ name: Daily Briefing
 
 on:
   schedule:
-    # 7:00 AM ET = 11:00 UTC (during EST/winter)
-    # During EDT/summer, this fires at 6:00 AM ET — acceptable tradeoff vs. running two cron lines
-    - cron: '0 11 * * *'
+# 09:23 UTC fires at 5:23 AM EDT (summer) / 4:23 AM EST (winter)
+    # Off-peak minute and hour to minimize GitHub Actions cron lag
+    # Targets "before 7 AM ET" delivery year-round with buffer for delays
+    - cron: '23 9 * * *'
   workflow_dispatch:  # allow manual triggering
 
 jobs:
