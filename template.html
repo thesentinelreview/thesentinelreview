@@ -406,25 +406,98 @@
       <p>The Sentinel Review tracks national security developments across dozens of primary sources every hour, so you don't have to. Subscribe to get the essential stories, curated analysis, and policy implications delivered to your inbox every morning.</p>
       <p style="font-family: 'Courier Prime', monospace; font-size: 12px; letter-spacing: 0.1em;">NO SPAM · NO ADS · UNSUBSCRIBE ANY TIME</p>
     </div>
-    <div class="form-card">
-      <h3>Subscribe to The Sentinel</h3>
-      <p>Free access for government and military personnel.</p>
-      <form name="newsletter" method="POST" action="https://formspree.io/f/xvzdlakn">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" name="name" placeholder="Your name" required>
-        </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" name="email" placeholder="you@agency.gov" required>
-        </div>
-        <div class="form-group">
-          <label>Organization (Optional)</label>
-          <input type="text" name="organization" placeholder="Department / Agency">
-        </div>
-        <button type="submit" class="subscribe-btn">✦ Subscribe — Free Access</button>
-      </form>
+    <!-- ============================================================ -->
+<!-- BUTTONDOWN SUBSCRIBE FORM — replaces Formspree form           -->
+<!-- Drop this into the existing <div class="form-card">           -->
+<!-- ============================================================ -->
+
+<div class="form-card">
+  <h3>Subscribe to The Sentinel</h3>
+  <p>Free access for government and military personnel.</p>
+
+  <form id="sentinel-subscribe" action="https://buttondown.com/api/emails/embed-subscribe/TheSentinelReview" method="post" target="popupwindow" onsubmit="return handleSentinelSubscribe(event)">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" name="metadata__name" id="sentinel-name" placeholder="Your name" required>
     </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" name="email" id="sentinel-email" placeholder="you@agency.gov" required>
+    </div>
+    <div class="form-group">
+      <label>Organization (Optional)</label>
+      <input type="text" name="metadata__organization" id="sentinel-org" placeholder="Department / Agency">
+    </div>
+    <button type="submit" class="subscribe-btn" id="sentinel-submit-btn">✦ Subscribe — Free Access</button>
+    <div id="sentinel-status" style="margin-top: 14px; font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.05em; line-height: 1.5; display: none;"></div>
+  </form>
+</div>
+
+<script>
+function handleSentinelSubscribe(event) {
+  event.preventDefault();
+  var form = event.target;
+  var email = document.getElementById('sentinel-email').value.trim();
+  var name = document.getElementById('sentinel-name').value.trim();
+  var org = document.getElementById('sentinel-org').value.trim();
+  var statusEl = document.getElementById('sentinel-status');
+  var btnEl = document.getElementById('sentinel-submit-btn');
+
+  if (!email) {
+    showSentinelStatus('error', 'Please enter your email address.');
+    return false;
+  }
+
+  if (!name) {
+    showSentinelStatus('error', 'Please enter your full name.');
+    return false;
+  }
+
+  // Disable button, show pending state
+  btnEl.disabled = true;
+  btnEl.textContent = '⋯ Subscribing...';
+  showSentinelStatus('pending', 'Submitting your subscription...');
+
+  // Build form data for Buttondown's embed endpoint
+  var formData = new FormData();
+  formData.append('email', email);
+  if (name) formData.append('metadata__name', name);
+  if (org)  formData.append('metadata__organization', org);
+
+  fetch('https://buttondown.com/api/emails/embed-subscribe/TheSentinelReview', {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors'  // Buttondown's embed endpoint doesn't return CORS headers
+  }).then(function() {
+    // 'no-cors' means we can't read the response, but successful submissions land
+    // We assume success if no network error occurred.
+    showSentinelStatus('success', '✓ Check your email to confirm your subscription.');
+    btnEl.textContent = '✓ Subscribed';
+    document.getElementById('sentinel-email').value = '';
+    document.getElementById('sentinel-name').value = '';
+    document.getElementById('sentinel-org').value = '';
+  }).catch(function(err) {
+    showSentinelStatus('error', 'Something went wrong. Please try again or email contact@thesentinelreview.com');
+    btnEl.disabled = false;
+    btnEl.textContent = '✦ Subscribe — Free Access';
+  });
+
+  return false;
+}
+
+function showSentinelStatus(type, message) {
+  var el = document.getElementById('sentinel-status');
+  el.style.display = 'block';
+  el.textContent = message;
+  if (type === 'success') {
+    el.style.color = '#7ED957';
+  } else if (type === 'error') {
+    el.style.color = '#E57373';
+  } else {
+    el.style.color = '#E8C97A';
+  }
+}
+</script>
   </div>
 </section>
 
