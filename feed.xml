@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 30 Apr 2026 00:54:30 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 Apr 2026 01:19:30 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌏 The Quad should share intel on critical-mineral supply risks | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/the-quad-should-share-intel-on-critical-mineral-supply-risks/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/the-quad-should-share-intel-on-critical-mineral-supply-risks/</guid>
+      <pubDate>Thu, 30 Apr 2026 01:00:05 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.aspistrategist.org.au/the-quad-should-share-intel-on-critical-mineral-supply-risks/">ASPI Strategist</source>
+      <description>With China increasing restrictions on critical minerals trade, including tighter export controls on rare earth elements announced in March, the United States and allied countries are trying to bring more mineral supply to market. To ...</description>
+    </item>
     <item>
       <title>🌍 Israel Now Using Netting To Protect Combat Vehicles Against Scourge Of Hezbollah Drones | The War Zone</title>
       <link>https://www.twz.com/news-features/israel-now-using-netting-to-protect-combat-vehicles-against-scourge-of-hezbollah-drones</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/blogs/econographics/what-swap-gulf/">Atlantic Council</source>
       <description>Amidst the chaos of the conflict in the Middle East, there’s been a buzz around offering dollar currency swaps to allies. Those have traditionally been the territory of central banks, but this time around, Treasury is taking the lead. The post What swap, Gulf? appeared first on…</description>
-    </item>
-    <item>
-      <title>📍 Safran, MBDA see delivery of French rocket artillery in 2029 as feasible | Defense News</title>
-      <link>https://www.defensenews.com/global/europe/2026/04/29/safran-mbda-see-delivery-of-french-rocket-artillery-in-2029-as-feasible/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/04/29/safran-mbda-see-delivery-of-french-rocket-artillery-in-2029-as-feasible/</guid>
-      <pubDate>Wed, 29 Apr 2026 16:50:47 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/global/europe/2026/04/29/safran-mbda-see-delivery-of-french-rocket-artillery-in-2029-as-feasible/">Defense News</source>
-      <description>The companies said Thundart is fully designed and produced in France.</description>
     </item>
   </channel>
 </rss>
