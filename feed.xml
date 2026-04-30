@@ -6,8 +6,26 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 29 Apr 2026 23:14:39 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 Apr 2026 00:53:10 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 Israel Now Using Netting To Protect Combat Vehicles Against Scourge Of Hezbollah Drones | The War Zone</title>
+      <link>https://www.twz.com/news-features/israel-now-using-netting-to-protect-combat-vehicles-against-scourge-of-hezbollah-drones</link>
+      <guid isPermaLink="true">https://www.twz.com/news-features/israel-now-using-netting-to-protect-combat-vehicles-against-scourge-of-hezbollah-drones</guid>
+      <pubDate>Wed, 29 Apr 2026 20:14:42 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.twz.com/news-features/israel-now-using-netting-to-protect-combat-vehicles-against-scourge-of-hezbollah-drones">The War Zone</source>
+      <description>The netting appears as the IDF takes heat for not doing more to defend against FPV drone attacks, although options remain very limited. The post Israel Now Using Netting To Protect Combat Vehicles Against Scourge Of Hezbollah Drones appeared first on The War Zone.</description>
+    </item>
+    <item>
+      <title>🏛️ US Navy to extend service life of amphibious assault ship USS Wasp by 5 years | Defense News</title>
+      <link>https://www.defensenews.com/news/your-navy/2026/04/30/us-navy-to-extend-service-life-of-amphibious-assault-ship-uss-wasp-by-5-years/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-navy/2026/04/30/us-navy-to-extend-service-life-of-amphibious-assault-ship-uss-wasp-by-5-years/</guid>
+      <pubDate>Thu, 30 Apr 2026 00:03:37 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defensenews.com/news/your-navy/2026/04/30/us-navy-to-extend-service-life-of-amphibious-assault-ship-uss-wasp-by-5-years/">Defense News</source>
+      <description>The service completed a study of Wasp-class amphibious assault ships and is currently conducting another on amphibious dock landing ships.</description>
+    </item>
     <item>
       <title>🏛️ Confidence In CH-53K King Stallion Grows Ahead Of First Operational Deployment | The War Zone</title>
       <link>https://www.twz.com/air/confidence-in-ch-53k-king-stallion-grows-ahead-of-first-operational-deployment</link>
@@ -259,24 +277,6 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/global/europe/2026/04/29/safran-mbda-see-delivery-of-french-rocket-artillery-in-2029-as-feasible/">Defense News</source>
       <description>The companies said Thundart is fully designed and produced in France.</description>
-    </item>
-    <item>
-      <title>🏛️ Brain function evaluations to be part of Marine health records | Defense News</title>
-      <link>https://www.defensenews.com/news/your-marine-corps/2026/04/29/brain-function-evaluations-to-be-part-of-marine-health-records/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-marine-corps/2026/04/29/brain-function-evaluations-to-be-part-of-marine-health-records/</guid>
-      <pubDate>Wed, 29 Apr 2026 16:41:57 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/your-marine-corps/2026/04/29/brain-function-evaluations-to-be-part-of-marine-health-records/">Defense News</source>
-      <description>By September, Marines will be screened for blast exposure and overpressure during their periodic health assessments, a Pentagon official said.</description>
-    </item>
-    <item>
-      <title>🏛️ Marines Offer Glimpse Of New Plan For Its Future Ground Combat Forces | The War Zone</title>
-      <link>https://www.twz.com/sea/marines-offer-glimpse-of-new-plan-for-its-future-ground-combat-forces</link>
-      <guid isPermaLink="true">https://www.twz.com/sea/marines-offer-glimpse-of-new-plan-for-its-future-ground-combat-forces</guid>
-      <pubDate>Wed, 29 Apr 2026 12:34:47 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.twz.com/sea/marines-offer-glimpse-of-new-plan-for-its-future-ground-combat-forces">The War Zone</source>
-      <description>Ground Combat Element 2040 offers hints into how the Marines expect to fight in a future dominated by AI and autonomous weapons. The post Marines Offer Glimpse Of New Plan For Its Future Ground Combat Forces appeared first on The War Zone.</description>
     </item>
   </channel>
 </rss>
