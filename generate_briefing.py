@@ -30,9 +30,15 @@ from pathlib import Path
 BUTTONDOWN_API_BASE = "https://api.buttondown.com/v1"
 FEED_XML_PATH = Path(__file__).parent / "feed.xml"
 SITE_URL = "https://thesentinelreview.com"
-BRIEFING_MODE = os.environ.get("BRIEFING_MODE", "send").lower()  # "send" or "draft"
+BRIEFING_MODE = os.environ.get("BRIEFING_MODE", "send").lower()  # "send", "draft", or "schedule"
 TOP_STORIES_COUNT = 5
 MAX_STORY_AGE_HOURS = 24  # Only include stories from past day
+
+# When BRIEFING_MODE = "schedule", deliver next briefing at this UTC time.
+# 09:23 UTC = 5:23 AM EDT (summer) / 4:23 AM EST (winter).
+# Buttondown's scheduler is precise; GitHub Actions cron lag no longer matters.
+SCHEDULED_DELIVERY_HOUR_UTC = 9
+SCHEDULED_DELIVERY_MINUTE_UTC = 23
 
 # Threat level can be made dynamic later; static for now
 THREAT_LEVEL = "ELEVATED"
@@ -362,7 +368,13 @@ def main():
     # Buttondown uses 'status' to control whether email is sent or kept as draft
     # "about_to_send" = send immediately
     # "draft"         = save as draft for manual review
-    status = "about_to_send" if BRIEFING_MODE == "send" else "draft"
+    # "scheduled"     = send at publish_date (precise delivery, not subject to GHA cron lag)
+    if BRIEFING_MODE == "send":
+        status = "about_to_send"
+    elif BRIEFING_MODE == "schedule":
+        status = "scheduled"
+    else:
+        status = "draft"
 
     payload = {
         "subject": subject,
@@ -370,6 +382,21 @@ def main():
         "email_type": "public",  # appears in archive
         "status": status,
     }
+
+    # For scheduled mode, calculate the next 5:23 AM EDT delivery time
+    if BRIEFING_MODE == "schedule":
+        now_utc = datetime.now(timezone.utc)
+        target = now_utc.replace(
+            hour=SCHEDULED_DELIVERY_HOUR_UTC,
+            minute=SCHEDULED_DELIVERY_MINUTE_UTC,
+            second=0,
+            microsecond=0,
+        )
+        # If we're past today's target, schedule for tomorrow
+        if target <= now_utc:
+            target = target + timedelta(days=1)
+        payload["publish_date"] = target.strftime("%Y-%m-%dT%H:%M:%SZ")
+        print(f"  Scheduled delivery: {payload['publish_date']} (UTC)")
 
     print(f"\n  Mode: {BRIEFING_MODE.upper()} (status={status})")
     print("  Posting to Buttondown API...")
@@ -381,6 +408,8 @@ def main():
         print(f"\n✅ Briefing created successfully (id={email_id})")
         if BRIEFING_MODE == "send":
             print("   → Email will be sent to all subscribers within minutes.")
+        elif BRIEFING_MODE == "schedule":
+            print(f"   → Email scheduled for delivery at {payload.get('publish_date')}.")
         else:
             print("   → Saved as draft. Review and send manually from Buttondown.")
     else:
