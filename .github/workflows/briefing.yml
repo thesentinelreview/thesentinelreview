@@ -2,9 +2,10 @@ name: Daily Briefing
 
 on:
   schedule:
-# 09:23 UTC fires at 5:23 AM EDT (summer) / 4:23 AM EST (winter)
-    # Off-peak minute and hour to minimize GitHub Actions cron lag
-    # Targets "before 7 AM ET" delivery year-round with buffer for delays
+    # 03:00 UTC = 11:00 PM ET (EDT) / 10:00 PM ET (EST) — runs the night before delivery.
+    # Generation timing isn't sensitive: GitHub Actions cron lag of even 2-3 hours
+    # is harmless because the briefing is created with a scheduled publish_date.
+    # Buttondown's scheduler delivers the email at the exact target time (5:23 AM EDT).
     - cron: '0 3 * * *'
   workflow_dispatch:  # allow manual triggering
 
@@ -29,5 +30,8 @@ jobs:
       - name: Send briefing
         env:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
-          BRIEFING_MODE: schedule  # change to "draft" to test without sending
+          # "schedule" = create email with future publish_date, Buttondown delivers precisely
+          # "send"     = send immediately upon creation
+          # "draft"    = save as draft for manual review
+          BRIEFING_MODE: schedule
         run: python generate_briefing.py
