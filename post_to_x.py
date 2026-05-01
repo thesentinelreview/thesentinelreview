@@ -32,7 +32,7 @@ except ImportError:
 MAX_POSTS_PER_RUN = 1
 POST_DELAY_SECONDS = 45
 MAX_STORY_AGE_HOURS = 12
-DAILY_POST_CAP = 15
+DAILY_POST_CAP = 3
 STATE_FILE = Path(__file__).parent / 'posted_state.json'
 STATE_HISTORY_LIMIT = 500
 FEED_FILE = Path(__file__).parent / 'feed.xml'
