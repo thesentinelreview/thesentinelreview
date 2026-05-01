@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 May 2026 17:43:26 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2026 17:48:19 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 Israel delivers Tamir interceptors to US Marine Corps for MRIC program | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/israel-delivers-tamir-interceptors-to-us-marine-corps-for-mric-program/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/israel-delivers-tamir-interceptors-to-us-marine-corps-for-mric-program/</guid>
+      <pubDate>Fri, 01 May 2026 17:45:00 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://breakingdefense.com/2026/05/israel-delivers-tamir-interceptors-to-us-marine-corps-for-mric-program/">Breaking Defense</source>
+      <description>The MRIC centers around Israel’s famed Iron Dome and uses truck-mounted Iron Dome launcher with Tamir interceptors.</description>
+    </item>
     <item>
       <title>⚛️ New Nuclear Bunker Buster Bomb Plans Revealed | The War Zone</title>
       <link>https://www.twz.com/nuclear/new-nuclear-bunker-buster-bomb-plans-revealed</link>
@@ -268,15 +277,6 @@
       <category>Middle East</category>
       <source url="https://www.justsecurity.org/114556/collection-israel-iran-conflict/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=collection-israel-iran-conflict">Just Security</source>
       <description>Experts analyze the US-Israel Iran military conflicts - covering nuclear diplomacy; strategic, security, and regional implications; and domestic and international law. The post Collection: Iran, Israel and the United States at War (2025-2026 Operations) appeared first on Just…</description>
-    </item>
-    <item>
-      <title>🌍 Early Edition: May 1, 2026 | Just Security</title>
-      <link>https://www.justsecurity.org/137681/early-edition-may-1-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-1-2026</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/137681/early-edition-may-1-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-1-2026</guid>
-      <pubDate>Fri, 01 May 2026 11:55:06 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.justsecurity.org/137681/early-edition-may-1-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-1-2026">Just Security</source>
-      <description>Signup to receive the Early Edition in your inbox here. A curated weekday guide to major news and developments over the last 24 hours. Here’s today’s news: IRAN WAR – CEASEFIRE Iranian Supreme Leader Mojtaba Khamenei yesterday vowed to protect the Islamic Republic’s nuclear and…</description>
     </item>
   </channel>
 </rss>
