@@ -37,7 +37,6 @@ FEEDS = [
     {"name": "Bellingcat",        "url": "https://www.bellingcat.com/feed/",                                    "source_tag": "Bellingcat"},
 
     # === New sources (replacements for broken feeds) ===
-    {"name": "Brookings",         "url": "https://www.brookings.edu/feeds/rss/research/",                       "source_tag": "Brookings"},
     {"name": "Foreign Affairs",   "url": "https://www.foreignaffairs.com/rss.xml",                              "source_tag": "Foreign Affairs"},
     {"name": "38 North",          "url": "https://www.38north.org/feed/",                                       "source_tag": "38 North"},
     {"name": "ASPI Strategist",   "url": "https://www.aspistrategist.org.au/feed/",                             "source_tag": "ASPI Strategist"},
