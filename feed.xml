@@ -6,8 +6,26 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 May 2026 15:02:40 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 03 May 2026 18:38:24 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Could The X-BAT Stealth Fighter Drone Change The Air Combat Game? | The War Zone</title>
+      <link>https://www.twz.com/air/could-the-x-bat-stealth-fighter-drone-change-the-air-combat-game</link>
+      <guid isPermaLink="true">https://www.twz.com/air/could-the-x-bat-stealth-fighter-drone-change-the-air-combat-game</guid>
+      <pubDate>Sun, 03 May 2026 12:58:48 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.twz.com/air/could-the-x-bat-stealth-fighter-drone-change-the-air-combat-game">The War Zone</source>
+      <description>We talk with Armor Harris, the chief designer of X-BAT, about its GE engine, thrust-vectoring controls, Hivemind AI &apos;pilot&apos; and forthcoming flight-test plans. The post Could The X-BAT Stealth Fighter Drone Change The Air Combat Game? appeared first on The War Zone.</description>
+    </item>
+    <item>
+      <title>🏛️ 2 US troops reported missing amid African Lion exercise | Defense News</title>
+      <link>https://www.defensenews.com/news/your-military/2026/05/03/2-us-troops-reported-missing-amid-africa-lion-exercise/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/05/03/2-us-troops-reported-missing-amid-africa-lion-exercise/</guid>
+      <pubDate>Sun, 03 May 2026 16:14:18 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defensenews.com/news/your-military/2026/05/03/2-us-troops-reported-missing-amid-africa-lion-exercise/">Defense News</source>
+      <description>The Moroccan army said the service members went missing near a cliff. The incident remains under investigation and the search is ongoing.</description>
+    </item>
     <item>
       <title>📍 How the Law of War Can Reckon with Longer-Term Harms of Attacks on Health | Just Security</title>
       <link>https://www.justsecurity.org/137470/law-of-war-attacks-healthcare/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=law-of-war-attacks-healthcare</link>
@@ -259,24 +277,6 @@
       <category>Middle East</category>
       <source url="https://breakingdefense.com/2026/05/israel-delivers-tamir-interceptors-to-us-marine-corps-for-mric-program/">Breaking Defense</source>
       <description>The MRIC centers around Israel’s famed Iron Dome and uses a truck-mounted Iron Dome launcher with Tamir interceptors.</description>
-    </item>
-    <item>
-      <title>🏛️ US Marine Corps replaces Basic Reconnaissance Course with expanded training | Defense News</title>
-      <link>https://www.defensenews.com/news/your-military/2026/05/01/us-marine-corps-replaces-basic-reconnaissance-course-with-expanded-training/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/05/01/us-marine-corps-replaces-basic-reconnaissance-course-with-expanded-training/</guid>
-      <pubDate>Fri, 01 May 2026 17:43:51 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/your-military/2026/05/01/us-marine-corps-replaces-basic-reconnaissance-course-with-expanded-training/">Defense News</source>
-      <description>The new Ground Reconnaissance Course is one of two programs replacing the service’s Basic Reconnaissance Course.</description>
-    </item>
-    <item>
-      <title>⚛️ New Nuclear Bunker Buster Bomb Plans Revealed (Updated) | The War Zone</title>
-      <link>https://www.twz.com/nuclear/new-nuclear-bunker-buster-bomb-plans-revealed</link>
-      <guid isPermaLink="true">https://www.twz.com/nuclear/new-nuclear-bunker-buster-bomb-plans-revealed</guid>
-      <pubDate>Fri, 01 May 2026 13:39:34 +0000</pubDate>
-      <category>Nuclear</category>
-      <source url="https://www.twz.com/nuclear/new-nuclear-bunker-buster-bomb-plans-revealed">The War Zone</source>
-      <description>There has been talk for decades about a true successor to the specialized deep bunker-busting B61-11 nuclear bomb. The post New Nuclear Bunker Buster Bomb Plans Revealed (Updated) appeared first on The War Zone.</description>
     </item>
   </channel>
 </rss>
