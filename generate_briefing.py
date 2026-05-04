@@ -36,7 +36,9 @@ MAX_STORY_AGE_HOURS = 24  # Only include stories from past day
 
 # When BRIEFING_MODE = "schedule", deliver next briefing at this UTC time.
 # 09:23 UTC = 5:23 AM EDT (summer) / 4:23 AM EST (winter).
-# Buttondown's scheduler is precise; GitHub Actions cron lag no longer matters.
+# Buttondown's scheduler is precise once we hand it a publish_date,
+# but we still have to compute that publish_date defensively — see
+# the lag-handling note in main() below.
 SCHEDULED_DELIVERY_HOUR_UTC = 9
 SCHEDULED_DELIVERY_MINUTE_UTC = 23
 
@@ -383,7 +385,18 @@ def main():
         "status": status,
     }
 
-    # For scheduled mode, calculate the next 5:23 AM EDT delivery time
+    # For scheduled mode, calculate the next 09:23 UTC delivery time.
+    #
+    # IMPORTANT — lag handling: GitHub Actions cron is unreliable and can lag
+    # several hours past its scheduled fire time. The previous logic here
+    # ("if target is in the past, schedule for tomorrow") meant that if the
+    # cron fired *after* 09:23 UTC, the briefing was scheduled +24h instead
+    # of +0h — silently skipping an entire day.
+    #
+    # New behavior: if we missed today's delivery window, send ASAP (5 min
+    # from now) rather than skipping a day. A late briefing beats no briefing.
+    # Pair this with running the cron earlier in briefing.yml (e.g. 01:00 UTC
+    # rather than 03:00 UTC) for headroom.
     if BRIEFING_MODE == "schedule":
         now_utc = datetime.now(timezone.utc)
         target = now_utc.replace(
@@ -392,9 +405,9 @@ def main():
             second=0,
             microsecond=0,
         )
-        # If we're past today's target, schedule for tomorrow
         if target <= now_utc:
-            target = target + timedelta(days=1)
+            target = now_utc + timedelta(minutes=5)
+            print("  ⚠️  Cron lagged past target window — scheduling immediate delivery.")
         payload["publish_date"] = target.strftime("%Y-%m-%dT%H:%M:%SZ")
         print(f"  Scheduled delivery: {payload['publish_date']} (UTC)")
 
