@@ -6,8 +6,35 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 2 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 May 2026 07:33:36 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 05 May 2026 11:52:49 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Trump’s Southeast Asia Trade Deals Are in Limbo | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/05/southeast-asia-trump-trade-deal-tariffs-malaysia/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/05/southeast-asia-trump-trade-deal-tariffs-malaysia/</guid>
+      <pubDate>Tue, 05 May 2026 09:42:34 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/05/05/southeast-asia-trump-trade-deal-tariffs-malaysia/">Foreign Policy</source>
+      <description>Malaysia becomes the first country to cancel its tariff deal with the White House.</description>
+    </item>
+    <item>
+      <title>🌏 US Army fires Tomahawk missile from new Typhon launcher during Philippines drill | Defense News</title>
+      <link>https://www.defensenews.com/global/asia-pacific/2026/05/05/us-army-fires-tomahawk-missile-from-new-typhon-launcher-during-philippines-drill/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/global/asia-pacific/2026/05/05/us-army-fires-tomahawk-missile-from-new-typhon-launcher-during-philippines-drill/</guid>
+      <pubDate>Tue, 05 May 2026 08:47:12 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.defensenews.com/global/asia-pacific/2026/05/05/us-army-fires-tomahawk-missile-from-new-typhon-launcher-during-philippines-drill/">Defense News</source>
+      <description>“The missile was very precise. Let’s say if you want to hit a window from a far distance, it lands directly into that window,” a military official said.</description>
+    </item>
+    <item>
+      <title>🏛️ Acquisition Reform Needs Its Own Wargame | War on the Rocks</title>
+      <link>https://warontherocks.com/cogs-of-war/acquisition-reform-needs-its-own-wargame/</link>
+      <guid isPermaLink="true">https://warontherocks.com/cogs-of-war/acquisition-reform-needs-its-own-wargame/</guid>
+      <pubDate>Tue, 05 May 2026 08:00:52 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://warontherocks.com/cogs-of-war/acquisition-reform-needs-its-own-wargame/">War on the Rocks</source>
+      <description>One number buried in the Pentagon’s Fiscal Year 2027 budget request reveals a decade of acquisition decisions in a data point: The U.S. Navy is requesting 785 Tomahawk cruise missiles. In 2025, Congress funded 55. That 1,200 percent jump is the cost of choices never…</description>
+    </item>
     <item>
       <title>⚛️ Practice Makes Deterrence: India’s Next Nuclear Challenge at Sea | War on the Rocks</title>
       <link>https://warontherocks.com/practice-makes-deterrence-indias-next-nuclear-challenge-at-sea/</link>
@@ -36,13 +63,22 @@
       <description>I’ve just finished reading a fantasy novel written entirely by an AI. The Second Son of the House of Bells is the story of a young bellmaker whose keen musical ear makes him an agent of political ...</description>
     </item>
     <item>
-      <title>🏛️ Only Congress Can Fix American Trade | Foreign Affairs</title>
-      <link>https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade</link>
-      <guid isPermaLink="true">https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade</guid>
-      <pubDate>Tue, 05 May 2026 00:00:00 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade">Foreign Affairs</source>
-      <description>Trump’s tariff mess offers a chance to restore legislative oversight.</description>
+      <title>📍 BJP Makes Major Gains in 3 of 5 State Assembly Elections | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/bjp-makes-major-gains-in-3-of-5-state-assembly-elections/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/bjp-makes-major-gains-in-3-of-5-state-assembly-elections/</guid>
+      <pubDate>Tue, 05 May 2026 13:12:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://thediplomat.com/2026/05/bjp-makes-major-gains-in-3-of-5-state-assembly-elections/">The Diplomat</source>
+      <description>Prime Minister Narendra Modi&apos;s party has stormed to power in West Bengal and retained its hold over Assam and Puducherry.</description>
+    </item>
+    <item>
+      <title>📍 The ICJ and the Limits of International Justice For the Rohingya | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/the-icj-and-the-limits-of-international-justice-for-the-rohingya/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/the-icj-and-the-limits-of-international-justice-for-the-rohingya/</guid>
+      <pubDate>Tue, 05 May 2026 13:06:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://thediplomat.com/2026/05/the-icj-and-the-limits-of-international-justice-for-the-rohingya/">The Diplomat</source>
+      <description>International courts can apportion legal responsibility, but cannot guarantee justice, safety, or safe return to Myanmar for more than 1 million Rohingya refugees.</description>
     </item>
     <item>
       <title>🌏 The Return of Japanese Hard Power | Foreign Affairs</title>
@@ -63,6 +99,24 @@
       <description>Why Xi keeps winning the summitry game.</description>
     </item>
     <item>
+      <title>🏛️ Only Congress Can Fix American Trade | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade</guid>
+      <pubDate>Tue, 05 May 2026 00:00:00 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.foreignaffairs.com/united-states/only-congress-can-fix-american-trade">Foreign Affairs</source>
+      <description>Trump’s tariff mess offers a chance to restore legislative oversight.</description>
+    </item>
+    <item>
+      <title>📍 Singapore, New Zealand Agree to Keep Vital Supplies Flowing in Times of Crisis | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/singapore-new-zealand-agree-to-keep-vital-supplies-flowing-in-times-of-crisis/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/singapore-new-zealand-agree-to-keep-vital-supplies-flowing-in-times-of-crisis/</guid>
+      <pubDate>Tue, 05 May 2026 12:32:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://thediplomat.com/2026/05/singapore-new-zealand-agree-to-keep-vital-supplies-flowing-in-times-of-crisis/">The Diplomat</source>
+      <description>The Agreement on Trade in Essential Supplies, which was agreed in October, is the world’s first legally-binding bilateral supply chain resilience agreement.</description>
+    </item>
+    <item>
       <title>🏴 Zelenskyy rains on Putin’s parade: Kyiv and Moscow declare rival ceasefires | Atlantic Council</title>
       <link>https://www.atlanticcouncil.org/blogs/ukrainealert/zelenskyy-rains-on-putins-parade-kyiv-and-moscow-declare-rival-ceasefires/</link>
       <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/ukrainealert/zelenskyy-rains-on-putins-parade-kyiv-and-moscow-declare-rival-ceasefires/</guid>
@@ -79,6 +133,15 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/technology/2026/05/pentagon-drones-autonomous-warfare/413323/">Defense One</source>
       <description>Uncrewed weapons actually require a lot of people. New DARPA projects aim to overcome that.</description>
+    </item>
+    <item>
+      <title>🌏 Indonesia, Japan Sign New Defense Agreement, Eye Possible Arms Transfers | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/indonesia-japan-sign-new-defense-agreement-eye-possible-arms-transfers/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/indonesia-japan-sign-new-defense-agreement-eye-possible-arms-transfers/</guid>
+      <pubDate>Tue, 05 May 2026 10:27:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://thediplomat.com/2026/05/indonesia-japan-sign-new-defense-agreement-eye-possible-arms-transfers/">The Diplomat</source>
+      <description>With the recent removal of its longstanding ban on lethal arms exports, Tokyo is set to become an active defense industry player in Southeast Asia.</description>
     </item>
     <item>
       <title>📍 In this month’s budgets, treat economic decisions as national-security decisions | ASPI Strategist</title>
@@ -214,69 +277,6 @@
       <category>Nuclear</category>
       <source url="https://www.aspistrategist.org.au/with-its-third-ssbn-india-edges-closer-to-continuous-at-sea-deterrence/">ASPI Strategist</source>
       <description>India’s commissioning of the submarine INS Aridhaman last month is significant as a strategic marker in the evolution of India’s sea-based nuclear deterrent. In adding a third boat to India’s fleet of nuclear-powered ballistic missile ...</description>
-    </item>
-    <item>
-      <title>🏛️ Anna Eshoo Joins Bipartisan Commission on Biodefense | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/news/press-releases/anna-eshoo-joins-bipartisan-commission-on-biodefense/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/news/press-releases/anna-eshoo-joins-bipartisan-commission-on-biodefense/</guid>
-      <pubDate>Mon, 04 May 2026 18:55:58 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.atlanticcouncil.org/news/press-releases/anna-eshoo-joins-bipartisan-commission-on-biodefense/">Atlantic Council</source>
-      <description>WASHINGTON, DC – September 11, 2025 – The Bipartisan Commission on Biodefense is pleased to welcome former Congresswoman Anna Eshoo of California as a new Commissioner. Representative Eshoo served her constituents – including those in Silicon Valley – from 1993 until the end of…</description>
-    </item>
-    <item>
-      <title>🏛️ Career submariner selected to perform duties of under secretary of the Navy | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/04/career-submariner-selected-to-perform-duties-of-under-secretary-of-the-navy/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/04/career-submariner-selected-to-perform-duties-of-under-secretary-of-the-navy/</guid>
-      <pubDate>Mon, 04 May 2026 18:25:21 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/04/career-submariner-selected-to-perform-duties-of-under-secretary-of-the-navy/">Defense News</source>
-      <description>Retired Navy Capt. William Toti is filling in as the Navy’s No. 2 civilian.</description>
-    </item>
-    <item>
-      <title>🌍 First Ships Transit Strait Of Hormuz Under New U.S. Protection Plan | The War Zone</title>
-      <link>https://www.twz.com/news-features/first-ships-transit-strait-of-hormuz-under-new-u-s-protection-plan</link>
-      <guid isPermaLink="true">https://www.twz.com/news-features/first-ships-transit-strait-of-hormuz-under-new-u-s-protection-plan</guid>
-      <pubDate>Mon, 04 May 2026 14:16:26 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.twz.com/news-features/first-ships-transit-strait-of-hormuz-under-new-u-s-protection-plan">The War Zone</source>
-      <description>Project Freedom appears to be aimed, at least for now, at evacuating ships stuck in the Persian Gulf since the war with Iran began. The post First Ships Transit Strait Of Hormuz Under New U.S. Protection Plan appeared first on The War Zone.</description>
-    </item>
-    <item>
-      <title>🔐 Firewalls won’t protect GEOINT companies. Cyber resilience will, if we act now. | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/firewalls-wont-protect-geoint-companies-cyber-resilience-will-if-we-act-now/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/firewalls-wont-protect-geoint-companies-cyber-resilience-will-if-we-act-now/</guid>
-      <pubDate>Mon, 04 May 2026 18:15:00 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://breakingdefense.com/2026/05/firewalls-wont-protect-geoint-companies-cyber-resilience-will-if-we-act-now/">Breaking Defense</source>
-      <description>As cyberattacks increasingly aim to disrupt operations rather than just steal data, GEOINT providers need models that can continue operations under attack, Norman Laudermilch writes.</description>
-    </item>
-    <item>
-      <title>🌍 US destroys six Iranian small boats, shoots down missiles, drones, admiral says | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/04/us-destroys-six-iranian-small-boats-shoots-down-missiles-drones-admiral-says/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/04/us-destroys-six-iranian-small-boats-shoots-down-missiles-drones-admiral-says/</guid>
-      <pubDate>Mon, 04 May 2026 18:06:58 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/04/us-destroys-six-iranian-small-boats-shoots-down-missiles-drones-admiral-says/">Defense News</source>
-      <description>Adm. Brad Cooper said Iran was trying to interfere with a U.S. military operation to open the Strait of Hormuz to commercial traffic.</description>
-    </item>
-    <item>
-      <title>🏛️ Former Qatari aircraft on track for summer Air Force One delivery | Defense News</title>
-      <link>https://www.defensenews.com/air-warfare/2026/05/04/former-qatari-aircraft-on-track-for-summer-air-force-one-delivery/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/air-warfare/2026/05/04/former-qatari-aircraft-on-track-for-summer-air-force-one-delivery/</guid>
-      <pubDate>Mon, 04 May 2026 17:47:55 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/air-warfare/2026/05/04/former-qatari-aircraft-on-track-for-summer-air-force-one-delivery/">Defense News</source>
-      <description>The new aircraft in the Boeing VC-25B Bridge program completed modifications and flight testing and is now being painting red, white and blue.</description>
-    </item>
-    <item>
-      <title>🏴 Confusion Surrounds Future Of U.S. Long-Range Missiles In Germany Amid Rift With White House | The War Zone</title>
-      <link>https://www.twz.com/land/confusion-surrounds-future-of-u-s-long-range-missiles-in-germany-amid-rift-with-white-house</link>
-      <guid isPermaLink="true">https://www.twz.com/land/confusion-surrounds-future-of-u-s-long-range-missiles-in-germany-amid-rift-with-white-house</guid>
-      <pubDate>Mon, 04 May 2026 13:13:47 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.twz.com/land/confusion-surrounds-future-of-u-s-long-range-missiles-in-germany-amid-rift-with-white-house">The War Zone</source>
-      <description>The latest U.S.-Germany rift could leave NATO in Europe outmatched by Russia’s long-range firepower, at least in the near term. The post Confusion Surrounds Future Of U.S. Long-Range Missiles In Germany Amid Rift With White House appeared first on The War Zone.</description>
     </item>
   </channel>
 </rss>
