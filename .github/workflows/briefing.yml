@@ -2,11 +2,12 @@ name: Daily Briefing
 
 on:
   schedule:
-    # 03:00 UTC = 11:00 PM ET (EDT) / 10:00 PM ET (EST) — runs the night before delivery.
-    # Generation timing isn't sensitive: GitHub Actions cron lag of even 2-3 hours
-    # is harmless because the briefing is created with a scheduled publish_date.
-    # Buttondown's scheduler delivers the email at the exact target time (5:23 AM EDT).
-    - cron: '0 3 * * *'
+    # 01:00 UTC = 9:00 PM ET (EDT) / 8:00 PM ET (EST) — runs the night before delivery.
+    # Moved earlier (was 03:00 UTC) to give an 8+ hour buffer before the 09:23 UTC
+    # delivery target. Combined with the lag-handling fallback in generate_briefing.py
+    # (which schedules ASAP if we somehow miss the window anyway), this makes
+    # delivery resilient to multi-hour GitHub Actions cron lag.
+    - cron: '0 1 * * *'
   workflow_dispatch:  # allow manual triggering
 
 jobs:
