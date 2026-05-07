@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0c0d10;
+  --color-surface: #141519;
+  --color-surface2: #1a1c22;
+  --color-edge: #26282f;
+  --color-edge-strong: #3a3d46;
+  --color-ink: #e6e4dc;
+  --color-ink-muted: #989790;
+  --color-ink-faint: #5d5c58;
+  --color-strike: #e63946;
+  --color-clash: #f4a261;
+  --color-move: #5b9eff;
+  --color-ok: #52b788;
+
+  --font-sans: var(--font-plex-sans), 'IBM Plex Sans', sans-serif;
+  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
+  --font-condensed: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
+}
+
+/* CSS variables in original mockup naming — used by page.module.css */
+:root {
+  --bg: #0c0d10;
+  --surface: #141519;
+  --surface-2: #1a1c22;
+  --border: #26282f;
+  --border-strong: #3a3d46;
+  --text: #e6e4dc;
+  --text-secondary: #989790;
+  --text-tertiary: #5d5c58;
+  --red: #e63946;
+  --red-dim: rgba(230, 57, 70, 0.2);
+  --amber: #f4a261;
+  --amber-dim: rgba(244, 162, 97, 0.2);
+  --blue: #5b9eff;
+  --blue-dim: rgba(91, 158, 255, 0.2);
+  --green: #52b788;
+  --font-sans-stack: var(--font-plex-sans), 'IBM Plex Sans', sans-serif;
+  --font-mono-stack: var(--font-plex-mono), 'IBM Plex Mono', monospace;
+  --font-cond-stack: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans-stack);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  z-index: 0;
+}
