@@ -8,6 +8,7 @@ import feedparser
 import html
 import re
 import sys
+from collections import Counter
 from datetime import datetime, timezone
 from dateutil import parser as date_parser
 from pathlib import Path
@@ -17,7 +18,6 @@ from pathlib import Path
 # ============================================================
 
 FEEDS = [
-    # === Original 12 sources ===
     {"name": "Defense News",      "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                 "source_tag": "Defense News"},
     {"name": "Breaking Defense",  "url": "https://breakingdefense.com/feed/",                                   "source_tag": "Breaking Defense"},
     {"name": "The War Zone",      "url": "https://www.twz.com/feed",                                            "source_tag": "The War Zone"},
@@ -30,13 +30,9 @@ FEEDS = [
     {"name": "Stars and Stripes", "url": "https://www.stripes.com/rss",                                         "source_tag": "Stars and Stripes"},
     {"name": "Lawfare",           "url": "https://www.lawfaremedia.org/feed",                                   "source_tag": "Lawfare"},
     {"name": "Just Security",     "url": "https://www.justsecurity.org/feed/",                                  "source_tag": "Just Security"},
-
-    # === New sources confirmed working ===
     {"name": "RAND Commentary",   "url": "https://www.rand.org/pubs/commentary.xml",                            "source_tag": "RAND"},
     {"name": "The Diplomat",      "url": "https://thediplomat.com/feed/",                                       "source_tag": "The Diplomat"},
     {"name": "Bellingcat",        "url": "https://www.bellingcat.com/feed/",                                    "source_tag": "Bellingcat"},
-
-    # === New sources (replacements for broken feeds) ===
     {"name": "Foreign Affairs",   "url": "https://www.foreignaffairs.com/rss.xml",                              "source_tag": "Foreign Affairs"},
     {"name": "38 North",          "url": "https://www.38north.org/feed/",                                       "source_tag": "38 North"},
     {"name": "ASPI Strategist",   "url": "https://www.aspistrategist.org.au/feed/",                             "source_tag": "ASPI Strategist"},
@@ -55,6 +51,8 @@ CATEGORIES = {
 
 DEFAULT_CATEGORY_NAME = "National Security"
 DEFAULT_CATEGORY_ICON = "📍"
+
+SITE_URL = "https://thesentinelreview.com"
 
 MAX_PER_FEED = 15
 MAX_HERO_SIDEBAR = 5
@@ -193,7 +191,7 @@ def xml_esc(text):
 # RSS FEED GENERATOR
 # ============================================================
 
-def generate_rss(stories, site_url="https://example.com", max_items=30):
+def generate_rss(stories, site_url=SITE_URL, max_items=30):
     now_rfc822 = datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S +0000')
     items_xml = []
     for s in stories[:max_items]:
@@ -216,7 +214,7 @@ def generate_rss(stories, site_url="https://example.com", max_items=30):
     <title>The Sentinel Review — National Security Feed</title>
     <link>{xml_esc(site_url)}</link>
     <atom:link href="{xml_esc(site_url)}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>Automated national security news aggregation. Updated every 2 hours.</description>
+    <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
     <lastBuildDate>{now_rfc822}</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
@@ -329,7 +327,6 @@ def main():
         print("⚠️  No stories fetched — check RSS feeds and network.")
         sys.exit(1)
 
-    from collections import Counter
     cat_counts = Counter(s['category'] for s in stories)
     for cat, n in cat_counts.most_common():
         print(f"    {cat}: {n}")
@@ -352,9 +349,8 @@ def main():
     out_path = Path(__file__).parent / 'index.html'
     out_path.write_text(template, encoding='utf-8')
 
-    SITE_URL = "https://thesentinelreview.com"
     rss_path = Path(__file__).parent / 'feed.xml'
-    rss_path.write_text(generate_rss(stories, site_url=SITE_URL), encoding='utf-8')
+    rss_path.write_text(generate_rss(stories), encoding='utf-8')
 
     print(f"\n✓ index.html generated — site is ready to deploy.")
     print(f"✓ feed.xml generated — {min(len(stories), 30)} items for syndication.")
