@@ -9,7 +9,9 @@ Environment variables required:
   BUTTONDOWN_API_KEY  - API key from Buttondown (stored as GitHub Secret)
 
 Optional environment variables:
-  BRIEFING_MODE       - "send" (default) or "draft" — draft creates without sending
+  BRIEFING_MODE       - "send", "draft", or "schedule" (workflow default: schedule)
+                        send = deliver immediately; draft = save for manual review;
+                        schedule = create with a future publish_date for precise delivery
 """
 
 import feedparser
