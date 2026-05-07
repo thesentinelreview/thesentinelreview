@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sentinel Review — Conflict Intelligence Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0d10;
+    --surface: #141519;
+    --surface-2: #1a1c22;
+    --border: #26282f;
+    --border-strong: #3a3d46;
+    --text: #e6e4dc;
+    --text-secondary: #989790;
+    --text-tertiary: #5d5c58;
+    --red: #e63946;
+    --red-dim: rgba(230, 57, 70, 0.2);
+    --amber: #f4a261;
+    --amber-dim: rgba(244, 162, 97, 0.2);
+    --blue: #5b9eff;
+    --blue-dim: rgba(91, 158, 255, 0.2);
+    --green: #52b788;
+    --map-land: #1d1f25;
+    --map-border: #2e3038;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-cond: 'IBM Plex Sans Condensed', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .brand-logo::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--text);
+    transform: rotate(45deg);
+  }
+
+  .brand-name {
+    font-family: var(--font-cond);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .brand-divider {
+    color: var(--text-tertiary);
+  }
+
+  .brand-section {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .filter-chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .filter-chip.active {
+    border-color: var(--border-strong);
+  }
+
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-left: 12px;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* MAIN GRID */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  /* MAP */
+  .map-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .map-title {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .map-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 16px;
+  }
+
+  .map-meta strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .map-canvas {
+    position: relative;
+    flex: 1;
+    min-height: 480px;
+    background: var(--bg);
+  }
+
+  .map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .map-overlay {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .map-coords-ticker {
+    bottom: 10px;
+    left: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+  }
+
+  .map-zoom {
+    top: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: auto;
+  }
+
+  .map-zoom button {
+    width: 28px;
+    height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    border-radius: 3px;
+  }
+
+  .map-legend {
+    bottom: 10px;
+    right: 12px;
+    background: rgba(20, 21, 25, 0.92);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .map-popover {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    padding: 10px 12px;
+    border-radius: 4px;
+    width: 230px;
+    pointer-events: none;
+  }
+
+  /* Time scrubber */
+  .scrubber {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .scrubber-track {
+    flex: 1;
+    height: 4px;
+    background: var(--surface-2);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .scrubber-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 78%;
+    background: var(--text-secondary);
+    border-radius: 2px;
+  }
+
+  .scrubber-handle {
+    position: absolute;
+    left: 78%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: var(--text);
+    border-radius: 50%;
+  }
+
+  .scrubber-time {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* RIGHT RAIL */
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 14px 10px;
+  }
+
+  .panel-title {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .panel-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat {
+    padding: 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat:nth-child(2n) { border-right: none; }
+  .stat:nth-child(n+3) { border-bottom: none; }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-family: var(--font-cond);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .stat-value.up {
+    color: var(--red);
+  }
+
+  .stat-arrow {
+    font-size: 18px;
+  }
+
+  /* Intensity chart */
+  .intensity {
+    padding: 0 14px 14px;
+  }
+
+  .intensity-chart {
+    height: 72px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .bar {
+    flex: 1;
+    background: var(--blue-dim);
+    border-top: 2px solid var(--blue);
+    position: relative;
+    min-height: 6px;
+  }
+
+  .bar.hot {
+    background: var(--red-dim);
+    border-top-color: var(--red);
+  }
+
+  .day-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+
+  /* Alerts */
+  .alerts {
+    border-top: 1px solid var(--border);
+  }
+
+  .alert-item {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .alert-item:hover {
+    background: var(--surface-2);
+  }
+
+  .alert-item:last-child {
+    border-bottom: none;
+  }
+
+  .alert-marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .alert-marker.red { background: var(--red); box-shadow: 0 0 0 4px var(--red-dim); }
+  .alert-marker.amber { background: var(--amber); box-shadow: 0 0 0 4px var(--amber-dim); }
+  .alert-marker.blue { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-dim); }
+
+  .alert-body {
+    flex: 1;
+  }
+
+  .alert-title {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .alert-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .verified {
+    color: var(--green);
+  }
+
+  /* BOTTOM ROW */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 14px;
+  }
+
+  .briefing {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+
+  .briefing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .briefing-title {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .briefing-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    cursor: default;
+  }
+
+  .badge.action {
+    cursor: pointer;
+  }
+
+  .badge.action:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  .briefing-byline {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .briefing-body p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .briefing-body p:last-child {
+    color: var(--text-secondary);
+    margin-bottom: 0;
+  }
+
+  .briefing-link {
+    color: var(--text);
+    border-bottom: 1px solid var(--border-strong);
+    text-decoration: none;
+  }
+
+  /* Sources */
+  .sources-list {
+    border-top: 1px solid var(--border);
+  }
+
+  .source-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .source-row:last-child {
+    border-bottom: none;
+  }
+
+  .source-rank {
+    color: var(--text-tertiary);
+    font-size: 10px;
+  }
+
+  .source-name {
+    color: var(--text);
+  }
+
+  .source-count {
+    color: var(--text-secondary);
+    font-size: 11px;
+  }
+
+  .source-rate {
+    font-size: 11px;
+    width: 38px;
+    text-align: right;
+  }
+
+  .source-rate.high { color: var(--green); }
+  .source-rate.mid { color: var(--amber); }
+
+  .sources-footer {
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div class="brand-name">Sentinel Review</div>
+      <div class="brand-divider">/</div>
+      <div class="brand-section">Conflict Intelligence — Live Map</div>
+    </div>
+    <div class="filters">
+      <span class="filter-label">Theater</span>
+      <span class="filter-chip active">Ukraine ▾</span>
+      <span class="filter-label" style="margin-left: 6px;">Window</span>
+      <span class="filter-chip active">24h ▾</span>
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>Live</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main">
+
+    <!-- MAP -->
+    <div class="map-card">
+      <div class="map-header">
+        <div class="map-title">Eastern Theater — Donetsk / Luhansk Oblasts</div>
+        <div class="map-meta">
+          <span><strong>47</strong> events</span>
+          <span><strong>14</strong> strikes</span>
+          <span><strong>33</strong> movements</span>
+        </div>
+      </div>
+      <div class="map-canvas">
+        <svg class="map-svg" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.025)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="800" height="480" fill="url(#grid)"/>
+
+          <!-- Land mass (stylized eastern Ukraine) -->
+          <path d="M 50 80 Q 120 60 200 70 L 280 65 Q 360 75 440 95 L 520 110 Q 600 130 660 170 L 700 220 L 720 280 L 700 340 L 660 390 L 580 420 L 480 425 L 380 410 L 290 380 L 220 340 L 160 290 L 110 230 L 70 170 Z"
+                fill="#1d1f25" stroke="#2e3038" stroke-width="1"/>
+
+          <!-- Rivers -->
+          <path d="M 200 70 Q 230 150 280 220 Q 310 290 350 360 Q 380 410 420 425"
+                fill="none" stroke="#2e3038" stroke-width="1.5" opacity="0.7"/>
+          <path d="M 440 95 Q 460 180 480 260 Q 490 340 480 425"
+                fill="none" stroke="#2e3038" stroke-width="1" opacity="0.5"/>
+
+          <!-- Front line -->
+          <path d="M 380 105 Q 410 150 430 200 Q 460 250 480 300 Q 500 360 510 410"
+                fill="none" stroke="#5a5a5a" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>
+
+          <!-- Oblast labels -->
+          <text x="280" y="200" font-family="IBM Plex Mono" font-size="9" fill="#5d5c58" letter-spacing="2">KHARKIV</text>
+          <text x="380" y="280" font-family="IBM Plex Mono" font-size="9" fill="#5d5c58" letter-spacing="2">DONETSK</text>
+          <text x="540" y="200" font-family="IBM Plex Mono" font-size="9" fill="#5d5c58" letter-spacing="2">LUHANSK</text>
+
+          <!-- Cities -->
+          <g font-family="IBM Plex Mono" font-size="9" fill="#8a8780">
+            <circle cx="320" cy="180" r="2" fill="#8a8780"/>
+            <text x="328" y="184">Izium</text>
+
+            <circle cx="430" cy="260" r="2" fill="#8a8780"/>
+            <text x="438" y="264">Kramatorsk</text>
+
+            <circle cx="450" cy="320" r="2" fill="#8a8780"/>
+            <text x="458" y="324">Pokrovsk</text>
+
+            <circle cx="540" cy="280" r="2" fill="#8a8780"/>
+            <text x="548" y="284">Bakhmut</text>
+
+            <circle cx="270" cy="120" r="2" fill="#8a8780"/>
+            <text x="278" y="124">Kupiansk</text>
+          </g>
+
+          <!-- Strikes (red) -->
+          <g>
+            <circle cx="450" cy="320" r="14" fill="rgba(230, 57, 70, 0.15)"/>
+            <circle cx="450" cy="320" r="8" fill="rgba(230, 57, 70, 0.35)"/>
+            <circle cx="450" cy="320" r="4" fill="#e63946"/>
+            <text x="450" y="324" font-family="IBM Plex Mono" font-size="8" font-weight="600" fill="#fff" text-anchor="middle">7</text>
+
+            <circle cx="540" cy="280" r="11" fill="rgba(230, 57, 70, 0.15)"/>
+            <circle cx="540" cy="280" r="6" fill="rgba(230, 57, 70, 0.35)"/>
+            <circle cx="540" cy="280" r="3" fill="#e63946"/>
+
+            <circle cx="430" cy="260" r="9" fill="rgba(230, 57, 70, 0.15)"/>
+            <circle cx="430" cy="260" r="3" fill="#e63946"/>
+
+            <circle cx="490" cy="350" r="7" fill="rgba(230, 57, 70, 0.15)"/>
+            <circle cx="490" cy="350" r="2.5" fill="#e63946"/>
+
+            <circle cx="395" cy="295" r="6" fill="rgba(230, 57, 70, 0.15)"/>
+            <circle cx="395" cy="295" r="2" fill="#e63946"/>
+          </g>
+
+          <!-- Clashes (amber) -->
+          <g>
+            <circle cx="465" cy="305" r="9" fill="rgba(244, 162, 97, 0.15)"/>
+            <circle cx="465" cy="305" r="3" fill="#f4a261"/>
+
+            <circle cx="510" cy="260" r="7" fill="rgba(244, 162, 97, 0.15)"/>
+            <circle cx="510" cy="260" r="2.5" fill="#f4a261"/>
+
+            <circle cx="270" cy="120" r="8" fill="rgba(244, 162, 97, 0.15)"/>
+            <circle cx="270" cy="120" r="3" fill="#f4a261"/>
+
+            <circle cx="320" cy="180" r="6" fill="rgba(244, 162, 97, 0.15)"/>
+            <circle cx="320" cy="180" r="2.5" fill="#f4a261"/>
+          </g>
+
+          <!-- Movement (blue) -->
+          <g>
+            <circle cx="380" cy="105" r="6" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="380" cy="105" r="2.5" fill="#5b9eff"/>
+
+            <circle cx="580" cy="220" r="5" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="580" cy="220" r="2" fill="#5b9eff"/>
+
+            <circle cx="350" cy="240" r="5" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="350" cy="240" r="2" fill="#5b9eff"/>
+
+            <circle cx="600" cy="170" r="4" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="600" cy="170" r="2" fill="#5b9eff"/>
+
+            <circle cx="240" cy="310" r="5" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="240" cy="310" r="2" fill="#5b9eff"/>
+
+            <circle cx="500" cy="380" r="4" fill="rgba(91, 158, 255, 0.15)"/>
+            <circle cx="500" cy="380" r="2" fill="#5b9eff"/>
+          </g>
+        </svg>
+
+        <!-- Hover popover (Pokrovsk strike cluster) -->
+        <div class="map-popover" style="left: 470px; top: 230px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase;">STRIKE — POKROVSK AXIS</div>
+            <div class="verified" style="font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;">● VERIFIED</div>
+          </div>
+          <div style="font-size: 12px; line-height: 1.45; margin-bottom: 8px;">7 reported impacts on industrial site, civilian infrastructure damaged.</div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary);">
+            <span>3 sources · 18m ago</span>
+            <span style="color: var(--text);">View →</span>
+          </div>
+        </div>
+
+        <div class="map-overlay map-coords-ticker">
+          48.2829° N · 37.1779° E
+        </div>
+
+        <div class="map-overlay map-zoom">
+          <button>+</button>
+          <button>−</button>
+        </div>
+
+        <div class="map-overlay map-legend">
+          <div class="legend-item"><span class="legend-dot" style="background: #e63946;"></span><span>Strike / impact</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background: #f4a261;"></span><span>Contact / clash</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background: #5b9eff;"></span><span>Movement</span></div>
+        </div>
+      </div>
+
+      <!-- Time scrubber -->
+      <div class="scrubber">
+        <span class="scrubber-time">−24h</span>
+        <div class="scrubber-track">
+          <div class="scrubber-fill"></div>
+          <div class="scrubber-handle"></div>
+        </div>
+        <span class="scrubber-time">14:42 UTC</span>
+      </div>
+    </div>
+
+    <!-- RIGHT RAIL -->
+    <div class="rail">
+
+      <!-- At a glance -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">At a glance</div>
+          <div class="panel-meta">Past 24h</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Events</div>
+            <div class="stat-value">47</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Strikes</div>
+            <div class="stat-value">14</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Verified</div>
+            <div class="stat-value">86<span style="font-size: 16px; color: var(--text-secondary);">%</span></div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">vs 7d avg</div>
+            <div class="stat-value up"><span class="stat-arrow">↑</span> 23<span style="font-size: 16px;">%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intensity -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Intensity — 7d</div>
+          <div class="panel-meta">events / day</div>
+        </div>
+        <div class="intensity">
+          <div class="intensity-chart">
+            <div class="bar" style="height: 38%;"></div>
+            <div class="bar" style="height: 45%;"></div>
+            <div class="bar" style="height: 32%;"></div>
+            <div class="bar" style="height: 55%;"></div>
+            <div class="bar" style="height: 62%;"></div>
+            <div class="bar hot" style="height: 78%;"></div>
+            <div class="bar hot" style="height: 92%;"></div>
+          </div>
+          <div class="day-labels">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active alerts -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Active alerts</div>
+          <div class="panel-meta">3 active</div>
+        </div>
+        <div class="alerts">
+          <div class="alert-item">
+            <div class="alert-marker red"></div>
+            <div class="alert-body">
+              <div class="alert-title">Strike cluster, Pokrovsk axis</div>
+              <div class="alert-meta">3 sources · <span class="verified">VERIFIED</span> · 18m ago</div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-marker amber"></div>
+            <div class="alert-body">
+              <div class="alert-title">Unverified armor movement, Kupiansk sector</div>
+              <div class="alert-meta">1 source · UNCONFIRMED · 42m ago</div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-marker blue"></div>
+            <div class="alert-body">
+              <div class="alert-title">Convoy spotted, M03 highway</div>
+              <div class="alert-meta">2 sources · PARTIAL · 1h 12m ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom">
+    <!-- Briefing -->
+    <div class="briefing">
+      <div class="briefing-header">
+        <div class="briefing-title">Daily Briefing — Eastern Theater</div>
+        <div class="briefing-actions">
+          <span class="badge">AI DRAFT</span>
+          <span class="badge action">EMBED ↗</span>
+          <span class="badge action">EXPORT</span>
+        </div>
+      </div>
+      <div class="briefing-byline">07 May 2026 · 14:42 UTC · Compiled from 38 sources · Reviewed</div>
+      <div class="briefing-body">
+        <p>Strike activity along the Pokrovsk axis intensified overnight, with seven separate impacts reported in the eastern oblast — a 23% jump over the seven-day rolling average. Two clusters are corroborated by geolocated footage from three independent accounts, including @DefMon3 and Reuters stringers on the ground. Damage assessments suggest industrial and civilian infrastructure as primary targets.</p>
+        <p>Movement reports near Kupiansk remain single-sourced and unverified; treat with caution pending corroboration. <a href="#" class="briefing-link">See full briefing →</a></p>
+      </div>
+    </div>
+
+    <!-- Top sources -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Top sources today</div>
+        <div class="panel-meta">events · verified rate</div>
+      </div>
+      <div class="sources-list">
+        <div class="source-row">
+          <span class="source-rank">01</span>
+          <span class="source-name">@DefMon3</span>
+          <span class="source-count">14</span>
+          <span class="source-rate high">92%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">02</span>
+          <span class="source-name">@war_mapper</span>
+          <span class="source-count">9</span>
+          <span class="source-rate high">88%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">03</span>
+          <span class="source-name">Telegram (mil channels)</span>
+          <span class="source-count">22</span>
+          <span class="source-rate mid">64%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">04</span>
+          <span class="source-name">Local press wire</span>
+          <span class="source-count">6</span>
+          <span class="source-rate mid">79%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">05</span>
+          <span class="source-name">@OSINTtechnical</span>
+          <span class="source-count">5</span>
+          <span class="source-rate high">94%</span>
+        </div>
+      </div>
+      <div class="sources-footer">Verification rate over rolling 30 days</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
