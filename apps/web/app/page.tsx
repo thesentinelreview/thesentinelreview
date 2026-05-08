@@ -1,4 +1,5 @@
 import s from "./page.module.css";
+import MapWrapper from "@/components/MapWrapper";
 import {
   stats,
   mapEvents,
@@ -7,7 +8,6 @@ import {
   sources,
   briefing,
   type Alert,
-  type MapEvent,
 } from "@/data/placeholder";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -70,70 +70,10 @@ export default function DashboardPage() {
           </div>
 
           <div className={s.mapCanvas}>
-            <svg className={s.mapSvg} viewBox="0 0 800 480" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="800" height="480" fill="url(#grid)"/>
+            {/* MapLibre real map */}
+            <MapWrapper events={mapEvents} />
 
-              {/* Land mass — stylized eastern Ukraine */}
-              <path
-                d="M 50 80 Q 120 60 200 70 L 280 65 Q 360 75 440 95 L 520 110 Q 600 130 660 170 L 700 220 L 720 280 L 700 340 L 660 390 L 580 420 L 480 425 L 380 410 L 290 380 L 220 340 L 160 290 L 110 230 L 70 170 Z"
-                fill="#1d1f25" stroke="#2e3038" strokeWidth="1"
-              />
-
-              {/* Rivers */}
-              <path d="M 200 70 Q 230 150 280 220 Q 310 290 350 360 Q 380 410 420 425"
-                fill="none" stroke="#2e3038" strokeWidth="1.5" opacity="0.7"/>
-              <path d="M 440 95 Q 460 180 480 260 Q 490 340 480 425"
-                fill="none" stroke="#2e3038" strokeWidth="1" opacity="0.5"/>
-
-              {/* Front line */}
-              <path d="M 380 105 Q 410 150 430 200 Q 460 250 480 300 Q 500 360 510 410"
-                fill="none" stroke="#5a5a5a" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7"/>
-
-              {/* Oblast labels */}
-              <text x="280" y="200" fontFamily="IBM Plex Mono" fontSize="9" fill="#5d5c58" letterSpacing="2">KHARKIV</text>
-              <text x="380" y="280" fontFamily="IBM Plex Mono" fontSize="9" fill="#5d5c58" letterSpacing="2">DONETSK</text>
-              <text x="540" y="200" fontFamily="IBM Plex Mono" fontSize="9" fill="#5d5c58" letterSpacing="2">LUHANSK</text>
-
-              {/* Cities */}
-              <g fontFamily="IBM Plex Mono" fontSize="9" fill="#8a8780">
-                <circle cx="320" cy="180" r="2" fill="#8a8780"/><text x="328" y="184">Izium</text>
-                <circle cx="430" cy="260" r="2" fill="#8a8780"/><text x="438" y="264">Kramatorsk</text>
-                <circle cx="450" cy="320" r="2" fill="#8a8780"/><text x="458" y="324">Pokrovsk</text>
-                <circle cx="540" cy="280" r="2" fill="#8a8780"/><text x="548" y="284">Bakhmut</text>
-                <circle cx="270" cy="120" r="2" fill="#8a8780"/><text x="278" y="124">Kupiansk</text>
-              </g>
-
-              {/* Event pins */}
-              {mapEvents.map((evt) => <EventPin key={evt.id} evt={evt} />)}
-            </svg>
-
-            {/* Hover popover — Pokrovsk strike cluster */}
-            <div className={s.mapPopover}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                <div className={s.popoverLabel}>Strike — Pokrovsk Axis</div>
-                <div className={s.popoverVerified}>● Verified</div>
-              </div>
-              <div className={s.popoverDesc}>7 reported impacts on industrial site, civilian infrastructure damaged.</div>
-              <div className={s.popoverFooter}>
-                <span>3 sources · 18m ago</span>
-                <span>View →</span>
-              </div>
-            </div>
-
-            <div className={`${s.mapOverlay} ${s.mapCoordsTicker}`}>
-              48.2829° N · 37.1779° E
-            </div>
-
-            <div className={`${s.mapOverlay} ${s.mapZoom}`}>
-              <button>+</button>
-              <button>−</button>
-            </div>
-
+            {/* Legend overlay */}
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
               <div className={s.legendItem}>
                 <span className={s.legendDot} style={{ background: "#e63946" }}/>
@@ -299,39 +239,3 @@ export default function DashboardPage() {
   );
 }
 
-// ── EventPin: renders a single map event as SVG circles ───────────────────────
-
-function pinColor(type: MapEvent["event_type"]): string {
-  if (type === "strike") return "#e63946";
-  if (type === "clash")  return "#f4a261";
-  return "#5b9eff";
-}
-
-function pinColorDim(type: MapEvent["event_type"]): string {
-  if (type === "strike") return "rgba(230,57,70,0.15)";
-  if (type === "clash")  return "rgba(244,162,97,0.15)";
-  return "rgba(91,158,255,0.15)";
-}
-
-function pinColorMid(type: MapEvent["event_type"]): string {
-  if (type === "strike") return "rgba(230,57,70,0.35)";
-  if (type === "clash")  return "rgba(244,162,97,0.35)";
-  return "rgba(91,158,255,0.35)";
-}
-
-function EventPin({ evt }: { evt: MapEvent }) {
-  const color    = pinColor(evt.event_type);
-  const colorDim = pinColorDim(evt.event_type);
-  const colorMid = pinColorMid(evt.event_type);
-  const r        = evt.radius;
-  const cx       = evt.svg_x;
-  const cy       = evt.svg_y;
-
-  return (
-    <g>
-      <circle cx={cx} cy={cy} r={r} fill={colorDim}/>
-      {r >= 10 && <circle cx={cx} cy={cy} r={r - 6} fill={colorMid}/>}
-      <circle cx={cx} cy={cy} r={Math.max(2, r - 10)} fill={color}/>
-    </g>
-  );
-}

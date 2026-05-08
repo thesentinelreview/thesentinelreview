@@ -6,11 +6,8 @@ export interface MapEvent {
   id: string;
   event_type: EventType;
   occurred_at: string;
-  /** SVG coordinate space (800×480 viewBox) */
-  svg_x: number;
-  svg_y: number;
-  /** Ring radius — scales with cluster size */
-  radius: number;
+  lat: number;
+  lng: number;
   location_name: string;
   oblast: string;
   description: string;
@@ -60,7 +57,7 @@ export interface BriefingData {
 }
 
 // ---------------------------------------------------------------------------
-// Seed data (matches the static mockup exactly)
+// Seed data
 // ---------------------------------------------------------------------------
 
 export const stats: Stats = {
@@ -75,9 +72,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-001",
     event_type: "strike",
     occurred_at: "2026-05-07T12:24:00Z",
-    svg_x: 450,
-    svg_y: 320,
-    radius: 14,
+    lat: 48.07,
+    lng: 37.71,
     location_name: "Pokrovsk",
     oblast: "Donetsk",
     description: "7 reported impacts on industrial site, civilian infrastructure damaged.",
@@ -89,9 +85,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-002",
     event_type: "strike",
     occurred_at: "2026-05-07T12:08:00Z",
-    svg_x: 540,
-    svg_y: 280,
-    radius: 11,
+    lat: 48.60,
+    lng: 37.99,
     location_name: "Bakhmut",
     oblast: "Donetsk",
     description: "Artillery strikes on residential district.",
@@ -103,9 +98,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-003",
     event_type: "strike",
     occurred_at: "2026-05-07T11:55:00Z",
-    svg_x: 430,
-    svg_y: 260,
-    radius: 9,
+    lat: 48.73,
+    lng: 37.55,
     location_name: "Kramatorsk",
     oblast: "Donetsk",
     description: "Drone strike on logistics hub.",
@@ -117,9 +111,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-004",
     event_type: "strike",
     occurred_at: "2026-05-07T11:40:00Z",
-    svg_x: 490,
-    svg_y: 350,
-    radius: 7,
+    lat: 47.95,
+    lng: 37.85,
     location_name: "Southern Donetsk axis",
     oblast: "Donetsk",
     description: "Glide bomb impact, unverified target.",
@@ -131,9 +124,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-005",
     event_type: "strike",
     occurred_at: "2026-05-07T11:28:00Z",
-    svg_x: 395,
-    svg_y: 295,
-    radius: 6,
+    lat: 48.13,
+    lng: 37.75,
     location_name: "Avdiivka outskirts",
     oblast: "Donetsk",
     description: "Reported shelling, no footage.",
@@ -145,9 +137,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-006",
     event_type: "clash",
     occurred_at: "2026-05-07T12:00:00Z",
-    svg_x: 465,
-    svg_y: 305,
-    radius: 9,
+    lat: 48.10,
+    lng: 37.68,
     location_name: "Pokrovsk front",
     oblast: "Donetsk",
     description: "Infantry contact, unclear outcome.",
@@ -159,9 +150,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-007",
     event_type: "clash",
     occurred_at: "2026-05-07T11:50:00Z",
-    svg_x: 510,
-    svg_y: 260,
-    radius: 7,
+    lat: 48.57,
+    lng: 37.84,
     location_name: "Chasiv Yar",
     oblast: "Donetsk",
     description: "Assault repelled per Ukrainian sources.",
@@ -173,9 +163,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-008",
     event_type: "clash",
     occurred_at: "2026-05-07T11:00:00Z",
-    svg_x: 270,
-    svg_y: 120,
-    radius: 8,
+    lat: 49.72,
+    lng: 37.60,
     location_name: "Kupiansk",
     oblast: "Kharkiv",
     description: "Unverified armor movement, single milblog source.",
@@ -187,9 +176,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-009",
     event_type: "clash",
     occurred_at: "2026-05-07T10:45:00Z",
-    svg_x: 320,
-    svg_y: 180,
-    radius: 6,
+    lat: 49.21,
+    lng: 37.27,
     location_name: "Izium sector",
     oblast: "Kharkiv",
     description: "Patrol contact, casualties unknown.",
@@ -201,9 +189,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-010",
     event_type: "movement",
     occurred_at: "2026-05-07T11:30:00Z",
-    svg_x: 380,
-    svg_y: 105,
-    radius: 6,
+    lat: 49.90,
+    lng: 37.30,
     location_name: "Northern Kharkiv axis",
     oblast: "Kharkiv",
     description: "Convoy spotted on M03 highway.",
@@ -215,9 +202,8 @@ export const mapEvents: MapEvent[] = [
     id: "evt-011",
     event_type: "movement",
     occurred_at: "2026-05-07T11:10:00Z",
-    svg_x: 580,
-    svg_y: 220,
-    radius: 5,
+    lat: 48.55,
+    lng: 39.30,
     location_name: "Eastern Luhansk",
     oblast: "Luhansk",
     description: "Logistics column, direction unknown.",
@@ -229,10 +215,9 @@ export const mapEvents: MapEvent[] = [
     id: "evt-012",
     event_type: "movement",
     occurred_at: "2026-05-07T10:30:00Z",
-    svg_x: 350,
-    svg_y: 240,
-    radius: 5,
-    location_name: "Central Donetsk",
+    lat: 48.65,
+    lng: 37.52,
+    location_name: "Druzhkivka",
     oblast: "Donetsk",
     description: "Redeployment near Druzhkivka.",
     confidence: "partial",
