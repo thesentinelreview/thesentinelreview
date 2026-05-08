@@ -57,7 +57,58 @@ export interface BriefingData {
 }
 
 // ---------------------------------------------------------------------------
-// Seed data
+// Extended types for detail pages
+// ---------------------------------------------------------------------------
+
+export interface EventSource {
+  id: string;
+  handle: string;
+  display_name: string;
+  platform: Platform;
+  url: string;
+  posted_at: string;
+  text_excerpt: string;
+  relationship: "primary" | "corroborating" | "contradicting";
+  trust_tier: 1 | 2 | 3;
+}
+
+export interface EvidenceItem {
+  type: "geolocation" | "screenshot" | "official_statement" | "wire_report";
+  label: string;
+  notes: string;
+}
+
+export interface ChangeHistoryEntry {
+  timestamp: string;
+  change: string;
+}
+
+export interface EventDetail extends MapEvent {
+  actor: string | null;
+  human_reviewed_at: string | null;
+  human_reviewer_notes: string | null;
+  event_sources: EventSource[];
+  evidence: EvidenceItem[];
+  change_history: ChangeHistoryEntry[];
+}
+
+export interface FullBriefing extends BriefingData {
+  full_paragraphs: string[];
+  referenced_event_ids: string[];
+  confidence_summary: { verified: number; partial: number; unconfirmed: number };
+}
+
+export interface SourceDetail extends Source {
+  url: string;
+  events_7d: number;
+  events_30d: number;
+  last_event_at: string;
+  trust_tier: 1 | 2 | 3;
+  notes: string;
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard seed data
 // ---------------------------------------------------------------------------
 
 export const stats: Stats = {
@@ -282,3 +333,240 @@ export const briefing: BriefingData = {
     "Movement reports near Kupiansk remain single-sourced and unverified; treat with caution pending corroboration.",
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Extended seed data for detail pages
+// ---------------------------------------------------------------------------
+
+const eventDetailMap: Record<string, EventDetail> = {
+  "evt-001": {
+    id: "evt-001",
+    event_type: "strike",
+    occurred_at: "2026-05-07T12:24:00Z",
+    lat: 48.07,
+    lng: 37.71,
+    location_name: "Pokrovsk",
+    oblast: "Donetsk",
+    description: "Seven reported impacts on an industrial site in the western Pokrovsk urban area. Civilian infrastructure confirmed damaged; no casualty figures available from verified sources.",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 18,
+    actor: null,
+    human_reviewed_at: "2026-05-07T13:15:00Z",
+    human_reviewer_notes: "Verified via @DefMon3 geolocation thread and Reuters stringer dispatch. Industrial area confirmed from satellite comparison. Confidence upgraded from partial.",
+    event_sources: [
+      {
+        id: "src-001-a",
+        handle: "@DefMon3",
+        display_name: "@DefMon3",
+        platform: "x",
+        url: "https://x.com/DefMon3",
+        posted_at: "2026-05-07T12:18:00Z",
+        text_excerpt: "Geolocated: 7+ strikes confirmed on industrial zone near Pokrovsk. Satellite match to known facility. Thread incoming.",
+        relationship: "primary",
+        trust_tier: 1,
+      },
+      {
+        id: "src-001-b",
+        handle: "Reuters Wire",
+        display_name: "Reuters Wire",
+        platform: "wire",
+        url: "https://reuters.com",
+        posted_at: "2026-05-07T12:31:00Z",
+        text_excerpt: "Ukraine — Seven impacts reported on industrial infrastructure in Pokrovsk area. Local stringer confirms damage to civilian buildings adjacent. No casualty figures available.",
+        relationship: "corroborating",
+        trust_tier: 1,
+      },
+      {
+        id: "src-001-c",
+        handle: "@war_mapper",
+        display_name: "@war_mapper",
+        platform: "x",
+        url: "https://x.com/war_mapper",
+        posted_at: "2026-05-07T12:22:00Z",
+        text_excerpt: "Reports of 7+ impacts in the Pokrovsk industrial area. Corroborates DefMon thread. Waiting for BDA.",
+        relationship: "corroborating",
+        trust_tier: 2,
+      },
+    ],
+    evidence: [
+      {
+        type: "geolocation",
+        label: "Satellite imagery match",
+        notes: "Impact craters geolocated to known industrial facility at 48.07°N 37.71°E via open-source satellite imagery. Confirmed by @DefMon3 geolocation thread.",
+      },
+      {
+        type: "wire_report",
+        label: "Reuters stringer dispatch",
+        notes: "Local Reuters correspondent confirmed damage to buildings adjacent to industrial zone. Filed via wire at 12:31 UTC.",
+      },
+    ],
+    change_history: [
+      {
+        timestamp: "2026-05-07T12:24:00Z",
+        change: "Event created — confidence: unconfirmed, 1 source (@DefMon3 post)",
+      },
+      {
+        timestamp: "2026-05-07T12:35:00Z",
+        change: "Reuters wire added as corroborating source — confidence upgraded to partial, 2 sources",
+      },
+      {
+        timestamp: "2026-05-07T13:15:00Z",
+        change: "Human review: satellite geolocation confirmed — confidence upgraded to verified, 3 sources",
+      },
+    ],
+  },
+};
+
+export function getEventDetail(id: string): EventDetail | null {
+  if (eventDetailMap[id]) return eventDetailMap[id];
+  const base = mapEvents.find((e) => e.id === id);
+  if (!base) return null;
+  return {
+    ...base,
+    actor: null,
+    human_reviewed_at: null,
+    human_reviewer_notes: null,
+    event_sources: [],
+    evidence: [],
+    change_history: [
+      { timestamp: base.occurred_at, change: "Event created from OSINT source." },
+    ],
+  };
+}
+
+export const fullBriefing: FullBriefing = {
+  id: "brief-20260507",
+  date: "07 May 2026",
+  utc_time: "14:42 UTC",
+  source_count: 38,
+  reviewed: false,
+  paragraphs: briefing.paragraphs,
+  full_paragraphs: [
+    "Strike activity along the Pokrovsk axis intensified overnight, with seven separate impacts reported in the eastern oblast — a 23% jump over the seven-day rolling average. Two clusters are corroborated by geolocated footage from three independent accounts, including @DefMon3 and Reuters stringers on the ground. Damage assessments suggest industrial and civilian infrastructure as primary targets.",
+    "Clash contacts near Chasiv Yar and Kupiansk remain the secondary focus. The Chasiv Yar contact is partial-confidence — two X accounts corroborate, but no footage has emerged confirming the reported outcome. The Kupiansk armor movement is single-sourced and unverified; a known Telegram milblog with a 64% verification rate is the sole origin. Treat with caution pending corroboration.",
+    "Overall theater tempo is elevated. The 92-event Sunday figure represents a genuine spike, not a reporting artifact — three wire services independently reflect increased sortie and contact counts. Watch: further confirmation or denial of the Kupiansk cluster is expected over the next 12–18 hours as satellite tasking windows open.",
+  ],
+  referenced_event_ids: ["evt-001", "evt-002", "evt-003", "evt-007", "evt-008"],
+  confidence_summary: { verified: 14, partial: 21, unconfirmed: 12 },
+};
+
+export function getFullBriefing(id: string): FullBriefing | null {
+  if (id === fullBriefing.id) return fullBriefing;
+  return null;
+}
+
+export const allSources: SourceDetail[] = [
+  {
+    rank: 1,
+    handle: "@DefMon3",
+    display_name: "@DefMon3",
+    platform: "x",
+    events_count: 14,
+    verified_rate: 92,
+    url: "https://x.com/DefMon3",
+    events_7d: 14,
+    events_30d: 58,
+    last_event_at: "2026-05-07T12:18:00Z",
+    trust_tier: 1,
+    notes: "Long-running geolocation specialist. Publishes verification threads with satellite imagery.",
+  },
+  {
+    rank: 2,
+    handle: "@OSINTtechnical",
+    display_name: "@OSINTtechnical",
+    platform: "x",
+    events_count: 5,
+    verified_rate: 94,
+    url: "https://x.com/OSINTtechnical",
+    events_7d: 5,
+    events_30d: 22,
+    last_event_at: "2026-05-07T10:45:00Z",
+    trust_tier: 1,
+    notes: "Technical OSINT analysis; emphasis on equipment identification and geolocation.",
+  },
+  {
+    rank: 3,
+    handle: "@war_mapper",
+    display_name: "@war_mapper",
+    platform: "x",
+    events_count: 9,
+    verified_rate: 88,
+    url: "https://x.com/war_mapper",
+    events_7d: 9,
+    events_30d: 41,
+    last_event_at: "2026-05-07T12:22:00Z",
+    trust_tier: 2,
+    notes: "Mapping-focused account with strong track record on frontline positions.",
+  },
+  {
+    rank: 4,
+    handle: "reuters-wire",
+    display_name: "Reuters Wire",
+    platform: "wire",
+    events_count: 6,
+    verified_rate: 96,
+    url: "https://reuters.com",
+    events_7d: 6,
+    events_30d: 29,
+    last_event_at: "2026-05-07T12:31:00Z",
+    trust_tier: 1,
+    notes: "Global wire service. High editorial standards but limited Ukraine-specific depth.",
+  },
+  {
+    rank: 5,
+    handle: "afp-wire",
+    display_name: "AFP Wire",
+    platform: "wire",
+    events_count: 4,
+    verified_rate: 95,
+    url: "https://afp.com",
+    events_7d: 4,
+    events_30d: 18,
+    last_event_at: "2026-05-07T11:55:00Z",
+    trust_tier: 1,
+    notes: "Global wire service with Kyiv bureau.",
+  },
+  {
+    rank: 6,
+    handle: "@GeoConfirmed",
+    display_name: "@GeoConfirmed",
+    platform: "x",
+    events_count: 7,
+    verified_rate: 86,
+    url: "https://x.com/GeoConfirmed",
+    events_7d: 7,
+    events_30d: 31,
+    last_event_at: "2026-05-07T11:40:00Z",
+    trust_tier: 2,
+    notes: "Community geolocation project with moderated contributor network.",
+  },
+  {
+    rank: 7,
+    handle: "telegram-mil",
+    display_name: "Telegram (mil channels)",
+    platform: "telegram",
+    events_count: 22,
+    verified_rate: 64,
+    url: "https://t.me",
+    events_7d: 22,
+    events_30d: 94,
+    last_event_at: "2026-05-07T12:42:00Z",
+    trust_tier: 3,
+    notes: "Aggregated Ukrainian and Russian milblog channels. High volume, lower verification rate. Tracked separately from individual accounts.",
+  },
+  {
+    rank: 8,
+    handle: "ukrinform-rss",
+    display_name: "Ukrinform (RSS)",
+    platform: "rss",
+    events_count: 8,
+    verified_rate: 78,
+    url: "https://ukrinform.ua",
+    events_7d: 8,
+    events_30d: 35,
+    last_event_at: "2026-05-07T12:00:00Z",
+    trust_tier: 2,
+    notes: "Ukrainian state news agency. Apply appropriate editorial weighting to coverage of Ukrainian operations.",
+  },
+];
