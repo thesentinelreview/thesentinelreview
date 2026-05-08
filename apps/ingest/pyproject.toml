@@ -57,6 +57,10 @@ ignore_missing_imports = true
 [tool.hatch.build.targets.wheel]
 packages = ["sentinel"]
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
