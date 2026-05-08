@@ -1,13 +1,20 @@
+export const dynamic = "force-dynamic";
+
 import s from "./page.module.css";
 import MapWrapper from "@/components/MapWrapper";
+import { queryEvents, queryStats, queryLatestBriefing, querySources, queryIntensity } from "@/lib/db";
 import {
-  stats,
-  mapEvents,
-  alerts,
-  intensity,
-  sources,
-  briefing,
+  mapEvents as placeholderEvents,
+  alerts as placeholderAlerts,
+  intensity as placeholderIntensity,
+  sources as placeholderSources,
+  briefing as placeholderBriefing,
   type Alert,
+  type MapEvent,
+  type BriefingData,
+  type IntensityDay,
+  type Source,
+  type Stats,
 } from "@/data/placeholder";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -29,9 +36,46 @@ function alertMarkerClass(e: Alert["event_type"]): string {
   return s.alertMarkerBlue;
 }
 
+/** Convert map events to the alerts feed — top 5, most recent first. */
+function eventsToAlerts(events: MapEvent[]): Alert[] {
+  return events.slice(0, 5).map((e) => ({
+    id: e.id,
+    event_type: e.event_type,
+    title: `${e.event_type.charAt(0).toUpperCase() + e.event_type.slice(1)}: ${e.location_name}, ${e.oblast}`,
+    confidence: e.confidence,
+    source_count: e.source_count,
+    minutes_ago: e.minutes_ago,
+  }));
+}
+
 // ── page ─────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  // Fetch all panels in parallel; fall back to placeholder data when DB is empty.
+  const [liveEvents, liveStats, liveBriefing, liveSources, liveIntensity] =
+    await Promise.all([
+      queryEvents({}),
+      queryStats(),
+      queryLatestBriefing(),
+      querySources(),
+      queryIntensity(),
+    ]);
+
+  const events: MapEvent[]       = liveEvents.length  ? liveEvents  : placeholderEvents;
+  const stats: Stats             = liveStats.events > 0 ? liveStats : { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+  const briefing: BriefingData   = liveBriefing       ?? placeholderBriefing;
+  const sources: Source[]        = liveSources.length ? liveSources : placeholderSources;
+  const intensity: IntensityDay[]= liveIntensity.length ? liveIntensity : placeholderIntensity;
+  const alerts: Alert[]          = liveEvents.length  ? eventsToAlerts(liveEvents) : placeholderAlerts;
+
+  const isLive = liveEvents.length > 0;
+
+  const nowUtc = new Date().toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }) + " UTC";
+
   return (
     <div className={s.app}>
 
@@ -50,7 +94,7 @@ export default function DashboardPage() {
           <span className={`${s.filterChip} ${s.filterChipActive}`}>24h ▾</span>
           <div className={s.liveIndicator}>
             <span className={s.liveDot} />
-            <span>Live</span>
+            <span>{isLive ? "Live" : "Demo"}</span>
           </div>
         </div>
       </div>
@@ -70,8 +114,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={s.mapCanvas}>
-            {/* MapLibre real map */}
-            <MapWrapper events={mapEvents} />
+            <MapWrapper events={events} />
 
             {/* Legend overlay */}
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
@@ -97,7 +140,7 @@ export default function DashboardPage() {
               <div className={s.scrubberFill}/>
               <div className={s.scrubberHandle}/>
             </div>
-            <span className={s.scrubberTime}>14:42 UTC</span>
+            <span className={s.scrubberTime}>{nowUtc}</span>
           </div>
         </div>
 
@@ -127,10 +170,14 @@ export default function DashboardPage() {
               </div>
               <div className={s.stat}>
                 <div className={s.statLabel}>vs 7d avg</div>
-                <div className={`${s.statValue} ${s.statValueUp}`}>
-                  <span className={s.statArrow}>↑</span>
-                  {stats.vs_7d_avg_pct}<span className={s.statUnit}>%</span>
-                </div>
+                {stats.vs_7d_avg_pct === 0 ? (
+                  <div className={s.statValue}>—</div>
+                ) : (
+                  <div className={`${s.statValue} ${stats.vs_7d_avg_pct > 0 ? s.statValueUp : s.statValueDown}`}>
+                    <span className={s.statArrow}>{stats.vs_7d_avg_pct > 0 ? "↑" : "↓"}</span>
+                    {Math.abs(stats.vs_7d_avg_pct)}<span className={s.statUnit}>%</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -193,7 +240,7 @@ export default function DashboardPage() {
           <div className={s.briefingHeader}>
             <div className={s.briefingTitle}>Daily Briefing — Eastern Theater</div>
             <div className={s.briefingActions}>
-              <span className={s.badge}>AI DRAFT</span>
+              <span className={s.badge}>{briefing.reviewed ? "REVIEWED" : "AI DRAFT"}</span>
               <span className={`${s.badge} ${s.badgeAction}`}>EMBED ↗</span>
               <span className={`${s.badge} ${s.badgeAction}`}>EXPORT</span>
             </div>
@@ -238,4 +285,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
