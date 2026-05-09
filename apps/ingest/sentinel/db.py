@@ -294,14 +294,15 @@ def insert_briefing(
         """
         INSERT INTO briefings (
             theater, period_start, period_end,
-            draft_text, event_ids, prompt_tokens, completion_tokens
+            draft_text, published_text, status, published_at,
+            event_ids, prompt_tokens, completion_tokens
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, 'published', now(), %s, %s, %s)
         RETURNING id
         """,
         (
             theater, period_start, period_end,
-            draft_text, event_ids, prompt_tokens, completion_tokens,
+            draft_text, draft_text, event_ids, prompt_tokens, completion_tokens,
         ),
     ).fetchone()
     assert row is not None
