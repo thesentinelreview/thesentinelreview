@@ -1,0 +1,33 @@
+name: Publish White Paper PDF to main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Copy PDF from feature branch
+        run: |
+          git fetch origin claude/resume-session-Z9hz8
+          git checkout origin/claude/resume-session-Z9hz8 -- sentinel-intel-dashboard-whitepaper.pdf
+
+      - name: Commit and push PDF
+        run: |
+          git config user.name "Sentinel Bot"
+          git config user.email "bot@sentinelreview.noreply"
+          git add sentinel-intel-dashboard-whitepaper.pdf
+          if git diff --staged --quiet; then
+            echo "PDF already up to date."
+          else
+            git commit -m "Publish white paper PDF to main"
+            git push
+          fi
