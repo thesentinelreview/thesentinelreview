@@ -13,9 +13,6 @@ dependencies = [
     "httpx>=0.27",
     "feedparser>=6.0",
 
-    # Telegram ingestion (public channels via MTProto API)
-    "telethon>=1.36",
-
     # LLM
     "anthropic>=0.40",
 
@@ -31,6 +28,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+telegram = [
+    "telethon>=1.36",
+]
 dev = [
     "pytest>=8.3",
     "pytest-asyncio>=0.24",
@@ -42,6 +42,8 @@ dev = [
 [project.scripts]
 sentinel-worker = "sentinel.worker:main"
 sentinel-scheduler = "sentinel.scheduler:main"
+sentinel-run-ingest = "sentinel.runner:run_ingest"
+sentinel-run-briefing = "sentinel.runner:run_briefing"
 
 [tool.ruff]
 line-length = 100
