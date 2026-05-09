@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 09 May 2026 11:14:45 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 May 2026 18:08:41 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 Digest of Recent Articles on Just Security (May 4-8, 2026) | Just Security</title>
+      <link>https://www.justsecurity.org/137624/digest-recent-articles-just-security-may-4-8-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-may-4-8-2026</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/137624/digest-recent-articles-just-security-may-4-8-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-may-4-8-2026</guid>
+      <pubDate>Sat, 09 May 2026 12:05:09 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.justsecurity.org/137624/digest-recent-articles-just-security-may-4-8-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-may-4-8-2026">Just Security</source>
+      <description>U.S.-Israel-Iran War • Russia-Ukraine War • U.S. Military • U.S. Boat Strikes • Series: Syria in Transition • Series: When Guardrails Erode • Violent Extremism • AI Governance • Hungary • International Human Rights • Trump Executive Actions The post Digest of Recent Articles on…</description>
+    </item>
     <item>
       <title>🌍 F/A-18 Super Hornet Drops Bombs Down Smoke Stacks Of Iranian Tankers Running Blockade (Updated) | The War Zone</title>
       <link>https://www.twz.com/news-features/f-a-18-super-hornet-drops-bombs-down-smoke-stacks-of-iranian-tankers-running-blockade</link>
@@ -268,15 +277,6 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/the-achilles-heel-of-chinas-supply-chain-strategy-new-technology/">The Diplomat</source>
       <description>The NEV industry is China’s best – maybe only – hope for leading a major tech manufacturing sector. But new technologies might erase China’s advantage.</description>
-    </item>
-    <item>
-      <title>🏛️ The US Marine Corps is looking for a few good robots to build airfields | Defense News</title>
-      <link>https://www.defensenews.com/news/your-military/2026/05/08/the-us-marine-corps-is-looking-for-a-few-good-robots-to-build-airfields/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/05/08/the-us-marine-corps-is-looking-for-a-few-good-robots-to-build-airfields/</guid>
-      <pubDate>Fri, 08 May 2026 14:13:43 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/your-military/2026/05/08/the-us-marine-corps-is-looking-for-a-few-good-robots-to-build-airfields/">Defense News</source>
-      <description>For Marines who have toiled over assembling airfields in austere environments, relief may be on the way.</description>
     </item>
   </channel>
 </rss>
