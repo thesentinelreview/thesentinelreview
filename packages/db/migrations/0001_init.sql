@@ -13,7 +13,8 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;     -- fast text search on descriptions
-CREATE EXTENSION IF NOT EXISTS pg_cron;     -- scheduled refresh of materialized view
+-- pg_cron is optional; the Python scheduler handles periodic refresh in dev/local.
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 -- ---------------------------------------------------------------------------
 -- sources
@@ -245,12 +246,13 @@ WITH DATA;
 CREATE UNIQUE INDEX source_reliability_source_id_uidx
     ON source_reliability (source_id);
 
--- Hourly refresh via pg_cron (adjust schedule as needed)
-SELECT cron.schedule(
-    'refresh-source-reliability',
-    '0 * * * *',
-    'REFRESH MATERIALIZED VIEW CONCURRENTLY source_reliability'
-);
+-- Hourly refresh is handled by the Python scheduler in dev.
+-- In production with pg_cron available, uncomment:
+-- SELECT cron.schedule(
+--     'refresh-source-reliability',
+--     '0 * * * *',
+--     'REFRESH MATERIALIZED VIEW CONCURRENTLY source_reliability'
+-- );
 
 -- ---------------------------------------------------------------------------
 -- Helper function: confidence_score

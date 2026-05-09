@@ -84,7 +84,6 @@ def main() -> None:
     structlog.configure(
         processors=[
             structlog.stdlib.add_log_level,
-            structlog.stdlib.add_logger_name,
             structlog.dev.ConsoleRenderer() if sys.stderr.isatty()
             else structlog.processors.JSONRenderer(),
         ],
