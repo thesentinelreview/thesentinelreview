@@ -78,28 +78,29 @@ def fail_job(conn: psycopg.Connection, job_id: uuid.UUID, error: str) -> None:
         """
         UPDATE jobs
         SET status = CASE WHEN attempts >= max_attempts THEN 'failed' ELSE 'pending' END,
-            error = %s,
-            scheduled_at = now() + (attempts * interval '30 seconds')
+            error = %s
         WHERE id = %s
         """,
-        (error[:2000], job_id),
+        (error, job_id),
     )
     conn.commit()
 
 
-def enqueue(
+def enqueue_job(
     conn: psycopg.Connection,
+    *,
     job_type: str,
     payload: dict,
     scheduled_at: datetime | None = None,
+    max_attempts: int = 3,
 ) -> uuid.UUID:
     row = conn.execute(
         """
-        INSERT INTO jobs (job_type, payload, scheduled_at)
-        VALUES (%s, %s, COALESCE(%s, now()))
+        INSERT INTO jobs (job_type, payload, scheduled_at, max_attempts)
+        VALUES (%s, %s, COALESCE(%s, now()), %s)
         RETURNING id
         """,
-        (job_type, psycopg.types.json.Jsonb(payload), scheduled_at),
+        (job_type, psycopg.types.json.Jsonb(payload), scheduled_at, max_attempts),
     ).fetchone()
     conn.commit()
     assert row is not None
@@ -110,84 +111,60 @@ def enqueue(
 # Sources
 # ---------------------------------------------------------------------------
 
-def get_active_sources(conn: psycopg.Connection) -> list[dict]:
+def get_all_sources(conn: psycopg.Connection) -> list[dict]:
     return conn.execute(
-        "SELECT * FROM sources WHERE is_active = true ORDER BY trust_tier, handle",
+        """
+        SELECT
+            s.id, s.handle, s.display_name, s.platform, s.url,
+            s.is_active, s.trust_tier, s.notes,
+            COALESCE(sr.events_30d, 0) AS events_30d,
+            COALESCE(sr.verified_rate_30d, 0) AS verified_rate_30d,
+            sr.last_event_at
+        FROM sources s
+        LEFT JOIN source_reliability sr ON sr.source_id = s.id
+        ORDER BY s.trust_tier, sr.events_30d DESC NULLS LAST
+        """
     ).fetchall()  # type: ignore[return-value]
-
-
-def get_source(conn: psycopg.Connection, source_id: uuid.UUID) -> dict | None:
-    return conn.execute(
-        "SELECT * FROM sources WHERE id = %s",
-        (source_id,),
-    ).fetchone()  # type: ignore[return-value]
 
 
 # ---------------------------------------------------------------------------
 # Raw posts
 # ---------------------------------------------------------------------------
 
-def insert_raw_post(
+def get_unprocessed_posts(
     conn: psycopg.Connection,
     *,
     source_id: uuid.UUID,
-    external_id: str,
-    posted_at: datetime,
-    text: str,
-    media_urls: list[str] | None = None,
-    archive_url: str | None = None,
-    lang: str | None = None,
-) -> uuid.UUID | None:
-    """Insert a raw post. Returns the new id, or None if the post already exists."""
-    row = conn.execute(
-        """
-        INSERT INTO raw_posts (source_id, external_id, posted_at, text, media_urls, archive_url, lang)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (source_id, external_id) DO NOTHING
-        RETURNING id
-        """,
-        (source_id, external_id, posted_at, text, media_urls or [], archive_url, lang),
-    ).fetchone()
-    return row["id"] if row else None  # type: ignore[index]
-
-
-def get_unprocessed_posts(
-    conn: psycopg.Connection,
-    source_id: uuid.UUID,
-    limit: int = 50,
+    batch_size: int = 10,
 ) -> list[dict]:
     return conn.execute(
         """
-        SELECT * FROM raw_posts
+        SELECT id, source_id, external_id, posted_at, text, media_urls, lang
+        FROM raw_posts
         WHERE source_id = %s
           AND processed_at IS NULL
           AND skip_reason IS NULL
-        ORDER BY posted_at DESC
+        ORDER BY posted_at ASC
         LIMIT %s
         """,
-        (source_id, limit),
+        (source_id, batch_size),
     ).fetchall()  # type: ignore[return-value]
 
 
 def mark_post_processed(
     conn: psycopg.Connection,
-    raw_post_id: uuid.UUID,
+    post_id: uuid.UUID,
+    *,
     skip_reason: str | None = None,
 ) -> None:
     conn.execute(
-        "UPDATE raw_posts SET processed_at = now(), skip_reason = %s WHERE id = %s",
-        (skip_reason, raw_post_id),
+        """
+        UPDATE raw_posts
+        SET processed_at = now(), skip_reason = %s
+        WHERE id = %s
+        """,
+        (skip_reason, post_id),
     )
-
-
-def get_posts_by_ids(
-    conn: psycopg.Connection,
-    ids: list[uuid.UUID],
-) -> list[dict]:
-    return conn.execute(
-        "SELECT * FROM raw_posts WHERE id = ANY(%s)",
-        (ids,),
-    ).fetchall()  # type: ignore[return-value]
 
 
 # ---------------------------------------------------------------------------
@@ -199,8 +176,8 @@ def insert_event(
     *,
     event_type: str,
     occurred_at: datetime,
-    lng: float,
     lat: float,
+    lng: float,
     location_name: str,
     oblast: str,
     actor: str | None,
@@ -211,21 +188,19 @@ def insert_event(
     row = conn.execute(
         """
         INSERT INTO events (
-            event_type, occurred_at, location,
-            location_name, oblast, actor, description,
-            confidence, held_for_review
+            event_type, occurred_at, location, location_name, oblast,
+            actor, description, confidence, held_for_review, published_at
         )
         VALUES (
-            %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326),
+            %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s,
             %s, %s, %s, %s,
-            %s, %s
+            CASE WHEN %s THEN NULL ELSE now() END
         )
         RETURNING id
         """,
         (
-            event_type, occurred_at, lng, lat,
-            location_name, oblast, actor, description,
-            confidence, held_for_review,
+            event_type, occurred_at, lng, lat, location_name, oblast,
+            actor, description, confidence, held_for_review, held_for_review,
         ),
     ).fetchone()
     assert row is not None
@@ -238,15 +213,62 @@ def link_event_source(
     event_id: uuid.UUID,
     source_id: uuid.UUID,
     raw_post_id: uuid.UUID,
-    relationship: str,
+    relationship: str = "primary",
 ) -> None:
     conn.execute(
         """
         INSERT INTO event_sources (event_id, source_id, raw_post_id, relationship)
         VALUES (%s, %s, %s, %s)
-        ON CONFLICT (event_id, raw_post_id) DO NOTHING
+        ON CONFLICT DO NOTHING
         """,
         (event_id, source_id, raw_post_id, relationship),
+    )
+
+
+def find_nearby_event(
+    conn: psycopg.Connection,
+    *,
+    lat: float,
+    lng: float,
+    radius_km: float = 5.0,
+    hours: int = 6,
+    event_type: str,
+) -> dict | None:
+    return conn.execute(
+        """
+        SELECT id, event_type, occurred_at, confidence,
+               ST_Distance(
+                   location::geography,
+                   ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+               ) / 1000 AS distance_km
+        FROM events
+        WHERE occurred_at > now() - (%s * interval '1 hour')
+          AND event_type = %s
+          AND ST_DWithin(
+              location::geography,
+              ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
+              %s * 1000
+          )
+        ORDER BY distance_km ASC
+        LIMIT 1
+        """,
+        (lng, lat, hours, event_type, lng, lat, radius_km),
+    ).fetchone()  # type: ignore[return-value]
+
+
+def update_event_confidence(
+    conn: psycopg.Connection,
+    event_id: uuid.UUID,
+    confidence: str,
+    held_for_review: bool = False,
+) -> None:
+    conn.execute(
+        """
+        UPDATE events
+        SET confidence = %s, held_for_review = %s
+        WHERE id = %s
+        """,
+        (confidence, held_for_review, event_id),
     )
 
 
@@ -294,14 +316,15 @@ def insert_briefing(
         """
         INSERT INTO briefings (
             theater, period_start, period_end,
-            draft_text, event_ids, prompt_tokens, completion_tokens
+            draft_text, published_text, status, published_at,
+            event_ids, prompt_tokens, completion_tokens
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, 'published', now(), %s, %s, %s)
         RETURNING id
         """,
         (
             theater, period_start, period_end,
-            draft_text, event_ids, prompt_tokens, completion_tokens,
+            draft_text, draft_text, event_ids, prompt_tokens, completion_tokens,
         ),
     ).fetchone()
     assert row is not None
@@ -322,58 +345,19 @@ def log_llm_call(
     prompt_tokens: int | None = None,
     completion_tokens: int | None = None,
     job_id: uuid.UUID | None = None,
-    raw_post_id: uuid.UUID | None = None,
     briefing_id: uuid.UUID | None = None,
+    raw_post_id: uuid.UUID | None = None,
 ) -> None:
     conn.execute(
         """
         INSERT INTO llm_logs (
             job_id, raw_post_id, briefing_id,
-            purpose, model, prompt_tokens, completion_tokens,
-            prompt, response
+            purpose, model, prompt_tokens, completion_tokens, prompt, response
         )
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             job_id, raw_post_id, briefing_id,
-            purpose, model, prompt_tokens, completion_tokens,
-            prompt, response,
+            purpose, model, prompt_tokens, completion_tokens, prompt, response,
         ),
     )
-
-
-# ---------------------------------------------------------------------------
-# Candidate event deduplication helper
-# ---------------------------------------------------------------------------
-
-def find_nearby_events(
-    conn: psycopg.Connection,
-    *,
-    lng: float,
-    lat: float,
-    radius_km: float = 5.0,
-    within_hours: float = 6.0,
-    event_type: str,
-) -> list[dict[str, Any]]:
-    """Return existing events within radius_km and within_hours of the candidate."""
-    return conn.execute(
-        """
-        SELECT
-            e.id, e.event_type, e.occurred_at, e.description,
-            e.confidence, e.location_name,
-            ST_Distance(e.location::geography, ST_MakePoint(%s,%s)::geography) / 1000 AS dist_km,
-            COUNT(DISTINCT es.source_id) AS source_count
-        FROM events e
-        LEFT JOIN event_sources es ON es.event_id = e.id
-        WHERE e.event_type = %s
-          AND ST_DWithin(
-              e.location::geography,
-              ST_MakePoint(%s, %s)::geography,
-              %s * 1000
-          )
-          AND e.occurred_at > now() - (%s * interval '1 hour')
-        GROUP BY e.id
-        ORDER BY dist_km ASC, e.occurred_at DESC
-        """,
-        (lng, lat, event_type, lng, lat, radius_km, within_hours),
-    ).fetchall()  # type: ignore[return-value]
