@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 09 May 2026 18:08:41 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 May 2026 18:27:14 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Drone Swarms Packed Into Unassuming Containers Sought By DARPA | The War Zone</title>
+      <link>https://www.twz.com/news-features/drone-swarms-packed-into-unassuming-containers-sought-by-darpa</link>
+      <guid isPermaLink="true">https://www.twz.com/news-features/drone-swarms-packed-into-unassuming-containers-sought-by-darpa</guid>
+      <pubDate>Sat, 09 May 2026 14:20:52 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.twz.com/news-features/drone-swarms-packed-into-unassuming-containers-sought-by-darpa">The War Zone</source>
+      <description>Remotely triggered containerized drone swarms, potentially placed behind enemy lines, create a hard-to-defend-against threat from pretty much everywhere. The post Drone Swarms Packed Into Unassuming Containers Sought By DARPA appeared first on The War Zone.</description>
+    </item>
     <item>
       <title>🌍 Digest of Recent Articles on Just Security (May 4-8, 2026) | Just Security</title>
       <link>https://www.justsecurity.org/137624/digest-recent-articles-just-security-may-4-8-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=digest-recent-articles-just-security-may-4-8-2026</link>
@@ -268,15 +277,6 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/kroenig-quoted-in-the-wall-street-journal-on-rubios-trip-to-italy/">Atlantic Council</source>
       <description>On May 7, Atlantic Council vice president and Scowcroft Center senior director Matthew Kroenig was quoted in The Wall Street Journal about Secretary of State Marco Rubio&apos;s trip to Italy, arguing that he is the Trump administration&apos;s most effective foreign policy communicator.…</description>
-    </item>
-    <item>
-      <title>🌏 The Achilles’ Heel of China’s Supply Chain Strategy: New Technology | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/the-achilles-heel-of-chinas-supply-chain-strategy-new-technology/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/the-achilles-heel-of-chinas-supply-chain-strategy-new-technology/</guid>
-      <pubDate>Fri, 08 May 2026 23:24:00 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://thediplomat.com/2026/05/the-achilles-heel-of-chinas-supply-chain-strategy-new-technology/">The Diplomat</source>
-      <description>The NEV industry is China’s best – maybe only – hope for leading a major tech manufacturing sector. But new technologies might erase China’s advantage.</description>
     </item>
   </channel>
 </rss>
