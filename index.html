@@ -89,6 +89,29 @@
   .nav-links a:hover, .nav-links a.active { color: var(--gold-pale); border-bottom-color: var(--gold); }
   .nav-links a.nav-dashboard { color: var(--gold-pale); border: 1px solid rgba(184,136,42,0.5); margin: 8px 8px 8px 16px; padding: 7px 14px; font-size: 11px; }
   .nav-links a.nav-dashboard:hover { background: rgba(184,136,42,0.15); border-color: var(--gold); border-bottom-color: var(--gold); }
+  .nav-whitepaper-btn { background: none; border: 1px solid rgba(245,240,232,0.25); color: var(--gray-light); font-family: 'Courier Prime', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; margin: 8px 8px 8px 4px; padding: 7px 14px; text-decoration: none; display: block; transition: all 0.2s; }
+  .nav-whitepaper-btn:hover { background: rgba(245,240,232,0.08); border-color: rgba(245,240,232,0.5); color: var(--white); }
+
+  /* WHITE PAPER MODAL */
+  .wp-overlay { display: none; position: fixed; inset: 0; background: rgba(7,15,30,0.88); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  .wp-overlay.open { display: flex; }
+  .wp-modal { background: var(--navy-deep); border: 1px solid var(--gold); max-width: 480px; width: 100%; position: relative; }
+  .wp-modal-header { background: var(--navy-mid); border-bottom: 2px solid var(--gold); padding: 20px 24px 16px; }
+  .wp-modal-eyebrow { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .wp-modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); line-height: 1.25; }
+  .wp-modal-body { padding: 24px; }
+  .wp-modal-desc { font-size: 13px; color: var(--gray-light); line-height: 1.6; margin-bottom: 20px; }
+  .wp-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--gray-mid); font-size: 22px; cursor: pointer; line-height: 1; padding: 0; }
+  .wp-close:hover { color: var(--gold-pale); }
+  .wp-form-group { margin-bottom: 14px; }
+  .wp-form-group label { display: block; font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .wp-form-group input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(184,136,42,0.3); color: var(--white); padding: 10px 14px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .wp-form-group input:focus { border-color: var(--gold); }
+  .wp-submit { width: 100%; background: var(--gold); border: none; color: var(--navy-deep); padding: 13px; font-family: 'Courier Prime', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 6px; }
+  .wp-submit:hover { background: var(--gold-bright); }
+  .wp-submit:disabled { opacity: 0.6; cursor: default; }
+  .wp-status { margin-top: 14px; font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.05em; line-height: 1.5; display: none; }
+  .wp-fine-print { font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--gray-mid); margin-top: 14px; letter-spacing: 0.04em; }
   .live-indicator { display: flex; align-items: center; gap: 8px; font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--gold-pale); letter-spacing: 0.1em; }
   .live-dot { width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: pulse 2s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -320,6 +343,7 @@
       <a href="#regions">Regional</a>
       <a href="#newsletter">Briefing</a>
       <a href="https://dashboard.thesentinelreview.com" target="_blank" class="nav-dashboard">⬡ Intel Dashboard</a>
+      <button class="nav-whitepaper-btn" onclick="document.querySelector('.wp-overlay').classList.add('open')">↓ White Paper</button>
     </div>
     <div class="live-indicator">
       <span class="live-dot"></span>
@@ -692,9 +716,82 @@ function showSentinelStatus(type, message) {
   </div>
 </footer>
 
+<!-- WHITE PAPER MODAL -->
+<div class="wp-overlay" id="wp-overlay" role="dialog" aria-modal="true" aria-label="Download White Paper">
+  <div class="wp-modal">
+    <button class="wp-close" onclick="document.getElementById('wp-overlay').classList.remove('open')" aria-label="Close">×</button>
+    <div class="wp-modal-header">
+      <div class="wp-modal-eyebrow">Intelligence Report — May 2026</div>
+      <div class="wp-modal-title">The Sentinel Review Intel Dashboard</div>
+    </div>
+    <div class="wp-modal-body">
+      <p class="wp-modal-desc">Enter your email and we'll send you the full white paper — covering the platform architecture, OSINT pipeline, confidence scoring methodology, and editorial principles.</p>
+      <form id="wp-form" onsubmit="handleWPSubmit(event)">
+        <div class="wp-form-group">
+          <label for="wp-name">Full Name</label>
+          <input type="text" id="wp-name" placeholder="Your name" required>
+        </div>
+        <div class="wp-form-group">
+          <label for="wp-email">Email Address</label>
+          <input type="email" id="wp-email" placeholder="your@email.com" required>
+        </div>
+        <button type="submit" class="wp-submit" id="wp-submit-btn">↓ Send Me the White Paper</button>
+        <div id="wp-status" class="wp-status"></div>
+        <p class="wp-fine-print">No spam. You'll also receive The Sentinel Review daily briefing — unsubscribe any time.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   const now = new Date();
   document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  document.getElementById('wp-overlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('wp-overlay').classList.remove('open');
+  });
+
+  function handleWPSubmit(e) {
+    e.preventDefault();
+    var name  = document.getElementById('wp-name').value.trim();
+    var email = document.getElementById('wp-email').value.trim();
+    var btn   = document.getElementById('wp-submit-btn');
+    var status = document.getElementById('wp-status');
+
+    btn.disabled = true;
+    btn.textContent = '⋯ Sending…';
+
+    var fd = new FormData();
+    fd.append('email', email);
+    fd.append('metadata__name', name);
+    fd.append('metadata__whitepaper', 'true');
+
+    fetch('https://buttondown.com/api/emails/embed-subscribe/TheSentinelReview', {
+      method: 'POST', body: fd, mode: 'no-cors'
+    }).then(function() {
+      status.style.display = 'block';
+      status.style.color = '#7ED957';
+      status.textContent = '✓ Check your inbox — the white paper is on its way. Please confirm your email if prompted.';
+      btn.textContent = '✓ Sent';
+      document.getElementById('wp-name').value = '';
+      document.getElementById('wp-email').value = '';
+      var a = document.createElement('a');
+      a.href = '/sentinel-intel-dashboard-whitepaper.pdf';
+      a.download = 'Sentinel-Intel-Dashboard-Whitepaper.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }).catch(function() {
+      status.style.display = 'block';
+      status.style.color = '#E57373';
+      status.textContent = 'Something went wrong. Please try again or email contact@thesentinelreview.com';
+      btn.disabled = false;
+      btn.textContent = '↓ Send Me the White Paper';
+    });
+  }
 </script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b09afe07b4af4784a5157eab2f122e1d"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
