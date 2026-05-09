@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
-import { getEventDetail, type EventSource, type EvidenceItem, type ChangeHistoryEntry } from "@/data/placeholder";
+import type { EventSource, EvidenceItem, ChangeHistoryEntry } from "@/data/placeholder";
+import { getEventDetail } from "@/lib/queries";
 import s from "./page.module.css";
+
+export const dynamic = "force-dynamic";
 
 function fmtUTC(iso: string): string {
   const d = new Date(iso);
@@ -60,7 +63,7 @@ function evidenceTypeLabel(t: EvidenceItem["type"]): string {
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const evt = getEventDetail(id);
+  const evt = await getEventDetail(id);
   if (!evt) notFound();
 
   return (

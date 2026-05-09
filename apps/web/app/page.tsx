@@ -1,14 +1,17 @@
+import Link from "next/link";
 import s from "./page.module.css";
 import MapWrapper from "@/components/MapWrapper";
+import { type Alert } from "@/data/placeholder";
 import {
-  stats,
-  mapEvents,
-  alerts,
-  intensity,
-  sources,
-  briefing,
-  type Alert,
-} from "@/data/placeholder";
+  getStats,
+  getMapEvents,
+  getAlerts,
+  getIntensity,
+  getTopSources,
+  getLatestBriefing,
+} from "@/lib/queries";
+
+export const dynamic = "force-dynamic";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,9 +32,26 @@ function alertMarkerClass(e: Alert["event_type"]): string {
   return s.alertMarkerBlue;
 }
 
+function nowUTC(): string {
+  return new Date().toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }) + " UTC";
+}
+
 // ── page ─────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
+    getStats(),
+    getMapEvents(),
+    getAlerts(),
+    getIntensity(),
+    getTopSources(),
+    getLatestBriefing(),
+  ]);
+
   return (
     <div className={s.app}>
 
@@ -65,15 +85,13 @@ export default function DashboardPage() {
             <div className={s.mapMeta}>
               <span><strong>{stats.events}</strong> events</span>
               <span><strong>{stats.strikes}</strong> strikes</span>
-              <span><strong>{stats.events - stats.strikes}</strong> movements</span>
+              <span><strong>{Math.max(0, stats.events - stats.strikes)}</strong> movements</span>
             </div>
           </div>
 
           <div className={s.mapCanvas}>
-            {/* MapLibre real map */}
             <MapWrapper events={mapEvents} />
 
-            {/* Legend overlay */}
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
               <div className={s.legendItem}>
                 <span className={s.legendDot} style={{ background: "#e63946" }}/>
@@ -97,7 +115,7 @@ export default function DashboardPage() {
               <div className={s.scrubberFill}/>
               <div className={s.scrubberHandle}/>
             </div>
-            <span className={s.scrubberTime}>14:42 UTC</span>
+            <span className={s.scrubberTime}>{nowUTC()}</span>
           </div>
         </div>
 
@@ -127,9 +145,9 @@ export default function DashboardPage() {
               </div>
               <div className={s.stat}>
                 <div className={s.statLabel}>vs 7d avg</div>
-                <div className={`${s.statValue} ${s.statValueUp}`}>
-                  <span className={s.statArrow}>↑</span>
-                  {stats.vs_7d_avg_pct}<span className={s.statUnit}>%</span>
+                <div className={`${s.statValue} ${stats.vs_7d_avg_pct >= 0 ? s.statValueUp : ""}`}>
+                  <span className={s.statArrow}>{stats.vs_7d_avg_pct >= 0 ? "↑" : "↓"}</span>
+                  {Math.abs(stats.vs_7d_avg_pct)}<span className={s.statUnit}>%</span>
                 </div>
               </div>
             </div>
@@ -164,21 +182,27 @@ export default function DashboardPage() {
               <div className={s.panelMeta}>{alerts.length} active</div>
             </div>
             <div className={s.alerts}>
-              {alerts.map((a) => (
-                <div key={a.id} className={s.alertItem}>
-                  <div className={`${s.alertMarker} ${alertMarkerClass(a.event_type)}`}/>
-                  <div className={s.alertBody}>
-                    <div className={s.alertTitle}>{a.title}</div>
-                    <div className={s.alertMeta}>
-                      {a.source_count} source{a.source_count !== 1 ? "s" : ""} ·{" "}
-                      <span className={a.confidence === "verified" ? s.verified : undefined}>
-                        {confidenceLabel(a.confidence)}
-                      </span>
-                      {" "}· {fmtMinutes(a.minutes_ago)}
-                    </div>
-                  </div>
+              {alerts.length === 0 ? (
+                <div style={{ padding: "16px", fontFamily: "var(--font-mono-stack)", fontSize: 11, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>
+                  No active alerts
                 </div>
-              ))}
+              ) : (
+                alerts.map((a) => (
+                  <Link key={a.id} href={`/event/${a.id}`} className={s.alertItem} style={{ textDecoration: "none", color: "inherit" }}>
+                    <div className={`${s.alertMarker} ${alertMarkerClass(a.event_type)}`}/>
+                    <div className={s.alertBody}>
+                      <div className={s.alertTitle}>{a.title}</div>
+                      <div className={s.alertMeta}>
+                        {a.source_count} source{a.source_count !== 1 ? "s" : ""} ·{" "}
+                        <span className={a.confidence === "verified" ? s.verified : undefined}>
+                          {confidenceLabel(a.confidence)}
+                        </span>
+                        {" "}· {fmtMinutes(a.minutes_ago)}
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
 
@@ -193,24 +217,35 @@ export default function DashboardPage() {
           <div className={s.briefingHeader}>
             <div className={s.briefingTitle}>Daily Briefing — Eastern Theater</div>
             <div className={s.briefingActions}>
-              <span className={s.badge}>AI DRAFT</span>
-              <span className={`${s.badge} ${s.badgeAction}`}>EMBED ↗</span>
-              <span className={`${s.badge} ${s.badgeAction}`}>EXPORT</span>
+              <span className={s.badge}>{briefing?.reviewed ? "REVIEWED" : "AI DRAFT"}</span>
+              {briefing && (
+                <Link href={`/briefing/${briefing.id}`} className={`${s.badge} ${s.badgeAction}`} style={{ textDecoration: "none" }}>
+                  OPEN ↗
+                </Link>
+              )}
             </div>
           </div>
-          <div className={s.briefingByline}>
-            {briefing.date} · {briefing.utc_time} · Compiled from {briefing.source_count} sources ·{" "}
-            {briefing.reviewed ? "Reviewed" : "AI Draft"}
-          </div>
-          <div className={s.briefingBody}>
-            {briefing.paragraphs.map((p, i) => (
-              <p key={i}>
-                {i === briefing.paragraphs.length - 1 ? (
-                  <>{p} <a href="#" className={s.briefingLink}>See full briefing →</a></>
-                ) : p}
-              </p>
-            ))}
-          </div>
+          {briefing ? (
+            <>
+              <div className={s.briefingByline}>
+                {briefing.date} · {briefing.utc_time} · Compiled from {briefing.source_count} sources ·{" "}
+                {briefing.reviewed ? "Reviewed" : "AI Draft"}
+              </div>
+              <div className={s.briefingBody}>
+                {briefing.paragraphs.map((p, i) => (
+                  <p key={i}>
+                    {i === briefing.paragraphs.length - 1 ? (
+                      <>{p} <Link href={`/briefing/${briefing.id}`} className={s.briefingLink}>See full briefing →</Link></>
+                    ) : p}
+                  </p>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className={s.briefingByline} style={{ borderBottom: "none", paddingBottom: 0 }}>
+              No briefing has been generated yet
+            </div>
+          )}
         </div>
 
         {/* Top sources */}
@@ -220,16 +255,22 @@ export default function DashboardPage() {
             <div className={s.panelMeta}>events · verified rate</div>
           </div>
           <div className={s.sourcesList}>
-            {sources.map((src) => (
-              <div key={src.rank} className={s.sourceRow}>
-                <span className={s.sourceRank}>{String(src.rank).padStart(2, "0")}</span>
-                <span className={s.sourceName}>{src.display_name}</span>
-                <span className={s.sourceCount}>{src.events_count}</span>
-                <span className={`${s.sourceRate} ${src.verified_rate >= 80 ? s.sourceRateHigh : s.sourceRateMid}`}>
-                  {src.verified_rate}%
-                </span>
+            {sources.length === 0 ? (
+              <div style={{ padding: "16px", fontFamily: "var(--font-mono-stack)", fontSize: 11, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>
+                No source activity yet
               </div>
-            ))}
+            ) : (
+              sources.map((src) => (
+                <div key={src.rank} className={s.sourceRow}>
+                  <span className={s.sourceRank}>{String(src.rank).padStart(2, "0")}</span>
+                  <span className={s.sourceName}>{src.display_name}</span>
+                  <span className={s.sourceCount}>{src.events_count}</span>
+                  <span className={`${s.sourceRate} ${src.verified_rate >= 80 ? s.sourceRateHigh : s.sourceRateMid}`}>
+                    {src.verified_rate}%
+                  </span>
+                </div>
+              ))
+            )}
           </div>
           <div className={s.sourcesFooter}>Verification rate over rolling 30 days</div>
         </div>
@@ -238,4 +279,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

@@ -1,11 +1,15 @@
 import SiteNav from "@/components/SiteNav";
-import { allSources, type SourceDetail } from "@/data/placeholder";
+import type { SourceDetail } from "@/data/placeholder";
+import { getAllSources } from "@/lib/queries";
 import s from "./page.module.css";
+
+export const dynamic = "force-dynamic";
 
 function fmtRelativeDate(iso: string): string {
   const d = new Date(iso);
-  const now = new Date("2026-05-07T14:42:00Z");
-  const mins = Math.floor((now.getTime() - d.getTime()) / 60000);
+  if (!d.getTime()) return "—";
+  const mins = Math.floor((Date.now() - d.getTime()) / 60000);
+  if (mins < 0) return "—";
   if (mins < 60) return `${mins}m ago`;
   const h = Math.floor(mins / 60);
   if (h < 24) return `${h}h ago`;
@@ -50,9 +54,12 @@ function rateFillClass(r: number, s: Record<string, string>): string {
   return s.rateFillLow;
 }
 
-export default function SourcesPage() {
+export default async function SourcesPage() {
+  const allSources = await getAllSources();
   const totalSources = allSources.length;
-  const avgRate = Math.round(allSources.reduce((a, b) => a + b.verified_rate, 0) / totalSources);
+  const avgRate = totalSources === 0
+    ? 0
+    : Math.round(allSources.reduce((a, b) => a + b.verified_rate, 0) / totalSources);
 
   return (
     <div className={s.page}>

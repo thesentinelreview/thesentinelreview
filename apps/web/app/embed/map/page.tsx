@@ -1,7 +1,10 @@
 import MapWrapper from "@/components/MapWrapper";
-import { mapEvents } from "@/data/placeholder";
+import { getMapEvents } from "@/lib/queries";
 
-export default function EmbedMapPage() {
+export const dynamic = "force-dynamic";
+
+export default async function EmbedMapPage() {
+  const mapEvents = await getMapEvents();
   return (
     <div style={{
       margin: "-20px",

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
-import { getFullBriefing, getEventDetail } from "@/data/placeholder";
+import { getFullBriefing, getEventDetail } from "@/lib/queries";
 import s from "./page.module.css";
+
+export const dynamic = "force-dynamic";
 
 function dotClass(type: string, s: Record<string, string>): string {
   if (type === "strike") return s.dotStrike;
@@ -12,8 +14,12 @@ function dotClass(type: string, s: Record<string, string>): string {
 
 export default async function BriefingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const brief = getFullBriefing(id);
+  const brief = await getFullBriefing(id);
   if (!brief) notFound();
+
+  const referencedEvents = (
+    await Promise.all(brief.referenced_event_ids.map((eid) => getEventDetail(eid)))
+  ).filter((e): e is NonNullable<typeof e> => e !== null);
 
   const embedIframe = `<iframe src="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/embed/briefing/${id}" width="100%" height="220" frameborder="0" style="border:none;background:#0c0d10"></iframe>`;
 
@@ -97,20 +103,16 @@ export default async function BriefingPage({ params }: { params: Promise<{ id: s
           <div className={s.panel}>
             <div className={s.panelHeader}>
               <div className={s.panelTitle}>Referenced events</div>
-              <div className={s.panelMeta}>{brief.referenced_event_ids.length}</div>
+              <div className={s.panelMeta}>{referencedEvents.length}</div>
             </div>
             <div className={s.eventList}>
-              {brief.referenced_event_ids.map((eid) => {
-                const evt = getEventDetail(eid);
-                if (!evt) return null;
-                return (
-                  <Link key={eid} href={`/event/${eid}`} className={s.eventRow}>
-                    <span className={`${s.eventDot} ${dotClass(evt.event_type, s)}`} />
-                    <span className={s.eventRowName}>{evt.location_name}</span>
-                    <span className={s.eventRowId}>{eid.toUpperCase()}</span>
-                  </Link>
-                );
-              })}
+              {referencedEvents.map((evt) => (
+                <Link key={evt.id} href={`/event/${evt.id}`} className={s.eventRow}>
+                  <span className={`${s.eventDot} ${dotClass(evt.event_type, s)}`} />
+                  <span className={s.eventRowName}>{evt.location_name}</span>
+                  <span className={s.eventRowId}>{evt.id.slice(0, 8).toUpperCase()}</span>
+                </Link>
+              ))}
             </div>
           </div>
 
