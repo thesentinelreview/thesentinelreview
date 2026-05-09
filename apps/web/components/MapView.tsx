@@ -64,6 +64,7 @@ function buildGeoJSON(events: MapEvent[]): GeoJSON.FeatureCollection {
 function popupHTML(props: Record<string, unknown>): string {
   const type = String(props.event_type ?? "");
   const conf = String(props.confidence ?? "");
+  const id = String(props.id ?? "");
   const color = COLORS[type] ?? "#e6e4dc";
   return `
     <div style="
@@ -84,14 +85,24 @@ function popupHTML(props: Record<string, unknown>): string {
       <div style="font-size:12px;line-height:1.45;color:#e6e4dc;margin-bottom:8px;">
         ${props.description}
       </div>
-      <div style="display:flex;justify-content:space-between;color:#989790;">
-        <span>${props.source_count} source${Number(props.source_count) !== 1 ? "s" : ""} · ${fmtMins(Number(props.minutes_ago))}</span>
-        <span style="
-          display:inline-block;
-          width:8px;height:8px;border-radius:50%;
-          background:${color};
-          margin-top:2px;
-        "></span>
+      <div style="display:flex;justify-content:space-between;align-items:center;color:#989790;">
+        <span>
+          <span style="
+            display:inline-block;
+            width:8px;height:8px;border-radius:50%;
+            background:${color};
+            margin-right:5px;vertical-align:middle;
+          "></span>
+          ${props.source_count} source${Number(props.source_count) !== 1 ? "s" : ""} · ${fmtMins(Number(props.minutes_ago))}
+        </span>
+        <a href="/event/${id}" style="
+          color:#e6e4dc;
+          text-decoration:none;
+          font-size:9px;
+          letter-spacing:.08em;
+          border-bottom:1px solid #3a3d46;
+          pointer-events:auto;
+        ">Details →</a>
       </div>
     </div>
   `;
