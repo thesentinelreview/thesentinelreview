@@ -87,6 +87,8 @@
   .nav-links { display: flex; flex-wrap: wrap; }
   .nav-links a { display: block; padding: 15px 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-light); text-decoration: none; transition: all 0.2s; border-bottom: 2px solid transparent; margin-bottom: -1px; }
   .nav-links a:hover, .nav-links a.active { color: var(--gold-pale); border-bottom-color: var(--gold); }
+  .nav-links a.nav-dashboard { color: var(--gold-pale); border: 1px solid rgba(184,136,42,0.5); margin: 8px 8px 8px 16px; padding: 7px 14px; font-size: 11px; }
+  .nav-links a.nav-dashboard:hover { background: rgba(184,136,42,0.15); border-color: var(--gold); border-bottom-color: var(--gold); }
   .live-indicator { display: flex; align-items: center; gap: 8px; font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--gold-pale); letter-spacing: 0.1em; }
   .live-dot { width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: pulse 2s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -317,6 +319,7 @@
       <a href="#news">Latest</a>
       <a href="#regions">Regional</a>
       <a href="#newsletter">Briefing</a>
+      <a href="https://thesentinelreview-git-cl-4c9d0f-sentinel-media-group-s-projects.vercel.app" target="_blank" class="nav-dashboard">⬡ Intel Dashboard</a>
     </div>
     <div class="live-indicator">
       <span class="live-dot"></span>
