@@ -41,6 +41,7 @@ dev = [
 
 [project.scripts]
 sentinel-worker = "sentinel.worker:main"
+sentinel-scheduler = "sentinel.scheduler:main"
 
 [tool.ruff]
 line-length = 100
