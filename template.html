@@ -294,6 +294,7 @@
   <div class="inner">
     <div class="date-info">
       <span class="classification">UNCLASSIFIED // PUBLIC RELEASE</span>
+      <span class="classification" style="border-color: rgba(184,136,42,0.5); color: var(--gold); font-size: 9px;">BETA</span>
       <span id="current-date"></span>
     </div>
     <div class="links">
@@ -343,7 +344,7 @@
       <a href="#regions">Regional</a>
       <a href="#newsletter">Briefing</a>
       <a href="https://dashboard.thesentinelreview.com" target="_blank" class="nav-dashboard">⬡ Intel Dashboard</a>
-      <button class="nav-whitepaper-btn" onclick="document.querySelector('.wp-overlay').classList.add('open')">↓ White Paper</button>
+      <button class="nav-whitepaper-btn" onclick="document.querySelector('.wp-overlay').classList.add('open')">&#x2193; White Paper</button>
     </div>
     <div class="live-indicator">
       <span class="live-dot"></span>
@@ -598,7 +599,7 @@ function showSentinelStatus(type, message) {
           <label for="wp-email">Email Address</label>
           <input type="email" id="wp-email" placeholder="your@email.com" required>
         </div>
-        <button type="submit" class="wp-submit" id="wp-submit-btn">↓ Send Me the White Paper</button>
+        <button type="submit" class="wp-submit" id="wp-submit-btn">&#x2193; Send Me the White Paper</button>
         <div id="wp-status" class="wp-status"></div>
         <p class="wp-fine-print">No spam. You'll also receive The Sentinel Review daily briefing — unsubscribe any time.</p>
       </form>
@@ -652,7 +653,7 @@ function showSentinelStatus(type, message) {
       status.style.color = '#E57373';
       status.textContent = 'Something went wrong. Please try again or email contact@thesentinelreview.com';
       btn.disabled = false;
-      btn.textContent = '↓ Send Me the White Paper';
+      btn.textContent = '&#x2193; Send Me the White Paper';
     });
   }
 </script>

@@ -31,6 +31,7 @@ Output requirements:
 - Paragraph 2: Key verified/partial events in detail. Explicitly distinguish verified from unconfirmed ("two clusters are corroborated...", "single-sourced and unverified...").
 - Paragraph 3 (optional): What to watch in the next 24h. Only if the data suggests a clear trend.
 - Final sentence of the last paragraph: one-line watch item ("Watch: [specific axis/development]").
+- After the last paragraph, add exactly this line as its own paragraph: "⚠ AI-generated analysis. Events sourced from open-source reporting; locations and details unverified. Not for operational use."
 - Never speculate beyond the input event list.
 - Never reference event IDs in the prose — use location names instead.
 

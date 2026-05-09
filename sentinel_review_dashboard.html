@@ -572,6 +572,28 @@
     color: var(--text);
   }
 
+  .beta-chip {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 7px;
+    border: 1px solid #B8882A;
+    color: #B8882A;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .briefing-disclaimer {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    padding: 8px 16px 10px;
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.03em;
+  }
+
   .briefing-byline {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -665,6 +687,7 @@
       <div class="brand-name">Sentinel Review</div>
       <div class="brand-divider">/</div>
       <div class="brand-section">Conflict Intelligence — Live Map</div>
+      <span class="beta-chip">Beta</span>
     </div>
     <div class="filters">
       <span class="filter-label">Theater</span>
@@ -938,18 +961,19 @@
           <span class="badge action">EXPORT</span>
         </div>
       </div>
-      <div class="briefing-byline">07 May 2026 · 14:42 UTC · Compiled from 38 sources · Reviewed</div>
+      <div class="briefing-byline">07 May 2026 · 14:42 UTC · Compiled from 38 sources</div>
       <div class="briefing-body">
         <p>Strike activity along the Pokrovsk axis intensified overnight, with seven separate impacts reported in the eastern oblast — a 23% jump over the seven-day rolling average. Two clusters are corroborated by geolocated footage from three independent accounts, including @DefMon3 and Reuters stringers on the ground. Damage assessments suggest industrial and civilian infrastructure as primary targets.</p>
         <p>Movement reports near Kupiansk remain single-sourced and unverified; treat with caution pending corroboration. <a href="#" class="briefing-link">See full briefing →</a></p>
       </div>
+      <div class="briefing-disclaimer">⚠ AI-generated analysis. Events sourced from open-source reporting; locations and details unverified. Not for operational use.</div>
     </div>
 
     <!-- Top sources -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Top sources today</div>
-        <div class="panel-meta">events · verified rate</div>
+        <div class="panel-meta">cross-ref'd · verified rate</div>
       </div>
       <div class="sources-list">
         <div class="source-row">
@@ -983,7 +1007,7 @@
           <span class="source-rate high">94%</span>
         </div>
       </div>
-      <div class="sources-footer">Verification rate over rolling 30 days</div>
+      <div class="sources-footer">Cross-referenced sources · Verification rate over rolling 30 days</div>
     </div>
   </div>
 
