@@ -675,6 +675,76 @@
     letter-spacing: 0.1em;
     border-top: 1px solid var(--border);
   }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    .main {
+      grid-template-columns: 1fr;
+    }
+    .bottom {
+      grid-template-columns: 1fr;
+    }
+    .map-canvas {
+      min-height: 320px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 10px;
+    }
+    .topbar {
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+    .brand {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .brand-section {
+      font-size: 10px;
+    }
+    .beta-chip {
+      margin-left: 0;
+    }
+    .filters {
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+    .map-canvas {
+      min-height: 220px;
+    }
+    .map-popover {
+      display: none;
+    }
+    .briefing {
+      padding: 12px 14px;
+    }
+    .panel-header {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .panel-meta {
+      width: 100%;
+      font-size: 9px;
+    }
+    .source-row {
+      padding: 8px 10px;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .source-rate {
+      width: 32px;
+    }
+    .stat-value {
+      font-size: 22px;
+    }
+    .briefing-disclaimer {
+      padding: 8px 10px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -973,7 +1043,7 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Top sources today</div>
-        <div class="panel-meta">cross-ref'd · verified rate</div>
+        <div class="panel-meta">cross-ref'd · verif. rate</div>
       </div>
       <div class="sources-list">
         <div class="source-row">
