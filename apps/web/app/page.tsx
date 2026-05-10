@@ -62,6 +62,7 @@ export default async function DashboardPage() {
           <div className={s.brandName}>Sentinel Review</div>
           <div className={s.brandDivider}>/</div>
           <div className={s.brandSection}>Conflict Intelligence — Live Map</div>
+          <span className={s.betaChip}>Beta</span>
         </div>
         <div className={s.filters}>
           <span className={s.filterLabel}>Theater</span>
@@ -228,8 +229,7 @@ export default async function DashboardPage() {
           {briefing ? (
             <>
               <div className={s.briefingByline}>
-                {briefing.date} · {briefing.utc_time} · Compiled from {briefing.source_count} sources ·{" "}
-                {briefing.reviewed ? "Reviewed" : "AI Draft"}
+                {briefing.date} · {briefing.utc_time} · Compiled from {briefing.source_count} sources
               </div>
               <div className={s.briefingBody}>
                 {briefing.paragraphs.map((p, i) => (
@@ -239,6 +239,9 @@ export default async function DashboardPage() {
                     ) : p}
                   </p>
                 ))}
+              </div>
+              <div className={s.briefingDisclaimer}>
+                ⚠ AI-generated analysis. Events sourced from open-source reporting; locations and details unverified. Not for operational use.
               </div>
             </>
           ) : (
@@ -252,7 +255,7 @@ export default async function DashboardPage() {
         <div className={s.panel}>
           <div className={s.panelHeader}>
             <div className={s.panelTitle}>Top sources today</div>
-            <div className={s.panelMeta}>events · verified rate</div>
+            <div className={s.panelMeta}>cross-ref&apos;d · verif. rate</div>
           </div>
           <div className={s.sourcesList}>
             {sources.length === 0 ? (
@@ -272,7 +275,7 @@ export default async function DashboardPage() {
               ))
             )}
           </div>
-          <div className={s.sourcesFooter}>Verification rate over rolling 30 days</div>
+          <div className={s.sourcesFooter}>Cross-referenced sources · Verification rate over rolling 30 days</div>
         </div>
 
       </div>

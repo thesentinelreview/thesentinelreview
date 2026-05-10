@@ -653,3 +653,88 @@
   letter-spacing: 0.1em;
   border-top: 1px solid var(--border);
 }
+
+/* ── BETA CHIP ───────────────────────────────────────────────────────────── */
+.betaChip {
+  font-family: var(--font-mono-stack);
+  font-size: 9px;
+  padding: 2px 7px;
+  border: 1px solid #B8882A;
+  color: #B8882A;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-radius: 2px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── BRIEFING DISCLAIMER ─────────────────────────────────────────────────── */
+.briefingDisclaimer {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 8px 0 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.03em;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+  .bottom {
+    grid-template-columns: 1fr;
+  }
+  .mapCanvas {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .brand {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .brandSection {
+    font-size: 10px;
+  }
+  .betaChip {
+    margin-left: 0;
+  }
+  .filters {
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+  .mapCanvas {
+    min-height: 220px;
+  }
+  .briefing {
+    padding: 12px 14px;
+  }
+  .panelHeader {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .panelMeta {
+    width: 100%;    font-size: 9px;
+  }
+  .sourceRow {
+    padding: 8px 10px;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .sourceRate {
+    width: 32px;
+  }
+  .statValue {
+    font-size: 22px;
+  }
+}
