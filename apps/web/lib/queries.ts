@@ -209,6 +209,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3): Pro
       FROM events e
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
+        AND e.occurred_at > now() - INTERVAL '24 hours'
         AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
@@ -291,6 +292,8 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5): Promise<Source[]> {
   if (!isDatabaseConfigured()) return ph.phSources(theater);
 
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+
   try {
     type Row = {
       handle: string;
@@ -316,13 +319,14 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
         JOIN events e ON e.id = es.event_id
         WHERE e.occurred_at > now() - INTERVAL '24 hours'
           AND e.published_at IS NOT NULL
+          AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
       WHERE s.is_active = true AND COALESCE(today.cnt, 0) > 0
       ORDER BY events_count DESC, verified_rate DESC
       LIMIT $1
       `,
-      [limit],
+      [limit, minLng, minLat, maxLng, maxLat],
     );
 
     return rows.map((r, i) => ({

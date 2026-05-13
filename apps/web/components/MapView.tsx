@@ -59,11 +59,21 @@ function buildGeoJSON(events: MapEvent[]): GeoJSON.FeatureCollection {
   };
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function popupHTML(props: Record<string, unknown>): string {
   const type = String(props.event_type ?? "");
   const conf = String(props.confidence ?? "");
-  const id = String(props.id ?? "");
+  const id = escapeHtml(String(props.id ?? ""));
   const color = COLORS[type] ?? "#e6e4dc";
+  const location = escapeHtml(String(props.location_name ?? "").toUpperCase());
+  const description = escapeHtml(String(props.description ?? ""));
   return `
     <div style="
       font-family: 'IBM Plex Mono', monospace;
@@ -74,14 +84,14 @@ function popupHTML(props: Record<string, unknown>): string {
     ">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
         <span style="color:#5d5c58;letter-spacing:.08em;text-transform:uppercase;">
-          ${type.toUpperCase()} — ${String(props.location_name ?? "").toUpperCase()}
+          ${type.toUpperCase()} — ${location}
         </span>
       </div>
       <div style="color:${confidenceColor(conf)};letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">
         ${confidenceLabel(conf)}
       </div>
       <div style="font-size:12px;line-height:1.45;color:#e6e4dc;margin-bottom:8px;">
-        ${props.description}
+        ${description}
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;color:#989790;">
         <span>
@@ -116,9 +126,14 @@ export default function MapView({ events, center, zoom }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
+  // Keep a ref so the "load" handler always reads the latest events even if
+  // the prop changed between mount and the style finishing loading.
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
 
+  // Initialize map once on mount; teardown on unmount.
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!containerRef.current) return;
 
     const map = new maplibregl.Map({
       container: containerRef.current,
@@ -138,11 +153,9 @@ export default function MapView({ events, center, zoom }: Props) {
     );
 
     map.on("load", () => {
-      const geojson = buildGeoJSON(events);
-
       map.addSource("events", {
         type: "geojson",
-        data: geojson,
+        data: buildGeoJSON(eventsRef.current),
         cluster: true,
         clusterMaxZoom: 10,
         clusterRadius: 40,
@@ -264,9 +277,9 @@ export default function MapView({ events, center, zoom }: Props) {
         if (!e.features?.length) return;
         const clusterId = e.features[0].properties.cluster_id as number;
         const src = map.getSource("events") as maplibregl.GeoJSONSource;
-        const zoom = await src.getClusterExpansionZoom(clusterId);
+        const expansionZoom = await src.getClusterExpansionZoom(clusterId);
         const coords = (e.features[0].geometry as GeoJSON.Point).coordinates as [number, number];
-        map.easeTo({ center: coords, zoom });
+        map.easeTo({ center: coords, zoom: expansionZoom });
       });
 
       // Click blank map → close popup
@@ -288,7 +301,21 @@ export default function MapView({ events, center, zoom }: Props) {
       map.remove();
       mapRef.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update event markers when the data changes (e.g. theater switch or refresh).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map?.isStyleLoaded()) return;
+    (map.getSource("events") as maplibregl.GeoJSONSource | undefined)
+      ?.setData(buildGeoJSON(events));
   }, [events]);
+
+  // Fly to the new theater center when center/zoom change.
+  useEffect(() => {
+    mapRef.current?.flyTo({ center, zoom, duration: 1200 });
+  }, [center, zoom]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }
