@@ -97,7 +97,7 @@ export async function getStats(theater: TheaterKey = "ukraine"): Promise<Stats> 
       [minLng, minLat, maxLng, maxLat],
     );
 
-    if (!row) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+    if (!row || Number(row.events) === 0) return ph.phStats(theater);
 
     return {
       events: Number(row.events) || 0,
@@ -156,6 +156,8 @@ export async function getMapEvents(theater: TheaterKey = "ukraine"): Promise<Map
       `,
       [minLng, minLat, maxLng, maxLat],
     );
+
+    if (!rows.length) return ph.phMapEvents(theater);
 
     return rows.map((r) => ({
       id: r.id,
@@ -218,6 +220,8 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3): Pro
       [limit, minLng, minLat, maxLng, maxLat],
     );
 
+    if (!rows.length) return ph.phAlerts(theater);
+
     return rows.map((r) => ({
       id: r.id,
       event_type: r.event_type,
@@ -263,15 +267,10 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
       [minLng, minLat, maxLng, maxLat],
     );
 
-    if (!rows.length) {
-      return Array.from({ length: 7 }, (_, i) => {
-        const d = new Date();
-        d.setUTCDate(d.getUTCDate() - (6 - i));
-        return { label: dayLabel(d), value: 0, hot: false };
-      });
-    }
-
     const counts = rows.map((r) => Number(r.count) || 0);
+
+    if (counts.every((c) => c === 0)) return ph.phIntensity(theater);
+
     const max = Math.max(1, ...counts);
     const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
 
@@ -329,6 +328,8 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
       [limit, minLng, minLat, maxLng, maxLat],
     );
 
+    if (!rows.length) return ph.phSources(theater);
+
     return rows.map((r, i) => ({
       rank: i + 1,
       handle: r.handle,
@@ -384,7 +385,7 @@ export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promis
       [theater],
     );
 
-    if (!row) return null;
+    if (!row) return ph.phBriefing(theater);
 
     const countRow = await queryOne<{ count: string | number }>(
       `
