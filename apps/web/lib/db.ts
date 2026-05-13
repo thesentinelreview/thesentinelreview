@@ -1,24 +1,28 @@
 import { Pool, type QueryResultRow } from "pg";
 
-let _pool: Pool | null = null;
+// Store on globalThis so Next.js HMR module re-evaluations don't leak pools.
+declare global {
+  // eslint-disable-next-line no-var
+  var __pgPool: Pool | undefined;
+}
 
 export function isDatabaseConfigured(): boolean {
   return !!process.env.DATABASE_URL;
 }
 
 function getPool(): Pool {
-  if (!_pool) {
+  if (!globalThis.__pgPool) {
     if (!process.env.DATABASE_URL) {
       throw new Error("DATABASE_URL is not configured");
     }
-    _pool = new Pool({
+    globalThis.__pgPool = new Pool({
       connectionString: process.env.DATABASE_URL,
       max: 5,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
     });
   }
-  return _pool;
+  return globalThis.__pgPool;
 }
 
 export async function query<T extends QueryResultRow = QueryResultRow>(
