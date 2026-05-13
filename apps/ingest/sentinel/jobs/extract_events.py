@@ -21,7 +21,7 @@ from sentinel.db import (
     log_llm_call,
     mark_post_processed,
 )
-from sentinel.models import ExtractEventsPayload
+from sentinel.models import ExtractEventsPayload, TheaterKey
 from sentinel.pipeline.dedup import find_duplicate
 from sentinel.pipeline.extractor import extract_event
 from sentinel.pipeline.scorer import score_confidence
@@ -36,10 +36,11 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
     if source is None:
         raise ValueError(f"Source not found: {params.source_id}")
 
-    log.info("extracting_events", post_count=len(posts), source=source["handle"])
+    theater: str = params.theater or source.get("theater", "ukraine")
+    log.info("extracting_events", post_count=len(posts), source=source["handle"], theater=theater)
 
     for post in posts:
-        _process_post(conn, post=post, source=source, job_id=job_id)
+        _process_post(conn, post=post, source=source, job_id=job_id, theater=theater)
 
     conn.commit()
 
@@ -50,11 +51,12 @@ def _process_post(
     post: dict,
     source: dict,
     job_id: uuid.UUID,
+    theater: str = "ukraine",
 ) -> None:
     post_id: uuid.UUID = post["id"]
 
     # ── LLM extraction ───────────────────────────────────────────────────────
-    result, llm_meta = extract_event(post["text"], source=source)
+    result, llm_meta = extract_event(post["text"], source=source, theater=theater)
 
     log_llm_call(
         conn,

@@ -33,14 +33,15 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
 
     log.info("ingested_posts", source=source["handle"], new_count=len(new_ids))
 
-    # Enqueue extraction jobs in batches
+    # Enqueue extraction jobs in batches, carrying theater through
     batch_size = settings.worker_batch_size
+    theater = source.get("theater", "ukraine")
     for i in range(0, len(new_ids), batch_size):
         batch = new_ids[i : i + batch_size]
         enqueue(
             conn,
             "extract_events",
-            {"raw_post_ids": [str(x) for x in batch], "source_id": str(params.source_id)},
+            {"raw_post_ids": [str(x) for x in batch], "source_id": str(params.source_id), "theater": theater},
         )
         log.debug("enqueued_extract_batch", batch_size=len(batch))
 

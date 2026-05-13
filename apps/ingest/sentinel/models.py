@@ -144,6 +144,7 @@ class IngestSourcePayload(BaseModel):
 class ExtractEventsPayload(BaseModel):
     raw_post_ids: list[uuid.UUID]
     source_id:    uuid.UUID
+    theater:      str = "ukraine"
 
 
 class GenerateBriefingPayload(BaseModel):
