@@ -1,6 +1,39 @@
 export type EventType = "strike" | "clash" | "movement";
 export type Confidence = "verified" | "partial" | "unconfirmed";
 export type Platform = "x" | "telegram" | "rss" | "wire";
+export type TheaterKey = "ukraine" | "iran";
+
+export interface TheaterConfig {
+  id: TheaterKey;
+  label: string;
+  mapCenter: [number, number];
+  mapZoom: number;
+  mapSubtitle: string;
+  briefingTitle: string;
+}
+
+export const THEATERS: Record<TheaterKey, TheaterConfig> = {
+  ukraine: {
+    id: "ukraine",
+    label: "Ukraine",
+    mapCenter: [38.2, 48.6],
+    mapZoom: 7,
+    mapSubtitle: "Eastern Theater — Donetsk / Luhansk Oblasts",
+    briefingTitle: "Daily Briefing — Eastern Theater",
+  },
+  iran: {
+    id: "iran",
+    label: "Iran",
+    mapCenter: [53.7, 32.4],
+    mapZoom: 5,
+    mapSubtitle: "Iran Theater — Nuclear Sites and Proxy Activity",
+    briefingTitle: "Daily Briefing — Iran Theater",
+  },
+};
+
+export function resolveTheater(raw: string | undefined): TheaterConfig {
+  return THEATERS[(raw as TheaterKey) in THEATERS ? (raw as TheaterKey) : "ukraine"];
+}
 
 export interface MapEvent {
   id: string;
@@ -333,6 +366,204 @@ export const briefing: BriefingData = {
     "Movement reports near Kupiansk remain single-sourced and unverified; treat with caution pending corroboration.",
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Iran theater placeholder data
+// ---------------------------------------------------------------------------
+
+export const iranStats: Stats = {
+  events: 19,
+  strikes: 6,
+  verified_pct: 74,
+  vs_7d_avg_pct: 11,
+};
+
+export const iranMapEvents: MapEvent[] = [
+  {
+    id: "ir-evt-001",
+    event_type: "strike",
+    occurred_at: "2026-05-13T09:14:00Z",
+    lat: 33.72,
+    lng: 51.72,
+    location_name: "Natanz",
+    oblast: "Isfahan Province",
+    description: "Reported explosion near underground enrichment facility perimeter. Single source; details unconfirmed.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 28,
+  },
+  {
+    id: "ir-evt-002",
+    event_type: "strike",
+    occurred_at: "2026-05-13T08:50:00Z",
+    lat: 32.66,
+    lng: 51.68,
+    location_name: "Isfahan",
+    oblast: "Isfahan Province",
+    description: "Air-defense activation reported over Isfahan airspace. Intercept unconfirmed.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 52,
+  },
+  {
+    id: "ir-evt-003",
+    event_type: "strike",
+    occurred_at: "2026-05-13T08:20:00Z",
+    lat: 35.69,
+    lng: 51.39,
+    location_name: "Tehran",
+    oblast: "Tehran Province",
+    description: "Explosions heard in northern Tehran suburbs. Cause unknown.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 82,
+  },
+  {
+    id: "ir-evt-004",
+    event_type: "movement",
+    occurred_at: "2026-05-13T07:55:00Z",
+    lat: 34.09,
+    lng: 49.70,
+    location_name: "Arak",
+    oblast: "Markazi Province",
+    description: "Convoy of military vehicles observed near Arak heavy-water reactor site.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 107,
+  },
+  {
+    id: "ir-evt-005",
+    event_type: "movement",
+    occurred_at: "2026-05-13T07:30:00Z",
+    lat: 27.19,
+    lng: 56.27,
+    location_name: "Bandar Abbas",
+    oblast: "Hormozgan Province",
+    description: "IRGC naval vessels departed Bandar Abbas; destination unknown.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 132,
+  },
+  {
+    id: "ir-evt-006",
+    event_type: "clash",
+    occurred_at: "2026-05-13T06:45:00Z",
+    lat: 36.57,
+    lng: 53.06,
+    location_name: "Sari",
+    oblast: "Mazandaran Province",
+    description: "Security forces and armed group contact reported near Sari. Casualties unknown.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 177,
+  },
+  {
+    id: "ir-evt-007",
+    event_type: "strike",
+    occurred_at: "2026-05-13T06:10:00Z",
+    lat: 31.32,
+    lng: 48.67,
+    location_name: "Ahvaz",
+    oblast: "Khuzestan Province",
+    description: "Drone intercept reported over Ahvaz industrial zone. No confirmed damage.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 212,
+  },
+  {
+    id: "ir-evt-008",
+    event_type: "movement",
+    occurred_at: "2026-05-13T05:30:00Z",
+    lat: 29.62,
+    lng: 52.53,
+    location_name: "Shiraz",
+    oblast: "Fars Province",
+    description: "Missile unit repositioning observed on satellite imagery east of Shiraz.",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 252,
+  },
+];
+
+export const iranAlerts: Alert[] = [
+  {
+    id: "ir-alt-001",
+    event_type: "strike",
+    title: "Explosion near Natanz perimeter",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 28,
+  },
+  {
+    id: "ir-alt-002",
+    event_type: "strike",
+    title: "Air-defense activation, Isfahan airspace",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 52,
+  },
+  {
+    id: "ir-alt-003",
+    event_type: "movement",
+    title: "IRGC naval departure, Bandar Abbas",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 132,
+  },
+];
+
+export const iranIntensity: IntensityDay[] = [
+  { label: "Mon", value: 22, hot: false },
+  { label: "Tue", value: 31, hot: false },
+  { label: "Wed", value: 18, hot: false },
+  { label: "Thu", value: 44, hot: false },
+  { label: "Fri", value: 39, hot: false },
+  { label: "Sat", value: 55, hot: true },
+  { label: "Sun", value: 72, hot: true },
+];
+
+export const iranSources: Source[] = [
+  { rank: 1, handle: "reuters-wire", display_name: "Reuters Wire", platform: "wire", events_count: 6, verified_rate: 96 },
+  { rank: 2, handle: "@OSINTtechnical", display_name: "@OSINTtechnical", platform: "x", events_count: 4, verified_rate: 94 },
+  { rank: 3, handle: "isw-rss", display_name: "ISW (RSS)", platform: "rss", events_count: 5, verified_rate: 88 },
+  { rank: 4, handle: "iran_channels", display_name: "Telegram (Iran channels)", platform: "telegram", events_count: 9, verified_rate: 58 },
+  { rank: 5, handle: "afp-wire", display_name: "AFP Wire", platform: "wire", events_count: 3, verified_rate: 95 },
+];
+
+export const iranBriefing: BriefingData = {
+  id: "ir-brief-20260513",
+  date: "13 May 2026",
+  utc_time: "09:42 UTC",
+  source_count: 19,
+  reviewed: false,
+  paragraphs: [
+    "An unconfirmed explosion near the Natanz enrichment facility perimeter was reported early this morning by a single Telegram channel; no corroborating footage has emerged. Air-defense activations over Isfahan, reported by two independent wire services, suggest heightened alert posture but do not confirm an incoming attack.",
+    "Satellite imagery from the previous 24-hour window shows missile unit repositioning east of Shiraz — the sole verified event in today's window. IRGC naval movements out of Bandar Abbas are partial-confidence; treat with caution pending confirmation.",
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// Theater-aware placeholder accessors
+// ---------------------------------------------------------------------------
+
+export function phStats(t: TheaterKey): Stats {
+  return t === "iran" ? iranStats : stats;
+}
+export function phMapEvents(t: TheaterKey): MapEvent[] {
+  return t === "iran" ? iranMapEvents : mapEvents;
+}
+export function phAlerts(t: TheaterKey): Alert[] {
+  return t === "iran" ? iranAlerts : alerts;
+}
+export function phIntensity(t: TheaterKey): IntensityDay[] {
+  return t === "iran" ? iranIntensity : intensity;
+}
+export function phSources(t: TheaterKey): Source[] {
+  return t === "iran" ? iranSources : sources;
+}
+export function phBriefing(t: TheaterKey): BriefingData {
+  return t === "iran" ? iranBriefing : briefing;
+}
 
 // ---------------------------------------------------------------------------
 // Extended seed data for detail pages

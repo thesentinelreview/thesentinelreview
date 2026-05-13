@@ -14,7 +14,14 @@ import type {
   Platform,
   EventType,
   Confidence,
+  TheaterKey,
 } from "@/data/placeholder";
+
+// Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering
+const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
+  ukraine: [22, 44, 40, 52],
+  iran: [44, 25, 64, 40],
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -46,8 +53,10 @@ function fmtBriefingUTC(ts: Date): string {
 // Stats
 // ---------------------------------------------------------------------------
 
-export async function getStats(): Promise<Stats> {
-  if (!isDatabaseConfigured()) return ph.stats;
+export async function getStats(theater: TheaterKey = "ukraine"): Promise<Stats> {
+  if (!isDatabaseConfigured()) return ph.phStats(theater);
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
   try {
     type Row = {
@@ -57,18 +66,21 @@ export async function getStats(): Promise<Stats> {
       vs_7d_avg_pct: string | number | null;
     };
 
-    const row = await queryOne<Row>(`
+    const row = await queryOne<Row>(
+      `
       WITH window_24h AS (
         SELECT *
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at > now() - INTERVAL '24 hours'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       ),
       prev_7d AS (
         SELECT count(*)::float / 7.0 AS daily_avg
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at BETWEEN now() - INTERVAL '8 days' AND now() - INTERVAL '1 day'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       )
       SELECT
         (SELECT count(*) FROM window_24h)::int AS events,
@@ -81,7 +93,9 @@ export async function getStats(): Promise<Stats> {
            100.0 * ((SELECT count(*) FROM window_24h)::numeric - daily_avg)
            / NULLIF(daily_avg, 0)
          ), 0)::int FROM prev_7d) AS vs_7d_avg_pct
-    `);
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
 
     if (!row) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
@@ -92,7 +106,7 @@ export async function getStats(): Promise<Stats> {
       vs_7d_avg_pct: Number(row.vs_7d_avg_pct) || 0,
     };
   } catch {
-    return ph.stats;
+    return ph.phStats(theater);
   }
 }
 
@@ -100,8 +114,10 @@ export async function getStats(): Promise<Stats> {
 // Map events (last 24h)
 // ---------------------------------------------------------------------------
 
-export async function getMapEvents(): Promise<MapEvent[]> {
-  if (!isDatabaseConfigured()) return ph.mapEvents;
+export async function getMapEvents(theater: TheaterKey = "ukraine"): Promise<MapEvent[]> {
+  if (!isDatabaseConfigured()) return ph.phMapEvents(theater);
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
   try {
     type Row = {
@@ -117,7 +133,8 @@ export async function getMapEvents(): Promise<MapEvent[]> {
       source_count: string | number;
     };
 
-    const rows = await query<Row>(`
+    const rows = await query<Row>(
+      `
       SELECT
         e.id::text                AS id,
         e.event_type              AS event_type,
@@ -133,9 +150,12 @@ export async function getMapEvents(): Promise<MapEvent[]> {
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
         AND e.occurred_at > now() - INTERVAL '24 hours'
+        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
-    `);
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
 
     return rows.map((r) => ({
       id: r.id,
@@ -151,7 +171,7 @@ export async function getMapEvents(): Promise<MapEvent[]> {
       minutes_ago: minutesAgo(r.occurred_at),
     }));
   } catch {
-    return ph.mapEvents;
+    return ph.phMapEvents(theater);
   }
 }
 
@@ -159,8 +179,10 @@ export async function getMapEvents(): Promise<MapEvent[]> {
 // Alerts (latest 3)
 // ---------------------------------------------------------------------------
 
-export async function getAlerts(limit = 3): Promise<Alert[]> {
-  if (!isDatabaseConfigured()) return ph.alerts;
+export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3): Promise<Alert[]> {
+  if (!isDatabaseConfigured()) return ph.phAlerts(theater);
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
   try {
     type Row = {
@@ -187,11 +209,12 @@ export async function getAlerts(limit = 3): Promise<Alert[]> {
       FROM events e
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
+        AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
       LIMIT $1
       `,
-      [limit],
+      [limit, minLng, minLat, maxLng, maxLat],
     );
 
     return rows.map((r) => ({
@@ -203,7 +226,7 @@ export async function getAlerts(limit = 3): Promise<Alert[]> {
       minutes_ago: minutesAgo(r.occurred_at),
     }));
   } catch {
-    return ph.alerts;
+    return ph.phAlerts(theater);
   }
 }
 
@@ -211,13 +234,16 @@ export async function getAlerts(limit = 3): Promise<Alert[]> {
 // Intensity (last 7 days)
 // ---------------------------------------------------------------------------
 
-export async function getIntensity(): Promise<IntensityDay[]> {
-  if (!isDatabaseConfigured()) return ph.intensity;
+export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<IntensityDay[]> {
+  if (!isDatabaseConfigured()) return ph.phIntensity(theater);
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
   try {
     type Row = { day: Date; count: string | number };
 
-    const rows = await query<Row>(`
+    const rows = await query<Row>(
+      `
       SELECT
         d.day::date AS day,
         COUNT(e.id)::int AS count
@@ -229,9 +255,12 @@ export async function getIntensity(): Promise<IntensityDay[]> {
       LEFT JOIN events e
         ON date_trunc('day', e.occurred_at AT TIME ZONE 'UTC') = d.day
        AND e.published_at IS NOT NULL
+       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       GROUP BY d.day
       ORDER BY d.day ASC
-    `);
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
 
     if (!rows.length) {
       return Array.from({ length: 7 }, (_, i) => {
@@ -251,7 +280,7 @@ export async function getIntensity(): Promise<IntensityDay[]> {
       hot: counts[i] > avg * 1.25,
     }));
   } catch {
-    return ph.intensity;
+    return ph.phIntensity(theater);
   }
 }
 
@@ -259,8 +288,8 @@ export async function getIntensity(): Promise<IntensityDay[]> {
 // Top sources (dashboard panel — top 5 by today's events)
 // ---------------------------------------------------------------------------
 
-export async function getTopSources(limit = 5): Promise<Source[]> {
-  if (!isDatabaseConfigured()) return ph.sources;
+export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5): Promise<Source[]> {
+  if (!isDatabaseConfigured()) return ph.phSources(theater);
 
   try {
     type Row = {
@@ -305,7 +334,7 @@ export async function getTopSources(limit = 5): Promise<Source[]> {
       verified_rate: Number(r.verified_rate) || 0,
     }));
   } catch {
-    return ph.sources;
+    return ph.phSources(theater);
   }
 }
 
@@ -336,17 +365,20 @@ function rowToBriefing(r: BriefingRow, sourceCount: number): BriefingData {
   };
 }
 
-export async function getLatestBriefing(): Promise<BriefingData | null> {
-  if (!isDatabaseConfigured()) return ph.briefing;
+export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promise<BriefingData | null> {
+  if (!isDatabaseConfigured()) return ph.phBriefing(theater);
 
   try {
-    const row = await queryOne<BriefingRow>(`
+    const row = await queryOne<BriefingRow>(
+      `
       SELECT id::text, draft_text, published_text, status, event_ids::text[], published_at, created_at
       FROM briefings
-      WHERE theater = 'ukraine'
+      WHERE theater = $1
       ORDER BY created_at DESC
       LIMIT 1
-    `);
+      `,
+      [theater],
+    );
 
     if (!row) return null;
 
@@ -361,7 +393,7 @@ export async function getLatestBriefing(): Promise<BriefingData | null> {
 
     return rowToBriefing(row, Number(countRow?.count) || 0);
   } catch {
-    return ph.briefing;
+    return ph.phBriefing(theater);
   }
 }
 

@@ -6,8 +6,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapEvent } from "@/data/placeholder";
 
 const STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
-const CENTER: [number, number] = [38.2, 48.6]; // eastern Ukraine
-const ZOOM = 7;
 
 const COLORS: Record<string, string> = {
   strike: "#e63946",
@@ -110,9 +108,11 @@ function popupHTML(props: Record<string, unknown>): string {
 
 interface Props {
   events: MapEvent[];
+  center: [number, number];
+  zoom: number;
 }
 
-export default function MapView({ events }: Props) {
+export default function MapView({ events, center, zoom }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -123,8 +123,8 @@ export default function MapView({ events }: Props) {
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: STYLE,
-      center: CENTER,
-      zoom: ZOOM,
+      center,
+      zoom,
       attributionControl: false,
     });
 
