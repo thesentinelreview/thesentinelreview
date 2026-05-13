@@ -1,7 +1,7 @@
 import Link from "next/link";
 import s from "./page.module.css";
 import MapWrapper from "@/components/MapWrapper";
-import { type Alert } from "@/data/placeholder";
+import { type Alert, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
   getMapEvents,
@@ -42,14 +42,21 @@ function nowUTC(): string {
 
 // ── page ─────────────────────────────────────────────────────────────────────
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ theater?: string }>;
+}) {
+  const params = await searchParams;
+  const theater = resolveTheater(params.theater);
+
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
-    getStats(),
-    getMapEvents(),
-    getAlerts(),
-    getIntensity(),
-    getTopSources(),
-    getLatestBriefing(),
+    getStats(theater.id),
+    getMapEvents(theater.id),
+    getAlerts(theater.id),
+    getIntensity(theater.id),
+    getTopSources(theater.id),
+    getLatestBriefing(theater.id),
   ]);
 
   return (
@@ -66,7 +73,15 @@ export default async function DashboardPage() {
         </div>
         <div className={s.filters}>
           <span className={s.filterLabel}>Theater</span>
-          <span className={`${s.filterChip} ${s.filterChipActive}`}>Ukraine ▾</span>
+          {(Object.values(THEATERS)).map((t) => (
+            <Link
+              key={t.id}
+              href={`/?theater=${t.id}`}
+              className={`${s.filterChip} ${theater.id === t.id ? s.filterChipActive : ""}`}
+            >
+              {t.label}
+            </Link>
+          ))}
           <span className={s.filterLabel} style={{ marginLeft: 6 }}>Window</span>
           <span className={`${s.filterChip} ${s.filterChipActive}`}>24h ▾</span>
           <div className={s.liveIndicator}>
@@ -82,7 +97,7 @@ export default async function DashboardPage() {
         {/* MAP */}
         <div className={s.mapCard}>
           <div className={s.mapHeader}>
-            <div className={s.mapTitle}>Eastern Theater — Donetsk / Luhansk Oblasts</div>
+            <div className={s.mapTitle}>{theater.mapSubtitle}</div>
             <div className={s.mapMeta}>
               <span><strong>{stats.events}</strong> events</span>
               <span><strong>{stats.strikes}</strong> strikes</span>
@@ -91,7 +106,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className={s.mapCanvas}>
-            <MapWrapper events={mapEvents} />
+            <MapWrapper events={mapEvents} center={theater.mapCenter} zoom={theater.mapZoom} />
 
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
               <div className={s.legendItem}>
@@ -216,7 +231,7 @@ export default async function DashboardPage() {
         {/* Daily briefing */}
         <div className={s.briefing}>
           <div className={s.briefingHeader}>
-            <div className={s.briefingTitle}>Daily Briefing — Eastern Theater</div>
+            <div className={s.briefingTitle}>{theater.briefingTitle}</div>
             <div className={s.briefingActions}>
               <span className={s.badge}>{briefing?.reviewed ? "REVIEWED" : "AI DRAFT"}</span>
               {briefing && (
