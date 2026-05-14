@@ -4,7 +4,7 @@ generate_briefing job
 Pulls the last N hours of verified/partial events, builds structured input
 for the LLM, generates a draft briefing, and saves it to the briefings table.
 
-Always saves as status='draft'. A human must publish via /admin/briefings.
+Saves directly as status='published' — briefings go live immediately upon generation.
 
 Payload schema: GenerateBriefingPayload
 """
