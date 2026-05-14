@@ -312,7 +312,7 @@ export const mapEvents: MapEvent[] = [
 
 export const alerts: Alert[] = [
   {
-    id: "alt-001",
+    id: "evt-001",
     event_type: "strike",
     title: "Strike cluster, Pokrovsk axis",
     confidence: "verified",
@@ -320,7 +320,7 @@ export const alerts: Alert[] = [
     minutes_ago: 18,
   },
   {
-    id: "alt-002",
+    id: "evt-008",
     event_type: "clash",
     title: "Unverified armor movement, Kupiansk sector",
     confidence: "unconfirmed",
@@ -328,7 +328,7 @@ export const alerts: Alert[] = [
     minutes_ago: 42,
   },
   {
-    id: "alt-003",
+    id: "evt-010",
     event_type: "movement",
     title: "Convoy spotted, M03 highway",
     confidence: "partial",
@@ -487,7 +487,7 @@ export const iranMapEvents: MapEvent[] = [
 
 export const iranAlerts: Alert[] = [
   {
-    id: "ir-alt-001",
+    id: "ir-evt-001",
     event_type: "strike",
     title: "Explosion near Natanz perimeter",
     confidence: "unconfirmed",
@@ -495,7 +495,7 @@ export const iranAlerts: Alert[] = [
     minutes_ago: 28,
   },
   {
-    id: "ir-alt-002",
+    id: "ir-evt-002",
     event_type: "strike",
     title: "Air-defense activation, Isfahan airspace",
     confidence: "partial",
@@ -503,7 +503,7 @@ export const iranAlerts: Alert[] = [
     minutes_ago: 52,
   },
   {
-    id: "ir-alt-003",
+    id: "ir-evt-005",
     event_type: "movement",
     title: "IRGC naval departure, Bandar Abbas",
     confidence: "partial",
@@ -651,7 +651,7 @@ const eventDetailMap: Record<string, EventDetail> = {
 
 export function getEventDetail(id: string): EventDetail | null {
   if (eventDetailMap[id]) return eventDetailMap[id];
-  const base = mapEvents.find((e) => e.id === id);
+  const base = [...mapEvents, ...iranMapEvents].find((e) => e.id === id);
   if (!base) return null;
   return {
     ...base,
@@ -665,6 +665,22 @@ export function getEventDetail(id: string): EventDetail | null {
     ],
   };
 }
+
+export const iranFullBriefing: FullBriefing = {
+  id: "ir-brief-20260513",
+  date: "13 May 2026",
+  utc_time: "09:42 UTC",
+  source_count: 19,
+  reviewed: false,
+  paragraphs: iranBriefing.paragraphs,
+  full_paragraphs: [
+    "An unconfirmed explosion near the Natanz enrichment facility perimeter was reported early this morning by a single Telegram channel; no corroborating footage has emerged. Air-defense activations over Isfahan, reported by two independent wire services, suggest heightened alert posture but do not confirm an incoming attack.",
+    "Satellite imagery from the previous 24-hour window shows missile unit repositioning east of Shiraz — the sole verified event in today's window. IRGC naval movements out of Bandar Abbas are partial-confidence; treat with caution pending confirmation.",
+    "Overall theater tempo is elevated relative to the prior 7-day average but remains well below peak levels. The Natanz perimeter report requires independent confirmation before confidence can be raised; three wire services have not yet corroborated. Watch: satellite tasking over Isfahan and Natanz in the next 12–18 hours may resolve the morning's ambiguity.",
+  ],
+  referenced_event_ids: ["ir-evt-001", "ir-evt-002", "ir-evt-008"],
+  confidence_summary: { verified: 1, partial: 4, unconfirmed: 3 },
+};
 
 export const fullBriefing: FullBriefing = {
   id: "brief-20260507",
@@ -684,6 +700,7 @@ export const fullBriefing: FullBriefing = {
 
 export function getFullBriefing(id: string): FullBriefing | null {
   if (id === fullBriefing.id) return fullBriefing;
+  if (id === iranFullBriefing.id) return iranFullBriefing;
   return null;
 }
 
