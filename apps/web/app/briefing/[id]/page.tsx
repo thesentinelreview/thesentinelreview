@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
 import { getFullBriefing, getEventDetail } from "@/lib/queries";
+import { resolveTheater } from "@/data/placeholder";
 import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -12,8 +13,15 @@ function dotClass(type: string, s: Record<string, string>): string {
   return s.dotMovement;
 }
 
-export default async function BriefingPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function BriefingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ theater?: string }>;
+}) {
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  const theater = resolveTheater(sp.theater);
   const brief = await getFullBriefing(id);
   if (!brief) notFound();
 
@@ -37,7 +45,7 @@ export default async function BriefingPage({ params }: { params: Promise<{ id: s
 
       <div className={s.header}>
         <div className={s.headerTop}>
-          <div className={s.title}>Daily Briefing — Eastern Theater</div>
+          <div className={s.title}>{theater.briefingTitle}</div>
           <div className={s.actions}>
             <span className={s.badge}>{brief.reviewed ? "Reviewed" : "AI Draft"}</span>
             <span className={`${s.badge} ${s.badgeAction}`}>Embed ↗</span>

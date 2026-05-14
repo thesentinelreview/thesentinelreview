@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
 import type { EventSource, EvidenceItem, ChangeHistoryEntry } from "@/data/placeholder";
+import { resolveTheater } from "@/data/placeholder";
 import { getEventDetail } from "@/lib/queries";
 import s from "./page.module.css";
 
@@ -61,8 +62,15 @@ function evidenceTypeLabel(t: EvidenceItem["type"]): string {
   return "Wire report";
 }
 
-export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function EventDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ theater?: string }>;
+}) {
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  const theater = resolveTheater(sp.theater);
   const evt = await getEventDetail(id);
   if (!evt) notFound();
 
@@ -85,7 +93,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             {evt.event_type}
           </div>
           <div className={s.eventTitle}>
-            {evt.location_name} · {evt.oblast} Oblast
+            {evt.location_name} · {theater.id === "ukraine" ? `${evt.oblast} Oblast` : evt.oblast}
           </div>
           <div className={s.eventMeta}>
             <span>{fmtUTC(evt.occurred_at)}</span>
@@ -172,10 +180,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               </div>
               <div className={s.metaRow}>
                 <div className={s.metaLabel}>Theater</div>
-                <div className={s.metaValue}>Ukraine — Eastern</div>
+                <div className={s.metaValue}>{theater.mapSubtitle}</div>
               </div>
               <div className={s.metaRow}>
-                <div className={s.metaLabel}>Oblast</div>
+                <div className={s.metaLabel}>{theater.id === "ukraine" ? "Oblast" : "Region"}</div>
                 <div className={s.metaValue}>{evt.oblast}</div>
               </div>
               <div className={s.metaRow}>

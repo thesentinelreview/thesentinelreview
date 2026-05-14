@@ -204,7 +204,7 @@ export default async function DashboardPage({
                 </div>
               ) : (
                 alerts.map((a) => (
-                  <Link key={a.id} href={`/event/${a.id}`} className={s.alertItem} style={{ textDecoration: "none", color: "inherit" }}>
+                  <Link key={a.id} href={`/event/${a.id}?theater=${theater.id}`} className={s.alertItem} style={{ textDecoration: "none", color: "inherit" }}>
                     <div className={`${s.alertMarker} ${alertMarkerClass(a.event_type)}`}/>
                     <div className={s.alertBody}>
                       <div className={s.alertTitle}>{a.title}</div>
@@ -235,7 +235,7 @@ export default async function DashboardPage({
             <div className={s.briefingActions}>
               <span className={s.badge}>{briefing?.reviewed ? "REVIEWED" : "AI DRAFT"}</span>
               {briefing && (
-                <Link href={`/briefing/${briefing.id}`} className={`${s.badge} ${s.badgeAction}`} style={{ textDecoration: "none" }}>
+                <Link href={`/briefing/${briefing.id}?theater=${theater.id}`} className={`${s.badge} ${s.badgeAction}`} style={{ textDecoration: "none" }}>
                   OPEN ↗
                 </Link>
               )}
@@ -250,7 +250,7 @@ export default async function DashboardPage({
                 {briefing.paragraphs.map((p, i) => (
                   <p key={i}>
                     {i === briefing.paragraphs.length - 1 ? (
-                      <>{p} <Link href={`/briefing/${briefing.id}`} className={s.briefingLink}>See full briefing →</Link></>
+                      <>{p} <Link href={`/briefing/${briefing.id}?theater=${theater.id}`} className={s.briefingLink}>See full briefing →</Link></>
                     ) : p}
                   </p>
                 ))}
