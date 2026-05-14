@@ -561,8 +561,17 @@ export function phIntensity(t: TheaterKey): IntensityDay[] {
 export function phSources(t: TheaterKey): Source[] {
   return t === "iran" ? iranSources : sources;
 }
+function todayLabel(): { date: string; utc_time: string } {
+  const now = new Date();
+  return {
+    date: now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }),
+    utc_time: now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC",
+  };
+}
+
 export function phBriefing(t: TheaterKey): BriefingData {
-  return t === "iran" ? iranBriefing : briefing;
+  const base = t === "iran" ? iranBriefing : briefing;
+  return { ...base, ...todayLabel() };
 }
 
 // ---------------------------------------------------------------------------
@@ -699,8 +708,8 @@ export const fullBriefing: FullBriefing = {
 };
 
 export function getFullBriefing(id: string): FullBriefing | null {
-  if (id === fullBriefing.id) return fullBriefing;
-  if (id === iranFullBriefing.id) return iranFullBriefing;
+  if (id === fullBriefing.id) return { ...fullBriefing, ...todayLabel() };
+  if (id === iranFullBriefing.id) return { ...iranFullBriefing, ...todayLabel() };
   return null;
 }
 
