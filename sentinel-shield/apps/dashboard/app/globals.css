@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Void palette ─────────────────────────────── */
+  --color-bg:              #060810;
+  --color-surface:         #0a0e1a;
+  --color-surface-2:       #0f1526;
+  --color-surface-3:       #141d35;
+  --color-edge:            #1a2340;
+  --color-edge-strong:     #253060;
+
+  /* ── Text ──────────────────────────────────────── */
+  --color-ink:             #c8d8e8;
+  --color-ink-muted:       #607090;
+  --color-ink-faint:       #304060;
+
+  /* ── Neon accents ──────────────────────────────── */
+  --color-neon-green:      #00ff88;
+  --color-neon-cyan:       #00d4ff;
+  --color-neon-amber:      #ffb800;
+  --color-neon-red:        #ff2d55;
+  --color-neon-purple:     #9d4edd;
+
+  --color-neon-green-dim:  color-mix(in srgb, #00ff88 8%, transparent);
+  --color-neon-cyan-dim:   color-mix(in srgb, #00d4ff 8%, transparent);
+  --color-neon-amber-dim:  color-mix(in srgb, #ffb800 10%, transparent);
+  --color-neon-red-dim:    color-mix(in srgb, #ff2d55 10%, transparent);
+
+  /* ── Typography ────────────────────────────────── */
+  --font-sans:      "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:      "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
+  --font-condensed: "IBM Plex Sans Condensed", ui-sans-serif, sans-serif;
+}
+
+/* ── Base reset ───────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CRT scan-line overlay ────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 212, 255, 0.012) 2px,
+    rgba(0, 212, 255, 0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanlines 12s linear infinite;
+}
+
+@keyframes scanlines {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100vh; }
+}
+
+/* ── Severity pulse animations ────────────────────── */
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0.6); }
+  50%       { box-shadow: 0 0 0 8px rgba(255, 45, 85, 0); }
+}
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.6); }
+  50%       { box-shadow: 0 0 0 6px rgba(255, 184, 0, 0); }
+}
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+}
+
+.animate-pulse-red    { animation: pulse-red    2s ease-in-out infinite; }
+.animate-pulse-amber  { animation: pulse-amber  2.5s ease-in-out infinite; }
+.animate-pulse-green  { animation: pulse-green  3s ease-in-out infinite; }
+
+/* ── Utility: neon text glow ─────────────────────── */
+.glow-green  { text-shadow: 0 0 8px rgba(0, 255, 136, 0.6); }
+.glow-cyan   { text-shadow: 0 0 8px rgba(0, 212, 255, 0.6); }
+.glow-red    { text-shadow: 0 0 8px rgba(255, 45, 85, 0.6); }
+
+/* ── Scrollbars ───────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
+::-webkit-scrollbar-thumb { background: var(--color-edge-strong); border-radius: 2px; }

@@ -1,0 +1,57 @@
+name: Shield — Threat Feed Sync
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 hours
+    - cron: "0 0 * * 0"     # MITRE ATT&CK sync weekly (Sunday midnight)
+  workflow_dispatch:
+
+jobs:
+  sync-feeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install workers
+        run: pip install -e apps/workers/
+
+      - name: Sync IOC feeds
+        env:
+          SHIELD_DATABASE_URL: ${{ secrets.SHIELD_DATABASE_URL }}
+          SHIELD_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: shield-ingest
+
+  sync-cves:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install workers
+        run: pip install -e apps/workers/
+
+      - name: Sync CVEs
+        env:
+          SHIELD_DATABASE_URL: ${{ secrets.SHIELD_DATABASE_URL }}
+          SHIELD_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SHIELD_NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          python -c "
+          from shield.db import get_conn, enqueue
+          from shield.worker import run_once
+          with get_conn() as conn:
+              enqueue(conn, 'ingest_cve_feed', {'since_days': 1})
+              conn.commit()
+          while run_once(): pass
+          "

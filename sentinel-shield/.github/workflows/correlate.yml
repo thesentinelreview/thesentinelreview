@@ -1,0 +1,36 @@
+name: Shield — Event Correlation
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes
+  workflow_dispatch:
+
+jobs:
+  correlate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install workers
+        run: pip install -e apps/workers/
+
+      - name: Run correlation + triage
+        env:
+          SHIELD_DATABASE_URL: ${{ secrets.SHIELD_DATABASE_URL }}
+          SHIELD_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python -c "
+          from shield.db import get_conn, enqueue
+          from shield.worker import run_once
+          with get_conn() as conn:
+              enqueue(conn, 'correlate_events', {})
+              conn.commit()
+          # Process correlate + any resulting triage jobs
+          while run_once(): pass
+          "
