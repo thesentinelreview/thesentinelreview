@@ -233,12 +233,45 @@
   align-items: center;
   gap: 6px;
   color: var(--text-secondary);
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.legendItem:hover {
+  color: var(--text);
+}
+
+.legendItemDim {
+  opacity: 0.35;
 }
 
 .legendDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+
+.shareBtn {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.shareBtn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 .mapPopover {

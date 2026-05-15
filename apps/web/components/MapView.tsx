@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { MapEvent } from "@/data/placeholder";
+import type { MapEvent, EventType } from "@/data/placeholder";
 
 const STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
@@ -120,16 +120,17 @@ interface Props {
   events: MapEvent[];
   center: [number, number];
   zoom: number;
+  visibleTypes: EventType[];
 }
 
-export default function MapView({ events, center, zoom }: Props) {
+export default function MapView({ events, center, zoom, visibleTypes }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
-  // Keep a ref so the "load" handler always reads the latest events even if
-  // the prop changed between mount and the style finishing loading.
   const eventsRef = useRef(events);
   eventsRef.current = events;
+  const visibleTypesRef = useRef(visibleTypes);
+  visibleTypesRef.current = visibleTypes;
 
   // Initialize map once on mount; teardown on unmount.
   useEffect(() => {
@@ -153,9 +154,13 @@ export default function MapView({ events, center, zoom }: Props) {
     );
 
     map.on("load", () => {
+      const filteredOnLoad = eventsRef.current.filter(e =>
+        visibleTypesRef.current.includes(e.event_type),
+      );
+
       map.addSource("events", {
         type: "geojson",
-        data: buildGeoJSON(eventsRef.current),
+        data: buildGeoJSON(filteredOnLoad),
         cluster: true,
         clusterMaxZoom: 10,
         clusterRadius: 40,
@@ -292,6 +297,17 @@ export default function MapView({ events, center, zoom }: Props) {
           popupRef.current = null;
         }
       });
+
+      // Sync map position to URL so the share button captures the current view.
+      map.on("moveend", () => {
+        const c = map.getCenter();
+        const z = map.getZoom();
+        const url = new URL(window.location.href);
+        url.searchParams.set("lat", c.lat.toFixed(4));
+        url.searchParams.set("lng", c.lng.toFixed(4));
+        url.searchParams.set("zoom", z.toFixed(1));
+        history.replaceState(null, "", url.toString());
+      });
     });
 
     mapRef.current = map;
@@ -304,13 +320,14 @@ export default function MapView({ events, center, zoom }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update event markers when the data changes (e.g. theater switch or refresh).
+  // Update visible events when data or type filter changes.
   useEffect(() => {
     const map = mapRef.current;
     if (!map?.isStyleLoaded()) return;
+    const visible = events.filter(e => visibleTypes.includes(e.event_type));
     (map.getSource("events") as maplibregl.GeoJSONSource | undefined)
-      ?.setData(buildGeoJSON(events));
-  }, [events]);
+      ?.setData(buildGeoJSON(visible));
+  }, [events, visibleTypes]);
 
   // Fly to the new theater center when center/zoom change.
   useEffect(() => {
