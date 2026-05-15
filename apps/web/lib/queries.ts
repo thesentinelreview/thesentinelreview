@@ -20,7 +20,9 @@ import type {
 // Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering
 const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
   ukraine: [22, 44, 40, 52],
-  iran: [44, 25, 64, 40],
+  iran:    [44, 25, 64, 40],
+  sudan:   [21,  8, 42, 23],
+  myanmar: [92,  9, 102, 29],
 };
 
 // ---------------------------------------------------------------------------

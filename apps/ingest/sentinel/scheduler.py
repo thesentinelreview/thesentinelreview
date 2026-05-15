@@ -62,9 +62,13 @@ def _enqueue_ingest_jobs() -> int:
     return count
 
 
+_THEATERS = ["ukraine", "iran", "sudan", "myanmar"]
+
+
 def _enqueue_briefing_job() -> None:
     with get_conn() as conn:
-        enqueue(conn, "generate_briefing", {"theater": "ukraine", "period_hours": 24})
+        for theater in _THEATERS:
+            enqueue(conn, "generate_briefing", {"theater": theater, "period_hours": 24})
 
 
 def _should_run_briefing(last_briefing_date: str | None) -> bool:

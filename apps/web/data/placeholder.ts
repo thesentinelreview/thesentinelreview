@@ -1,7 +1,7 @@
 export type EventType = "strike" | "clash" | "movement";
 export type Confidence = "verified" | "partial" | "unconfirmed";
 export type Platform = "x" | "telegram" | "rss" | "wire";
-export type TheaterKey = "ukraine" | "iran";
+export type TheaterKey = "ukraine" | "iran" | "sudan" | "myanmar";
 
 export interface TheaterConfig {
   id: TheaterKey;
@@ -28,6 +28,22 @@ export const THEATERS: Record<TheaterKey, TheaterConfig> = {
     mapZoom: 5,
     mapSubtitle: "Iran Theater — Nuclear Sites and Proxy Activity",
     briefingTitle: "Daily Briefing — Iran Theater",
+  },
+  sudan: {
+    id: "sudan",
+    label: "Sudan",
+    mapCenter: [30.0, 15.5],
+    mapZoom: 5,
+    mapSubtitle: "Sudan — SAF/RSF Civil Conflict",
+    briefingTitle: "Daily Briefing — Sudan Theater",
+  },
+  myanmar: {
+    id: "myanmar",
+    label: "Myanmar",
+    mapCenter: [96.5, 19.5],
+    mapZoom: 6,
+    mapSubtitle: "Myanmar — PDF/Tatmadaw Conflict",
+    briefingTitle: "Daily Briefing — Myanmar Theater",
   },
 };
 
@@ -547,19 +563,34 @@ export const iranBriefing: BriefingData = {
 // ---------------------------------------------------------------------------
 
 export function phStats(t: TheaterKey): Stats {
-  return t === "iran" ? iranStats : stats;
+  if (t === "iran") return iranStats;
+  if (t === "sudan") return sudanStats;
+  if (t === "myanmar") return myanmarStats;
+  return stats;
 }
 export function phMapEvents(t: TheaterKey): MapEvent[] {
-  return t === "iran" ? iranMapEvents : mapEvents;
+  if (t === "iran") return iranMapEvents;
+  if (t === "sudan") return sudanMapEvents;
+  if (t === "myanmar") return myanmarMapEvents;
+  return mapEvents;
 }
 export function phAlerts(t: TheaterKey): Alert[] {
-  return t === "iran" ? iranAlerts : alerts;
+  if (t === "iran") return iranAlerts;
+  if (t === "sudan") return sudanAlerts;
+  if (t === "myanmar") return myanmarAlerts;
+  return alerts;
 }
 export function phIntensity(t: TheaterKey): IntensityDay[] {
-  return t === "iran" ? iranIntensity : intensity;
+  if (t === "iran") return iranIntensity;
+  if (t === "sudan") return sudanIntensity;
+  if (t === "myanmar") return myanmarIntensity;
+  return intensity;
 }
 export function phSources(t: TheaterKey): Source[] {
-  return t === "iran" ? iranSources : sources;
+  if (t === "iran") return iranSources;
+  if (t === "sudan") return sudanSources;
+  if (t === "myanmar") return myanmarSources;
+  return sources;
 }
 function todayLabel(): { date: string; utc_time: string } {
   const now = new Date();
@@ -570,7 +601,11 @@ function todayLabel(): { date: string; utc_time: string } {
 }
 
 export function phBriefing(t: TheaterKey): BriefingData {
-  const base = t === "iran" ? iranBriefing : briefing;
+  let base: BriefingData;
+  if (t === "iran") base = iranBriefing;
+  else if (t === "sudan") base = sudanBriefing;
+  else if (t === "myanmar") base = myanmarBriefing;
+  else base = briefing;
   return { ...base, ...todayLabel() };
 }
 
@@ -660,7 +695,7 @@ const eventDetailMap: Record<string, EventDetail> = {
 
 export function getEventDetail(id: string): EventDetail | null {
   if (eventDetailMap[id]) return eventDetailMap[id];
-  const base = [...mapEvents, ...iranMapEvents].find((e) => e.id === id);
+  const base = [...mapEvents, ...iranMapEvents, ...sudanMapEvents, ...myanmarMapEvents].find((e) => e.id === id);
   if (!base) return null;
   return {
     ...base,
@@ -691,6 +726,336 @@ export const iranFullBriefing: FullBriefing = {
   confidence_summary: { verified: 1, partial: 4, unconfirmed: 3 },
 };
 
+// ---------------------------------------------------------------------------
+// Sudan theater placeholder data
+// ---------------------------------------------------------------------------
+
+export const sudanStats: Stats = {
+  events: 12,
+  strikes: 5,
+  verified_pct: 67,
+  vs_7d_avg_pct: 8,
+};
+
+export const sudanMapEvents: MapEvent[] = [
+  {
+    id: "sd-evt-001",
+    event_type: "strike",
+    occurred_at: "2026-05-14T07:15:00Z",
+    lat: 15.55,
+    lng: 32.53,
+    location_name: "Omdurman",
+    oblast: "Khartoum State",
+    description: "RSF artillery reported in western Omdurman residential districts. Fires observed from multiple locations.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 31,
+  },
+  {
+    id: "sd-evt-002",
+    event_type: "clash",
+    occurred_at: "2026-05-14T06:40:00Z",
+    lat: 13.63,
+    lng: 25.35,
+    location_name: "El Fasher",
+    oblast: "North Darfur",
+    description: "SAF positions on the northern perimeter of El Fasher reportedly came under RSF small-arms and mortar fire. Civilians sheltering in place.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 66,
+  },
+  {
+    id: "sd-evt-003",
+    event_type: "strike",
+    occurred_at: "2026-05-14T05:50:00Z",
+    lat: 19.62,
+    lng: 37.22,
+    location_name: "Port Sudan",
+    oblast: "Red Sea State",
+    description: "Drone strike on Port Sudan airport area. Infrastructure damage reported; single source, unverified.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 116,
+  },
+  {
+    id: "sd-evt-004",
+    event_type: "movement",
+    occurred_at: "2026-05-14T04:30:00Z",
+    lat: 13.18,
+    lng: 30.22,
+    location_name: "El Obeid",
+    oblast: "North Kordofan",
+    description: "RSF convoy observed moving northeast of El Obeid on the Khartoum road. Direction and size unconfirmed.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 196,
+  },
+  {
+    id: "sd-evt-005",
+    event_type: "clash",
+    occurred_at: "2026-05-14T03:10:00Z",
+    lat: 14.40,
+    lng: 33.50,
+    location_name: "Wad Madani",
+    oblast: "Al Jazirah State",
+    description: "Fighting reported on the southern approach to Wad Madani. Two wire services confirm armed contact; outcome unclear.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 276,
+  },
+  {
+    id: "sd-evt-006",
+    event_type: "movement",
+    occurred_at: "2026-05-13T21:00:00Z",
+    lat: 12.06,
+    lng: 24.89,
+    location_name: "Nyala",
+    oblast: "South Darfur",
+    description: "Satellite imagery shows military vehicle concentration south of Nyala airfield, consistent with pre-operation staging.",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 546,
+  },
+];
+
+export const sudanAlerts: Alert[] = [
+  {
+    id: "sd-evt-001",
+    event_type: "strike",
+    title: "RSF artillery, Omdurman residential",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 31,
+  },
+  {
+    id: "sd-evt-002",
+    event_type: "clash",
+    title: "El Fasher perimeter contact, North Darfur",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 66,
+  },
+  {
+    id: "sd-evt-003",
+    event_type: "strike",
+    title: "Drone strike reported, Port Sudan airport",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 116,
+  },
+];
+
+export const sudanIntensity: IntensityDay[] = [
+  { label: "Mon", value: 28, hot: false },
+  { label: "Tue", value: 35, hot: false },
+  { label: "Wed", value: 42, hot: false },
+  { label: "Thu", value: 30, hot: false },
+  { label: "Fri", value: 50, hot: false },
+  { label: "Sat", value: 65, hot: true },
+  { label: "Sun", value: 58, hot: true },
+];
+
+export const sudanSources: Source[] = [
+  { rank: 1, handle: "reuters_africa_rss", display_name: "Reuters Africa", platform: "rss", events_count: 5, verified_rate: 94 },
+  { rank: 2, handle: "@SudanWarMonitor", display_name: "Sudan War Monitor", platform: "x", events_count: 8, verified_rate: 81 },
+  { rank: 3, handle: "afp_africa_rss", display_name: "AFP Africa", platform: "rss", events_count: 4, verified_rate: 92 },
+  { rank: 4, handle: "ayin_rss", display_name: "Ayin Network", platform: "rss", events_count: 3, verified_rate: 74 },
+  { rank: 5, handle: "@RadioDabaanga", display_name: "Radio Dabanga", platform: "x", events_count: 6, verified_rate: 68 },
+];
+
+export const sudanBriefing: BriefingData = {
+  id: "sd-brief-20260514",
+  date: "14 May 2026",
+  utc_time: "08:00 UTC",
+  source_count: 14,
+  reviewed: false,
+  paragraphs: [
+    "Artillery fire and armed contact were reported across three fronts in the 24-hour window. The El Fasher perimeter contact in North Darfur is the highest-priority development — two independent wire services place RSF forces within mortar range of the city's northern SAF positions, sustaining a weeks-long siege pattern. The Omdurman residential strikes are partial-confidence; corroborating footage has not emerged.",
+    "A satellite imagery assessment places a military vehicle concentration south of Nyala airfield — the sole verified event in today's window. Treat the Port Sudan drone report as unconfirmed; it originates from a single Telegram channel with no wire corroboration.",
+  ],
+};
+
+export const sudanFullBriefing: FullBriefing = {
+  id: "sd-brief-20260514",
+  date: "14 May 2026",
+  utc_time: "08:00 UTC",
+  source_count: 14,
+  reviewed: false,
+  paragraphs: sudanBriefing.paragraphs,
+  full_paragraphs: [
+    "Artillery fire and armed contact were reported across three fronts in the 24-hour window. The El Fasher perimeter contact in North Darfur is the highest-priority development — two independent wire services place RSF forces within mortar range of the city's northern SAF positions, sustaining a weeks-long siege pattern. The Omdurman residential strikes are partial-confidence; corroborating footage has not emerged.",
+    "A satellite imagery assessment places a military vehicle concentration south of Nyala airfield — the sole verified event in today's window. Treat the Port Sudan drone report as unconfirmed; it originates from a single Telegram channel with no wire corroboration. The Wad Madani contact is confirmed by two sources but outcome remains unknown.",
+    "Theater tempo is running approximately 8% above the 7-day rolling average, driven by sustained pressure on El Fasher. Watch: any escalation at El Fasher carries acute humanitarian risk — the city remains the last major displacement refuge in North Darfur with an estimated 1.8 million internally displaced persons sheltering there.",
+  ],
+  referenced_event_ids: ["sd-evt-001", "sd-evt-002", "sd-evt-005", "sd-evt-006"],
+  confidence_summary: { verified: 1, partial: 3, unconfirmed: 2 },
+};
+
+// ---------------------------------------------------------------------------
+// Myanmar theater placeholder data
+// ---------------------------------------------------------------------------
+
+export const myanmarStats: Stats = {
+  events: 9,
+  strikes: 4,
+  verified_pct: 71,
+  vs_7d_avg_pct: -5,
+};
+
+export const myanmarMapEvents: MapEvent[] = [
+  {
+    id: "mm-evt-001",
+    event_type: "strike",
+    occurred_at: "2026-05-14T06:20:00Z",
+    lat: 22.00,
+    lng: 96.09,
+    location_name: "Sagaing",
+    oblast: "Sagaing Region",
+    description: "Tatmadaw jet airstrike on Sagaing township. DVB reports residential structures hit; casualties unconfirmed.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 76,
+  },
+  {
+    id: "mm-evt-002",
+    event_type: "clash",
+    occurred_at: "2026-05-14T05:30:00Z",
+    lat: 22.97,
+    lng: 97.74,
+    location_name: "Lashio",
+    oblast: "Northern Shan State",
+    description: "MNDAA and PDF forces reported in contact with SAC troops on the eastern approach to Lashio. Fighting ongoing per local monitors.",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 126,
+  },
+  {
+    id: "mm-evt-003",
+    event_type: "strike",
+    occurred_at: "2026-05-14T04:45:00Z",
+    lat: 16.44,
+    lng: 98.59,
+    location_name: "Myawaddy",
+    oblast: "Kayin State",
+    description: "Artillery exchange reported near Myawaddy border crossing. Karen National Liberation Army confirmed involvement.",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 191,
+  },
+  {
+    id: "mm-evt-004",
+    event_type: "strike",
+    occurred_at: "2026-05-14T03:00:00Z",
+    lat: 23.50,
+    lng: 93.58,
+    location_name: "Hakha",
+    oblast: "Chin State",
+    description: "Drone strike on Hakha outskirts. Single source; Chin Brotherhood units operating in the area.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 296,
+  },
+  {
+    id: "mm-evt-005",
+    event_type: "movement",
+    occurred_at: "2026-05-13T22:00:00Z",
+    lat: 21.97,
+    lng: 96.08,
+    location_name: "Mandalay",
+    oblast: "Mandalay Region",
+    description: "SAC troop reinforcements observed entering Mandalay via the Yangon highway. Satellite confirms column of approximately 30 vehicles.",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 496,
+  },
+  {
+    id: "mm-evt-006",
+    event_type: "clash",
+    occurred_at: "2026-05-13T18:00:00Z",
+    lat: 19.45,
+    lng: 97.02,
+    location_name: "Loikaw",
+    oblast: "Kayah State",
+    description: "Karenni Army engaged SAC forces on the northern approach to Loikaw. Two KA sources claim positions held; no independent confirmation.",
+    confidence: "unconfirmed",
+    source_count: 1,
+    minutes_ago: 736,
+  },
+];
+
+export const myanmarAlerts: Alert[] = [
+  {
+    id: "mm-evt-001",
+    event_type: "strike",
+    title: "Airstrike, Sagaing township",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 76,
+  },
+  {
+    id: "mm-evt-002",
+    event_type: "clash",
+    title: "MNDAA contact, Lashio eastern approach",
+    confidence: "verified",
+    source_count: 3,
+    minutes_ago: 126,
+  },
+  {
+    id: "mm-evt-003",
+    event_type: "strike",
+    title: "Artillery, Myawaddy border crossing",
+    confidence: "partial",
+    source_count: 2,
+    minutes_ago: 191,
+  },
+];
+
+export const myanmarIntensity: IntensityDay[] = [
+  { label: "Mon", value: 55, hot: true },
+  { label: "Tue", value: 42, hot: false },
+  { label: "Wed", value: 38, hot: false },
+  { label: "Thu", value: 60, hot: true },
+  { label: "Fri", value: 48, hot: false },
+  { label: "Sat", value: 35, hot: false },
+  { label: "Sun", value: 40, hot: false },
+];
+
+export const myanmarSources: Source[] = [
+  { rank: 1, handle: "dvb_rss", display_name: "DVB News", platform: "rss", events_count: 7, verified_rate: 88 },
+  { rank: 2, handle: "@Myanmar_OSINT", display_name: "Myanmar OSINT", platform: "x", events_count: 5, verified_rate: 91 },
+  { rank: 3, handle: "irrawaddy_rss", display_name: "The Irrawaddy", platform: "rss", events_count: 6, verified_rate: 84 },
+  { rank: 4, handle: "frontiermyanmar_rss", display_name: "Frontier Myanmar", platform: "rss", events_count: 3, verified_rate: 86 },
+  { rank: 5, handle: "rfa_myanmar_rss", display_name: "RFA Myanmar", platform: "rss", events_count: 4, verified_rate: 76 },
+];
+
+export const myanmarBriefing: BriefingData = {
+  id: "mm-brief-20260514",
+  date: "14 May 2026",
+  utc_time: "07:30 UTC",
+  source_count: 11,
+  reviewed: false,
+  paragraphs: [
+    "Airstrike and armed contact activity spread across four states and regions in the 24-hour window. The Lashio eastern approach contact is the sole verified event — three independent sources including DVB and @Myanmar_OSINT confirm ongoing fighting between MNDAA/PDF and SAC troops, continuing a weeks-long push for the city.",
+    "The Sagaing airstrike is partial-confidence; two sources report residential structures hit but no casualty figures are available from verified outlets. Satellite imagery confirms SAC reinforcements entering Mandalay via the Yangon highway.",
+  ],
+};
+
+export const myanmarFullBriefing: FullBriefing = {
+  id: "mm-brief-20260514",
+  date: "14 May 2026",
+  utc_time: "07:30 UTC",
+  source_count: 11,
+  reviewed: false,
+  paragraphs: myanmarBriefing.paragraphs,
+  full_paragraphs: [
+    "Airstrike and armed contact activity spread across four states and regions in the 24-hour window. The Lashio eastern approach contact is the sole verified event — three independent sources including DVB and @Myanmar_OSINT confirm ongoing fighting between MNDAA/PDF and SAC troops, continuing a weeks-long push for the city.",
+    "The Sagaing airstrike is partial-confidence; two sources report residential structures hit but no casualty figures are available from verified outlets. Satellite imagery confirms SAC reinforcements entering Mandalay via the Yangon highway — assessed as a defensive repositioning ahead of anticipated PDF pressure on the city. The Loikaw contact is single-sourced from Karenni Army channels; treat as unconfirmed.",
+    "Overall tempo is 5% below the 7-day rolling average, suggesting a brief operational pause rather than a structural de-escalation. Watch: the Lashio front is the critical variable — if MNDAA forces secure the city's eastern approach, SAC's logistics corridor to the Chinese border comes under pressure.",
+  ],
+  referenced_event_ids: ["mm-evt-001", "mm-evt-002", "mm-evt-003", "mm-evt-005"],
+  confidence_summary: { verified: 2, partial: 3, unconfirmed: 2 },
+};
+
 export const fullBriefing: FullBriefing = {
   id: "brief-20260507",
   date: "07 May 2026",
@@ -710,6 +1075,8 @@ export const fullBriefing: FullBriefing = {
 export function getFullBriefing(id: string): FullBriefing | null {
   if (id === fullBriefing.id) return { ...fullBriefing, ...todayLabel() };
   if (id === iranFullBriefing.id) return { ...iranFullBriefing, ...todayLabel() };
+  if (id === sudanFullBriefing.id) return { ...sudanFullBriefing, ...todayLabel() };
+  if (id === myanmarFullBriefing.id) return { ...myanmarFullBriefing, ...todayLabel() };
   return null;
 }
 
