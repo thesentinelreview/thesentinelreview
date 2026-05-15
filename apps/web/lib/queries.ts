@@ -26,6 +26,24 @@ const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
 };
 
 // ---------------------------------------------------------------------------
+// Time range
+// ---------------------------------------------------------------------------
+
+export type TimeRange = "24h" | "7d" | "30d";
+
+const VALID_RANGES: TimeRange[] = ["24h", "7d", "30d"];
+
+export function resolveTimeRange(raw: string | undefined): TimeRange {
+  return VALID_RANGES.includes(raw as TimeRange) ? (raw as TimeRange) : "24h";
+}
+
+const SQL_INTERVALS: Record<TimeRange, string> = {
+  "24h": "24 hours",
+  "7d":  "7 days",
+  "30d": "30 days",
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -55,10 +73,11 @@ function fmtBriefingUTC(ts: Date): string {
 // Stats
 // ---------------------------------------------------------------------------
 
-export async function getStats(theater: TheaterKey = "ukraine"): Promise<Stats> {
+export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<Stats> {
   if (!isDatabaseConfigured()) return ph.phStats(theater);
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
 
   try {
     type Row = {
@@ -74,7 +93,7 @@ export async function getStats(theater: TheaterKey = "ukraine"): Promise<Stats> 
         SELECT *
         FROM events
         WHERE published_at IS NOT NULL
-          AND occurred_at > now() - INTERVAL '24 hours'
+          AND occurred_at > now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       ),
       prev_7d AS (
@@ -116,10 +135,11 @@ export async function getStats(theater: TheaterKey = "ukraine"): Promise<Stats> 
 // Map events (last 24h)
 // ---------------------------------------------------------------------------
 
-export async function getMapEvents(theater: TheaterKey = "ukraine"): Promise<MapEvent[]> {
+export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<MapEvent[]> {
   if (!isDatabaseConfigured()) return ph.phMapEvents(theater);
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
 
   try {
     type Row = {
@@ -151,7 +171,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine"): Promise<Map
       FROM events e
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
-        AND e.occurred_at > now() - INTERVAL '24 hours'
+        AND e.occurred_at > now() - INTERVAL '${interval}'
         AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC

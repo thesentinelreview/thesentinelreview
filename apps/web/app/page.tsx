@@ -1,7 +1,8 @@
 import Link from "next/link";
 import s from "./page.module.css";
 import MapWrapper from "@/components/MapWrapper";
-import { type Alert, resolveTheater, THEATERS } from "@/data/placeholder";
+import ShareButton from "@/components/ShareButton";
+import { type Alert, type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
   getMapEvents,
@@ -9,6 +10,8 @@ import {
   getIntensity,
   getTopSources,
   getLatestBriefing,
+  resolveTimeRange,
+  type TimeRange,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -40,24 +43,78 @@ function nowUTC(): string {
   }) + " UTC";
 }
 
+const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
+
+const WINDOW_LABELS: Record<TimeRange, string> = {
+  "24h": "24h",
+  "7d":  "7d",
+  "30d": "30d",
+};
+
+// Build a URL preserving theater + window + types, optionally overriding any.
+function buildHref(opts: {
+  theater: string;
+  window: TimeRange;
+  types: EventType[];
+}): string {
+  const p = new URLSearchParams();
+  p.set("theater", opts.theater);
+  if (opts.window !== "24h") p.set("window", opts.window);
+  if (opts.types.length > 0 && opts.types.length < ALL_TYPES.length) {
+    p.set("types", opts.types.join(","));
+  }
+  return `/?${p}`;
+}
+
 // ── page ─────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ theater?: string }>;
+  searchParams: Promise<{
+    theater?: string;
+    window?: string;
+    types?: string;
+    lat?: string;
+    lng?: string;
+    zoom?: string;
+  }>;
 }) {
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
+  const timeRange = resolveTimeRange(params.window);
+
+  // Parse visible event types (default = all three).
+  const rawTypes = params.types
+    ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
+    : ALL_TYPES;
+  const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
+
+  // Use URL-encoded map position when present (set by the client on pan/zoom).
+  const urlLat  = params.lat  ? parseFloat(params.lat)  : NaN;
+  const urlLng  = params.lng  ? parseFloat(params.lng)  : NaN;
+  const urlZoom = params.zoom ? parseFloat(params.zoom) : NaN;
+  const mapCenter: [number, number] =
+    !isNaN(urlLat) && !isNaN(urlLng) ? [urlLng, urlLat] : theater.mapCenter;
+  const mapZoom = !isNaN(urlZoom) ? urlZoom : theater.mapZoom;
 
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
-    getStats(theater.id),
-    getMapEvents(theater.id),
+    getStats(theater.id, timeRange),
+    getMapEvents(theater.id, timeRange),
     getAlerts(theater.id),
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),
   ]);
+
+  const windowLabel = timeRange === "24h" ? "Past 24h" : timeRange === "7d" ? "Past 7d" : "Past 30d";
+  const scrubberStart = `−${WINDOW_LABELS[timeRange]}`;
+
+  const TYPE_META: { type: EventType; color: string; label: string }[] = [
+    { type: "strike",   color: "#e63946", label: "Strike / impact" },
+    { type: "clash",    color: "#f4a261", label: "Contact / clash" },
+    { type: "movement", color: "#5b9eff", label: "Movement" },
+  ];
 
   return (
     <div className={s.app}>
@@ -76,14 +133,22 @@ export default async function DashboardPage({
           {(Object.values(THEATERS)).map((t) => (
             <Link
               key={t.id}
-              href={`/?theater=${t.id}`}
+              href={buildHref({ theater: t.id, window: timeRange, types: visibleTypes })}
               className={`${s.filterChip} ${theater.id === t.id ? s.filterChipActive : ""}`}
             >
               {t.label}
             </Link>
           ))}
           <span className={s.filterLabel} style={{ marginLeft: 6 }}>Window</span>
-          <span className={`${s.filterChip} ${s.filterChipActive}`}>24h ▾</span>
+          {(["24h", "7d", "30d"] as TimeRange[]).map((w) => (
+            <Link
+              key={w}
+              href={buildHref({ theater: theater.id, window: w, types: visibleTypes })}
+              className={`${s.filterChip} ${timeRange === w ? s.filterChipActive : ""}`}
+            >
+              {WINDOW_LABELS[w]}
+            </Link>
+          ))}
           <div className={s.liveIndicator}>
             <span className={s.liveDot} />
             <span>Live</span>
@@ -102,31 +167,49 @@ export default async function DashboardPage({
               <span><strong>{stats.events}</strong> events</span>
               <span><strong>{stats.strikes}</strong> strikes</span>
               <span><strong>{Math.max(0, stats.events - stats.strikes)}</strong> movements</span>
+              <ShareButton className={s.shareBtn} />
             </div>
           </div>
 
           <div className={s.mapCanvas}>
-            <MapWrapper events={mapEvents} center={theater.mapCenter} zoom={theater.mapZoom} />
+            <MapWrapper
+              events={mapEvents}
+              center={mapCenter}
+              zoom={mapZoom}
+              visibleTypes={visibleTypes}
+            />
 
+            {/* Clickable legend — each item toggles that event type */}
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
-              <div className={s.legendItem}>
-                <span className={s.legendDot} style={{ background: "#e63946" }}/>
-                <span>Strike / impact</span>
-              </div>
-              <div className={s.legendItem}>
-                <span className={s.legendDot} style={{ background: "#f4a261" }}/>
-                <span>Contact / clash</span>
-              </div>
-              <div className={s.legendItem}>
-                <span className={s.legendDot} style={{ background: "#5b9eff" }}/>
-                <span>Movement</span>
-              </div>
+              {TYPE_META.map(({ type, color, label }) => {
+                const active = visibleTypes.includes(type);
+                const next = active
+                  ? visibleTypes.filter(t => t !== type)
+                  : [...visibleTypes, type];
+                const href = buildHref({ theater: theater.id, window: timeRange, types: next });
+                return (
+                  <Link
+                    key={type}
+                    href={href}
+                    className={`${s.legendItem} ${!active ? s.legendItemDim : ""}`}
+                  >
+                    <span
+                      className={s.legendDot}
+                      style={{
+                        background: active ? color : "transparent",
+                        borderColor: color,
+                      }}
+                    />
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
           {/* Time scrubber */}
           <div className={s.scrubber}>
-            <span className={s.scrubberTime}>−24h</span>
+            <span className={s.scrubberTime}>{scrubberStart}</span>
             <div className={s.scrubberTrack}>
               <div className={s.scrubberFill}/>
               <div className={s.scrubberHandle}/>
@@ -142,7 +225,7 @@ export default async function DashboardPage({
           <div className={s.panel}>
             <div className={s.panelHeader}>
               <div className={s.panelTitle}>At a glance</div>
-              <div className={s.panelMeta}>Past 24h</div>
+              <div className={s.panelMeta}>{windowLabel}</div>
             </div>
             <div className={s.statsGrid}>
               <div className={s.stat}>
@@ -160,11 +243,20 @@ export default async function DashboardPage({
                 </div>
               </div>
               <div className={s.stat}>
-                <div className={s.statLabel}>vs 7d avg</div>
-                <div className={`${s.statValue} ${stats.vs_7d_avg_pct >= 0 ? s.statValueUp : ""}`}>
-                  <span className={s.statArrow}>{stats.vs_7d_avg_pct >= 0 ? "↑" : "↓"}</span>
-                  {Math.abs(stats.vs_7d_avg_pct)}<span className={s.statUnit}>%</span>
-                </div>
+                {timeRange === "24h" ? (
+                  <>
+                    <div className={s.statLabel}>vs 7d avg</div>
+                    <div className={`${s.statValue} ${stats.vs_7d_avg_pct >= 0 ? s.statValueUp : ""}`}>
+                      <span className={s.statArrow}>{stats.vs_7d_avg_pct >= 0 ? "↑" : "↓"}</span>
+                      {Math.abs(stats.vs_7d_avg_pct)}<span className={s.statUnit}>%</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className={s.statLabel}>Movements</div>
+                    <div className={s.statValue}>{Math.max(0, stats.events - stats.strikes)}</div>
+                  </>
+                )}
               </div>
             </div>
           </div>
