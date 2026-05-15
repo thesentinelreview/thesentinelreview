@@ -23,6 +23,15 @@ const plexCondensed = IBM_Plex_Sans_Condensed({
 export const metadata: Metadata = {
   title: "Sentinel Review — Conflict Intelligence Dashboard",
   description: "Real-time OSINT conflict intelligence for Ukraine and beyond.",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
