@@ -1,10 +1,27 @@
 import MapWrapper from "@/components/MapWrapper";
-import { getMapEvents } from "@/lib/queries";
+import { type EventType, resolveTheater } from "@/data/placeholder";
+import { getMapEvents, resolveTimeRange } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-export default async function EmbedMapPage() {
-  const mapEvents = await getMapEvents();
+const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
+
+export default async function EmbedMapPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ theater?: string; window?: string; types?: string }>;
+}) {
+  const params = await searchParams;
+  const theater = resolveTheater(params.theater);
+  const timeRange = resolveTimeRange(params.window);
+
+  const rawTypes = params.types
+    ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
+    : ALL_TYPES;
+  const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
+
+  const mapEvents = await getMapEvents(theater.id, timeRange);
+
   return (
     <div style={{
       margin: "-20px",
@@ -32,7 +49,12 @@ export default async function EmbedMapPage() {
         Sentinel Review · thesentinelreview.com
       </div>
       <div style={{ flex: 1, position: "relative" }}>
-        <MapWrapper events={mapEvents} center={[38.2, 48.6]} zoom={7} visibleTypes={["strike", "clash", "movement"]} />
+        <MapWrapper
+          events={mapEvents}
+          center={theater.mapCenter}
+          zoom={theater.mapZoom}
+          visibleTypes={visibleTypes}
+        />
       </div>
     </div>
   );
