@@ -54,7 +54,7 @@ def _process_post(
     post_id: uuid.UUID = post["id"]
 
     # ── LLM extraction ───────────────────────────────────────────────────────
-    result, llm_meta = extract_event(post["text"], source=source)
+    result, llm_meta = extract_event(post["text"], source=source, theater=source.get("theater", "ukraine"))
 
     log_llm_call(
         conn,
