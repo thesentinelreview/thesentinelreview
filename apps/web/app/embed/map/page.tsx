@@ -32,7 +32,7 @@ export default async function EmbedMapPage() {
         Sentinel Review · thesentinelreview.com
       </div>
       <div style={{ flex: 1, position: "relative" }}>
-        <MapWrapper events={mapEvents} center={[38.2, 48.6]} zoom={7} />
+        <MapWrapper events={mapEvents} center={[38.2, 48.6]} zoom={7} visibleTypes={["strike", "clash", "movement"]} />
       </div>
     </div>
   );
