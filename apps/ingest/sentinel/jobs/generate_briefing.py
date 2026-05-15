@@ -82,13 +82,16 @@ def _compute_baseline(conn: psycopg.Connection, *, theater: str) -> dict:
     """Average events per day per oblast over the last 7 days."""
     rows = conn.execute(
         """
-        SELECT oblast, COUNT(*)::float / 7 AS avg_per_day
-        FROM events
-        WHERE occurred_at > now() - interval '7 days'
-          AND confidence IN ('verified', 'partial')
-        GROUP BY oblast
+        SELECT e.oblast, COUNT(*)::float / 7 AS avg_per_day
+        FROM events e
+        JOIN event_sources es ON es.event_id = e.id
+        JOIN sources s ON s.id = es.source_id AND s.theater = %s
+        WHERE e.occurred_at > now() - interval '7 days'
+          AND e.confidence IN ('verified', 'partial')
+        GROUP BY e.oblast
         ORDER BY avg_per_day DESC
         """,
+        (theater,),
     ).fetchall()
     return {row["oblast"]: round(row["avg_per_day"], 1) for row in rows}
 

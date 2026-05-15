@@ -54,7 +54,7 @@ _TOOL: anthropic.types.ToolParam = {
             },
             "oblast": {
                 "type": "string",
-                "description": "Ukrainian oblast name (e.g. Donetsk, Kharkiv, Zaporizhzhia).",
+                "description": "Administrative region name appropriate for the theater (e.g. Ukrainian oblast, Sudanese state, Myanmar region/state, Iranian province).",
             },
             "lat": {
                 "type": "number",

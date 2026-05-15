@@ -265,13 +265,14 @@ def get_recent_events(
             e.location_name, e.oblast, e.description, e.confidence,
             COUNT(DISTINCT es.source_id) AS source_count
         FROM events e
-        LEFT JOIN event_sources es ON es.event_id = e.id
+        JOIN event_sources es ON es.event_id = e.id
+        JOIN sources s ON s.id = es.source_id AND s.theater = %s
         WHERE e.occurred_at > now() - (%s * interval '1 hour')
           AND e.confidence IN ('verified', 'partial')
         GROUP BY e.id
         ORDER BY e.occurred_at DESC
         """,
-        (hours,),
+        (theater, hours),
     ).fetchall()  # type: ignore[return-value]
 
 
@@ -297,12 +298,12 @@ def insert_briefing(
             draft_text, published_text, status, published_at,
             event_ids, prompt_tokens, completion_tokens
         )
-        VALUES (%s, %s, %s, %s, %s, 'published', now(), %s, %s, %s)
+        VALUES (%s, %s, %s, %s, NULL, 'draft', NULL, %s, %s, %s)
         RETURNING id
         """,
         (
             theater, period_start, period_end,
-            draft_text, draft_text, event_ids, prompt_tokens, completion_tokens,
+            draft_text, event_ids, prompt_tokens, completion_tokens,
         ),
     ).fetchone()
     assert row is not None
