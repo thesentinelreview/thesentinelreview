@@ -701,9 +701,13 @@ const eventDetailMap: Record<string, EventDetail> = {
 };
 
 export function getEventDetail(id: string): EventDetail | null {
-  if (eventDetailMap[id]) return eventDetailMap[id];
-  const base = [...mapEvents, ...iranMapEvents, ...sudanMapEvents, ...myanmarMapEvents].find((e) => e.id === id);
-  if (!base) return null;
+  if (eventDetailMap[id]) {
+    const d = eventDetailMap[id];
+    return { ...d, ...rebaseEvent(d) };
+  }
+  const raw = [...mapEvents, ...iranMapEvents, ...sudanMapEvents, ...myanmarMapEvents].find((e) => e.id === id);
+  if (!raw) return null;
+  const base = rebaseEvent(raw);
   return {
     ...base,
     actor: null,
