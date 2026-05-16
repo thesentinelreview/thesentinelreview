@@ -334,5 +334,15 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
     mapRef.current?.flyTo({ center, zoom, duration: 1200 });
   }, [center, zoom]);
 
+  // Listen for geocoder fly-to events fired by GeoSearch.
+  useEffect(() => {
+    function onFlyTo(e: Event) {
+      const { lng, lat, zoom: z } = (e as CustomEvent<{ lng: number; lat: number; zoom: number }>).detail;
+      mapRef.current?.flyTo({ center: [lng, lat], zoom: z, duration: 1200 });
+    }
+    window.addEventListener("sentinel:flyto", onFlyTo);
+    return () => window.removeEventListener("sentinel:flyto", onFlyTo);
+  }, []);
+
   return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }

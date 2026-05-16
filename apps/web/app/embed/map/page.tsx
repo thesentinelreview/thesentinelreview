@@ -1,6 +1,6 @@
 import MapWrapper from "@/components/MapWrapper";
 import { type EventType, resolveTheater } from "@/data/placeholder";
-import { getMapEvents, resolveTimeRange } from "@/lib/queries";
+import { getMapEvents, resolveTimeRange, resolveConfidence } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -9,18 +9,19 @@ const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
 export default async function EmbedMapPage({
   searchParams,
 }: {
-  searchParams: Promise<{ theater?: string; window?: string; types?: string }>;
+  searchParams: Promise<{ theater?: string; window?: string; types?: string; confidence?: string }>;
 }) {
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
+  const confidence = resolveConfidence(params.confidence);
 
   const rawTypes = params.types
     ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
     : ALL_TYPES;
   const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
 
-  const mapEvents = await getMapEvents(theater.id, timeRange);
+  const mapEvents = await getMapEvents(theater.id, timeRange, confidence);
 
   return (
     <div style={{

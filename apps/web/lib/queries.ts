@@ -37,6 +37,30 @@ export function resolveTimeRange(raw: string | undefined): TimeRange {
   return VALID_RANGES.includes(raw as TimeRange) ? (raw as TimeRange) : "24h";
 }
 
+// ---------------------------------------------------------------------------
+// Confidence filter
+// ---------------------------------------------------------------------------
+
+export type ConfidenceFilter = "all" | "verified" | "partial";
+
+const VALID_CONFIDENCE: ConfidenceFilter[] = ["all", "verified", "partial"];
+
+export function resolveConfidence(raw: string | undefined): ConfidenceFilter {
+  return VALID_CONFIDENCE.includes(raw as ConfidenceFilter) ? (raw as ConfidenceFilter) : "all";
+}
+
+function confidenceSQL(confidence: ConfidenceFilter): string {
+  if (confidence === "verified") return "AND confidence = 'verified'";
+  if (confidence === "partial") return "AND confidence IN ('verified', 'partial')";
+  return "";
+}
+
+function confidenceSQLPrefixed(confidence: ConfidenceFilter): string {
+  if (confidence === "verified") return "AND e.confidence = 'verified'";
+  if (confidence === "partial") return "AND e.confidence IN ('verified', 'partial')";
+  return "";
+}
+
 const SQL_INTERVALS: Record<TimeRange, string> = {
   "24h": "24 hours",
   "7d":  "7 days",
@@ -73,11 +97,12 @@ function fmtBriefingUTC(ts: Date): string {
 // Stats
 // ---------------------------------------------------------------------------
 
-export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<Stats> {
+export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h", confidence: ConfidenceFilter = "all"): Promise<Stats> {
   if (!isDatabaseConfigured()) return ph.phStats(theater);
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval = SQL_INTERVALS[timeRange];
+  const confClause = confidenceSQL(confidence);
 
   try {
     type Row = {
@@ -95,6 +120,7 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
         WHERE published_at IS NOT NULL
           AND occurred_at > now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          ${confClause}
       ),
       prev_7d AS (
         SELECT count(*)::float / 7.0 AS daily_avg
@@ -135,11 +161,24 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 // Map events (last 24h)
 // ---------------------------------------------------------------------------
 
-export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<MapEvent[]> {
+export async function getMapEvents(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange = "24h",
+  confidence: ConfidenceFilter = "all",
+  q?: string,
+): Promise<MapEvent[]> {
   if (!isDatabaseConfigured()) return ph.phMapEvents(theater);
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval = SQL_INTERVALS[timeRange];
+  const confClause = confidenceSQLPrefixed(confidence);
+
+  const params: (string | number)[] = [minLng, minLat, maxLng, maxLat];
+  let keywordClause = "";
+  if (q?.trim()) {
+    params.push(`%${q.trim()}%`);
+    keywordClause = `AND e.description ILIKE $${params.length}`;
+  }
 
   try {
     type Row = {
@@ -173,10 +212,12 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
       WHERE e.published_at IS NOT NULL
         AND e.occurred_at > now() - INTERVAL '${interval}'
         AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        ${confClause}
+        ${keywordClause}
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
       `,
-      [minLng, minLat, maxLng, maxLat],
+      params,
     );
 
     if (!rows.length) return ph.phMapEvents(theater);

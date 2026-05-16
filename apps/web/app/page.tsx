@@ -2,6 +2,8 @@ import Link from "next/link";
 import s from "./page.module.css";
 import MapWrapper from "@/components/MapWrapper";
 import ShareButton from "@/components/ShareButton";
+import GeoSearch from "@/components/GeoSearch";
+import SearchBox from "@/components/SearchBox";
 import { type Alert, type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
@@ -11,7 +13,9 @@ import {
   getTopSources,
   getLatestBriefing,
   resolveTimeRange,
+  resolveConfidence,
   type TimeRange,
+  type ConfidenceFilter,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -51,18 +55,30 @@ const WINDOW_LABELS: Record<TimeRange, string> = {
   "30d": "30d",
 };
 
-// Build a URL preserving theater + window + types, optionally overriding any.
-function buildHref(opts: {
+const CONFIDENCE_LABELS: Record<ConfidenceFilter, string> = {
+  all:      "All",
+  verified: "Verified",
+  partial:  "Partial+",
+};
+
+// Current filter state — used to build consistent hrefs across all navigation.
+type FilterState = {
   theater: string;
   window: TimeRange;
   types: EventType[];
-}): string {
+  confidence: ConfidenceFilter;
+  q?: string;
+};
+
+function buildHref(state: FilterState): string {
   const p = new URLSearchParams();
-  p.set("theater", opts.theater);
-  if (opts.window !== "24h") p.set("window", opts.window);
-  if (opts.types.length > 0 && opts.types.length < ALL_TYPES.length) {
-    p.set("types", opts.types.join(","));
+  p.set("theater", state.theater);
+  if (state.window !== "24h") p.set("window", state.window);
+  if (state.types.length > 0 && state.types.length < ALL_TYPES.length) {
+    p.set("types", state.types.join(","));
   }
+  if (state.confidence !== "all") p.set("confidence", state.confidence);
+  if (state.q?.trim()) p.set("q", state.q.trim());
   return `/?${p}`;
 }
 
@@ -75,6 +91,8 @@ export default async function DashboardPage({
     theater?: string;
     window?: string;
     types?: string;
+    confidence?: string;
+    q?: string;
     lat?: string;
     lng?: string;
     zoom?: string;
@@ -83,6 +101,8 @@ export default async function DashboardPage({
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
+  const confidence = resolveConfidence(params.confidence);
+  const q = params.q?.trim() || undefined;
 
   // Parse visible event types (default = all three).
   const rawTypes = params.types
@@ -98,9 +118,11 @@ export default async function DashboardPage({
     !isNaN(urlLat) && !isNaN(urlLng) ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = !isNaN(urlZoom) ? urlZoom : theater.mapZoom;
 
+  const cur: FilterState = { theater: theater.id, window: timeRange, types: visibleTypes, confidence, q };
+
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
-    getStats(theater.id, timeRange),
-    getMapEvents(theater.id, timeRange),
+    getStats(theater.id, timeRange, confidence),
+    getMapEvents(theater.id, timeRange, confidence, q),
     getAlerts(theater.id),
     getIntensity(theater.id),
     getTopSources(theater.id),
@@ -109,6 +131,15 @@ export default async function DashboardPage({
 
   const windowLabel = timeRange === "24h" ? "Past 24h" : timeRange === "7d" ? "Past 7d" : "Past 30d";
   const scrubberStart = `−${WINDOW_LABELS[timeRange]}`;
+
+  // Export URL mirrors all active filters.
+  const exportParams = new URLSearchParams();
+  exportParams.set("theater", theater.id);
+  if (timeRange !== "24h") exportParams.set("window", timeRange);
+  if (visibleTypes.length < ALL_TYPES.length) exportParams.set("types", visibleTypes.join(","));
+  if (confidence !== "all") exportParams.set("confidence", confidence);
+  if (q) exportParams.set("q", q);
+  const exportHref = `/api/export?${exportParams}`;
 
   const TYPE_META: { type: EventType; color: string; label: string }[] = [
     { type: "strike",   color: "#e63946", label: "Strike / impact" },
@@ -133,22 +164,48 @@ export default async function DashboardPage({
           {(Object.values(THEATERS)).map((t) => (
             <Link
               key={t.id}
-              href={buildHref({ theater: t.id, window: timeRange, types: visibleTypes })}
+              href={buildHref({ ...cur, theater: t.id })}
               className={`${s.filterChip} ${theater.id === t.id ? s.filterChipActive : ""}`}
             >
               {t.label}
             </Link>
           ))}
-          <span className={s.filterLabel} style={{ marginLeft: 6 }}>Window</span>
+          <span className={s.filterLabel}>Window</span>
           {(["24h", "7d", "30d"] as TimeRange[]).map((w) => (
             <Link
               key={w}
-              href={buildHref({ theater: theater.id, window: w, types: visibleTypes })}
+              href={buildHref({ ...cur, window: w })}
               className={`${s.filterChip} ${timeRange === w ? s.filterChipActive : ""}`}
             >
               {WINDOW_LABELS[w]}
             </Link>
           ))}
+          <span className={s.filterLabel}>Intel</span>
+          {(["all", "verified", "partial"] as ConfidenceFilter[]).map((c) => (
+            <Link
+              key={c}
+              href={buildHref({ ...cur, confidence: c })}
+              className={`${s.filterChip} ${confidence === c ? s.filterChipActive : ""}`}
+            >
+              {CONFIDENCE_LABELS[c]}
+            </Link>
+          ))}
+          <GeoSearch
+            className={s.geoSearchWrap}
+            inputClassName={s.geoInput}
+            dropdownClassName={s.geoDropdown}
+            resultClassName={s.geoResult}
+            loadingClassName={s.geoLoading}
+          />
+          <SearchBox
+            key={q ?? ""}
+            initialValue={q}
+            theater={theater.id}
+            timeRange={timeRange !== "24h" ? timeRange : undefined}
+            types={visibleTypes.length < ALL_TYPES.length ? visibleTypes.join(",") : undefined}
+            confidence={confidence !== "all" ? confidence : undefined}
+            className={s.searchInput}
+          />
           <div className={s.liveIndicator}>
             <span className={s.liveDot} />
             <span>Live</span>
@@ -167,6 +224,7 @@ export default async function DashboardPage({
               <span><strong>{stats.events}</strong> events</span>
               <span><strong>{stats.strikes}</strong> strikes</span>
               <span><strong>{Math.max(0, stats.events - stats.strikes)}</strong> movements</span>
+              <a href={exportHref} className={s.exportBtn} download>Export CSV</a>
               <ShareButton className={s.shareBtn} />
             </div>
           </div>
@@ -186,11 +244,10 @@ export default async function DashboardPage({
                 const next = active
                   ? visibleTypes.filter(t => t !== type)
                   : [...visibleTypes, type];
-                const href = buildHref({ theater: theater.id, window: timeRange, types: next });
                 return (
                   <Link
                     key={type}
-                    href={href}
+                    href={buildHref({ ...cur, types: next })}
                     className={`${s.legendItem} ${!active ? s.legendItemDim : ""}`}
                   >
                     <span
