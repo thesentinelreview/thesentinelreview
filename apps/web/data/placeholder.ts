@@ -562,6 +562,10 @@ export const iranBriefing: BriefingData = {
 // Theater-aware placeholder accessors
 // ---------------------------------------------------------------------------
 
+function liveMinutesAgo(iso: string): number {
+  return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60_000));
+}
+
 export function phStats(t: TheaterKey): Stats {
   if (t === "iran") return iranStats;
   if (t === "sudan") return sudanStats;
@@ -569,16 +573,25 @@ export function phStats(t: TheaterKey): Stats {
   return stats;
 }
 export function phMapEvents(t: TheaterKey): MapEvent[] {
-  if (t === "iran") return iranMapEvents;
-  if (t === "sudan") return sudanMapEvents;
-  if (t === "myanmar") return myanmarMapEvents;
-  return mapEvents;
+  let base: MapEvent[];
+  if (t === "iran") base = iranMapEvents;
+  else if (t === "sudan") base = sudanMapEvents;
+  else if (t === "myanmar") base = myanmarMapEvents;
+  else base = mapEvents;
+  return base.map((e) => ({ ...e, minutes_ago: liveMinutesAgo(e.occurred_at) }));
 }
 export function phAlerts(t: TheaterKey): Alert[] {
-  if (t === "iran") return iranAlerts;
-  if (t === "sudan") return sudanAlerts;
-  if (t === "myanmar") return myanmarAlerts;
-  return alerts;
+  let staticAlerts: Alert[];
+  let events: MapEvent[];
+  if (t === "iran") { staticAlerts = iranAlerts; events = iranMapEvents; }
+  else if (t === "sudan") { staticAlerts = sudanAlerts; events = sudanMapEvents; }
+  else if (t === "myanmar") { staticAlerts = myanmarAlerts; events = myanmarMapEvents; }
+  else { staticAlerts = alerts; events = mapEvents; }
+  const byId = new Map(events.map((e) => [e.id, e.occurred_at]));
+  return staticAlerts.map((a) => {
+    const occurredAt = byId.get(a.id);
+    return { ...a, minutes_ago: occurredAt ? liveMinutesAgo(occurredAt) : a.minutes_ago };
+  });
 }
 export function phIntensity(t: TheaterKey): IntensityDay[] {
   if (t === "iran") return iranIntensity;

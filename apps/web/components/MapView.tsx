@@ -25,9 +25,14 @@ const COLORS_MID: Record<string, string> = {
 
 function fmtMins(m: number): string {
   if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  const rem = m % 60;
-  return rem > 0 ? `${h}h ${rem}m ago` : `${h}h ago`;
+  if (m < 1440) {
+    const h = Math.floor(m / 60);
+    const rem = m % 60;
+    return rem > 0 ? `${h}h ${rem}m ago` : `${h}h ago`;
+  }
+  const d = Math.floor(m / 1440);
+  const remH = Math.floor((m % 1440) / 60);
+  return remH > 0 ? `${d}d ${remH}h ago` : `${d}d ago`;
 }
 
 function confidenceLabel(c: string): string {
