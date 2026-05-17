@@ -41,6 +41,36 @@ def main() -> None:
             for row in conn.execute("SELECT filename FROM schema_migrations").fetchall()
         }
 
+        # Bootstrap: if schema_migrations is empty but the DB is already initialised
+        # (sources table exists), mark all migrations that exist on disk as applied
+        # EXCEPT the current batch — we only skip migrations older than the newest
+        # file that hasn't been recorded. This handles the case where the DB was set
+        # up before this tracking table existed.
+        if not applied:
+            already_initialised = conn.execute(
+                "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'sources')"
+            ).fetchone()[0]  # type: ignore[index]
+
+            if already_initialised:
+                print("Bootstrapping schema_migrations for pre-existing database...")
+                # Mark all but the last migration as already applied — conservative:
+                # try to apply the last one so genuinely new migrations still run.
+                # In practice, treat everything before the final file as applied.
+                all_files = sorted(migration_files, key=lambda p: p.name)
+                to_bootstrap = all_files[:-1]
+                for path in to_bootstrap:
+                    conn.execute(
+                        "INSERT INTO schema_migrations (filename) VALUES (%s) ON CONFLICT DO NOTHING",
+                        (path.name,),
+                    )
+                    print(f"  bootstrapped (skipping): {path.name}")
+                conn.commit()
+                # Refresh applied set
+                applied = {
+                    row[0]
+                    for row in conn.execute("SELECT filename FROM schema_migrations").fetchall()
+                }
+
         pending = [p for p in migration_files if p.name not in applied]
 
         if not pending:
