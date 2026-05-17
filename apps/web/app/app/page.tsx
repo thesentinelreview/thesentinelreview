@@ -105,7 +105,7 @@ export default async function AnalystDashboardPage({
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
-    getAlerts(theater.id),
+    getAlerts(theater.id, 3, timeRange),
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),

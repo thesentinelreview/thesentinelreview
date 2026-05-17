@@ -250,6 +250,14 @@ def link_event_source(
     )
 
 
+_THEATER_BBOX: dict[str, tuple[float, float, float, float]] = {
+    "ukraine": (22, 44, 40, 52),
+    "iran":    (44, 25, 64, 40),
+    "sudan":   (21,  8, 42, 23),
+    "myanmar": (92,  9, 102, 29),
+}
+
+
 def get_recent_events(
     conn: psycopg.Connection,
     *,
@@ -257,6 +265,8 @@ def get_recent_events(
     theater: str = "ukraine",
 ) -> list[dict]:
     """Events for the briefing generator — includes source count."""
+    bbox = _THEATER_BBOX.get(theater, _THEATER_BBOX["ukraine"])
+    min_lng, min_lat, max_lng, max_lat = bbox
     return conn.execute(
         """
         SELECT
@@ -268,10 +278,11 @@ def get_recent_events(
         LEFT JOIN event_sources es ON es.event_id = e.id
         WHERE e.occurred_at > now() - (%s * interval '1 hour')
           AND e.confidence IN ('verified', 'partial')
+          AND ST_Within(e.location, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
         GROUP BY e.id
         ORDER BY e.occurred_at DESC
         """,
-        (hours,),
+        (hours, min_lng, min_lat, max_lng, max_lat),
     ).fetchall()  # type: ignore[return-value]
 
 

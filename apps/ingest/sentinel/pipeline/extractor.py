@@ -93,7 +93,7 @@ _TOOL: anthropic.types.ToolParam = {
                 "description": "True if the event involves mass casualties (10+), use of weapons of mass destruction, or a major escalation (e.g. cross-border strike on a new country).",
             },
         },
-        "required": ["has_event"],
+        "required": ["has_event", "is_high_impact"],
     },
 }
 
@@ -161,7 +161,7 @@ Rules:
 - If the post is vague, commentary, or unrelated to an active military event, set has_event=false and explain in skip_reason.
 - For coordinates: use your knowledge of Myanmar geography. Key conflict areas include Sagaing Region, Shan State (north and east), Karen/Kayin State, Chin State, Rakhine State, Kayah/Karenni State, and Mandalay Region. The "oblast" field must be the Myanmar region or state name (e.g. Sagaing Region, Northern Shan State, Kayin State, Chin State).
 - Descriptions must be factual and neutral.
-- is_high_impact must be true for: airstrikes on civilian infrastructure (schools, hospitals, markets), mass-casualty events (10+ killed/wounded claimed), use of incendiary weapons, or capture of a significant town or military base.
+- is_high_impact must be true ONLY for: mass-casualty events (10+ killed/wounded claimed), confirmed use of chemical/biological/radiological weapons, or an unprecedented cross-border escalation targeting a country not previously struck in this conflict. Routine airstrikes, clashes, and territorial changes are NOT high-impact regardless of location.
 
 You MUST call the record_event tool exactly once.""",
 }

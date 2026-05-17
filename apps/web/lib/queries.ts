@@ -118,7 +118,8 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
       [minLng, minLat, maxLng, maxLat],
     );
 
-    if (!row || Number(row.events) === 0) return ph.phStats(theater);
+    if (!row) return ph.phStats(theater);
+    if (Number(row.events) === 0) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
     return {
       events: Number(row.events) || 0,
@@ -203,10 +204,11 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
 // Alerts (latest 3)
 // ---------------------------------------------------------------------------
 
-export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3): Promise<Alert[]> {
+export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, timeRange: TimeRange = "24h"): Promise<Alert[]> {
   if (!isDatabaseConfigured()) return ph.phAlerts(theater);
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
 
   try {
     type Row = {
@@ -233,7 +235,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3): Pro
       FROM events e
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
-        AND e.occurred_at > now() - INTERVAL '24 hours'
+        AND e.occurred_at > now() - INTERVAL '${interval}'
         AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
@@ -343,7 +345,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
           AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
-      WHERE s.is_active = true AND COALESCE(today.cnt, 0) > 0
+      WHERE s.is_active = true
       ORDER BY events_count DESC, verified_rate DESC
       LIMIT $1
       `,
@@ -667,6 +669,7 @@ export async function getAllSources(): Promise<SourceDetail[]> {
       events_30d: string | number;
       last_event_at: Date | null;
       events_today: string | number;
+      events_7d: string | number;
     };
 
     const rows = await query<Row>(`
@@ -680,7 +683,8 @@ export async function getAllSources(): Promise<SourceDetail[]> {
         COALESCE(sr.verified_rate_30d, 0)::int  AS verified_rate,
         COALESCE(sr.events_30d, 0)::int         AS events_30d,
         sr.last_event_at                        AS last_event_at,
-        COALESCE(today.cnt, 0)::int             AS events_today
+        COALESCE(today.cnt, 0)::int             AS events_today,
+        COALESCE(week.cnt, 0)::int              AS events_7d
       FROM sources s
       LEFT JOIN source_reliability sr ON sr.source_id = s.id
       LEFT JOIN (
@@ -691,6 +695,14 @@ export async function getAllSources(): Promise<SourceDetail[]> {
           AND e.published_at IS NOT NULL
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
+      LEFT JOIN (
+        SELECT es.source_id, COUNT(DISTINCT es.event_id) AS cnt
+        FROM event_sources es
+        JOIN events e ON e.id = es.event_id
+        WHERE e.occurred_at > now() - INTERVAL '7 days'
+          AND e.published_at IS NOT NULL
+        GROUP BY es.source_id
+      ) week ON week.source_id = s.id
       WHERE s.is_active = true
       ORDER BY events_30d DESC, verified_rate DESC, s.handle ASC
     `);
@@ -703,7 +715,7 @@ export async function getAllSources(): Promise<SourceDetail[]> {
       events_count: Number(r.events_today) || 0,
       verified_rate: Number(r.verified_rate) || 0,
       url: r.url ?? "",
-      events_7d: Number(r.events_today) || 0,
+      events_7d: Number(r.events_7d) || 0,
       events_30d: Number(r.events_30d) || 0,
       last_event_at: r.last_event_at ? new Date(r.last_event_at).toISOString() : new Date(0).toISOString(),
       trust_tier: (r.trust_tier as 1 | 2 | 3) ?? 2,

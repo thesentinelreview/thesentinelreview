@@ -4,7 +4,7 @@ generate_briefing job
 Pulls the last N hours of verified/partial events, builds structured input
 for the LLM, generates a draft briefing, and saves it to the briefings table.
 
-Always saves as status='draft'. A human must publish via /admin/briefings.
+Saves directly as status='published' — briefings go live immediately on creation.
 
 Payload schema: GenerateBriefingPayload
 """
@@ -80,15 +80,20 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
 
 def _compute_baseline(conn: psycopg.Connection, *, theater: str) -> dict:
     """Average events per day per oblast over the last 7 days."""
+    from sentinel.db import _THEATER_BBOX
+    bbox = _THEATER_BBOX.get(theater, _THEATER_BBOX["ukraine"])
+    min_lng, min_lat, max_lng, max_lat = bbox
     rows = conn.execute(
         """
         SELECT oblast, COUNT(*)::float / 7 AS avg_per_day
         FROM events
         WHERE occurred_at > now() - interval '7 days'
           AND confidence IN ('verified', 'partial')
+          AND ST_Within(location, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
         GROUP BY oblast
         ORDER BY avg_per_day DESC
         """,
+        (min_lng, min_lat, max_lng, max_lat),
     ).fetchall()
     return {row["oblast"]: round(row["avg_per_day"], 1) for row in rows}
 
