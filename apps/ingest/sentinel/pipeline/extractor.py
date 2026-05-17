@@ -7,6 +7,7 @@ cached via prompt caching to reduce token costs on bulk extraction runs.
 from __future__ import annotations
 
 import json
+from datetime import datetime
 
 import anthropic
 import structlog
@@ -174,6 +175,7 @@ def extract_event(
     *,
     source: dict,
     theater: str = "ukraine",
+    post_timestamp: datetime | None = None,
 ) -> tuple[ExtractedEvent, dict]:
     """
     Extract a structured event from a raw post.
@@ -182,9 +184,14 @@ def extract_event(
         (ExtractedEvent, llm_meta)  where llm_meta carries model/token/prompt/response
         for the audit log.
     """
+    ts_line = (
+        f"Post timestamp (UTC): {post_timestamp.strftime('%Y-%m-%d %H:%M')} — use this as occurred_at if no explicit event time is stated.\n"
+        if post_timestamp else ""
+    )
     user_message = (
-        f"Source: {source['display_name']} ({source['platform']}, trust tier {source['trust_tier']})\n\n"
-        f"Post text:\n{text[:4000]}"  # hard cap to avoid prompt blowout
+        f"Source: {source['display_name']} ({source['platform']}, trust tier {source['trust_tier']})\n"
+        f"{ts_line}"
+        f"\nPost text:\n{text[:4000]}"  # hard cap to avoid prompt blowout
     )
 
     system_text = _SYSTEM_PROMPTS.get(theater, _SYSTEM_PROMPTS["ukraine"])
