@@ -213,19 +213,19 @@ def insert_event(
         INSERT INTO events (
             event_type, occurred_at, location,
             location_name, oblast, actor, description,
-            confidence, held_for_review
+            confidence, held_for_review, published_at
         )
         VALUES (
             %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326),
             %s, %s, %s, %s,
-            %s, %s
+            %s, %s, CASE WHEN %s THEN NULL ELSE now() END
         )
         RETURNING id
         """,
         (
             event_type, occurred_at, lng, lat,
             location_name, oblast, actor, description,
-            confidence, held_for_review,
+            confidence, held_for_review, held_for_review,
         ),
     ).fetchone()
     assert row is not None

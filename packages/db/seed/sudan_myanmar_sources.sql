@@ -29,20 +29,20 @@ INSERT INTO sources (handle, platform, display_name, url, trust_tier, theater, n
 (
     'reuters_africa_rss',
     'rss',
-    'Reuters Africa',
-    'https://feeds.reuters.com/reuters/AFRICANews',
+    'BBC World — Africa',
+    'https://feeds.bbci.co.uk/news/world/africa/rss.xml',
     1,
     'sudan',
-    'Reuters Africa wire. Covers Sudan extensively; correspondents in Port Sudan and Cairo. Strong editorial verification standards.'
+    'BBC World Service Africa coverage. Covers Sudan conflict and humanitarian situation.'
 ),
 (
     'afp_africa_rss',
     'rss',
-    'AFP Africa',
-    'https://www.afp.com/en/rss-feeds',
+    'Radio Dabanga',
+    'https://www.dabangasudan.org/en/feed',
     1,
     'sudan',
-    'AFP Africa bureau. Reliable wire coverage with on-ground stringers. Cross-reference against Reuters for verification.'
+    'Sudan-focused independent radio. Strong Darfur/El Fasher coverage with local correspondents.'
 ),
 (
     '@SudanWarMonitor',
@@ -56,11 +56,11 @@ INSERT INTO sources (handle, platform, display_name, url, trust_tier, theater, n
 (
     'ayin_rss',
     'rss',
-    'Ayin Network',
-    'https://ayin.network/feed',
+    'ReliefWeb — Sudan',
+    'https://reliefweb.int/country/sdn/rss.xml',
     2,
     'sudan',
-    'Independent Sudan-focused outlet covering conflict and humanitarian issues. Strong Blue Nile and Kordofan coverage.'
+    'UN OCHA humanitarian data. Sudan crisis situation reports and updates.'
 ),
 (
     '@RadioDabaanga',

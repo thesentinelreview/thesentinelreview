@@ -216,26 +216,26 @@ INSERT INTO sources (handle, platform, display_name, url, trust_tier, notes) VAL
 (
     'reuters_ukraine_rss',
     'rss',
-    'Reuters Ukraine',
-    'https://feeds.reuters.com/reuters/UKWorldNews',
+    'BBC World — Europe',
+    'https://feeds.bbci.co.uk/news/world/europe/rss.xml',
     1,
-    'Reuters breaking news feed filtered to Ukraine. Wire accuracy standards. Slower than social but high authority.'
+    'BBC World Service Europe coverage. Reliable Ukraine conflict reporting.'
 ),
 (
     'ap_ukraine_rss',
     'rss',
     'AP Ukraine',
-    'https://rsshub.app/apnews/topics/ukraine',
+    'https://feeds.apnews.com/apnews/worldnews',
     1,
     'AP Newswire Ukraine coverage. Verified before publish. Cite freely.'
 ),
 (
     'afp_ukraine_rss',
     'rss',
-    'AFP Ukraine',
-    'https://www.afp.com/en/rss',
+    'Ukrainska Pravda (English)',
+    'https://www.pravda.com.ua/eng/rss/',
     1,
-    'AFP wire. Strong Ukraine bureau. Good for strike confirmation from official Ukrainian channels.'
+    'Major independent Ukrainian outlet. Strong front-line and political coverage.'
 );
 
 -- ---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ INSERT INTO sources (handle, platform, display_name, url, trust_tier, notes) VAL
     'ukrinform_rss',
     'rss',
     'Ukrinform',
-    'https://www.ukrinform.net/rss/block-ato',
+    'https://www.ukrinform.net/rss/block-chronika',
     2,
     'Ukrainian state news agency. Pro-Ukrainian framing on operational matters but generally accurate on confirmed incidents. Distinguish confirmed from claimed.'
 ),
@@ -271,7 +271,7 @@ INSERT INTO sources (handle, platform, display_name, url, trust_tier, notes) VAL
     'interfax_ukraine_rss',
     'rss',
     'Interfax Ukraine',
-    'https://en.interfax.com.ua/news/rss',
+    'https://kyivpost.com/feed',
     2,
     'Private Ukrainian wire. Often cites official sources directly. Use for official Ukrainian military statements.'
 ),
