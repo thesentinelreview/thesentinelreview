@@ -4,7 +4,15 @@ import { Pool } from "pg";
 export const dynamic = "force-dynamic";
 
 // One-shot endpoint to backfill published_at. Removed after use.
+export async function GET() {
+  return handler();
+}
+
 export async function POST(_req: NextRequest) {
+  return handler();
+}
+
+async function handler() {
   const url = process.env.DATABASE_URL;
   if (!url) {
     return NextResponse.json({ ok: false, error: "DATABASE_URL not set" });
