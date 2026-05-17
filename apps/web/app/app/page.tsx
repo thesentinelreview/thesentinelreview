@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import s from "@/app/page.module.css";
 import MapWrapper from "@/components/MapWrapper";
 import ShareButton from "@/components/ShareButton";
+import SuccessBanner from "@/components/SuccessBanner";
 import { type Alert, type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
@@ -83,8 +85,10 @@ export default async function AnalystDashboardPage({
     checkout?: string;
   }>;
 }) {
-  const tier = await getUserTier();
-  if (tier !== "analyst" && tier !== "bureau") redirect("/sign-in");
+  const [{ userId }, tier] = await Promise.all([auth(), getUserTier()]);
+  if (tier !== "analyst" && tier !== "bureau") {
+    redirect(userId ? "/pricing" : "/sign-in");
+  }
 
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
@@ -122,6 +126,8 @@ export default async function AnalystDashboardPage({
 
   return (
     <div className={s.app}>
+
+      {params.checkout === "success" && <SuccessBanner />}
 
       {/* TOP BAR */}
       <div className={s.topbar}>
