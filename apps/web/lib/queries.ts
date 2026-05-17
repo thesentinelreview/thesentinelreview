@@ -640,7 +640,7 @@ export async function getLiveDataStatus(): Promise<DataStatus> {
   if (!isDatabaseConfigured()) return "no-db";
   try {
     const row = await queryOne<{ count: string }>(
-      `SELECT count(*)::int AS count FROM events WHERE occurred_at > now() - INTERVAL '7 days'`,
+      `SELECT count(*)::int AS count FROM events WHERE published_at IS NOT NULL`,
     );
     return Number(row?.count) > 0 ? "live" : "db-empty";
   } catch {
