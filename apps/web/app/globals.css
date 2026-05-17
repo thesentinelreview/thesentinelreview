@@ -113,3 +113,9 @@ body::before {
 .sr-popup .maplibregl-popup-tip {
   border-top-color: var(--border-strong) !important;
 }
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+}

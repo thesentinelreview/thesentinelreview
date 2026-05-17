@@ -726,48 +726,119 @@
 }
 
 @media (max-width: 600px) {
+
+  /* ── TOPBAR ────────────────────────────────────────────────────────── */
   .topbar {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
     gap: 10px;
     padding: 10px 12px;
   }
+
   .brand {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
+    align-items: center;
   }
+
+  .brandDivider {
+    display: none;
+  }
+
   .brandSection {
-    font-size: 10px;
+    display: none;
   }
+
   .betaChip {
     margin-left: 0;
+    flex-shrink: 0;
   }
+
+  /* ── FILTER CHIPS (scrollable row) ─────────────────────────────────── */
   .filters {
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 8px;
     width: 100%;
+    align-items: center;
+    padding-bottom: 2px;
   }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filterChip {
+    flex-shrink: 0;
+  }
+
+  .filterLabel {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .liveIndicator {
+    flex-shrink: 0;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── MAP HEADER (stacked column) ───────────────────────────────────── */
+  .mapHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .mapMeta {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  /* ── MAP CANVAS ────────────────────────────────────────────────────── */
   .mapCanvas {
-    min-height: 220px;
+    min-height: 300px;
   }
+
+  /* ── BRIEFING ──────────────────────────────────────────────────────── */
   .briefing {
     padding: 12px 14px;
   }
+
+  .briefingHeader {
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* ── PANEL HEADER ──────────────────────────────────────────────────── */
   .panelHeader {
     flex-wrap: wrap;
     gap: 4px;
   }
+
   .panelMeta {
-    width: 100%;    font-size: 9px;
+    width: 100%;
+    font-size: 9px;
   }
+
+  /* ── SOURCES ───────────────────────────────────────────────────────── */
   .sourceRow {
     padding: 8px 10px;
     gap: 6px;
     font-size: 11px;
   }
+
   .sourceRate {
     width: 32px;
   }
+
+  /* ── STATS ─────────────────────────────────────────────────────────── */
   .statValue {
     font-size: 22px;
   }
+
 }
