@@ -57,7 +57,7 @@ def _fetch_feed(url: str) -> bytes | None:
             url,
             timeout=_TIMEOUT,
             follow_redirects=True,
-            headers={"User-Agent": "SentinelReview/0.1 (+https://sentinelreview.com)"},
+            headers={"User-Agent": "Mozilla/5.0 (compatible; SentinelReview/0.1; RSS aggregator)"},
         )
         response.raise_for_status()
         return response.content

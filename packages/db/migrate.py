@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Apply all SQL migrations in packages/db/migrations/ in alphabetical order.
+"""Apply pending SQL migrations in packages/db/migrations/ in alphabetical order.
+
+Tracks applied migrations in a schema_migrations table so re-running is safe.
 
 Usage:
     DATABASE_URL=postgresql://user:pass@host/db python packages/db/migrate.py
@@ -26,9 +28,32 @@ def main() -> None:
         return
 
     with psycopg.connect(database_url) as conn:
-        for path in migration_files:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+                filename TEXT PRIMARY KEY,
+                applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            )
+        """)
+        conn.commit()
+
+        applied = {
+            row[0]
+            for row in conn.execute("SELECT filename FROM schema_migrations").fetchall()
+        }
+
+        pending = [p for p in migration_files if p.name not in applied]
+
+        if not pending:
+            print("All migrations already applied.")
+            return
+
+        for path in pending:
             print(f"Applying {path.name}...")
             conn.execute(path.read_text())
+            conn.execute(
+                "INSERT INTO schema_migrations (filename) VALUES (%s)",
+                (path.name,),
+            )
             conn.commit()
             print(f"  done: {path.name}")
 

@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir \
     "psycopg[binary]>=3.2" \
     "psycopg-pool>=3.2" \
     "httpx>=0.27" \
+    "feedparser>=6.0" \
     "anthropic>=0.40" \
     "pydantic>=2.9" \
     "pydantic-settings>=2.5" \
