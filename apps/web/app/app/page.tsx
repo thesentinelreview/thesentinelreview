@@ -1,5 +1,7 @@
 import Link from "next/link";
-import s from "./page.module.css";
+import { redirect } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
+import s from "@/app/page.module.css";
 import MapWrapper from "@/components/MapWrapper";
 import ShareButton from "@/components/ShareButton";
 import { type Alert, type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
@@ -13,6 +15,7 @@ import {
   resolveTimeRange,
   type TimeRange,
 } from "@/lib/queries";
+import { getUserTier } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -51,10 +54,6 @@ const WINDOW_LABELS: Record<TimeRange, string> = {
   "30d": "30d",
 };
 
-// Watch tier shows only up to 7d
-const WATCH_WINDOWS: TimeRange[] = ["24h", "7d"];
-
-// Build a URL preserving theater + window + types, optionally overriding any.
 function buildHref(opts: {
   theater: string;
   window: TimeRange;
@@ -66,12 +65,12 @@ function buildHref(opts: {
   if (opts.types.length > 0 && opts.types.length < ALL_TYPES.length) {
     p.set("types", opts.types.join(","));
   }
-  return `/?${p}`;
+  return `/app?${p}`;
 }
 
 // ── page ─────────────────────────────────────────────────────────────────────
 
-export default async function DashboardPage({
+export default async function AnalystDashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -81,19 +80,21 @@ export default async function DashboardPage({
     lat?: string;
     lng?: string;
     zoom?: string;
+    checkout?: string;
   }>;
 }) {
+  const tier = await getUserTier();
+  if (tier !== "analyst" && tier !== "bureau") redirect("/sign-in");
+
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
 
-  // Parse visible event types (default = all three).
   const rawTypes = params.types
     ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
     : ALL_TYPES;
   const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
 
-  // Use URL-encoded map position when present (set by the client on pan/zoom).
   const urlLat  = params.lat  ? parseFloat(params.lat)  : NaN;
   const urlLng  = params.lng  ? parseFloat(params.lng)  : NaN;
   const urlZoom = params.zoom ? parseFloat(params.zoom) : NaN;
@@ -128,8 +129,8 @@ export default async function DashboardPage({
           <div className={s.brandLogo} />
           <div className={s.brandName}>Sentinel Review</div>
           <div className={s.brandDivider}>/</div>
-          <div className={s.brandSection}>Conflict Intelligence — Live Map</div>
-          <span className={s.betaChip}>Beta</span>
+          <div className={s.brandSection}>Conflict Intelligence — Analyst</div>
+          <span className={s.betaChip} style={{ borderColor: "#B8882A", color: "#B8882A" }}>Analyst</span>
         </div>
         <div className={s.filters}>
           <span className={s.filterLabel}>Theater</span>
@@ -143,7 +144,7 @@ export default async function DashboardPage({
             </Link>
           ))}
           <span className={s.filterLabel} style={{ marginLeft: 6 }}>Window</span>
-          {WATCH_WINDOWS.map((w) => (
+          {(["24h", "7d", "30d"] as TimeRange[]).map((w) => (
             <Link
               key={w}
               href={buildHref({ theater: theater.id, window: w, types: visibleTypes })}
@@ -152,12 +153,12 @@ export default async function DashboardPage({
               {WINDOW_LABELS[w]}
             </Link>
           ))}
-          <Link href="/sign-up" className={s.filterChip} style={{ opacity: 0.45 }} title="30-day history — Analyst tier">
-            30d
-          </Link>
           <div className={s.liveIndicator}>
             <span className={s.liveDot} />
             <span>Live</span>
+          </div>
+          <div style={{ marginLeft: 8 }}>
+            <UserButton />
           </div>
         </div>
       </div>
@@ -185,7 +186,6 @@ export default async function DashboardPage({
               visibleTypes={visibleTypes}
             />
 
-            {/* Clickable legend — each item toggles that event type */}
             <div className={`${s.mapOverlay} ${s.mapLegend}`}>
               {TYPE_META.map(({ type, color, label }) => {
                 const active = visibleTypes.includes(type);
@@ -213,7 +213,6 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          {/* Time scrubber */}
           <div className={s.scrubber}>
             <span className={s.scrubberTime}>{scrubberStart}</span>
             <div className={s.scrubberTrack}>
@@ -326,15 +325,17 @@ export default async function DashboardPage({
       {/* BOTTOM ROW */}
       <div className={s.bottom}>
 
-        {/* Daily briefing */}
+        {/* Daily briefing — full access */}
         <div className={s.briefing}>
           <div className={s.briefingHeader}>
             <div className={s.briefingTitle}>{theater.briefingTitle}</div>
             <div className={s.briefingActions}>
               <span className={s.badge}>{briefing?.reviewed ? "REVIEWED" : "AI DRAFT"}</span>
-              <Link href="/sign-up" className={`${s.badge} ${s.badgeAction}`} style={{ textDecoration: "none", opacity: 0.5 }} title="Full briefing archive — Analyst tier">
-                FULL ARCHIVE ↑
-              </Link>
+              {briefing && (
+                <Link href={`/briefing/${briefing.id}?theater=${theater.id}`} className={`${s.badge} ${s.badgeAction}`} style={{ textDecoration: "none" }}>
+                  OPEN ↗
+                </Link>
+              )}
             </div>
           </div>
           {briefing ? (
@@ -389,41 +390,6 @@ export default async function DashboardPage({
           <div className={s.sourcesFooter}>Cross-referenced sources · Verification rate over rolling 30 days</div>
         </div>
 
-      </div>
-
-      {/* UPGRADE NUDGE */}
-      <div style={{
-        marginTop: 14,
-        padding: "12px 18px",
-        border: "1px solid var(--border)",
-        borderRadius: 6,
-        background: "var(--surface)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16,
-        flexWrap: "wrap",
-      }}>
-        <div style={{ fontFamily: "var(--font-mono-stack)", fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-          Watch tier · Free · Ukraine, Iran, Sudan &amp; Myanmar · 24h–7d window
-        </div>
-        <Link
-          href="/sign-up"
-          style={{
-            fontFamily: "var(--font-mono-stack)",
-            fontSize: 11,
-            color: "var(--text)",
-            border: "1px solid var(--border-strong)",
-            borderRadius: 3,
-            padding: "6px 14px",
-            textDecoration: "none",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Analyst — 30d history, exports, API · from $12/mo →
-        </Link>
       </div>
     </div>
   );
