@@ -562,6 +562,18 @@ export const iranBriefing: BriefingData = {
 // Theater-aware placeholder accessors
 // ---------------------------------------------------------------------------
 
+function dayLabel(d: Date): string {
+  return d.toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
+}
+
+function relativeEvents(events: MapEvent[]): MapEvent[] {
+  const now = Date.now();
+  return events.map((e) => ({
+    ...e,
+    occurred_at: new Date(now - e.minutes_ago * 60_000).toISOString(),
+  }));
+}
+
 export function phStats(t: TheaterKey): Stats {
   if (t === "iran") return iranStats;
   if (t === "sudan") return sudanStats;
@@ -569,10 +581,10 @@ export function phStats(t: TheaterKey): Stats {
   return stats;
 }
 export function phMapEvents(t: TheaterKey): MapEvent[] {
-  if (t === "iran") return iranMapEvents;
-  if (t === "sudan") return sudanMapEvents;
-  if (t === "myanmar") return myanmarMapEvents;
-  return mapEvents;
+  if (t === "iran") return relativeEvents(iranMapEvents);
+  if (t === "sudan") return relativeEvents(sudanMapEvents);
+  if (t === "myanmar") return relativeEvents(myanmarMapEvents);
+  return relativeEvents(mapEvents);
 }
 export function phAlerts(t: TheaterKey): Alert[] {
   if (t === "iran") return iranAlerts;
@@ -581,10 +593,17 @@ export function phAlerts(t: TheaterKey): Alert[] {
   return alerts;
 }
 export function phIntensity(t: TheaterKey): IntensityDay[] {
-  if (t === "iran") return iranIntensity;
-  if (t === "sudan") return sudanIntensity;
-  if (t === "myanmar") return myanmarIntensity;
-  return intensity;
+  let base: IntensityDay[];
+  if (t === "iran") base = iranIntensity;
+  else if (t === "sudan") base = sudanIntensity;
+  else if (t === "myanmar") base = myanmarIntensity;
+  else base = intensity;
+  const today = new Date();
+  return base.map((item, i) => {
+    const d = new Date(today);
+    d.setUTCDate(today.getUTCDate() - (6 - i));
+    return { ...item, label: dayLabel(d) };
+  });
 }
 export function phSources(t: TheaterKey): Source[] {
   if (t === "iran") return iranSources;

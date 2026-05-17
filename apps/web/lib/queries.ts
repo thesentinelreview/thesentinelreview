@@ -631,6 +631,24 @@ export async function getFullBriefing(id: string): Promise<FullBriefing | null> 
 }
 
 // ---------------------------------------------------------------------------
+// Data liveness status — used by the demo banner
+// ---------------------------------------------------------------------------
+
+export type DataStatus = "live" | "no-db" | "db-empty";
+
+export async function getLiveDataStatus(): Promise<DataStatus> {
+  if (!isDatabaseConfigured()) return "no-db";
+  try {
+    const row = await queryOne<{ count: string }>(
+      `SELECT count(*)::int AS count FROM events WHERE occurred_at > now() - INTERVAL '7 days'`,
+    );
+    return Number(row?.count) > 0 ? "live" : "db-empty";
+  } catch {
+    return "db-empty";
+  }
+}
+
+// ---------------------------------------------------------------------------
 // All sources (sources page)
 // ---------------------------------------------------------------------------
 
