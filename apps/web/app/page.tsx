@@ -407,23 +407,6 @@ export default async function DashboardPage({
         <div style={{ fontFamily: "var(--font-mono-stack)", fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
           Watch tier · Free · Ukraine, Iran, Sudan &amp; Myanmar · 24h–7d window
         </div>
-        <Link
-          href="/sign-up"
-          style={{
-            fontFamily: "var(--font-mono-stack)",
-            fontSize: 11,
-            color: "var(--text)",
-            border: "1px solid var(--border-strong)",
-            borderRadius: 3,
-            padding: "6px 14px",
-            textDecoration: "none",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Analyst — 30d history, exports, API · from $12/mo →
-        </Link>
       </div>
     </div>
   );
