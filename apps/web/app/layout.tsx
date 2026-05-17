@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import DemoBanner from "@/components/DemoBanner";
+import { getLiveDataStatus } from "@/lib/queries";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -26,18 +28,22 @@ export const metadata: Metadata = {
   description: "Real-time OSINT conflict intelligence for Ukraine and beyond.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const dataStatus = await getLiveDataStatus();
   return (
     <ClerkProvider>
       <html
         lang="en"
         className={`${plexSans.variable} ${plexMono.variable} ${plexCondensed.variable} h-full antialiased`}
       >
-        <body className="min-h-full">{children}</body>
+        <body className="min-h-full">
+          <DemoBanner status={dataStatus} />
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
