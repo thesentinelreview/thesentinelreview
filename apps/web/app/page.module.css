@@ -758,6 +758,7 @@
   .filters {
     flex-wrap: nowrap;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     scrollbar-width: none;
     -ms-overflow-style: none;
     gap: 8px;
@@ -770,13 +771,13 @@
     display: none;
   }
 
-  .filterChip {
-    flex-shrink: 0;
+  .filterLabel {
+    display: none;
   }
 
-  .filterLabel {
+  .filterChip {
     flex-shrink: 0;
-    white-space: nowrap;
+    padding: 10px 12px;
   }
 
   .liveIndicator {
@@ -800,7 +801,27 @@
 
   /* ── MAP CANVAS ────────────────────────────────────────────────────── */
   .mapCanvas {
-    min-height: 300px;
+    min-height: clamp(260px, 42vh, 360px);
+  }
+
+  /* ── STATS ─────────────────────────────────────────────────────────── */
+  .stat {
+    padding: 10px 12px;
+  }
+
+  .statValue {
+    font-size: 22px;
+  }
+
+  /* ── INTENSITY CHART ───────────────────────────────────────────────── */
+  .intensityChart {
+    height: 88px;
+  }
+
+  /* ── ALERTS ────────────────────────────────────────────────────────── */
+  .alerts {
+    max-height: 260px;
+    overflow-y: auto;
   }
 
   /* ── BRIEFING ──────────────────────────────────────────────────────── */
@@ -821,7 +842,6 @@
   }
 
   .panelMeta {
-    width: 100%;
     font-size: 9px;
   }
 
@@ -834,11 +854,6 @@
 
   .sourceRate {
     width: 32px;
-  }
-
-  /* ── STATS ─────────────────────────────────────────────────────────── */
-  .statValue {
-    font-size: 22px;
   }
 
 }
