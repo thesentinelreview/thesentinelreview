@@ -74,8 +74,10 @@ export default async function WatchfloorPage({
   const urlLng = params.lng ? parseFloat(params.lng) : NaN;
   const urlZoom = params.zoom ? parseFloat(params.zoom) : NaN;
   const mapCenter: [number, number] =
-    !isNaN(urlLat) && !isNaN(urlLng) ? [urlLng, urlLat] : theater.mapCenter;
-  const mapZoom = !isNaN(urlZoom) ? urlZoom : theater.mapZoom;
+    !isNaN(urlLat) && !isNaN(urlLng) && urlLat >= -90 && urlLat <= 90 && urlLng >= -180 && urlLng <= 180
+      ? [urlLng, urlLat]
+      : theater.mapCenter;
+  const mapZoom = !isNaN(urlZoom) && urlZoom >= 0 && urlZoom <= 28 ? urlZoom : theater.mapZoom;
 
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
     getStats(theater.id, timeRange),

@@ -97,8 +97,11 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
   const conf = String(props.confidence ?? "");
   const id = escapeHtml(String(props.id ?? ""));
   const color = core[type as keyof Pal] ?? "#e6e4dc";
+  const escapedType = escapeHtml(type);
   const location = escapeHtml(String(props.location_name ?? "").toUpperCase());
   const description = escapeHtml(String(props.description ?? ""));
+  const sourceCount = Number(props.source_count);
+  const minutesAgo = Number(props.minutes_ago);
   return `
     <div style="
       font-family: 'IBM Plex Mono', monospace;
@@ -109,7 +112,7 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
     ">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
         <span style="color:#5d5c58;letter-spacing:.08em;text-transform:uppercase;">
-          ${type.toUpperCase()} — ${location}
+          ${escapedType.toUpperCase()} — ${location}
         </span>
       </div>
       <div style="color:${confidenceColor(conf)};letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">
@@ -126,7 +129,7 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
             background:${color};
             margin-right:5px;vertical-align:middle;
           "></span>
-          ${props.source_count} source${Number(props.source_count) !== 1 ? "s" : ""} · ${fmtMins(Number(props.minutes_ago))}
+          ${sourceCount} source${sourceCount !== 1 ? "s" : ""} · ${fmtMins(minutesAgo)}
         </span>
         <a href="/event/${id}" style="
           color:#e6e4dc;

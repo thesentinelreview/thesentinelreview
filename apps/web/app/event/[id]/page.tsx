@@ -137,12 +137,12 @@ export default async function EventDetailPage({
           <div className={s.panel}>
             <div className={s.panelHeader}>
               <div className={s.panelTitle}>Sources</div>
-              <div className={s.panelMeta}>{evt.event_sources.length} linked</div>
+              <div className={s.panelMeta}>{(evt.event_sources ?? []).length} linked</div>
             </div>
-            {evt.event_sources.length === 0 ? (
+            {(evt.event_sources ?? []).length === 0 ? (
               <div className={s.empty}>No sources linked</div>
             ) : (
-              evt.event_sources.map((src: EventSource, i: number) => (
+              (evt.event_sources ?? []).map((src: EventSource, i: number) => (
                 <div key={src.id} className={s.sourceItem}>
                   <div className={s.sourceNum}>{String(i + 1).padStart(2, "0")}</div>
                   <div>
@@ -205,13 +205,13 @@ export default async function EventDetailPage({
           <div className={s.panel}>
             <div className={s.panelHeader}>
               <div className={s.panelTitle}>Evidence</div>
-              <div className={s.panelMeta}>{evt.evidence.length} items</div>
+              <div className={s.panelMeta}>{(evt.evidence ?? []).length} items</div>
             </div>
-            {evt.evidence.length === 0 ? (
+            {(evt.evidence ?? []).length === 0 ? (
               <div className={s.empty}>No evidence recorded</div>
             ) : (
-              evt.evidence.map((item: EvidenceItem, i: number) => (
-                <div key={i} className={s.evidenceItem}>
+              (evt.evidence ?? []).map((item: EvidenceItem) => (
+                <div key={item.label} className={s.evidenceItem}>
                   <div className={s.evidenceType}>{evidenceTypeLabel(item.type)}</div>
                   <div className={s.evidenceLabel}>{item.label}</div>
                   <div className={s.evidenceNotes}>{item.notes}</div>
@@ -225,8 +225,8 @@ export default async function EventDetailPage({
             <div className={s.panelHeader}>
               <div className={s.panelTitle}>Change history</div>
             </div>
-            {evt.change_history.map((entry: ChangeHistoryEntry, i: number) => (
-              <div key={i} className={s.historyItem}>
+            {(evt.change_history ?? []).map((entry: ChangeHistoryEntry) => (
+              <div key={entry.timestamp} className={s.historyItem}>
                 <div className={s.historyTime}>{fmtTime(entry.timestamp)}</div>
                 <div className={s.historyChange}>{entry.change}</div>
               </div>
