@@ -1,14 +1,14 @@
-name: Sentinel — Ingest Sources
+name: Sentinel — Data Integrity Checks
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # every 30 minutes
+    - cron: '15 */2 * * *'  # every 2 hours at :15 past (independent of ingest)
   workflow_dispatch:
 
 jobs:
-  ingest:
+  integrity:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4
@@ -23,26 +23,10 @@ jobs:
             "psycopg[binary]>=3.2" \
             "psycopg-pool>=3.2" \
             "httpx>=0.27" \
-            "feedparser>=6.0" \
-            "anthropic>=0.40" \
             "pydantic>=2.9" \
             "pydantic-settings>=2.5" \
-            "structlog>=24.4" \
-            "tenacity>=9.0"
+            "structlog>=24.4"
           pip install --no-deps -e apps/ingest
-
-      - name: Apply pending migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: python packages/db/migrate.py
-
-      - name: Run ingest
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_MODEL_EXTRACT: claude-sonnet-4-6
-          PYTHONUNBUFFERED: '1'
-        run: sentinel-run-ingest
 
       - name: Run integrity checks
         env:
