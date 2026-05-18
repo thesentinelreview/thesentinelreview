@@ -27,6 +27,7 @@ def _configure_logging() -> None:
     structlog.configure(
         processors=[
             structlog.stdlib.add_log_level,
+            structlog.processors.format_exc_info,
             structlog.processors.JSONRenderer(),
         ],
         wrapper_class=structlog.BoundLogger,
