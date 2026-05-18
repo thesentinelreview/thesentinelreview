@@ -294,13 +294,9 @@
   <div class="inner">
     <div class="date-info">
       <span class="classification">UNCLASSIFIED // PUBLIC RELEASE</span>
-      <span class="classification" style="border-color: rgba(184,136,42,0.5); color: var(--gold); font-size: 9px;">BETA</span>
-      <span id="current-date"></span>
     </div>
     <div class="links">
-      <a href="#newsletter">Daily Briefing</a>
-      <a href="#regions">Regional Watch</a>
-      <a href="#newsletter">Subscribe</a>
+      <a href="https://dashboard.thesentinelreview.com" target="_blank">⬡ Intel Dashboard</a>
     </div>
   </div>
 </div>
@@ -343,8 +339,6 @@
       <a href="#news">Latest</a>
       <a href="#regions">Regional</a>
       <a href="#newsletter">Briefing</a>
-      <a href="https://dashboard.thesentinelreview.com" target="_blank" class="nav-dashboard">⬡ Intel Dashboard</a>
-      <button class="nav-whitepaper-btn" onclick="document.querySelector('.wp-overlay').classList.add('open')">&#x2193; White Paper</button>
     </div>
     <div class="live-indicator">
       <span class="live-dot"></span>
@@ -741,9 +735,6 @@ function showSentinelStatus(type, message) {
 </div>
 
 <script>
-  const now = new Date();
-  document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
   document.getElementById('wp-overlay').addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
