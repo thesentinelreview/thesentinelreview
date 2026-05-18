@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     # Database
     database_url: PostgresDsn
 
-    # Anthropic
-    anthropic_api_key: str
+    # Anthropic (optional here so sentinel-run-checks can start without the key)
+    anthropic_api_key: str = ""
     anthropic_model_extract: str = "claude-sonnet-4-6"
     anthropic_model_briefing: str = "claude-opus-4-7"
 
