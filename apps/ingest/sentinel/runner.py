@@ -7,7 +7,11 @@ from __future__ import annotations
 
 import json
 import os
+import smtplib
 import sys
+from datetime import datetime, timezone
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from typing import TYPE_CHECKING
 
 import httpx
@@ -95,6 +99,7 @@ def run_checks() -> None:
 
     if critical_failures:
         _maybe_send_webhook(critical_failures, warnings)
+        _maybe_send_email(critical_failures, warnings)
         sys.exit(1)
 
     sys.exit(0)
@@ -147,3 +152,60 @@ def _maybe_send_webhook(
         log.info("webhook_sent", status=resp.status_code)
     except Exception as exc:
         log.warning("webhook_failed", error=str(exc))
+
+
+def _maybe_send_email(
+    critical_failures: list[CheckResult],
+    warnings: list[CheckResult],
+) -> None:
+    to_addr = os.environ.get("ALERT_EMAIL", "").strip()
+    smtp_host = os.environ.get("SMTP_HOST", "").strip()
+    smtp_user = os.environ.get("SMTP_USER", "").strip()
+    smtp_password = os.environ.get("SMTP_PASSWORD", "").strip()
+    if not (to_addr and smtp_host and smtp_user and smtp_password):
+        return
+
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    from_addr = os.environ.get("SMTP_FROM", smtp_user)
+    now = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    subject = f"[Sentinel] Integrity check FAILED — {len(critical_failures)} critical failure(s)"
+
+    lines = [
+        f"Sentinel data integrity check failed at {now}.",
+        "",
+        "CRITICAL FAILURES:",
+    ]
+    for r in critical_failures:
+        lines.append(f"  [✗] {r.name}: {r.detail}")
+
+    if warnings:
+        lines += ["", "WARNINGS:"]
+        for r in warnings:
+            lines.append(f"  [!] {r.name}: {r.detail}")
+
+    lines += [
+        "",
+        "Check the GitHub Actions log for full details:",
+        "https://github.com/thesentinelreview/thesentinelreview/actions",
+        "",
+        "Inspect live: GET /api/admin/integrity",
+    ]
+
+    body = "\n".join(lines)
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = from_addr
+    msg["To"] = to_addr
+    msg.attach(MIMEText(body, "plain"))
+
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(smtp_user, smtp_password)
+            smtp.sendmail(from_addr, to_addr, msg.as_string())
+        log.info("alert_email_sent", to=to_addr)
+    except Exception as exc:
+        log.warning("alert_email_failed", error=str(exc))

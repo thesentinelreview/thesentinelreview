@@ -144,19 +144,16 @@ async function runChecks(pool: Pool): Promise<CheckResult[]> {
   });
 
   const heldBacklog = await pool.query(
-    `SELECT COUNT(*)::int AS n FROM events
-     WHERE held_for_review = true
-       AND human_reviewed_at IS NULL
-       AND created_at < now() - interval '48 hours'`
+    `SELECT COUNT(*)::int AS n FROM events WHERE held_for_review = true`
   );
   const heldCount = heldBacklog.rows[0].n;
   results.push({
-    name: "held_backlog_old",
+    name: "held_events",
     passed: heldCount === 0,
     severity: "warning",
     detail: heldCount
-      ? `${heldCount} event(s) held for review for >48h with no action`
-      : "no stale held events",
+      ? `${heldCount} event(s) still held for review (should be 0 — run migration 0007)`
+      : "no events held for review",
     value: heldCount,
   });
 

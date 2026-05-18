@@ -224,23 +224,21 @@ def check_no_published_events_8h(conn: psycopg.Connection) -> CheckResult:
     )
 
 
-def check_held_backlog_old(conn: psycopg.Connection) -> CheckResult:
-    """Events held for review for >48h with no reviewer action — backlog growing."""
+def check_held_events(conn: psycopg.Connection) -> CheckResult:
+    """Any held_for_review event is a policy violation — dashboard runs autonomously."""
     row = conn.execute(
         """
         SELECT COUNT(*) AS n
         FROM events
         WHERE held_for_review = true
-          AND human_reviewed_at IS NULL
-          AND created_at < now() - interval '48 hours'
         """,
     ).fetchone()
     count = row["n"] if row else 0
     return CheckResult(
-        name="held_backlog_old",
+        name="held_events",
         passed=count == 0,
         severity="warning",
-        detail=f"{count} event(s) held for review for >48h with no action" if count else "no stale held events",
+        detail=f"{count} event(s) still held for review (should be 0 — run migration 0007)" if count else "no events held for review",
         value=count,
     )
 
@@ -286,7 +284,7 @@ _ALL_CHECKS = [
     check_unprocessed_posts_old,
     check_high_skip_rate_24h,
     check_no_published_events_8h,
-    check_held_backlog_old,
+    check_held_events,
     check_silent_active_sources,
 ]
 

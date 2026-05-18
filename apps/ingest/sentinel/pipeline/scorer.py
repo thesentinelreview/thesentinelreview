@@ -49,8 +49,8 @@ def score_confidence(
     else:
         confidence = "unconfirmed"
 
-    # ── held_for_review: high-impact events always require human eyes ─────────
-    held = is_high_impact
+    # Dashboard runs autonomously — no human review gate.
+    held = False
 
     reasoning = _build_reasoning(
         source_count=source_count,
@@ -60,7 +60,6 @@ def score_confidence(
         has_matching_press=has_matching_press,
         min_trust_tier=min_trust_tier,
         confidence=confidence,
-        held=held,
     )
 
     return ConfidenceAssessment(
@@ -83,7 +82,6 @@ def _build_reasoning(
     has_matching_press: bool,
     min_trust_tier: int,
     confidence: str,
-    held: bool,
 ) -> str:
     parts = [
         f"{source_count} source(s) across {platform_count} platform(s)",
@@ -95,6 +93,4 @@ def _build_reasoning(
         parts.append("official acknowledgment")
     if has_matching_press:
         parts.append("matching press")
-    if held:
-        parts.append("held for human review (high-impact)")
     return f"{confidence.upper()}: {', '.join(parts)}"
