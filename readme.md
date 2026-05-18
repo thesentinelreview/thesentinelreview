@@ -38,11 +38,11 @@ A fully automated national security news site. RSS feeds from 18 trusted sources
                      └───────┬────────┘
                              │ git push
                              ▼
-                    ┌────────────────┐
-                    │    Netlify     │
-                    │  auto-deploys  │
-                    └───────┬────────┘
-                            ▼
+                    ┌────────────────────┐
+                    │  Cloudflare Pages  │
+                    │   auto-deploys     │
+                    └─────────┬──────────┘
+                              ▼
                    🌐 Live site updated
 
    ┌─────────────────┐    daily 01:00 UTC   ┌──────────────────────┐
@@ -90,13 +90,13 @@ Go to [github.com](https://github.com) and sign up if you don't have one.
 4. Click **"Run workflow"** → **"Run workflow"**
 5. Wait ~1 minute. `index.html` and `feed.xml` will appear in your repo.
 
-### Step 5 — Connect Netlify for hosting (free)
-1. Go to [netlify.com](https://netlify.com) and sign up (use your GitHub account)
-2. Click **"Add new site"** → **"Import an existing project"**
-3. Choose **GitHub**, authorize Netlify, pick your repo
+### Step 5 — Connect Cloudflare Pages for hosting (free)
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) and sign up or log in
+2. Navigate to **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+3. Authorize Cloudflare, choose **GitHub**, and select your repo
 4. **Build command**: leave empty
-5. **Publish directory**: `.` (just a dot)
-6. Click **Deploy** — your site is live in ~30 seconds
+5. **Build output directory**: `.` (just a dot)
+6. Click **Save and Deploy** — your site is live in ~30 seconds
 
 ### Step 6 — Configure secrets
 Add these in **GitHub → Settings → Secrets and variables → Actions**:
@@ -111,11 +111,11 @@ Add these in **GitHub → Settings → Secrets and variables → Actions**:
 | `X_BEARER_TOKEN` | `main.yml` (optional) |
 
 ### Step 7 — Custom domain (optional, ~$12/year)
-Buy a domain from Namecheap or Cloudflare, then: **Netlify → Domain management → Add custom domain**.
+Buy a domain from Namecheap or Cloudflare, then: **Cloudflare Pages → your project → Custom domains → Set up a custom domain**.
 
 ## That's it. Your site is now fully automated.
 
-Every 8 hours, GitHub Actions runs the aggregator, regenerates the site, commits changes, and Netlify redeploys. The daily briefing email goes out at 09:23 UTC. You don't need to do anything.
+Every 8 hours, GitHub Actions runs the aggregator, regenerates the site, commits changes, and Cloudflare Pages redeploys. The daily briefing email goes out at 09:23 UTC. You don't need to do anything.
 
 ---
 
@@ -186,7 +186,7 @@ python generate_briefing.py  # requires BUTTONDOWN_API_KEY in environment
 
 **Site isn't updating** — Check the **Actions** tab. Green runs with no commits mean the feeds returned the same stories. Red runs: click into the run to see the error.
 
-**Netlify isn't redeploying** — Ensure Netlify is connected to the `main` branch. Each commit triggers a rebuild.
+**Cloudflare Pages isn't redeploying** — Ensure the Pages project is connected to the `main` branch. Each commit triggers a rebuild. Check **Workers & Pages → your project → Deployments** for logs.
 
 **Briefing not arriving** — Check `briefing.yml` run logs. Verify `BUTTONDOWN_API_KEY` is set and that `BRIEFING_MODE` is `schedule` or `send` (not `draft`).
 
