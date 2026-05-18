@@ -7,7 +7,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-
 # ── Enums ─────────────────────────────────────────────────────────────────────
 
 EventType   = Literal["strike", "clash", "movement"]
@@ -33,17 +32,18 @@ class Source(BaseModel):
 
 
 class RawPost(BaseModel):
-    id:           uuid.UUID
-    source_id:    uuid.UUID
-    external_id:  str
-    posted_at:    datetime
-    text:         str
-    media_urls:   list[str]
-    archive_url:  str | None
-    lang:         str | None
-    ingested_at:  datetime
-    processed_at: datetime | None
-    skip_reason:  str | None
+    id:              uuid.UUID
+    source_id:       uuid.UUID
+    external_id:     str
+    posted_at:       datetime
+    text:            str
+    media_urls:      list[str]
+    archive_url:     str | None
+    lang:            str | None
+    ingested_at:     datetime
+    processed_at:    datetime | None
+    skip_reason:     str | None
+    translated_text: str | None = None
 
 
 class Event(BaseModel):
@@ -115,6 +115,14 @@ class ConfidenceAssessment(BaseModel):
     has_official_ack:     bool
     held_for_review:      bool
     reasoning:            str
+
+
+class TranslationResult(BaseModel):
+    """Result of running the translator on a raw post."""
+    language:    str | None = None       # ISO 639-1, e.g. "ru", "ar"; None if undetermined
+    translation: str | None = None       # English text; None if source is English or skipped
+    skipped:     bool       = False      # True when the pre-filter skipped the API call
+    skip_reason: str | None = None       # "empty" | "english_heuristic" | "link_only" | None
 
 
 class BriefingInput(BaseModel):

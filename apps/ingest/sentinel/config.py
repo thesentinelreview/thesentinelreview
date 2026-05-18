@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str
     anthropic_model_extract: str = "claude-sonnet-4-6"
     anthropic_model_briefing: str = "claude-opus-4-7"
+    anthropic_model_translate: str = "claude-haiku-4-5"
 
     # Telegram (optional — ingestor silently skips if unset)
     telegram_api_id: int | None = None

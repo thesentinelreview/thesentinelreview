@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Generator
+from typing import Any
 
 import psycopg
 import psycopg.rows
@@ -178,6 +179,30 @@ def mark_post_processed(
         "UPDATE raw_posts SET processed_at = now(), skip_reason = %s WHERE id = %s",
         (skip_reason, raw_post_id),
     )
+
+
+def update_post_translation(
+    conn: psycopg.Connection,
+    raw_post_id: uuid.UUID,
+    *,
+    language: str | None,
+    translated_text: str | None,
+) -> None:
+    """
+    Persist a translation result. `language` overrides any prior `lang` value
+    when non-null (the translator's detection is more authoritative than the
+    ingest-time guess).
+    """
+    if language is not None:
+        conn.execute(
+            "UPDATE raw_posts SET translated_text = %s, lang = %s WHERE id = %s",
+            (translated_text, language, raw_post_id),
+        )
+    else:
+        conn.execute(
+            "UPDATE raw_posts SET translated_text = %s WHERE id = %s",
+            (translated_text, raw_post_id),
+        )
 
 
 def get_posts_by_ids(

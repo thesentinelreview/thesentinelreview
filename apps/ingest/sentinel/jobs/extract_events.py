@@ -20,11 +20,13 @@ from sentinel.db import (
     link_event_source,
     log_llm_call,
     mark_post_processed,
+    update_post_translation,
 )
 from sentinel.models import ExtractEventsPayload
 from sentinel.pipeline.dedup import find_duplicate
 from sentinel.pipeline.extractor import extract_event
 from sentinel.pipeline.scorer import score_confidence
+from sentinel.pipeline.translator import translate_post
 
 log = structlog.get_logger()
 
@@ -53,9 +55,38 @@ def _process_post(
 ) -> None:
     post_id: uuid.UUID = post["id"]
 
+    # ── Translation ──────────────────────────────────────────────────────────
+    # Run before extraction so the extractor sees English text. Skipped posts
+    # (English by heuristic, link-only, empty) consume no API budget.
+    translation, translate_meta = translate_post(post["text"], source=source)
+
+    if translate_meta is not None:
+        log_llm_call(
+            conn,
+            purpose="translate_raw_post",
+            model=translate_meta["model"],
+            prompt=translate_meta["prompt"],
+            response=translate_meta["response"],
+            prompt_tokens=translate_meta.get("prompt_tokens"),
+            completion_tokens=translate_meta.get("completion_tokens"),
+            job_id=job_id,
+            raw_post_id=post_id,
+        )
+
+    update_post_translation(
+        conn,
+        post_id,
+        language=translation.language,
+        translated_text=translation.translation,
+    )
+
+    # Use the English translation for extraction when available; fall back to
+    # the original text when translation was skipped (English source) or failed.
+    text_for_extraction = translation.translation or post["text"]
+
     # ── LLM extraction ───────────────────────────────────────────────────────
     result, llm_meta = extract_event(
-        post["text"],
+        text_for_extraction,
         source=source,
         theater=source.get("theater", "ukraine"),
         post_timestamp=post.get("posted_at"),
