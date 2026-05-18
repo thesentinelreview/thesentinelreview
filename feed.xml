@@ -6,8 +6,17 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 18 May 2026 11:57:56 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2026 12:52:16 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌏 Early Edition: May 18, 2026 | Just Security</title>
+      <link>https://www.justsecurity.org/139231/early-edition-may-18-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-18-2026</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/139231/early-edition-may-18-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-18-2026</guid>
+      <pubDate>Mon, 18 May 2026 12:45:38 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.justsecurity.org/139231/early-edition-may-18-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-18-2026">Just Security</source>
+      <description>Signup to receive the Early Edition in your inbox here. A curated weekday guide to major news and developments over the last 24 hours. Here’s today’s news: U.S.-CHINA SUMMIT President Trump returned from two days of talks with Chinese President Xi Jinping in Beijing with limited…</description>
+    </item>
     <item>
       <title>🏴 Inaugural Europe Gulf Forum Concludes in Greece, Advancing Long-Term Cooperation Between Europe and the Gulf | Atlantic Council</title>
       <link>https://www.atlanticcouncil.org/news/press-releases/inaugural-europe-gulf-forum-concludes-in-greece-advancing-long-term-cooperation-between-europe-and-the-gulf/</link>
@@ -268,15 +277,6 @@
       <category>Europe / NATO</category>
       <source url="https://www.defenseone.com/threats/2026/05/lawmaker-threatens-pentagon-canceled-deployment/413593/">Defense One</source>
       <description>Recent Trump-administration moves may drop troop presence below legal minimums.</description>
-    </item>
-    <item>
-      <title>🕵️ CIA Director Ratcliffe’s Trip to Havana | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/15/cuba-ratcliffe-cia-regime-change-us-blockade-oil-fuel-blackouts-china-russia/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/15/cuba-ratcliffe-cia-regime-change-us-blockade-oil-fuel-blackouts-china-russia/</guid>
-      <pubDate>Fri, 15 May 2026 20:02:14 +0000</pubDate>
-      <category>Intelligence</category>
-      <source url="https://foreignpolicy.com/2026/05/15/cuba-ratcliffe-cia-regime-change-us-blockade-oil-fuel-blackouts-china-russia/">Foreign Policy</source>
-      <description>The United States is offering to turn Cuba’s lights back on—for a price.</description>
     </item>
   </channel>
 </rss>
