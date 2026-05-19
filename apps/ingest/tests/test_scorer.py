@@ -187,15 +187,21 @@ class TestUnconfirmed:
 # ---------------------------------------------------------------------------
 
 class TestHeldForReview:
-    def test_high_impact_sets_held(self) -> None:
+    """
+    The dashboard runs fully autonomously — held_for_review is always False,
+    regardless of impact or confidence. These tests pin that contract so a
+    future change that reintroduces a hold gate has to update them explicitly.
+    """
+
+    def test_high_impact_does_not_hold(self) -> None:
         result = score_confidence(
             source=_src("telegram", 2),
             geo_signals=_geo(geolocated_footage=True),
             corroborating_sources=[_src("x", 2)],
             is_high_impact=True,
         )
-        assert result.held_for_review is True
-        assert result.confidence == "verified"   # held doesn't change confidence
+        assert result.held_for_review is False
+        assert result.confidence == "verified"   # high-impact doesn't change confidence either
 
     def test_not_high_impact_not_held(self) -> None:
         result = score_confidence(
@@ -206,14 +212,14 @@ class TestHeldForReview:
         )
         assert result.held_for_review is False
 
-    def test_unconfirmed_high_impact_still_held(self) -> None:
+    def test_unconfirmed_high_impact_does_not_hold(self) -> None:
         result = score_confidence(
             source=_src("telegram", 3),
             geo_signals=_geo(),
             corroborating_sources=[],
             is_high_impact=True,
         )
-        assert result.held_for_review is True
+        assert result.held_for_review is False
         assert result.confidence == "unconfirmed"
 
 
@@ -246,14 +252,16 @@ class TestReasoning:
         )
         assert "geolocated" in result.reasoning
 
-    def test_reasoning_includes_held(self) -> None:
+    def test_reasoning_omits_held_marker(self) -> None:
+        # The autonomous pipeline never holds, so the reasoning string should
+        # not advertise a hold-for-review marker.
         result = score_confidence(
             source=_src("telegram", 2),
             geo_signals=_geo(geolocated_footage=True),
             corroborating_sources=[_src("x", 2)],
             is_high_impact=True,
         )
-        assert "held for human review" in result.reasoning
+        assert "held" not in result.reasoning.lower()
 
     def test_build_reasoning_direct(self) -> None:
         text = _build_reasoning(
@@ -264,7 +272,6 @@ class TestReasoning:
             has_matching_press=False,
             min_trust_tier=1,
             confidence="verified",
-            held=False,
         )
         assert "VERIFIED" in text
         assert "3 source(s)" in text
