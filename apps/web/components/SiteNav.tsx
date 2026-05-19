@@ -6,6 +6,7 @@ import s from "./SiteNav.module.css";
 
 const NAV = [
   { href: "/", label: "Map" },
+  { href: "/app/feed", label: "Source feed" },
   { href: "/sources", label: "Sources" },
   { href: "/methodology", label: "Methodology" },
   { href: "/about", label: "About" },
