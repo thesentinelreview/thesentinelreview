@@ -9,9 +9,9 @@ import s from "./pricing.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Subscribe — The Sentinel Review",
+  title: "Membership — The Sentinel Review",
   description:
-    "Access AI-synthesized conflict intelligence. Founding Analyst pricing locked in for the first 250 subscribers.",
+    "Sentinel Review membership tiers. Free conflict monitoring for Ukraine and the Middle East, with Founding Analyst pricing locked in for life.",
 };
 
 const ANALYST_PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_MONTHLY ?? "";
@@ -20,66 +20,88 @@ const ANALYST_PRICE_YEARLY  = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_YEARL
 function fmtDate(d: Date): string {
   return d.toLocaleDateString("en-US", {
     weekday: "long",
-    day: "numeric",
-    month: "long",
     year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
-const CHECK = "✓";
-const DASH  = "—";
+type CellValue =
+  | "check"
+  | "dash"
+  | { detail: string }
+  | { plain: string };
 
-const TABLE_ROWS: Array<
+type TableEntry =
   | { type: "group"; label: string }
-  | { type: "row"; label: string; watch: string; analyst: string; bureau: string }
-> = [
-  { type: "group", label: "Intelligence Access" },
-  { type: "row", label: "Source Feed (translated raw posts)", watch: CHECK, analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "All Active Theatres",               watch: CHECK, analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "AI Synthesis Dashboard",            watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Verified Event Feed",               watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Confidence Scoring",                watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Daily Intelligence Briefings",      watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "group", label: "Analysis Tools" },
-  { type: "row", label: "Geolocation & Mapping",            watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Intensity Heatmaps",               watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Key Actor Tracking",               watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "row", label: "Event Timeline",                   watch: DASH,  analyst: CHECK, bureau: CHECK },
-  { type: "group", label: "Bureau Features" },
-  { type: "row", label: "API Access",                       watch: DASH,  analyst: DASH,  bureau: CHECK },
-  { type: "row", label: "Team Seats",                       watch: DASH,  analyst: DASH,  bureau: CHECK },
-  { type: "row", label: "Custom Theatre Briefings",         watch: DASH,  analyst: DASH,  bureau: CHECK },
-  { type: "row", label: "Priority Support",                 watch: DASH,  analyst: DASH,  bureau: CHECK },
+  | { type: "row"; label: string; watch: CellValue; analyst: CellValue; bureau: CellValue };
+
+const TABLE: TableEntry[] = [
+  { type: "group", label: "Content & Briefings" },
+  { type: "row", label: "Daily morning briefing (email)",  watch: "check",                    analyst: "check",                    bureau: "check" },
+  { type: "row", label: "AI theater briefings",            watch: { detail: "Today only" },   analyst: { detail: "Full history" },  bureau: { detail: "Full history" } },
+  { type: "row", label: "Weekly strategic assessment",     watch: "dash",                     analyst: "check",                    bureau: "check" },
+  { type: "row", label: "Custom briefings on request",     watch: "dash",                     analyst: "dash",                     bureau: { detail: "1 / month" } },
+
+  { type: "group", label: "Dashboard & Data" },
+  { type: "row", label: "Live dashboard access",           watch: { detail: "Ukraine + ME" }, analyst: { detail: "All theaters" }, bureau: { detail: "All theaters" } },
+  { type: "row", label: "Event history window",            watch: { detail: "7 days" },       analyst: { detail: "Full archive" }, bureau: { detail: "Full archive" } },
+  { type: "row", label: "Verification audit trail",        watch: { detail: "Basic state" },  analyst: "check",                   bureau: { detail: "+ peer flags" } },
+  { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Rate-limited" }, bureau: { detail: "Higher limits" } },
+
+  { type: "group", label: "Alerts & Integrations" },
+  { type: "row", label: "Custom alerts (topic / theater / geofence)", watch: "dash", analyst: { detail: "Email + browser" }, bureau: { detail: "+ Slack/Teams" } },
+  { type: "row", label: "API access",                      watch: "dash",                     analyst: { detail: "1K calls/day" }, bureau: { detail: "25K calls/day" } },
+  { type: "row", label: "Webhooks",                        watch: "dash",                     analyst: "dash",                     bureau: { detail: "Basic" } },
+  { type: "row", label: "Embeddable widgets",              watch: "dash",                     analyst: { detail: "Personal (1)" }, bureau: { detail: "Newsroom unlimited" } },
+
+  { type: "group", label: "Team & Admin" },
+  { type: "row", label: "Seats",                           watch: { plain: "1" },             analyst: { plain: "1" },             bureau: { detail: "3–10" } },
+  { type: "row", label: "Shared workspaces / annotations", watch: "dash",                     analyst: "dash",                     bureau: "check" },
+  { type: "row", label: "Admin panel / SSO",               watch: "dash",                     analyst: "dash",                     bureau: { detail: "Admin panel" } },
+
+  { type: "group", label: "Community & Support" },
+  { type: "row", label: "Discord community",               watch: "dash",                     analyst: "check",                    bureau: "check" },
+  { type: "row", label: "Quarterly methodology webinars",  watch: "dash",                     analyst: "check",                    bureau: "check" },
+  { type: "row", label: "Workshops / training",            watch: "dash",                     analyst: "dash",                     bureau: { detail: "1 team workshop/yr" } },
+  { type: "row", label: "Support",                         watch: { detail: "Best-effort" },  analyst: { detail: "Priority email" }, bureau: { detail: "Named contact" } },
 ];
+
+function Cell({ v }: { v: CellValue }) {
+  if (v === "check") return <td className={s.check}>◆</td>;
+  if (v === "dash")  return <td className={s.dash}>—</td>;
+  if ("detail" in v) return <td><span className={s.detail}>{v.detail}</span></td>;
+  return <td>{v.plain}</td>;
+}
 
 const FAQ_ITEMS = [
   {
-    q: "What is the source feed?",
-    a: "The source feed consists of raw OSINT posts collected from Telegram channels, forums, and social media in conflict zones — translated into English from Arabic, Russian, Pashto, and other languages. Every post is machine-translated and timestamped. No editorial filtering.",
+    q: "What does “locked in for life” actually mean?",
+    a: "If you become one of the first 250 Analyst subscribers, your rate stays at $12/month (or $99/year) for as long as your subscription remains active and uninterrupted. If you cancel and resubscribe later, the standard rate applies. We honor the founding rate through any future pricing changes.",
   },
   {
-    q: "How does AI synthesis work?",
-    a: "Our pipeline processes raw source posts through Claude to extract structured events: location, actors, event type, and a confidence score based on multi-source corroboration. Events are then geolocated and surfaced in the Analyst dashboard.",
+    q: "What’s the difference between The Sentinel Review and the Intel Dashboard?",
+    a: "The Sentinel Review is the publication — daily briefings, curated headlines, the morning email. The Intel Dashboard is a separate product for live OSINT conflict monitoring with verification scoring. Watch members get free access to both. Analyst unlocks the full dashboard archive, alerts, and tools.",
   },
   {
-    q: "Is this information reliable?",
-    a: "The Sentinel Review aggregates open-source intelligence — it is not independently verified. Locations, actors, and event details may be inaccurate or based on propaganda. This platform is for analytical awareness, not operational decision-making.",
+    q: "Is this for operational or intelligence use?",
+    a: "No. Every event on the dashboard carries an explicit disclaimer: AI-generated analysis. Events sourced from open-source reporting; locations and details unverified. Not for operational use. The Sentinel Review is a research and situational-awareness tool for journalists, analysts, researchers, and informed observers.",
   },
   {
-    q: "What happens to my rate after the founding window closes?",
-    a: "Your Founding Analyst rate ($12/mo or $99/yr) is locked in for life as long as your subscription remains active and uninterrupted. The standard rate after the 250-subscriber founding window closes will be $25/mo.",
+    q: "Are there academic or student discounts?",
+    a: "Yes. Graduate students, faculty, and accredited program researchers with a verifiable .edu email can receive 50% off the Analyst tier at the standard price ($12.50/month). Contact us with your university affiliation.",
   },
   {
-    q: "Can I cancel anytime?",
-    a: "Yes. Cancel at any time from the billing portal. Your Analyst access continues through the end of your current billing period, then reverts to the free Watch tier.",
+    q: "When will Bureau launch?",
+    a: "Bureau is targeted for the second half of 2026, once we have meaningful Analyst-tier traction and have heard sustained demand for team features. If you have a team need now, email us — we’re happy to work something out manually before the tier is formally live.",
   },
   {
-    q: "What payment methods are accepted?",
-    a: "All major credit and debit cards are accepted via Stripe. We do not store card details — all payment processing is handled by Stripe's secure infrastructure.",
+    q: "How do I cancel?",
+    a: "One click in your account portal, anytime. No retention calls, no friction. Founding pricing is forfeited only if you cancel.",
   },
   {
-    q: "Is there a free trial?",
-    a: "The Watch tier is permanently free — no credit card required. You get full access to the source feed across all active theatres. Upgrade to Analyst when you want AI synthesis, verified events, and daily briefings.",
+    q: "Who is behind The Sentinel Review?",
+    a: "The Sentinel Review is published by Sentinel Media Group LLC (Ohio), founded and edited by Jacob Troxtell, M.S. National Security candidate at the University of New Haven, inducted into the Order of the Sword & Shield.",
   },
 ];
 
@@ -93,18 +115,27 @@ export default async function PricingPage({
   const sub          = userId ? await getSubscriptionDetails() : null;
   const tier         = sub?.status === "active" ? sub.tier : null;
   const hasAnalyst   = tier === "analyst" || tier === "bureau";
-
-  const dateStr = fmtDate(new Date());
+  const dateStr      = fmtDate(new Date());
 
   return (
     <div className={s.page}>
-      {/* Classification bar */}
+
+      {/* ── Top bar ──────────────────────────────────────────────── */}
       <div className={s.classBar}>
-        <span>{dateStr}</span>
-        <span>Vol. XXVII · No. 247 · Open-Source Conflict Intelligence</span>
+        <div className={s.classBarInner}>
+          <div className={s.classBarLeft}>
+            <span className={s.classification}>UNCLASSIFIED // PUBLIC RELEASE</span>
+            <span className={s.classBarDate}>{dateStr}</span>
+          </div>
+          <div className={s.classBarLinks}>
+            <Link href="/#newsletter" className={s.classBarLink}>Daily Briefing</Link>
+            <Link href="/#regions" className={s.classBarLink}>Regional Watch</Link>
+            <a href="https://dashboard.thesentinelreview.com" className={s.classBarLink}>Intel Dashboard</a>
+          </div>
+        </div>
       </div>
 
-      {/* Banners */}
+      {/* ── Banners ───────────────────────────────────────────────── */}
       {checkout === "success" && (
         <div className={s.successBanner}>
           Payment received — Analyst access has been activated.{" "}
@@ -119,254 +150,381 @@ export default async function PricingPage({
         </div>
       )}
 
-      {/* Masthead */}
+      {/* ── Masthead ─────────────────────────────────────────────── */}
       <header className={s.masthead}>
-        <Image
-          src="/logo-horizontal-transparent.png"
-          alt="The Sentinel Review"
-          width={220}
-          height={60}
-          className={s.mastheadLogo}
-          priority
-        />
-        <div className={s.mastheadTitle}>THE SENTINEL REVIEW</div>
-        <div className={s.mastheadTagline}>
-          <em>Independent Open-Source Conflict Intelligence</em>
+        <div className={s.mastheadInner}>
+          <div className={s.mastheadAside}>
+            <div className={s.asideLabel}>Tier Status</div>
+            <div className={s.asideValue}>ENROLLMENT OPEN</div>
+          </div>
+          <div className={s.mastheadLogoBlock}>
+            <Link href="/" aria-label="The Sentinel Review — Home">
+              <Image
+                src="/logo-horizontal-transparent.png"
+                alt="The Sentinel Review"
+                width={540}
+                height={80}
+                className={s.mastheadLogo}
+                priority
+              />
+            </Link>
+          </div>
+          <div className={`${s.mastheadAside} ${s.mastheadAsideRight}`}>
+            <div className={s.asideLabel}>Membership</div>
+            <div className={s.asideValue}>FOUNDING WINDOW</div>
+          </div>
         </div>
       </header>
 
-      <hr className={s.rule} />
-
-      {/* Nav */}
-      <nav className={s.nav}>
-        <Link href="/app/feed">Intelligence Feed</Link>
-        <Link href="/app">Theatres</Link>
-        <Link href="/#methodology">Methodology</Link>
-        <Link href="/pricing" aria-current="page">Subscribe</Link>
+      {/* ── Main nav ─────────────────────────────────────────────── */}
+      <nav className={s.mainNav}>
+        <div className={s.navInner}>
+          <div className={s.navLinks}>
+            <Link href="/"            className={s.navLink}>Home</Link>
+            <Link href="/#news"       className={s.navLink}>Latest</Link>
+            <Link href="/#regions"    className={s.navLink}>Regional</Link>
+            <Link href="/#newsletter" className={s.navLink}>Briefing</Link>
+            <Link href="/pricing"     className={`${s.navLink} ${s.navLinkActive}`}>Membership</Link>
+          </div>
+          <div className={s.liveIndicator}>
+            <span className={s.liveDot} />
+            <span>LIVE FEED</span>
+          </div>
+        </div>
       </nav>
 
-      {/* Hero */}
-      <section className={s.hero}>
-        <div className={s.heroEyebrow}>Membership &amp; Access</div>
-        <h1 className={s.heroTitle}>Choose Your Vantage Point</h1>
-        <p className={s.heroSubtitle}>
-          <em>From raw signals to verified intelligence — select the tier that matches your mission.</em>
-        </p>
-      </section>
+      {/* ── Page content ─────────────────────────────────────────── */}
+      <div className={s.pageWrap}>
 
-      {/* Founding banner */}
-      <div className={s.foundingBanner}>
-        <span className={s.foundingIcon}>⚡</span>
-        <strong>FOUNDING SUBSCRIBER OFFER</strong>
-        {" "}— 247 of 250 founding spots remaining. Lock in $12/mo for life.
-      </div>
-
-      {/* Tier cards */}
-      <div className={s.grid}>
-        {/* Watch */}
-        <div className={s.card}>
-          {tier === "watch" && <div className={s.cardBadge}>Current Plan</div>}
-          <div className={s.cardTier}>Watch</div>
-          <div className={s.cardPrice}>
-            <span className={s.cardCurrency}>$</span>
-            <span className={s.cardAmount}>0</span>
-          </div>
-          <div className={s.cardPriceNote}>Free — no credit card required</div>
-          <ul className={s.features}>
-            <li>Source feed — translated raw OSINT posts</li>
-            <li>All four active theatres</li>
-            <li>Per-theatre dashboards &amp; key actors</li>
-          </ul>
-          <div className={s.actions}>
-            {userId ? (
-              <Link href="/app/feed" className={s.btnSecondary}>
-                Browse Source Feed
-              </Link>
-            ) : (
-              <Link href="/sign-up" className={s.btnSecondary}>
-                Create Free Account
-              </Link>
-            )}
-          </div>
-        </div>
-
-        {/* Analyst */}
-        <div className={`${s.card} ${s.cardFeatured}`}>
-          <div className={s.cardBadge}>Founding Rate</div>
-          <div className={s.cardTier}>Analyst</div>
-          <div className={s.cardPrice}>
-            <span className={s.cardCurrency}>$</span>
-            <span className={s.cardAmount}>12</span>
-            <span className={s.cardUnit}>/mo</span>
-          </div>
-          <div className={s.cardPriceNote}>$99/yr · founding rate locked in for life</div>
-          {hasAnalyst && sub?.current_period_end && (
-            <div className={s.renewalNote}>
-              {sub.status === "active" ? "Renews" : "Access until"}{" "}
-              {fmtDate(sub.current_period_end)}
-              {sub.is_founding && " · Founding rate"}
-            </div>
-          )}
-          <ul className={s.features}>
-            <li>Everything in Watch</li>
-            <li>AI synthesis — geolocated, verified events</li>
-            <li>Confidence scoring &amp; multi-source corroboration</li>
-            <li>Intensity heatmaps (30-day)</li>
-            <li>Daily AI intelligence briefings</li>
-            <li>Real-time alerts</li>
-          </ul>
-          <div className={s.actions}>
-            {hasAnalyst ? (
-              <>
-                <Link href="/app" className={s.btnPrimary}>
-                  Access Dashboard
-                </Link>
-                <ManageBillingButton className={s.btnSecondary} />
-              </>
-            ) : !userId ? (
-              <Link href="/sign-up" className={s.btnPrimary}>
-                Create Account to Subscribe
-              </Link>
-            ) : ANALYST_PRICE_MONTHLY ? (
-              <>
-                <CheckoutButton priceId={ANALYST_PRICE_MONTHLY} className={s.btnGold}>
-                  Claim Founding Analyst — $12/mo
-                </CheckoutButton>
-                {ANALYST_PRICE_YEARLY && (
-                  <CheckoutButton priceId={ANALYST_PRICE_YEARLY} className={s.btnSecondary}>
-                    Subscribe Yearly — $99/yr (save 31%)
-                  </CheckoutButton>
-                )}
-              </>
-            ) : (
-              <Link href="/#newsletter" className={s.btnPrimary}>
-                Join the Waitlist
-              </Link>
-            )}
-          </div>
-        </div>
-
-        {/* Bureau */}
-        <div className={`${s.card} ${s.cardDim}`}>
-          {tier === "bureau" && <div className={s.cardBadge}>Current Plan</div>}
-          <div className={s.cardTier}>Bureau</div>
-          <div className={s.cardPrice}>
-            <span className={s.cardAmountTbd}>TBD</span>
-          </div>
-          <div className={s.cardPriceNote}>Coming soon · contact us for early access</div>
-          <ul className={s.features}>
-            <li>Everything in Analyst</li>
-            <li>API access</li>
-            <li>Team seats</li>
-            <li>Custom theatre briefings</li>
-            <li>Priority support</li>
-          </ul>
-          <div className={s.actions}>
-            <span className={s.btnDisabled}>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Comparison table */}
-      <section className={s.tableSection}>
-        <h2 className={s.tableTitle}>Full Feature Comparison</h2>
-        <div className={s.table}>
-          <div className={`${s.tableRow} ${s.tableHeader}`}>
-            <div className={s.tableFeatureCol}>Feature</div>
-            <div className={s.tableColHead}>Watch</div>
-            <div className={s.tableColHead}>Analyst</div>
-            <div className={s.tableColHead}>Bureau</div>
-          </div>
-          {TABLE_ROWS.map((row, i) =>
-            row.type === "group" ? (
-              <div key={i} className={s.tableGroupHead}>
-                {row.label}
-              </div>
-            ) : (
-              <div key={i} className={s.tableRow}>
-                <div className={s.tableFeatureCol}>{row.label}</div>
-                <div className={row.watch === CHECK ? s.tableCheck : s.tableDash}>{row.watch}</div>
-                <div className={row.analyst === CHECK ? s.tableCheck : s.tableDash}>{row.analyst}</div>
-                <div className={row.bureau === CHECK ? s.tableCheck : s.tableDash}>{row.bureau}</div>
-              </div>
-            )
-          )}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className={s.faq}>
-        <h2 className={s.faqTitle}>Frequently Asked Questions</h2>
-        {FAQ_ITEMS.map((item, i) => (
-          <details key={i} className={s.faqItem}>
-            <summary className={s.faqQ}>{item.q}</summary>
-            <p className={s.faqA}>{item.a}</p>
-          </details>
-        ))}
-      </section>
-
-      {/* Final CTA */}
-      <section className={s.finalCta}>
-        <div className={s.finalCtaInner}>
-          <div className={s.finalCtaEyebrow}>Ready to See Clearly?</div>
-          <h2 className={s.finalCtaTitle}>Join the Intelligence Network</h2>
-          <p className={s.finalCtaSub}>
-            247 founding spots remain. Lock in $12/mo for life — cancel anytime.
+        {/* Hero */}
+        <section className={s.hero}>
+          <div className={s.heroEyebrow}>Access Levels · Membership Tiers</div>
+          <h1 className={s.heroTitle}>
+            Choose Your <span className={s.heroAccent}>Vantage Point</span>
+          </h1>
+          <p className={s.heroLead}>
+            Free conflict monitoring for Ukraine and the Middle East. Working analyst tools for
+            individuals. Team and enterprise tiers arriving as we grow.
           </p>
-          <div className={s.finalCtaActions}>
-            {hasAnalyst ? (
-              <Link href="/app" className={s.finalCtaBtn}>
-                Go to Dashboard
-              </Link>
-            ) : !userId ? (
-              <Link href="/sign-up" className={s.finalCtaBtn}>
-                Create Free Account
-              </Link>
-            ) : ANALYST_PRICE_MONTHLY ? (
-              <CheckoutButton priceId={ANALYST_PRICE_MONTHLY} className={s.finalCtaBtn}>
-                Claim Founding Analyst Access
-              </CheckoutButton>
-            ) : (
-              <Link href="/#newsletter" className={s.finalCtaBtn}>
-                Join the Waitlist
-              </Link>
-            )}
+        </section>
+
+        {/* Founding banner */}
+        <div className={s.foundingBanner}>
+          <span className={s.foundingBadge}>Founding Members</span>
+          <div className={s.foundingText}>
+            The first <strong>250 Analyst subscribers</strong> lock in{" "}
+            <strong>$12/mo</strong> for as long as their subscription stays active. After the
+            founding window, Analyst is $25/mo.
           </div>
+          <div className={s.foundingCounter}>
+            <span className={s.foundingCount}>247 / 250</span>
+            Spots remaining
+          </div>
+        </div>
+
+        {/* ── Pricing grid ──────────────────────────────────────── */}
+        <div className={s.grid}>
+
+          {/* Watch */}
+          <div className={s.card}>
+            {tier === "watch" && <span className={s.cardTag}>Current Plan</span>}
+            <div className={s.tierLabel}>Tier 01</div>
+            <div className={s.tierName}>Watch</div>
+            <div className={s.tierPrice}>
+              <span className={s.priceCurrency}>$</span>0
+              <span className={s.priceUnit}> / forever</span>
+            </div>
+            <div className={s.priceSecondary}>FREE ACCESS</div>
+            <div className={s.priceStrike}>&nbsp;</div>
+            <div className={s.tierDesc}>
+              For anyone monitoring the space. Daily briefings, live dashboards, and the source
+              feed — at no cost.
+            </div>
+            <ul className={s.features}>
+              <li>Daily morning briefing by email</li>
+              <li>Live dashboard: Ukraine + Middle East</li>
+              <li>7-day rolling event window</li>
+              <li>Today&rsquo;s AI theater briefing</li>
+              <li>The Sentinel methodology white paper</li>
+              <li>Best-effort email support</li>
+            </ul>
+            <div className={s.cardActions}>
+              {userId ? (
+                <Link href="/app/feed" className={s.tierCta}>Access Source Feed</Link>
+              ) : (
+                <Link href="/sign-up" className={s.tierCta}>Subscribe — Free</Link>
+              )}
+            </div>
+          </div>
+
+          {/* Analyst (featured) */}
+          <div className={`${s.card} ${s.cardFeatured}`}>
+            <span className={s.cardTag}>Founding Tier</span>
+            <div className={s.tierLabel}>Tier 02</div>
+            <div className={s.tierName}>Analyst</div>
+            <div className={s.tierPrice}>
+              <span className={s.priceCurrency}>$</span>12
+              <span className={s.priceUnit}> / month</span>
+            </div>
+            <div className={s.priceSecondary}>OR $99 / YEAR · LOCKED IN</div>
+            <div className={s.priceStrike}>Standard: <s>$25/mo · $249/yr</s></div>
+            {hasAnalyst && sub?.current_period_end && (
+              <div className={s.renewalNote}>
+                {sub.status === "active" ? "Renews" : "Access until"}{" "}
+                {sub.current_period_end.toLocaleDateString("en-US", {
+                  month: "short", day: "numeric", year: "numeric",
+                })}
+                {sub.is_founding && " · Founding rate"}
+              </div>
+            )}
+            <div className={s.tierDesc}>
+              For working analysts, journalists, and researchers. Real alerts, full history, and
+              the data you need to do your job.
+            </div>
+            <ul className={s.features}>
+              <li className={s.everything}>Everything in Watch, plus:</li>
+              <li>All theaters (Indo-Pacific, Africa, more coming)</li>
+              <li>Full event history — queryable archive</li>
+              <li>Custom alerts: topic, theater, geofence, threshold</li>
+              <li>Weekly strategic assessment from the editor</li>
+              <li>CSV / JSON data exports</li>
+              <li>Read API access (1,000 calls/day)</li>
+              <li>Embeddable widget for personal use</li>
+              <li>Quarterly methodology webinars</li>
+              <li>Discord community access</li>
+              <li>Priority email support</li>
+            </ul>
+            <div className={s.cardActions}>
+              {hasAnalyst ? (
+                <>
+                  <Link href="/app" className={`${s.tierCta} ${s.tierCtaPrimary}`}>
+                    Access Dashboard
+                  </Link>
+                  <ManageBillingButton className={s.tierCta} />
+                </>
+              ) : !userId ? (
+                <Link href="/sign-up" className={`${s.tierCta} ${s.tierCtaPrimary}`}>
+                  Create Account to Subscribe
+                </Link>
+              ) : ANALYST_PRICE_MONTHLY ? (
+                <>
+                  <CheckoutButton
+                    priceId={ANALYST_PRICE_MONTHLY}
+                    className={`${s.tierCta} ${s.tierCtaPrimary}`}
+                  >
+                    Claim Founding Analyst
+                  </CheckoutButton>
+                  {ANALYST_PRICE_YEARLY && (
+                    <CheckoutButton priceId={ANALYST_PRICE_YEARLY} className={s.tierCta}>
+                      Subscribe Yearly — $99/yr (save 31%)
+                    </CheckoutButton>
+                  )}
+                </>
+              ) : (
+                <Link href="/#newsletter" className={`${s.tierCta} ${s.tierCtaPrimary}`}>
+                  Claim Founding Analyst
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Bureau */}
+          <div className={`${s.card} ${s.cardComing}`}>
+            <span className={`${s.cardTag} ${s.cardTagComing}`}>Coming Soon</span>
+            <div className={s.tierLabel}>Tier 03</div>
+            <div className={s.tierName}>Bureau</div>
+            <div className={s.tierPrice}>
+              <span className={s.priceCurrency}>$</span>129
+              <span className={s.priceUnit}> / month</span>
+            </div>
+            <div className={s.priceSecondary}>UP TO 10 SEATS · FROM $129/MO</div>
+            <div className={s.priceStrike}>&nbsp;</div>
+            <div className={s.tierDesc}>
+              For newsrooms, NGO security teams, and small consultancies. Shared workspaces,
+              team alerts, and a contact who answers.
+            </div>
+            <ul className={s.features}>
+              <li className={s.everything}>Everything in Analyst, plus:</li>
+              <li>3–10 team seats</li>
+              <li>Shared workspaces and saved views</li>
+              <li>Team alert rules + Slack/Teams integration</li>
+              <li>Higher API limits (25K calls/day)</li>
+              <li>Webhook support</li>
+              <li>Newsroom embed license (unlimited widgets)</li>
+              <li>1 custom briefing per month</li>
+              <li>Named support contact + monthly office hours</li>
+              <li>1 private team workshop per year</li>
+            </ul>
+            <div className={s.cardActions}>
+              <a
+                href="mailto:contact@thesentinelreview.com?subject=Notify%20me%20when%20Bureau%20launches"
+                className={s.tierCta}
+              >
+                Notify Me at Launch
+              </a>
+            </div>
+          </div>
+
+        </div>{/* /grid */}
+
+        {/* ── Comparison table ──────────────────────────────────── */}
+        <section className={s.compareSection}>
+          <div className={s.sectionLabel}>
+            <h2 className={s.sectionLabelH2}>Full Comparison</h2>
+            <div className={s.sectionLabelLine} />
+            <div className={s.sectionLabelMeta}>All Features · All Tiers</div>
+          </div>
+          <div className={s.tableWrap}>
+            <table className={s.compareTable}>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Watch<span className={s.priceMini}>Free</span></th>
+                  <th>Analyst<span className={s.priceMini}>$12/mo founding</span></th>
+                  <th>Bureau<span className={s.priceMini}>$129+/mo · coming</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {TABLE.map((row, i) =>
+                  row.type === "group" ? (
+                    <tr key={i} className={s.groupHeader}>
+                      <td colSpan={4}>{row.label}</td>
+                    </tr>
+                  ) : (
+                    <tr key={i}>
+                      <td>{row.label}</td>
+                      <Cell v={row.watch} />
+                      <Cell v={row.analyst} />
+                      <Cell v={row.bureau} />
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ── FAQ ───────────────────────────────────────────────── */}
+        <section className={s.faqSection}>
+          <div className={s.sectionLabel}>
+            <h2 className={s.sectionLabelH2}>Frequently Asked</h2>
+            <div className={s.sectionLabelLine} />
+            <div className={s.sectionLabelMeta}>FAQ</div>
+          </div>
+          {FAQ_ITEMS.map((item, i) => (
+            <div key={i} className={s.faqItem}>
+              <h3 className={s.faqQ}>{item.q}</h3>
+              <p className={s.faqA}>{item.a}</p>
+            </div>
+          ))}
+        </section>
+
+      </div>{/* /pageWrap */}
+
+      {/* ── Final CTA ─────────────────────────────────────────────── */}
+      <section className={s.finalCta}>
+        <div className={s.finalCtaEyebrow}>Limited Founding Window</div>
+        <h2 className={s.finalCtaTitle}>
+          Start with <span className={s.finalCtaAccent}>Watch</span>. Upgrade when you&rsquo;re ready.
+        </h2>
+        <p className={s.finalCtaP}>
+          Subscribe to the free morning briefing — no credit card, no friction. If the dashboard
+          becomes part of how you work, claim your founding Analyst rate before the 250 spots are gone.
+        </p>
+        <div className={s.finalCtaButtons}>
+          {userId ? (
+            <Link href="/app/feed" className={s.btnPrimary}>Start with Watch — Free</Link>
+          ) : (
+            <Link href="/sign-up" className={s.btnPrimary}>Start with Watch — Free</Link>
+          )}
+          {hasAnalyst ? (
+            <Link href="/app" className={s.btnSecondary}>Go to Dashboard →</Link>
+          ) : ANALYST_PRICE_MONTHLY ? (
+            <CheckoutButton priceId={ANALYST_PRICE_MONTHLY} className={s.btnSecondary}>
+              Claim Founding Analyst →
+            </CheckoutButton>
+          ) : (
+            <Link href="/#newsletter" className={s.btnSecondary}>Claim Founding Analyst →</Link>
+          )}
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── Footer ────────────────────────────────────────────────── */}
       <footer className={s.footer}>
+        <div className={s.autoNotice}>
+          📡 AUTOMATED AGGREGATION — This site curates headlines from trusted national security
+          sources. All stories link to original publishers.
+        </div>
         <div className={s.footerGrid}>
-          <div className={s.footerCol}>
-            <div className={s.footerColHead}>The Sentinel Review</div>
-            <p className={s.footerText}>
-              Independent open-source conflict intelligence. All events are
-              AI-generated from OSINT. Not verified. Not for operational use.
+          <div className={s.footerBrand}>
+            <div className={s.footerLogoText}>
+              The <span className={s.footerLogoAccent}>Sentinel</span> Review
+            </div>
+            <p className={s.footerBrandDesc}>
+              Authoritative national security news aggregation and intelligence curation for
+              policy makers and defense professionals.
             </p>
-            <p className={s.footerText}>
-              © {new Date().getFullYear()} The Sentinel Review. All rights reserved.
-            </p>
-          </div>
-          <div className={s.footerCol}>
-            <div className={s.footerColHead}>Navigate</div>
-            <Link href="/app/feed" className={s.footerLink}>Intelligence Feed</Link>
-            <Link href="/app" className={s.footerLink}>Theatres</Link>
-            <Link href="/pricing" className={s.footerLink}>Subscribe</Link>
-            <Link href="/sign-in" className={s.footerLink}>Sign In</Link>
-          </div>
-          <div className={s.footerCol}>
-            <div className={s.footerColHead}>Contact</div>
-            <Link href="mailto:support@thesentinelreview.com" className={s.footerLink}>
-              support@thesentinelreview.com
-            </Link>
-            <div className={s.footerDisclaimer}>
-              Sources include Telegram OSINT channels, LiveUAMap, ISW, and other
-              open-source reporting. Coverage does not imply endorsement.
+            <div className={s.followSection}>
+              <div className={s.followLabel}>Follow Us</div>
+              <div className={s.socialLinks}>
+                <a className={s.socialLink} href="https://x.com/thesentinelrev" target="_blank" rel="noopener" title="Follow on X">X</a>
+                <a className={s.socialLink} href="https://thesentinelreview.com/feed.xml" target="_blank" rel="noopener" title="RSS Feed">⊕</a>
+              </div>
+            </div>
+            <div className={s.contactSection}>
+              <div className={s.followLabel}>Contact</div>
+              <a className={s.contactEmail} href="mailto:contact@thesentinelreview.com">
+                contact@thesentinelreview.com
+              </a>
             </div>
           </div>
+          <div className={s.footerCol}>
+            <h4 className={s.footerColHead}>Our Sources</h4>
+            <ul className={s.footerColList}>
+              {[
+                ["https://www.defensenews.com",    "Defense News"],
+                ["https://breakingdefense.com",     "Breaking Defense"],
+                ["https://www.twz.com",             "The War Zone"],
+                ["https://warontherocks.com",        "War on the Rocks"],
+                ["https://www.defenseone.com",      "Defense One"],
+                ["https://www.csis.org",            "CSIS"],
+                ["https://www.atlanticcouncil.org", "Atlantic Council"],
+                ["https://foreignpolicy.com",       "Foreign Policy"],
+                ["https://www.foreignaffairs.com",  "Foreign Affairs"],
+              ].map(([href, label]) => (
+                <li key={href}>
+                  <a href={href} target="_blank" rel="noopener" className={s.footerColLink}>{label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className={s.footerCol}>
+            <h4 className={s.footerColHead}>More Sources</h4>
+            <ul className={s.footerColList}>
+              {[
+                ["https://www.cisa.gov",              "CISA"],
+                ["https://www.stripes.com",            "Stars and Stripes"],
+                ["https://www.lawfaremedia.org",       "Lawfare"],
+                ["https://www.justsecurity.org",       "Just Security"],
+                ["https://www.rand.org",               "RAND"],
+                ["https://thediplomat.com",            "The Diplomat"],
+                ["https://www.bellingcat.com",         "Bellingcat"],
+                ["https://www.38north.org",            "38 North"],
+                ["https://www.aspistrategist.org.au",  "ASPI Strategist"],
+              ].map(([href, label]) => (
+                <li key={href}>
+                  <a href={href} target="_blank" rel="noopener" className={s.footerColLink}>{label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className={s.footerBottom}>
+          <p>© {new Date().getFullYear()} Sentinel Media Group LLC · Columbus, Ohio</p>
+          <p>All content links to original sources. Fair use for news aggregation.</p>
         </div>
       </footer>
+
     </div>
   );
 }
