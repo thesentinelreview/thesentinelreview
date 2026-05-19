@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserTier } from "@/lib/auth";
 import SiteNav from "@/components/SiteNav";
 import CheckoutButton from "./CheckoutButton";
+import ManageBillingButton from "./ManageBillingButton";
 import s from "./pricing.module.css";
 
 export const dynamic = "force-dynamic";
@@ -95,9 +96,12 @@ export default async function PricingPage({
           </ul>
           <div className={s.actions}>
             {hasAnalyst ? (
-              <Link href="/app" className={`${s.btn} ${s.btnPrimary}`}>
-                Go to dashboard →
-              </Link>
+              <>
+                <Link href="/app" className={`${s.btn} ${s.btnPrimary}`}>
+                  Go to dashboard →
+                </Link>
+                <ManageBillingButton className={`${s.btn} ${s.btnOutline}`} />
+              </>
             ) : !userId ? (
               <Link href="/sign-up" className={`${s.btn} ${s.btnPrimary}`}>
                 Create account to subscribe →
