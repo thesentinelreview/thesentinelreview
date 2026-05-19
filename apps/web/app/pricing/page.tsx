@@ -43,6 +43,14 @@ export default async function PricingPage({
         </div>
       )}
 
+      {checkout === "error" && (
+        <div className={s.errorBanner}>
+          Something went wrong verifying your payment. If you were charged, contact us and we&rsquo;ll sort it out —
+          your subscription is in Stripe and can be retrieved.{" "}
+          <Link href="mailto:support@thesentinelreview.com">support@thesentinelreview.com</Link>
+        </div>
+      )}
+
       <div className={s.hero}>
         <div className={s.eyebrow}>Membership</div>
         <h1 className={s.title}>Analyst-grade OSINT, priced for serious readers</h1>

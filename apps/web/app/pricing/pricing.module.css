@@ -6,6 +6,24 @@
 
 /* ── Success banner ──────────────────────────────────────────────────────── */
 
+.errorBanner {
+  margin-bottom: 16px;
+  padding: 12px 20px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 4px;
+  font-family: var(--font-mono-stack);
+  font-size: 12px;
+  color: #f87171;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+.errorBanner a {
+  color: #f87171;
+  text-decoration: underline;
+}
+
 .successBanner {
   margin-bottom: 16px;
   padding: 12px 20px;
