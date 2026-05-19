@@ -5,6 +5,18 @@
   z-index: 1;
 }
 
+.successBanner {
+  margin-bottom: 14px;
+  padding: 10px 18px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 4px;
+  font-family: var(--font-mono-stack);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #4ade80;
+}
+
 /* ── TOP BAR ─────────────────────────────────────────────────────────────── */
 .topbar {
   display: flex;

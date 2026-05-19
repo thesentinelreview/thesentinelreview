@@ -4,6 +4,7 @@ const isProtected = createRouteMatcher([
   "/app(.*)",
   "/api/checkout(.*)",
   "/api/billing-portal(.*)",
+  "/api/activate(.*)",
 ]);
 // The Source Feed is free in beta — Watch tier (unauthenticated) can reach it
 // even though it lives under /app/. Keep the rest of /app/ behind sign-in.
