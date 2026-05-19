@@ -172,6 +172,13 @@ export default async function AnalystDashboardPage({
             <span className={s.liveDot} />
             <span>Live</span>
           </div>
+          <Link
+            href="/pricing"
+            className={s.filterChip}
+            style={{ marginLeft: 8 }}
+          >
+            Billing
+          </Link>
           <div style={{ marginLeft: 8 }}>
             <UserButton />
           </div>
