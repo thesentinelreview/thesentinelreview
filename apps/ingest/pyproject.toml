@@ -45,6 +45,7 @@ sentinel-scheduler = "sentinel.scheduler:main"
 sentinel-run-ingest = "sentinel.runner:run_ingest"
 sentinel-run-briefing = "sentinel.runner:run_briefing"
 sentinel-run-checks = "sentinel.runner:run_checks"
+sentinel-run-backfill-translations = "sentinel.runner:run_backfill_translations"
 
 [tool.ruff]
 line-length = 100
