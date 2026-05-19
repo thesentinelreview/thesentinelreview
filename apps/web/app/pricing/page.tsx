@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { getUserTier } from "@/lib/auth";
+import { getSubscriptionDetails } from "@/lib/auth";
 import SiteNav from "@/components/SiteNav";
 import CheckoutButton from "./CheckoutButton";
 import ManageBillingButton from "./ManageBillingButton";
@@ -17,6 +17,10 @@ export const metadata = {
 const ANALYST_PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_MONTHLY ?? "";
 const ANALYST_PRICE_YEARLY  = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_YEARLY  ?? "";
 
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
 export default async function PricingPage({
   searchParams,
 }: {
@@ -24,7 +28,8 @@ export default async function PricingPage({
 }) {
   const { checkout } = await searchParams;
   const { userId }   = await auth();
-  const tier         = userId ? await getUserTier() : null;
+  const sub          = userId ? await getSubscriptionDetails() : null;
+  const tier         = sub?.status === "active" ? sub.tier : null;
   const hasAnalyst   = tier === "analyst" || tier === "bureau";
 
   return (
@@ -86,6 +91,13 @@ export default async function PricingPage({
             <span className={s.unit}>/mo</span>
           </div>
           <div className={s.priceNote}>$99/yr · founding rate locked in for life</div>
+          {hasAnalyst && sub?.current_period_end && (
+            <div className={s.renewalNote}>
+              {sub.status === "active" ? "Renews" : "Access until"}{" "}
+              {fmtDate(sub.current_period_end)}
+              {sub.is_founding && " · Founding rate"}
+            </div>
+          )}
           <ul className={s.features}>
             <li>Everything in Watch</li>
             <li>AI synthesis dashboard — geolocated, verified events</li>

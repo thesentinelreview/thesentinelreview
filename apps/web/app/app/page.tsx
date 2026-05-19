@@ -122,8 +122,16 @@ export default async function AnalystDashboardPage({
     { type: "movement", color: "#5b9eff", label: "Movement" },
   ];
 
+  const showCheckoutSuccess = params.checkout === "success";
+
   return (
     <div className={s.app}>
+
+      {showCheckoutSuccess && (
+        <div className={s.successBanner}>
+          Analyst access activated — welcome to the dashboard.
+        </div>
+      )}
 
       {/* TOP BAR */}
       <div className={s.topbar}>
