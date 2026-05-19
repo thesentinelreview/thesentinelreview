@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     line_items: [{ price: priceId, quantity: 1 }],
     client_reference_id: userId,
     customer_email: (sessionClaims?.email as string | undefined) ?? undefined,
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/app?checkout=success`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing?checkout=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
   });
 

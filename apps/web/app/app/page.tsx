@@ -84,7 +84,9 @@ export default async function AnalystDashboardPage({
   }>;
 }) {
   const tier = await getUserTier();
-  if (tier !== "analyst" && tier !== "bureau") redirect("/sign-in");
+  // proxy.ts already sends anonymous users to /sign-in before this runs;
+  // a signed-in Watch user needs the upgrade page, not sign-in again.
+  if (tier !== "analyst" && tier !== "bureau") redirect("/pricing");
 
   const params = await searchParams;
   const theater = resolveTheater(params.theater);

@@ -11,6 +11,7 @@ const NAV = [
   { href: "/sources", label: "Sources" },
   { href: "/methodology", label: "Methodology" },
   { href: "/about", label: "About" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export default function SiteNav() {
