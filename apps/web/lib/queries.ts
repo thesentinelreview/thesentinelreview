@@ -427,6 +427,110 @@ export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promis
 }
 
 // ---------------------------------------------------------------------------
+// Source Feed — raw posts joined to sources, chronological
+// ---------------------------------------------------------------------------
+
+export interface FeedPost {
+  id:               string;
+  posted_at:        string;       // ISO
+  minutes_ago:      number;
+  text:             string;
+  translated_text:  string | null;
+  lang:             string | null;
+  source_handle:    string;
+  source_display:   string;
+  source_platform:  Platform;
+  source_url:       string | null;
+  source_trust:     1 | 2 | 3;
+}
+
+export interface FeedPage {
+  posts:       FeedPost[];
+  next_before: string | null;     // ISO timestamp to pass back as `before`
+}
+
+const FEED_PAGE_SIZE = 30;
+
+export async function getSourceFeedPosts(
+  theater: TheaterKey = "ukraine",
+  opts: { before?: string } = {},
+): Promise<FeedPage> {
+  if (!isDatabaseConfigured()) return { posts: [], next_before: null };
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+
+  type Row = {
+    id:               string;
+    posted_at:        Date;
+    text:             string;
+    translated_text:  string | null;
+    lang:             string | null;
+    source_handle:    string;
+    source_display:   string;
+    source_platform:  Platform;
+    source_url:       string | null;
+    source_trust:     number;
+  };
+
+  // We join to event_sources → events to scope posts to the theater bbox.
+  // Posts that haven't been linked to an event yet won't appear here; that's
+  // intentional for v1 — those are the noisy long tail.
+  const before = opts.before ?? null;
+  try {
+    const rows = await query<Row>(
+      `
+      SELECT DISTINCT ON (rp.posted_at, rp.id)
+        rp.id::text            AS id,
+        rp.posted_at           AS posted_at,
+        rp.text                AS text,
+        rp.translated_text     AS translated_text,
+        rp.lang                AS lang,
+        s.handle               AS source_handle,
+        s.display_name         AS source_display,
+        s.platform             AS source_platform,
+        s.url                  AS source_url,
+        s.trust_tier           AS source_trust
+      FROM raw_posts rp
+      JOIN sources s        ON s.id = rp.source_id
+      JOIN event_sources es ON es.raw_post_id = rp.id
+      JOIN events e         ON e.id = es.event_id
+      WHERE e.published_at IS NOT NULL
+        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND ($5::timestamptz IS NULL OR rp.posted_at < $5::timestamptz)
+      ORDER BY rp.posted_at DESC, rp.id DESC
+      LIMIT ${FEED_PAGE_SIZE + 1}
+      `,
+      [minLng, minLat, maxLng, maxLat, before],
+    );
+
+    const hasMore = rows.length > FEED_PAGE_SIZE;
+    const pageRows = hasMore ? rows.slice(0, FEED_PAGE_SIZE) : rows;
+
+    const posts: FeedPost[] = pageRows.map((r) => ({
+      id:              r.id,
+      posted_at:       r.posted_at.toISOString(),
+      minutes_ago:     minutesAgo(r.posted_at),
+      text:            r.text,
+      translated_text: r.translated_text,
+      lang:            r.lang,
+      source_handle:   r.source_handle,
+      source_display:  r.source_display,
+      source_platform: r.source_platform,
+      source_url:      r.source_url,
+      source_trust:    (r.source_trust as 1 | 2 | 3) ?? 2,
+    }));
+
+    const last = pageRows[pageRows.length - 1];
+    return {
+      posts,
+      next_before: hasMore && last ? last.posted_at.toISOString() : null,
+    };
+  } catch {
+    return { posts: [], next_before: null };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Event detail
 // ---------------------------------------------------------------------------
 
