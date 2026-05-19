@@ -108,6 +108,21 @@ def extract_story(entry, source_tag):
         if not title or not link:
             return None
 
+        image_url = None
+        for mc in getattr(entry, 'media_content', []):
+            if mc.get('medium') == 'image' or str(mc.get('url', '')).endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')):
+                image_url = mc.get('url')
+                break
+        if not image_url:
+            for mt in getattr(entry, 'media_thumbnail', []):
+                image_url = mt.get('url')
+                break
+        if not image_url:
+            for enc in getattr(entry, 'enclosures', []):
+                if 'image' in enc.get('type', ''):
+                    image_url = enc.get('href') or enc.get('url')
+                    break
+
         return {
             'title': title,
             'link': link,
@@ -115,6 +130,7 @@ def extract_story(entry, source_tag):
             'pub_date': pub_date,
             'source': source_tag,
             'category': categorize(title + ' ' + summary),
+            'image': image_url,
         }
     except Exception:
         return None
@@ -228,6 +244,16 @@ def generate_rss(stories, site_url=SITE_URL, max_items=30):
 # RENDERERS
 # ============================================================
 
+def render_hero_overlay(story):
+    if not story:
+        return ''
+    parts = []
+    if story.get('image'):
+        parts.append(f'<div class="hero-img-bg" style="background-image:url(\'{esc(story["image"])}\')"></div>')
+    parts.append(f'<a href="{esc(story["link"])}" target="_blank" rel="noopener" class="hero-link-overlay" aria-label="Read full story at {esc(story["source"])}"></a>')
+    return '\n        '.join(parts)
+
+
 def render_ticker(stories):
     items = stories[:MAX_TICKER]
     doubled = items + items
@@ -336,6 +362,7 @@ def main():
 
     replacements = {
         '<!-- TICKER_CONTENT -->':   render_ticker(stories),
+        '<!-- HERO_OVERLAY -->':     render_hero_overlay(stories[0]),
         '<!-- HERO_STORY -->':       render_hero(stories[0]),
         '<!-- HERO_SIDEBAR -->':     render_hero_sidebar(stories[1:1 + MAX_HERO_SIDEBAR]),
         '<!-- NEWS_GRID -->':        render_news_grid(stories[1 + MAX_HERO_SIDEBAR : 1 + MAX_HERO_SIDEBAR + MAX_NEWS_GRID]),
