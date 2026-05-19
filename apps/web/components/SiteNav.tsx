@@ -6,6 +6,7 @@ import s from "./SiteNav.module.css";
 
 const NAV = [
   { href: "/", label: "Map" },
+  { href: "/theaters", label: "Theaters" },
   { href: "/app/feed", label: "Source feed" },
   { href: "/sources", label: "Sources" },
   { href: "/methodology", label: "Methodology" },
@@ -21,15 +22,20 @@ export default function SiteNav() {
         <span className={s.brandName}>Sentinel Review</span>
       </Link>
       <div className={s.links}>
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`${s.link} ${pathname === item.href ? s.linkActive : ""}`}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {NAV.map((item) => {
+          const isActive = item.href === "/"
+            ? pathname === "/"
+            : pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${s.link} ${isActive ? s.linkActive : ""}`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
