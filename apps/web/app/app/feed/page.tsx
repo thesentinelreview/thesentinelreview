@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import s from "@/app/page.module.css";
 import f from "./feed.module.css";
 import PostCard from "@/components/PostCard";
@@ -104,6 +105,7 @@ export default async function SourceFeedPage({
   const platforms = parsePlatforms(params.platforms);
   const tiers     = parseTiers(params.tiers);
   const before    = params.before;
+  const { userId } = await auth();
 
   const page = await getSourceFeedPosts(theater.id, { platforms, tiers, before });
   const groups = groupByDay(page.posts);
@@ -158,7 +160,13 @@ export default async function SourceFeedPage({
             </Link>
           ))}
           <div style={{ marginLeft: 8 }}>
-            <UserButton />
+            {userId ? (
+              <UserButton />
+            ) : (
+              <Link href="/sign-in" className={s.filterChip}>
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </div>
