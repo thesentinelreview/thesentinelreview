@@ -9,7 +9,7 @@ import json
 import os
 import smtplib
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import TYPE_CHECKING
@@ -73,6 +73,20 @@ def run_briefing() -> None:
     log.info("briefing_job_enqueued")
     processed = _drain_queue()
     log.info("briefing_complete", jobs_processed=processed)
+    sys.exit(0)
+
+
+def run_backfill_translations() -> None:
+    """One-shot backfill of raw_posts.translated_text for historical rows."""
+    _configure_logging()
+    from sentinel.pipeline.translation_backfill import run_backfill
+
+    stats = run_backfill()
+    print(
+        f"\nBACKFILL: considered={stats.considered} "
+        f"translated={stats.translated} skipped={stats.skipped} failed={stats.failed}",
+        flush=True,
+    )
     sys.exit(0)
 
 
@@ -168,7 +182,7 @@ def _maybe_send_email(
 
     smtp_port = int(os.environ.get("SMTP_PORT", "587"))
     from_addr = os.environ.get("SMTP_FROM", smtp_user)
-    now = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     subject = f"[Sentinel] Integrity check FAILED — {len(critical_failures)} critical failure(s)"
 

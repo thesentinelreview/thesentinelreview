@@ -1,0 +1,61 @@
+name: Sentinel — Backfill Translations
+
+# One-shot backfill of raw_posts.translated_text for rows that predate the
+# translator. Manual trigger only — never on a schedule.
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Window of raw_posts to translate, in days (default 30)'
+        required: false
+        default: '30'
+      rate_limit:
+        description: 'Max translate calls per second (default 5)'
+        required: false
+        default: '5'
+      max_posts:
+        description: 'Safety cap on rows processed (0 = no cap)'
+        required: false
+        default: '0'
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "anthropic>=0.40" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0"
+          pip install --no-deps -e apps/ingest
+
+      - name: Apply pending migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python packages/db/migrate.py
+
+      - name: Run translation backfill
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL_TRANSLATE: claude-haiku-4-5
+          SENTINEL_BACKFILL_DAYS: ${{ github.event.inputs.days }}
+          SENTINEL_BACKFILL_RATE_LIMIT: ${{ github.event.inputs.rate_limit }}
+          SENTINEL_BACKFILL_MAX_POSTS: ${{ github.event.inputs.max_posts }}
+          PYTHONUNBUFFERED: '1'
+        run: sentinel-run-backfill-translations
