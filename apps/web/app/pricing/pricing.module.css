@@ -1,0 +1,271 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* ── Success banner ──────────────────────────────────────────────────────── */
+
+.successBanner {
+  margin-bottom: 16px;
+  padding: 12px 20px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 4px;
+  font-family: var(--font-mono-stack);
+  font-size: 12px;
+  color: #4ade80;
+  letter-spacing: 0.04em;
+}
+
+.successBanner a {
+  color: #4ade80;
+  text-decoration: underline;
+  margin-left: 6px;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+.hero {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #888);
+  margin-bottom: 10px;
+}
+
+.title {
+  font-family: var(--font-cond-stack);
+  font-weight: 600;
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-primary, #ededed);
+  margin: 0 0 12px;
+}
+
+.sub {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-secondary, #aaa);
+  max-width: 680px;
+}
+
+/* ── Grid ───────────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cardFeatured {
+  border-color: var(--text-secondary, #aaa);
+}
+
+.cardDim {
+  opacity: 0.6;
+}
+
+.pill {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  font-family: var(--font-mono-stack);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--text-primary, #ededed);
+  color: var(--bg, #0a0a0a);
+  padding: 3px 9px;
+  font-weight: 700;
+}
+
+.tierLabel {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #888);
+  margin-bottom: 12px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.currency {
+  font-family: var(--font-cond-stack);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-secondary, #aaa);
+  line-height: 1;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.amount {
+  font-family: var(--font-cond-stack);
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--text-primary, #ededed);
+  line-height: 1;
+}
+
+.unit {
+  font-family: var(--font-mono-stack);
+  font-size: 12px;
+  color: var(--text-tertiary, #888);
+  margin-left: 2px;
+}
+
+.amountTbd {
+  font-family: var(--font-cond-stack);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--text-secondary, #aaa);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.priceNote {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary, #888);
+  margin-bottom: 20px;
+}
+
+/* ── Feature list ────────────────────────────────────────────────────────── */
+
+.features {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.features li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary, #aaa);
+  padding-left: 14px;
+  position: relative;
+}
+
+.features li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--text-tertiary, #888);
+}
+
+.cardFeatured .features li {
+  color: var(--text-primary, #ededed);
+}
+
+/* ── Actions ────────────────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono-stack);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0;
+  line-height: 1;
+  width: 100%;
+  box-sizing: border-box;
+  transition: none;
+}
+
+.btnPrimary {
+  background: var(--text-primary, #ededed);
+  color: var(--bg, #0a0a0a);
+  border: 1px solid var(--text-primary, #ededed);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--text-secondary, #aaa);
+  border-color: var(--text-secondary, #aaa);
+}
+
+.btnOutline {
+  background: transparent;
+  color: var(--text-secondary, #aaa);
+  border: 1px solid var(--border);
+}
+
+.btnOutline:hover {
+  color: var(--text-primary, #ededed);
+  border-color: var(--text-tertiary, #888);
+}
+
+.btnDisabled {
+  background: transparent;
+  color: var(--text-tertiary, #888);
+  border: 1px solid var(--border);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Fine print ──────────────────────────────────────────────────────────── */
+
+.fine {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fine p {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary, #888);
+  line-height: 1.7;
+}
