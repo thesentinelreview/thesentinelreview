@@ -451,9 +451,15 @@ export interface FeedPage {
 
 const FEED_PAGE_SIZE = 30;
 
+export interface FeedFilters {
+  before?:    string;             // pagination cursor (ISO timestamp)
+  platforms?: Platform[];         // empty / undefined = all
+  tiers?:     Array<1 | 2 | 3>;   // empty / undefined = all
+}
+
 export async function getSourceFeedPosts(
   theater: TheaterKey = "ukraine",
-  opts: { before?: string } = {},
+  opts: FeedFilters = {},
 ): Promise<FeedPage> {
   if (!isDatabaseConfigured()) return { posts: [], next_before: null };
 
@@ -475,7 +481,9 @@ export async function getSourceFeedPosts(
   // We join to event_sources → events to scope posts to the theater bbox.
   // Posts that haven't been linked to an event yet won't appear here; that's
   // intentional for v1 — those are the noisy long tail.
-  const before = opts.before ?? null;
+  const before    = opts.before ?? null;
+  const platforms = opts.platforms && opts.platforms.length > 0 ? opts.platforms : null;
+  const tiers     = opts.tiers     && opts.tiers.length     > 0 ? opts.tiers     : null;
   try {
     const rows = await query<Row>(
       `
@@ -497,10 +505,12 @@ export async function getSourceFeedPosts(
       WHERE e.published_at IS NOT NULL
         AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
         AND ($5::timestamptz IS NULL OR rp.posted_at < $5::timestamptz)
+        AND ($6::text[]      IS NULL OR s.platform   = ANY($6::text[]))
+        AND ($7::smallint[]  IS NULL OR s.trust_tier = ANY($7::smallint[]))
       ORDER BY rp.posted_at DESC, rp.id DESC
       LIMIT ${FEED_PAGE_SIZE + 1}
       `,
-      [minLng, minLat, maxLng, maxLat, before],
+      [minLng, minLat, maxLng, maxLat, before, platforms, tiers],
     );
 
     const hasMore = rows.length > FEED_PAGE_SIZE;
