@@ -133,7 +133,20 @@ export default async function AnalystDashboardPage({
           <span className={s.betaChip} style={{ borderColor: "#B8882A", color: "#B8882A" }}>Analyst</span>
         </div>
         <div className={s.filters}>
-          <span className={s.filterLabel}>Theater</span>
+          <span className={s.filterLabel}>Mode</span>
+          <Link
+            href={`/app?theater=${theater.id}`}
+            className={`${s.filterChip} ${s.filterChipActive}`}
+          >
+            AI synthesis
+          </Link>
+          <Link
+            href={`/app/feed?theater=${theater.id}`}
+            className={s.filterChip}
+          >
+            Source feed
+          </Link>
+          <span className={s.filterLabel} style={{ marginLeft: 6 }}>Theater</span>
           {(Object.values(THEATERS)).map((t) => (
             <Link
               key={t.id}
