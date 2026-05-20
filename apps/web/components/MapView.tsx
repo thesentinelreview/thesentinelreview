@@ -7,21 +7,46 @@ import type { MapEvent, EventType } from "@/data/placeholder";
 
 const STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
-const COLORS: Record<string, string> = {
-  strike: "#e63946",
-  clash: "#f4a261",
-  movement: "#5b9eff",
+type Pal = { strike: string; clash: string; movement: string };
+
+// "app" = the existing site palette (used by embeds); "watch" = the watchfloor
+// template palette (red / amber / cyan).
+const PALETTE: Record<"app" | "watch", { core: Pal; mid: Pal; dim: Pal }> = {
+  app: {
+    core: { strike: "#e63946", clash: "#f4a261", movement: "#5b9eff" },
+    mid: { strike: "rgba(230,57,70,0.38)", clash: "rgba(244,162,97,0.38)", movement: "rgba(91,158,255,0.38)" },
+    dim: { strike: "rgba(230,57,70,0.18)", clash: "rgba(244,162,97,0.18)", movement: "rgba(91,158,255,0.18)" },
+  },
+  watch: {
+    core: { strike: "#ef4444", clash: "#f59e0b", movement: "#22d3ee" },
+    mid: { strike: "rgba(239,68,68,0.38)", clash: "rgba(245,158,11,0.38)", movement: "rgba(34,211,238,0.38)" },
+    dim: { strike: "rgba(239,68,68,0.18)", clash: "rgba(245,158,11,0.18)", movement: "rgba(34,211,238,0.18)" },
+  },
 };
-const COLORS_DIM: Record<string, string> = {
-  strike: "rgba(230,57,70,0.18)",
-  clash: "rgba(244,162,97,0.18)",
-  movement: "rgba(91,158,255,0.18)",
-};
-const COLORS_MID: Record<string, string> = {
-  strike: "rgba(230,57,70,0.38)",
-  clash: "rgba(244,162,97,0.38)",
-  movement: "rgba(91,158,255,0.38)",
-};
+
+// ── Static tactical overlays (Donetsk AOI) ──────────────────────────────────
+// Spec coords are [lat,lng] (Leaflet); GeoJSON/MapLibre want [lng,lat] — swapped.
+const FEBA_LINE: [number, number][] = [
+  [37.9, 49.8], [37.95, 49.2], [37.9, 48.8], [37.8, 48.5],
+  [37.35, 48.3], [37.55, 48.1], [37.75, 47.95], [38.05, 47.8],
+];
+const AOI_POLY: [number, number][] = [
+  [37.05, 48.42], [37.5, 48.45], [37.55, 48.2], [37.1, 48.16], [37.05, 48.42],
+];
+const RING_CENTER: [number, number] = [37.71, 48.07]; // primary Pokrovsk strike
+const RING_KM = [15, 25, 40];
+
+function ringPolygon(center: [number, number], km: number, points = 64): [number, number][] {
+  const [lng, lat] = center;
+  const latDeg = km / 111.32;
+  const lngDeg = km / (111.32 * Math.cos((lat * Math.PI) / 180));
+  const coords: [number, number][] = [];
+  for (let i = 0; i <= points; i++) {
+    const a = (i / points) * 2 * Math.PI;
+    coords.push([lng + lngDeg * Math.cos(a), lat + latDeg * Math.sin(a)]);
+  }
+  return coords;
+}
 
 function fmtMins(m: number): string {
   if (m < 60) return `${m}m ago`;
@@ -67,11 +92,11 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function popupHTML(props: Record<string, unknown>): string {
+function popupHTML(props: Record<string, unknown>, core: Pal): string {
   const type = String(props.event_type ?? "");
   const conf = String(props.confidence ?? "");
   const id = escapeHtml(String(props.id ?? ""));
-  const color = COLORS[type] ?? "#e6e4dc";
+  const color = core[type as keyof Pal] ?? "#e6e4dc";
   const location = escapeHtml(String(props.location_name ?? "").toUpperCase());
   const description = escapeHtml(String(props.description ?? ""));
   return `
@@ -121,9 +146,22 @@ interface Props {
   center: [number, number];
   zoom: number;
   visibleTypes: EventType[];
+  palette?: "app" | "watch";
+  showFebA?: boolean;
+  showAOI?: boolean;
+  showRangeRings?: boolean;
 }
 
-export default function MapView({ events, center, zoom, visibleTypes }: Props) {
+export default function MapView({
+  events,
+  center,
+  zoom,
+  visibleTypes,
+  palette = "app",
+  showFebA = false,
+  showAOI = false,
+  showRangeRings = false,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -154,6 +192,7 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
     );
 
     map.on("load", () => {
+      const pal = PALETTE[palette];
       const filteredOnLoad = eventsRef.current.filter(e =>
         visibleTypesRef.current.includes(e.event_type),
       );
@@ -165,6 +204,71 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
         clusterMaxZoom: 10,
         clusterRadius: 40,
       });
+
+      // ── Static tactical overlays — added first so they render beneath pins ──
+      if (showFebA) {
+        map.addSource("feba", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: { type: "LineString", coordinates: FEBA_LINE },
+          } as GeoJSON.Feature,
+        });
+        map.addLayer({
+          id: "feba-line",
+          type: "line",
+          source: "feba",
+          paint: { "line-color": "#a1a1aa", "line-width": 1.4, "line-opacity": 0.7, "line-dasharray": [6, 4] },
+        });
+      }
+
+      if (showAOI) {
+        map.addSource("aoi", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: { type: "Polygon", coordinates: [AOI_POLY] },
+          } as GeoJSON.Feature,
+        });
+        map.addLayer({
+          id: "aoi-fill",
+          type: "fill",
+          source: "aoi",
+          paint: { "fill-color": "#ef4444", "fill-opacity": 0.06 },
+        });
+        map.addLayer({
+          id: "aoi-outline",
+          type: "line",
+          source: "aoi",
+          paint: { "line-color": "#ef4444", "line-width": 1, "line-opacity": 0.55, "line-dasharray": [3, 3] },
+        });
+      }
+
+      if (showRangeRings) {
+        map.addSource("range-rings", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: RING_KM.map((km, i) => ({
+              type: "Feature",
+              properties: { ring: i },
+              geometry: { type: "LineString", coordinates: ringPolygon(RING_CENTER, km) },
+            })),
+          } as GeoJSON.FeatureCollection,
+        });
+        map.addLayer({
+          id: "range-rings-line",
+          type: "line",
+          source: "range-rings",
+          paint: {
+            "line-color": "#ef4444",
+            "line-width": 0.7,
+            "line-opacity": ["match", ["get", "ring"], 0, 0.5, 1, 0.35, 2, 0.2, 0.3],
+          },
+        });
+      }
 
       // Cluster circle
       map.addLayer({
@@ -202,9 +306,9 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
           "circle-radius": 13,
           "circle-color": [
             "match", ["get", "event_type"],
-            "strike", COLORS_DIM.strike,
-            "clash",  COLORS_DIM.clash,
-            COLORS_DIM.movement,
+            "strike", pal.dim.strike,
+            "clash",  pal.dim.clash,
+            pal.dim.movement,
           ],
         },
       });
@@ -219,9 +323,9 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
           "circle-radius": 7,
           "circle-color": [
             "match", ["get", "event_type"],
-            "strike", COLORS_MID.strike,
-            "clash",  COLORS_MID.clash,
-            COLORS_MID.movement,
+            "strike", pal.mid.strike,
+            "clash",  pal.mid.clash,
+            pal.mid.movement,
           ],
         },
       });
@@ -236,9 +340,9 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
           "circle-radius": 4,
           "circle-color": [
             "match", ["get", "event_type"],
-            "strike", COLORS.strike,
-            "clash",  COLORS.clash,
-            COLORS.movement,
+            "strike", pal.core.strike,
+            "clash",  pal.core.clash,
+            pal.core.movement,
           ],
         },
       });
@@ -273,7 +377,7 @@ export default function MapView({ events, center, zoom, visibleTypes }: Props) {
           maxWidth: "none",
         })
           .setLngLat(coords)
-          .setHTML(popupHTML(props))
+          .setHTML(popupHTML(props, pal.core))
           .addTo(map);
       });
 

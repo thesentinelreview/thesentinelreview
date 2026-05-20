@@ -17,6 +17,9 @@
   --font-sans: var(--font-plex-sans), 'IBM Plex Sans', sans-serif;
   --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
   --font-condensed: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
+
+  --font-ui: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-data: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
 }
 
 /* CSS variables in original mockup naming — used by page.module.css */
@@ -65,6 +68,22 @@ body::before {
   background-size: 3px 3px;
   pointer-events: none;
   z-index: 0;
+}
+
+/* ── Watchfloor (fullscreen dashboard) ──────────────────────────────────── */
+/* The watchfloor is edge-to-edge. Drop the global body padding + grain and turn
+   the body into a flex column so the screen fills the viewport below the demo
+   banner without scroll or clipping. */
+body:has(.watchfloor-root) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+body:has(.watchfloor-root)::before {
+  content: none;
+}
+body:has(.watchfloor-root) .demo-banner {
+  margin: 0 !important;
 }
 
 /* ── MapLibre control overrides ─────────────────────────────────────────── */

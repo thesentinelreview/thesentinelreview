@@ -6,6 +6,8 @@ import {
   Playfair_Display,
   Source_Sans_3,
   Courier_Prime,
+  Inter,
+  JetBrains_Mono,
 } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import DemoBanner from "@/components/DemoBanner";
@@ -49,6 +51,19 @@ const courierPrime = Courier_Prime({
   variable: "--font-courier-prime",
 });
 
+// Watchfloor dashboard fonts
+const inter = Inter({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+});
+
 export const metadata: Metadata = {
   title: "Sentinel Review — Conflict Intelligence Dashboard",
   description: "Real-time OSINT conflict intelligence for Ukraine and beyond.",
@@ -64,7 +79,7 @@ export default async function RootLayout({
     <ClerkProvider>
       <html
         lang="en"
-        className={`${plexSans.variable} ${plexMono.variable} ${plexCondensed.variable} ${playfair.variable} ${sourceSans.variable} ${courierPrime.variable} h-full antialiased`}
+        className={`${plexSans.variable} ${plexMono.variable} ${plexCondensed.variable} ${playfair.variable} ${sourceSans.variable} ${courierPrime.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
       >
         <body className="min-h-full">
           <DemoBanner status={dataStatus} />
