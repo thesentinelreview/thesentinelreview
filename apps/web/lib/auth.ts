@@ -3,6 +3,18 @@ import { queryOne } from "./db";
 
 export type Tier = "watch" | "analyst" | "bureau";
 
+// Comma-separated Clerk user IDs allowed to hit /api/admin/* and /api/db-check.
+// Configured via env so we don't need a DB-side admin flag yet.
+export async function isAdmin(): Promise<boolean> {
+  const { userId } = await auth();
+  if (!userId) return false;
+  const allowlist = (process.env.ADMIN_CLERK_USER_IDS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return allowlist.includes(userId);
+}
+
 export interface SubscriptionDetails {
   tier:               Tier;
   status:             string;

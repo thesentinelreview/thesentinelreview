@@ -9,8 +9,8 @@ import {
   getTopSources,
   getLatestBriefing,
   getSourceFeedPosts,
-  type FeedPost,
 } from "@/lib/queries";
+import { groupByDay } from "@/lib/day-groups";
 import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -36,54 +36,6 @@ export async function generateMetadata({
     description: content.seoDescription,
   };
 }
-
-// ---------------------------------------------------------------------------
-// Day-grouping helpers (same logic as /app/feed)
-// ---------------------------------------------------------------------------
-
-function dayKey(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-CA", { timeZone: "UTC" });
-}
-
-function dayLabel(iso: string): string {
-  const today     = new Date().toLocaleDateString("en-CA", { timeZone: "UTC" });
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
-    .toLocaleDateString("en-CA", { timeZone: "UTC" });
-  const dk = dayKey(iso);
-  if (dk === today) return "Today";
-  if (dk === yesterday) return "Yesterday";
-  return new Date(iso).toLocaleDateString("en-GB", {
-    weekday:  "short",
-    day:      "2-digit",
-    month:    "short",
-    year:     "numeric",
-    timeZone: "UTC",
-  });
-}
-
-interface DayGroup {
-  key:   string;
-  label: string;
-  posts: FeedPost[];
-}
-
-function groupByDay(posts: FeedPost[]): DayGroup[] {
-  const groups: DayGroup[] = [];
-  let current: DayGroup | null = null;
-  for (const post of posts) {
-    const k = dayKey(post.posted_at);
-    if (!current || current.key !== k) {
-      current = { key: k, label: dayLabel(post.posted_at), posts: [] };
-      groups.push(current);
-    }
-    current.posts.push(post);
-  }
-  return groups;
-}
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
 
 export default async function TheaterDetailPage({
   params,

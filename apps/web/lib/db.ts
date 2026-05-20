@@ -40,3 +40,11 @@ export async function queryOne<T extends QueryResultRow = QueryResultRow>(
   const rows = await query<T>(sql, params);
   return rows[0] ?? null;
 }
+
+export async function execute(
+  sql: string,
+  params: readonly unknown[] = [],
+): Promise<number> {
+  const result = await getPool().query(sql, params as unknown[]);
+  return result.rowCount ?? 0;
+}

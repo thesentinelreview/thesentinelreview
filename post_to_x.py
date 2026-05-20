@@ -117,12 +117,14 @@ def parse_feed():
         link = (link_el.text or '').strip()
         pub_date_raw = (pub_date_el.text or '').strip() if pub_date_el is not None else ''
 
-        pub_date = None
         try:
             from email.utils import parsedate_to_datetime
             pub_date = parsedate_to_datetime(pub_date_raw)
         except Exception:
-            pub_date = datetime.now(timezone.utc)
+            # Skip stories with unparseable pubDate rather than letting an old
+            # broken-date story pass the recency check via a "now" fallback.
+            print(f"⚠ Skipping story with unparseable pubDate: {title[:60]}")
+            continue
 
         stories.append({
             'title': title,
@@ -218,9 +220,20 @@ def main():
             print(f"   ✗ Rate-limited by X. Stopping for this run.")
             break
         except tweepy.Forbidden as e:
+            # Forbidden covers both "duplicate content" (which we want to skip
+            # permanently) and permission failures (read-only token, suspended
+            # account). Only mark the URL as posted in the duplicate case so a
+            # bad token doesn't silently burn stories.
+            err_text = str(e).lower()
+            is_duplicate = "duplicate" in err_text
             print(f"   ✗ Forbidden: {e}")
-            print(f"   → Check: app has Read+Write permissions, post isn't duplicate.")
-            state['posted_urls'].append(story['link'])
+            if is_duplicate:
+                print("   → Treating as duplicate; will not retry this URL.")
+                state['posted_urls'].append(story['link'])
+            else:
+                print("   → Likely a permission/token problem. Leaving URL unposted so it retries.")
+                print("   → Check: app has Read+Write permissions, account isn't suspended.")
+                break
         except Exception as e:
             print(f"   ✗ Error: {e}")
             break
