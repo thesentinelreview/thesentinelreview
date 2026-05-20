@@ -1,13 +1,57 @@
 import Link from "next/link";
 import SentinelMark from "./SentinelMark";
 
-// Theater/Window chips are static visual chrome this pass.
+export interface ControlOption {
+  label: string;
+  href: string;
+  active: boolean;
+}
+
+// Native disclosure dropdown — no client JS. Options are links that set URL params.
+function HeaderDropdown({
+  srLabel,
+  current,
+  options,
+}: {
+  srLabel: string;
+  current: string;
+  options: ControlOption[];
+}) {
+  return (
+    <details className="relative [&_summary::-webkit-details-marker]:hidden">
+      <summary
+        className="list-none cursor-pointer bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300 select-none hover:border-zinc-700"
+        aria-label={srLabel}
+      >
+        {current} ▾
+      </summary>
+      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-zinc-900 border border-zinc-800 rounded-sm py-1 shadow-xl">
+        {options.map((o) => (
+          <Link
+            key={o.label}
+            href={o.href}
+            className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
+              o.active ? "text-amber-300 bg-amber-500/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
+            }`}
+          >
+            {o.label}
+          </Link>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 export default function HeaderBar({
   theaterLabel,
   windowLabel,
+  theaterOptions,
+  windowOptions,
 }: {
   theaterLabel: string;
   windowLabel: string;
+  theaterOptions: ControlOption[];
+  windowOptions: ControlOption[];
 }) {
   return (
     <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
@@ -30,9 +74,9 @@ export default function HeaderBar({
       {/* Right cluster */}
       <div className="flex items-center gap-2 text-xs font-data flex-none">
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
-        <span className="bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300">{theaterLabel} ▾</span>
+        <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
-        <span className="bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300">{windowLabel} ▾</span>
+        <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
         <span className="flex items-center gap-1.5 ml-1">
           <span className="relative flex w-2 h-2">
             <span className="animate-ping absolute inline-flex w-full h-full rounded-full bg-red-500 opacity-75" />

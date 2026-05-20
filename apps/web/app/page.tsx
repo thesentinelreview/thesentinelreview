@@ -9,7 +9,7 @@ import SectorThreat from "@/components/watchfloor/SectorThreat";
 import TimeScrubber from "@/components/watchfloor/TimeScrubber";
 import MapLegend from "@/components/watchfloor/MapLegend";
 import TacticalReadout from "@/components/watchfloor/TacticalReadout";
-import { type EventType, resolveTheater } from "@/data/placeholder";
+import { type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
   getMapEvents,
@@ -18,6 +18,7 @@ import {
   getTopSources,
   getLatestBriefing,
   resolveTimeRange,
+  type TimeRange,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,23 @@ export const metadata: Metadata = {
 };
 
 const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
-const WINDOW_LABELS: Record<string, string> = { "24h": "24H", "7d": "7D", "30d": "30D" };
+const WATCH_WINDOWS: TimeRange[] = ["24h", "7d"];
+const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30d": "30D" };
+
+const TYPE_META: { type: EventType; label: string; dot: string }[] = [
+  { type: "strike", label: "Strike", dot: "bg-red-500" },
+  { type: "clash", label: "Contact", dot: "bg-amber-500" },
+  { type: "movement", label: "Track", dot: "bg-teal-300" },
+];
+
+// Build a URL preserving theater + window + visible types, overriding any.
+function buildHref(o: { theater: string; window: TimeRange; types: EventType[] }): string {
+  const p = new URLSearchParams();
+  p.set("theater", o.theater);
+  if (o.window !== "24h") p.set("window", o.window);
+  if (o.types.length > 0 && o.types.length < ALL_TYPES.length) p.set("types", o.types.join(","));
+  return `/?${p}`;
+}
 
 export default async function WatchfloorPage({
   searchParams,
@@ -35,6 +52,7 @@ export default async function WatchfloorPage({
   searchParams: Promise<{
     theater?: string;
     window?: string;
+    types?: string;
     lat?: string;
     lng?: string;
     zoom?: string;
@@ -43,6 +61,12 @@ export default async function WatchfloorPage({
   const params = await searchParams;
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
+
+  // Visible event types (default = all three).
+  const rawTypes = params.types
+    ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
+    : ALL_TYPES;
+  const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
 
   // Honor the map's URL-persisted position (written by MapView on pan/zoom).
   const urlLat = params.lat ? parseFloat(params.lat) : NaN;
@@ -61,9 +85,36 @@ export default async function WatchfloorPage({
     getLatestBriefing(theater.id),
   ]);
 
+  // Control models (server-driven via URL params).
+  const theaterOptions = Object.values(THEATERS).map((t) => ({
+    label: t.label,
+    active: t.id === theater.id,
+    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes }),
+  }));
+  const windowOptions = WATCH_WINDOWS.map((w) => ({
+    label: WINDOW_LABELS[w],
+    active: w === timeRange,
+    href: buildHref({ theater: theater.id, window: w, types: visibleTypes }),
+  }));
+  const legendItems = TYPE_META.map((m) => {
+    const active = visibleTypes.includes(m.type);
+    const next = active ? visibleTypes.filter((t) => t !== m.type) : [...visibleTypes, m.type];
+    return {
+      label: m.label,
+      dot: m.dot,
+      active,
+      href: buildHref({ theater: theater.id, window: timeRange, types: next }),
+    };
+  });
+
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-[#05070A] text-zinc-100 font-ui">
-      <HeaderBar theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} />
+      <HeaderBar
+        theaterLabel={theater.label}
+        windowLabel={WINDOW_LABELS[timeRange]}
+        theaterOptions={theaterOptions}
+        windowOptions={windowOptions}
+      />
       <SensorStrip />
       <KpiRail stats={stats} />
 
@@ -74,13 +125,13 @@ export default async function WatchfloorPage({
             events={mapEvents}
             center={mapCenter}
             zoom={mapZoom}
-            visibleTypes={ALL_TYPES}
+            visibleTypes={visibleTypes}
             palette="watch"
             showFebA
             showAOI
             showRangeRings
           />
-          <MapLegend />
+          <MapLegend items={legendItems} />
           <TacticalReadout />
         </section>
 
