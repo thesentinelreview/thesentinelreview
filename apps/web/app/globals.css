@@ -86,6 +86,29 @@ body:has(.watchfloor-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Source Feed (full-bleed, scrolls) ──────────────────────────────────── */
+/* Drop the global body padding + grain so the feed sits edge-to-edge on the
+   watchfloor's deep bg, and retint PostCard's themeable vars to match the
+   watchfloor (these vars fall back to a neutral dark elsewhere, e.g. the
+   public theater pages, which are intentionally left unchanged). */
+body:has(.feed-root) {
+  padding: 0;
+}
+body:has(.feed-root)::before {
+  content: none;
+}
+body:has(.feed-root) .demo-banner {
+  margin: 0 !important;
+}
+.feed-root {
+  --surface-1: rgba(9, 9, 11, 0.6);
+  --border-subtle: #18181b;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --font-mono-stack: var(--font-data);
+}
+
 /* ── MapLibre control overrides ─────────────────────────────────────────── */
 .maplibregl-ctrl-group {
   background: var(--surface) !important;

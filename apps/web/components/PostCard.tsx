@@ -30,12 +30,14 @@ function platformLabel(p: FeedPost["source_platform"]): string {
 
 export default function PostCard({
   post,
+  watchable = false,
   isAuthed = false,
   initialWatched = false,
   confirmed = false,
   eventId = null,
 }: {
   post: FeedPost;
+  watchable?: boolean;
   isAuthed?: boolean;
   initialWatched?: boolean;
   confirmed?: boolean;
@@ -109,28 +111,30 @@ export default function PostCard({
 
       <div className={s.body}>{body}</div>
 
-      <div className={s.actions}>
-        {isAuthed ? (
-          <button
-            type="button"
-            className={`${s.watchBtn} ${watched ? s.watchBtnOn : ""}`}
-            onClick={toggleWatch}
-            disabled={pending}
-            aria-pressed={watched}
-          >
-            {watched ? "★ Watching" : "☆ Watch"}
-          </button>
-        ) : (
-          <Link href="/sign-in" className={s.watchBtn}>
-            ☆ Watch
-          </Link>
-        )}
-        {confirmed && eventId && (
-          <Link href={`/event/${eventId}`} className={`${s.badge} ${s.badgeConfirmed}`}>
-            ✓ Confirmed by Sentinel
-          </Link>
-        )}
-      </div>
+      {watchable && (
+        <div className={s.actions}>
+          {isAuthed ? (
+            <button
+              type="button"
+              className={`${s.watchBtn} ${watched ? s.watchBtnOn : ""}`}
+              onClick={toggleWatch}
+              disabled={pending}
+              aria-pressed={watched}
+            >
+              {watched ? "★ Watching" : "☆ Watch"}
+            </button>
+          ) : (
+            <Link href="/sign-in" className={s.watchBtn}>
+              ☆ Watch
+            </Link>
+          )}
+          {confirmed && eventId && (
+            <Link href={`/event/${eventId}`} className={`${s.badge} ${s.badgeConfirmed}`}>
+              ✓ Confirmed by Sentinel
+            </Link>
+          )}
+        </div>
+      )}
 
       {post.source_url && (
         <footer className={s.foot}>

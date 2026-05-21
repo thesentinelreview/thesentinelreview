@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import s from "@/app/page.module.css";
-import f from "./feed.module.css";
+import SentinelMark from "@/components/watchfloor/SentinelMark";
 import PostCard from "@/components/PostCard";
 import { type Platform, resolveTheater, THEATERS } from "@/data/placeholder";
 import { type FeedPost, getFirehosePosts, getWatchInfo } from "@/lib/queries";
@@ -18,6 +17,11 @@ const PLATFORM_LABEL: Record<Platform, string> = {
   x:        "X",
   wire:     "Wire",
 };
+
+// Shared chip styling, matching the watchfloor header controls.
+const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
+const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
+const CHIP_ON = "border-amber-500/40 bg-amber-500/[0.08] text-amber-300";
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -129,80 +133,84 @@ export default async function SourceFeedPage({
     tiers.length === 0 ? true : tiers.includes(t);
 
   return (
-    <div className={s.app}>
+    <div className="feed-root min-h-screen flex flex-col bg-[#05070A] text-zinc-100 font-ui">
       {/* TOP BAR */}
-      <div className={s.topbar}>
-        <div className={s.brand}>
-          <div className={s.brandLogo} />
-          <div className={s.brandName}>Sentinel Review</div>
-          <div className={s.brandDivider}>/</div>
-          <div className={s.brandSection}>Source Feed</div>
+      <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
+        <div className="flex items-center gap-3 min-w-0">
+          <SentinelMark className="text-amber-400/80 flex-none" size={24} />
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
+              Sentinel Review
+            </span>
+            <span className="text-zinc-700">/</span>
+            <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80 whitespace-nowrap">
+              Source Feed
+            </span>
+          </div>
         </div>
-        <div className={s.filters}>
-          <span className={s.filterLabel}>Mode</span>
-          <Link
-            href={`/?theater=${theater.id}`}
-            className={s.filterChip}
-          >
-            Sentinel View
-          </Link>
-          <Link
-            href={buildHref({ theater: theater.id, platforms, tiers })}
-            className={`${s.filterChip} ${s.filterChipActive}`}
-          >
-            Source Feed
-          </Link>
-          <span className={s.filterLabel} style={{ marginLeft: 6 }}>Theater</span>
+
+        <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
+          {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
+          <div className="flex items-center rounded-sm border border-zinc-800 overflow-hidden">
+            <Link
+              href={`/?theater=${theater.id}`}
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+            >
+              Sentinel View
+            </Link>
+            <span
+              aria-current="page"
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-amber-500/[0.12] text-amber-300 border-l border-zinc-800"
+            >
+              Source Feed
+            </span>
+          </div>
+
+          <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
+            Theater
+          </span>
           {Object.values(THEATERS).map((t) => (
             <Link
               key={t.id}
               href={buildHref({ theater: t.id, platforms, tiers })}
-              className={`${s.filterChip} ${theater.id === t.id ? s.filterChipActive : ""}`}
+              className={`${CHIP} ${theater.id === t.id ? CHIP_ON : CHIP_OFF}`}
             >
               {t.label}
             </Link>
           ))}
-          <div style={{ marginLeft: 8 }}>
-            {userId ? (
-              <UserButton />
-            ) : (
-              <Link href="/sign-in" className={s.filterChip}>
-                Sign in
-              </Link>
-            )}
-          </div>
+
+          <span className="w-px h-5 bg-zinc-800 mx-1" />
+          {userId ? (
+            <UserButton />
+          ) : (
+            <Link href="/sign-in" className={`${CHIP} ${CHIP_OFF}`}>
+              Sign in
+            </Link>
+          )}
         </div>
-      </div>
+      </header>
 
       {/* FILTER ROW */}
-      <div className={f.filterBar}>
-        <div className={f.filterGroup}>
-          <span className={f.filterGroupLabel}>Platform</span>
+      <div className="border-b border-zinc-900 bg-zinc-950/40 px-5 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-2 flex-none">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Platform</span>
           {ALL_PLATFORMS.map((p) => (
             <Link
               key={p}
-              href={buildHref({
-                theater:   theater.id,
-                platforms: togglePlatform(p),
-                tiers,
-              })}
-              className={`${f.chip} ${platformIsActive(p) ? f.chipActive : ""}`}
+              href={buildHref({ theater: theater.id, platforms: togglePlatform(p), tiers })}
+              className={`${CHIP} ${platformIsActive(p) ? CHIP_ON : CHIP_OFF}`}
             >
               {PLATFORM_LABEL[p]}
             </Link>
           ))}
         </div>
-        <div className={f.filterGroup}>
-          <span className={f.filterGroupLabel}>Trust tier</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Trust tier</span>
           {ALL_TIERS.map((t) => (
             <Link
               key={t}
-              href={buildHref({
-                theater:   theater.id,
-                platforms,
-                tiers:     toggleTier(t),
-              })}
-              className={`${f.chip} ${tierIsActive(t) ? f.chipActive : ""}`}
+              href={buildHref({ theater: theater.id, platforms, tiers: toggleTier(t) })}
+              className={`${CHIP} ${tierIsActive(t) ? CHIP_ON : CHIP_OFF}`}
             >
               Tier {t}
             </Link>
@@ -211,27 +219,31 @@ export default async function SourceFeedPage({
       </div>
 
       {/* FEED CONTENT */}
-      <div className={f.container}>
-        <div className={f.intro}>
-          <div className={f.introTitle}>{theater.mapSubtitle}</div>
-          <div className={f.introMeta}>
+      <div className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">
+        <div className="flex flex-col gap-1 pb-3 border-b border-zinc-900">
+          <div className="text-[12px] font-data tracking-[0.18em] uppercase text-zinc-200">
+            {theater.mapSubtitle}
+          </div>
+          <div className="text-[13px] text-zinc-400 leading-relaxed">
             The unfiltered firehose — every OSINT post ingested for this theater, before AI
             synthesis. Unverified and unprocessed; English-translated where available. Newest first.
           </div>
         </div>
 
         {page.posts.length === 0 ? (
-          <div className={f.empty}>
+          <div className="text-center py-12 px-4 border border-dashed border-zinc-800 rounded-sm text-[11px] font-data tracking-[0.08em] uppercase text-zinc-500">
             No posts match these filters.
           </div>
         ) : (
           <>
-            <div className={f.feed}>
+            <div className="flex flex-col gap-3">
               {groups.map((group) => (
-                <section key={group.key} className={f.daySection}>
-                  <div className={f.daySep}>
-                    <span className={f.daySepLabel}>{group.label}</span>
-                    <span className={f.daySepCount}>
+                <section key={group.key} className="flex flex-col gap-3">
+                  <div className="flex justify-between items-baseline pb-2 mt-3 first:mt-0 border-b border-zinc-900">
+                    <span className="text-[12px] font-data tracking-[0.08em] uppercase text-zinc-200">
+                      {group.label}
+                    </span>
+                    <span className="text-[10px] font-data tracking-[0.08em] uppercase text-zinc-500">
                       {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -241,6 +253,7 @@ export default async function SourceFeedPage({
                       <PostCard
                         key={post.id}
                         post={post}
+                        watchable
                         isAuthed={!!userId}
                         initialWatched={!!info}
                         confirmed={info?.confirmed ?? false}
@@ -253,15 +266,10 @@ export default async function SourceFeedPage({
             </div>
 
             {page.next_before && (
-              <div className={f.more}>
+              <div className="flex justify-center pt-3">
                 <Link
-                  href={buildHref({
-                    theater:   theater.id,
-                    platforms,
-                    tiers,
-                    before:    page.next_before,
-                  })}
-                  className={f.moreLink}
+                  href={buildHref({ theater: theater.id, platforms, tiers, before: page.next_before })}
+                  className="px-3.5 py-2 text-[11px] font-data tracking-[0.08em] uppercase text-zinc-300 border border-zinc-800 rounded-sm hover:text-zinc-100 hover:border-zinc-700"
                 >
                   Load older posts →
                 </Link>
@@ -270,7 +278,7 @@ export default async function SourceFeedPage({
           </>
         )}
 
-        <div className={f.disclaimer}>
+        <div className="text-[10px] font-data tracking-[0.04em] text-zinc-500 leading-relaxed pt-4 border-t border-zinc-900">
           ⚠ Raw, unverified source posts — not yet corroborated or geolocated by Sentinel.
           AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
           Sourced from open-source reporting. Not for operational use.
