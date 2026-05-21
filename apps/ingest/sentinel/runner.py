@@ -180,7 +180,10 @@ def _maybe_send_email(
     if not (to_addr and smtp_host and smtp_user and smtp_password):
         return
 
-    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    try:
+        smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    except ValueError:
+        smtp_port = 587
     from_addr = os.environ.get("SMTP_FROM", smtp_user)
     now = datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M UTC")
 
