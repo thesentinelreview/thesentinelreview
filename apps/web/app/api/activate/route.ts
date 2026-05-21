@@ -27,7 +27,12 @@ export async function GET(req: Request) {
     redirect("/pricing?checkout=error");
   }
 
-  const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+  let sub: Stripe.Subscription;
+  try {
+    sub = await stripe.subscriptions.retrieve(session.subscription as string);
+  } catch {
+    redirect("/pricing?checkout=error");
+  }
   const periodEnd = sub.items.data[0]?.current_period_end ?? null;
 
   await query(

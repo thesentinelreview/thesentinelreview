@@ -18,10 +18,14 @@ export async function POST() {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  const session = await stripe.billingPortal.sessions.create({
-    customer: row.stripe_customer_id,
-    return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
-  });
-
-  return Response.json({ url: session.url });
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: row.stripe_customer_id,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+    });
+    return Response.json({ url: session.url });
+  } catch (err) {
+    console.error("[billing-portal] Stripe error", err);
+    return Response.json({ error: "Failed to open billing portal" }, { status: 502 });
+  }
 }

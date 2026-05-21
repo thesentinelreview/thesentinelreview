@@ -17,15 +17,19 @@ export async function POST(req: Request) {
     return Response.json({ error: "priceId required" }, { status: 400 });
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [{ price: priceId, quantity: 1 }],
-    client_reference_id: userId,
-    customer_email: (sessionClaims?.email as string | undefined) ?? undefined,
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/activate?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
-  });
-
-  return Response.json({ url: session.url });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceId, quantity: 1 }],
+      client_reference_id: userId,
+      customer_email: (sessionClaims?.email as string | undefined) ?? undefined,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/activate?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+    });
+    return Response.json({ url: session.url });
+  } catch (err) {
+    console.error("[checkout] Stripe error", err);
+    return Response.json({ error: "Failed to create checkout session" }, { status: 502 });
+  }
 }
