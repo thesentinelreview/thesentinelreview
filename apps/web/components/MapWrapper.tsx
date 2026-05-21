@@ -11,8 +11,32 @@ interface Props {
   center: [number, number];
   zoom: number;
   visibleTypes: EventType[];
+  palette?: "app" | "watch";
+  showFebA?: boolean;
+  showAOI?: boolean;
+  showRangeRings?: boolean;
 }
 
-export default function MapWrapper({ events, center, zoom, visibleTypes }: Props) {
-  return <MapView events={events} center={center} zoom={zoom} visibleTypes={visibleTypes} />;
+export default function MapWrapper({
+  events,
+  center,
+  zoom,
+  visibleTypes,
+  palette,
+  showFebA,
+  showAOI,
+  showRangeRings,
+}: Props) {
+  return (
+    <MapView
+      events={events}
+      center={center}
+      zoom={zoom}
+      visibleTypes={visibleTypes}
+      palette={palette}
+      showFebA={showFebA}
+      showAOI={showAOI}
+      showRangeRings={showRangeRings}
+    />
+  );
 }

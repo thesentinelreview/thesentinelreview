@@ -92,7 +92,7 @@ export default function MethodologyPage() {
           <div className={s.prose}>
             <p>
               Every source in the system is assigned a trust tier by a human editor. Tiers affect how much
-              weight a source's posts receive in confidence scoring — a tier-1 source posting alone can reach
+              weight a source&apos;s posts receive in confidence scoring — a tier-1 source posting alone can reach
               <em> partial</em> confidence; a tier-3 source posting alone stays <em>unconfirmed</em>.
             </p>
           </div>

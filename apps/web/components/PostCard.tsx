@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { FeedPost } from "@/lib/queries";
 import s from "./PostCard.module.css";
 
@@ -27,13 +28,45 @@ function platformLabel(p: FeedPost["source_platform"]): string {
   return p === "x" ? "X" : p === "rss" ? "RSS" : p === "wire" ? "Wire" : "Telegram";
 }
 
-export default function PostCard({ post }: { post: FeedPost }) {
+export default function PostCard({
+  post,
+  watchable = false,
+  isAuthed = false,
+  initialWatched = false,
+  confirmed = false,
+  eventId = null,
+}: {
+  post: FeedPost;
+  watchable?: boolean;
+  isAuthed?: boolean;
+  initialWatched?: boolean;
+  confirmed?: boolean;
+  eventId?: string | null;
+}) {
   const hasTranslation = post.translated_text !== null && post.translated_text.length > 0;
   const isEnglish = post.lang === "en";
   const translationUnavailable = !isEnglish && !hasTranslation;
 
   const [showOriginal, setShowOriginal] = useState(false);
   const body = hasTranslation && !showOriginal ? post.translated_text! : post.text;
+
+  const [watched, setWatched] = useState(initialWatched);
+  const [pending, setPending] = useState(false);
+
+  async function toggleWatch() {
+    if (pending) return;
+    setPending(true);
+    try {
+      const res = await fetch("/api/watches", {
+        method: watched ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ raw_post_id: post.id }),
+      });
+      if (res.ok) setWatched((w) => !w);
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <article className={s.card}>
@@ -77,6 +110,31 @@ export default function PostCard({ post }: { post: FeedPost }) {
       )}
 
       <div className={s.body}>{body}</div>
+
+      {watchable && (
+        <div className={s.actions}>
+          {isAuthed ? (
+            <button
+              type="button"
+              className={`${s.watchBtn} ${watched ? s.watchBtnOn : ""}`}
+              onClick={toggleWatch}
+              disabled={pending}
+              aria-pressed={watched}
+            >
+              {watched ? "★ Watching" : "☆ Watch"}
+            </button>
+          ) : (
+            <Link href="/sign-in" className={s.watchBtn}>
+              ☆ Watch
+            </Link>
+          )}
+          {confirmed && eventId && (
+            <Link href={`/event/${eventId}`} className={`${s.badge} ${s.badgeConfirmed}`}>
+              ✓ Confirmed by Sentinel
+            </Link>
+          )}
+        </div>
+      )}
 
       {post.source_url && (
         <footer className={s.foot}>

@@ -541,6 +541,144 @@ export async function getSourceFeedPosts(
 }
 
 // ---------------------------------------------------------------------------
+// Source Feed — full firehose (every ingested post for a theater)
+// ---------------------------------------------------------------------------
+//
+// Unlike getSourceFeedPosts, this is NOT scoped to published events: it returns
+// every raw post for the theater's sources, including unprocessed and skipped
+// ones. Scoping is by sources.theater, since raw posts carry no location.
+
+export async function getFirehosePosts(
+  theater: TheaterKey = "ukraine",
+  opts: FeedFilters = {},
+): Promise<FeedPage> {
+  if (!isDatabaseConfigured()) return { posts: [], next_before: null };
+
+  type Row = {
+    id:               string;
+    posted_at:        Date;
+    text:             string;
+    translated_text:  string | null;
+    lang:             string | null;
+    source_handle:    string;
+    source_display:   string;
+    source_platform:  Platform;
+    source_url:       string | null;
+    source_trust:     number;
+  };
+
+  const before    = opts.before ?? null;
+  const platforms = opts.platforms && opts.platforms.length > 0 ? opts.platforms : null;
+  const tiers     = opts.tiers     && opts.tiers.length     > 0 ? opts.tiers     : null;
+  try {
+    const rows = await query<Row>(
+      `
+      SELECT
+        rp.id::text            AS id,
+        rp.posted_at           AS posted_at,
+        rp.text                AS text,
+        rp.translated_text     AS translated_text,
+        rp.lang                AS lang,
+        s.handle               AS source_handle,
+        s.display_name         AS source_display,
+        s.platform             AS source_platform,
+        s.url                  AS source_url,
+        s.trust_tier           AS source_trust
+      FROM raw_posts rp
+      JOIN sources s ON s.id = rp.source_id
+      WHERE s.theater = $1
+        AND ($2::timestamptz IS NULL OR rp.posted_at < $2::timestamptz)
+        AND ($3::text[]      IS NULL OR s.platform   = ANY($3::text[]))
+        AND ($4::smallint[]  IS NULL OR s.trust_tier = ANY($4::smallint[]))
+      ORDER BY rp.posted_at DESC, rp.id DESC
+      LIMIT ${FEED_PAGE_SIZE + 1}
+      `,
+      [theater, before, platforms, tiers],
+    );
+
+    const hasMore = rows.length > FEED_PAGE_SIZE;
+    const pageRows = hasMore ? rows.slice(0, FEED_PAGE_SIZE) : rows;
+
+    const posts: FeedPost[] = pageRows.map((r) => ({
+      id:              r.id,
+      posted_at:       r.posted_at.toISOString(),
+      minutes_ago:     minutesAgo(r.posted_at),
+      text:            r.text,
+      translated_text: r.translated_text,
+      lang:            r.lang,
+      source_handle:   r.source_handle,
+      source_display:  r.source_display,
+      source_platform: r.source_platform,
+      source_url:      r.source_url,
+      source_trust:    (r.source_trust as 1 | 2 | 3) ?? 2,
+    }));
+
+    const last = pageRows[pageRows.length - 1];
+    return {
+      posts,
+      next_before: hasMore && last ? last.posted_at.toISOString() : null,
+    };
+  } catch {
+    return { posts: [], next_before: null };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Watches — per-user watched raw posts + confirmation status
+// ---------------------------------------------------------------------------
+//
+// A post is "confirmed" once Sentinel View links it to a published, geocoded
+// event (via event_sources → events). That event's id lets the UI deep-link to
+// /event/[id]. Confirmation is global; watching is per-user.
+
+export interface WatchInfo {
+  confirmed: boolean;
+  event_id:  string | null;
+}
+
+// Returns watch info keyed by raw_post_id for the subset of rawPostIds the user
+// is watching. Posts absent from the result are simply not watched.
+export async function getWatchInfo(
+  clerkUserId: string,
+  rawPostIds: string[],
+): Promise<Record<string, WatchInfo>> {
+  if (!isDatabaseConfigured() || rawPostIds.length === 0) return {};
+
+  try {
+    type Row = { raw_post_id: string; confirmed: boolean; event_id: string | null };
+    const rows = await query<Row>(
+      `
+      SELECT
+        w.raw_post_id::text AS raw_post_id,
+        (ev.id IS NOT NULL) AS confirmed,
+        ev.id::text         AS event_id
+      FROM watches w
+      LEFT JOIN LATERAL (
+        SELECT e.id
+        FROM event_sources es
+        JOIN events e ON e.id = es.event_id
+        WHERE es.raw_post_id = w.raw_post_id
+          AND e.published_at IS NOT NULL
+        ORDER BY e.published_at DESC
+        LIMIT 1
+      ) ev ON true
+      WHERE w.clerk_user_id = $1
+        AND w.raw_post_id = ANY($2::uuid[])
+      `,
+      [clerkUserId, rawPostIds],
+    );
+
+    const out: Record<string, WatchInfo> = {};
+    for (const r of rows) {
+      out[r.raw_post_id] = { confirmed: r.confirmed, event_id: r.event_id };
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Event detail
 // ---------------------------------------------------------------------------
 

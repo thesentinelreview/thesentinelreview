@@ -97,6 +97,48 @@
   word-wrap: break-word;
 }
 
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.watchBtn {
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 2px;
+  background: none;
+  color: var(--text-secondary, #b7b7b7);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.watchBtn:hover {
+  color: var(--text-primary, #ededed);
+  border-color: var(--text-tertiary, #888);
+}
+
+.watchBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.watchBtnOn {
+  border-color: #b8882a;
+  color: #b8882a;
+}
+
+.badgeConfirmed {
+  border-color: #2f855a;
+  color: #4ade80;
+  text-decoration: none;
+}
+
 .foot {
   padding-top: 4px;
   border-top: 1px solid var(--border-subtle, #2a2a2a);

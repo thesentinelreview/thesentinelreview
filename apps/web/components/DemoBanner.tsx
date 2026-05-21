@@ -9,7 +9,7 @@ export default function DemoBanner({ status }: { status: DataStatus }) {
   if (status === "live") return null;
 
   return (
-    <div style={{
+    <div className="demo-banner" style={{
       margin: "-20px -20px 0",
       padding: "7px 20px",
       background: "var(--amber-dim)",
