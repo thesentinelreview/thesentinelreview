@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BriefingData, Source } from "@/data/placeholder";
+import ExportButton from "./ExportButton";
 
 // Use the briefing's first sentence as the editorial headline; the remainder
 // becomes body copy. Falls back gracefully if there's no clean sentence split.
@@ -48,9 +49,11 @@ export default function BriefPane({
             >
               Open Brief
             </Link>
-            <span className="px-2 py-1 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data">
-              Export
-            </span>
+            <ExportButton
+              date={briefing.date}
+              headline={deriveHeadline(briefing.paragraphs).headline}
+              paragraphs={deriveHeadline(briefing.paragraphs).body}
+            />
           </div>
         )}
       </header>
@@ -65,9 +68,12 @@ export default function BriefPane({
               <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-red-500/[0.08] border border-red-500/30 text-red-400">
                 Priority 1
               </span>
+              <span className={`px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm border ${briefing.reviewed ? "bg-emerald-500/[0.08] border-emerald-500/30 text-emerald-400" : "bg-zinc-800/60 border-zinc-600 text-zinc-400"}`}>
+                {briefing.reviewed ? "Reviewed" : "AI Draft"}
+              </span>
             </div>
             <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-data flex-none">
-              {briefing.utc_time} · Conf 0.84
+              {briefing.utc_time}
             </div>
 
             <h2 className="text-[19px] font-bold leading-[1.2] text-zinc-100 flex-none" style={{ textWrap: "pretty" }}>

@@ -342,14 +342,15 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
         JOIN events e ON e.id = es.event_id
         WHERE e.occurred_at > now() - INTERVAL '24 hours'
           AND e.published_at IS NOT NULL
-          AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
+          AND ST_Within(e.location, ST_MakeEnvelope($3, $4, $5, $6, 4326))
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
       WHERE s.is_active = true
+        AND s.theater = $2
       ORDER BY events_count DESC, verified_rate DESC
       LIMIT $1
       `,
-      [limit, minLng, minLat, maxLng, maxLat],
+      [limit, theater, minLng, minLat, maxLng, maxLat],
     );
 
     if (!rows.length) return ph.phSources(theater);
@@ -794,7 +795,7 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
       oblast: evt.oblast,
       description: evt.description,
       confidence: evt.confidence,
-      source_count: Number(evt.source_count) || event_sources.length,
+      source_count: Number(evt.source_count),
       minutes_ago: minutesAgo(evt.occurred_at),
       actor: evt.actor,
       human_reviewed_at: evt.human_reviewed_at ? new Date(evt.human_reviewed_at).toISOString() : null,

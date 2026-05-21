@@ -63,7 +63,7 @@ export default function HeaderBar({
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
-              Sentinel Review
+              Sentinel Intelligence Map
             </span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
               Beta
@@ -76,16 +76,16 @@ export default function HeaderBar({
       {/* Right cluster */}
       <div className="flex items-center gap-2 text-xs font-data flex-none">
         {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
-        <div className="flex items-center rounded-sm border border-zinc-800 overflow-hidden mr-1">
+        <div className="flex items-center rounded-sm border border-zinc-700 overflow-hidden mr-1">
           <span
             aria-current="page"
-            className="px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase bg-amber-500/[0.12] text-amber-300"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-amber-500/[0.15] text-amber-300 border-r border-zinc-700"
           >
             Sentinel View
           </span>
           <Link
             href={feedHref}
-            className="px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase text-zinc-400 border-l border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
           >
             Source Feed
           </Link>

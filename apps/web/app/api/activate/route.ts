@@ -33,7 +33,7 @@ export async function GET(req: Request) {
   await query(
     `INSERT INTO user_subscriptions
        (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, status, current_period_end)
-     VALUES ($1, $2, $3, 'analyst', 'active', ${periodEnd !== null ? "to_timestamp($4)" : "NULL"})
+     VALUES ($1, $2, $3, 'analyst', 'active', to_timestamp($4::bigint))
      ON CONFLICT (clerk_user_id) DO UPDATE
        SET stripe_customer_id      = EXCLUDED.stripe_customer_id,
            stripe_subscription_id  = EXCLUDED.stripe_subscription_id,
@@ -41,9 +41,7 @@ export async function GET(req: Request) {
            status                  = 'active',
            current_period_end      = EXCLUDED.current_period_end,
            updated_at              = now()`,
-    periodEnd !== null
-      ? [userId, session.customer, session.subscription, periodEnd]
-      : [userId, session.customer, session.subscription],
+    [userId, session.customer, session.subscription, periodEnd ?? null],
   );
 
   redirect("/app?checkout=success");
