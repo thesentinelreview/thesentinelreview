@@ -624,6 +624,61 @@ export async function getFirehosePosts(
 }
 
 // ---------------------------------------------------------------------------
+// Watches — per-user watched raw posts + confirmation status
+// ---------------------------------------------------------------------------
+//
+// A post is "confirmed" once Sentinel View links it to a published, geocoded
+// event (via event_sources → events). That event's id lets the UI deep-link to
+// /event/[id]. Confirmation is global; watching is per-user.
+
+export interface WatchInfo {
+  confirmed: boolean;
+  event_id:  string | null;
+}
+
+// Returns watch info keyed by raw_post_id for the subset of rawPostIds the user
+// is watching. Posts absent from the result are simply not watched.
+export async function getWatchInfo(
+  clerkUserId: string,
+  rawPostIds: string[],
+): Promise<Record<string, WatchInfo>> {
+  if (!isDatabaseConfigured() || rawPostIds.length === 0) return {};
+
+  try {
+    type Row = { raw_post_id: string; confirmed: boolean; event_id: string | null };
+    const rows = await query<Row>(
+      `
+      SELECT
+        w.raw_post_id::text AS raw_post_id,
+        (ev.id IS NOT NULL) AS confirmed,
+        ev.id::text         AS event_id
+      FROM watches w
+      LEFT JOIN LATERAL (
+        SELECT e.id
+        FROM event_sources es
+        JOIN events e ON e.id = es.event_id
+        WHERE es.raw_post_id = w.raw_post_id
+          AND e.published_at IS NOT NULL
+        ORDER BY e.published_at DESC
+        LIMIT 1
+      ) ev ON true
+      WHERE w.clerk_user_id = $1
+        AND w.raw_post_id = ANY($2::uuid[])
+      `,
+      [clerkUserId, rawPostIds],
+    );
+
+    const out: Record<string, WatchInfo> = {};
+    for (const r of rows) {
+      out[r.raw_post_id] = { confirmed: r.confirmed, event_id: r.event_id };
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Event detail
 // ---------------------------------------------------------------------------
 

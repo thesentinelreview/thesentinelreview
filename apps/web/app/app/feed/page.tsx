@@ -5,7 +5,7 @@ import s from "@/app/page.module.css";
 import f from "./feed.module.css";
 import PostCard from "@/components/PostCard";
 import { type Platform, resolveTheater, THEATERS } from "@/data/placeholder";
-import { type FeedPost, getFirehosePosts } from "@/lib/queries";
+import { type FeedPost, getFirehosePosts, getWatchInfo } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +109,9 @@ export default async function SourceFeedPage({
 
   const page = await getFirehosePosts(theater.id, { platforms, tiers, before });
   const groups = groupByDay(page.posts);
+  const watchInfo = userId
+    ? await getWatchInfo(userId, page.posts.map((p) => p.id))
+    : {};
 
   // Toggle helpers — clicking a chip flips its own state.
   function togglePlatform(p: Platform): Platform[] {
@@ -232,9 +235,19 @@ export default async function SourceFeedPage({
                       {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
                     </span>
                   </div>
-                  {group.posts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
+                  {group.posts.map((post) => {
+                    const info = watchInfo[post.id];
+                    return (
+                      <PostCard
+                        key={post.id}
+                        post={post}
+                        isAuthed={!!userId}
+                        initialWatched={!!info}
+                        confirmed={info?.confirmed ?? false}
+                        eventId={info?.event_id ?? null}
+                      />
+                    );
+                  })}
                 </section>
               ))}
             </div>
