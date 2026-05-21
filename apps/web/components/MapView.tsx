@@ -166,9 +166,12 @@ export default function MapView({
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const eventsRef = useRef(events);
-  eventsRef.current = events;
   const visibleTypesRef = useRef(visibleTypes);
-  visibleTypesRef.current = visibleTypes;
+  // Keep refs current so the map's long-lived event handlers read fresh props.
+  useEffect(() => {
+    eventsRef.current = events;
+    visibleTypesRef.current = visibleTypes;
+  });
 
   // Initialize map once on mount; teardown on unmount.
   useEffect(() => {
