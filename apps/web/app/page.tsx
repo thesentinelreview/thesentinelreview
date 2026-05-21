@@ -8,7 +8,6 @@ import LiveStream from "@/components/watchfloor/LiveStream";
 import SectorThreat from "@/components/watchfloor/SectorThreat";
 import TimeScrubber from "@/components/watchfloor/TimeScrubber";
 import MapLegend from "@/components/watchfloor/MapLegend";
-import TacticalReadout from "@/components/watchfloor/TacticalReadout";
 import { type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
 import {
   getStats,
@@ -34,7 +33,7 @@ const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30
 const TYPE_META: { type: EventType; label: string; dot: string }[] = [
   { type: "strike", label: "Strike", dot: "bg-red-500" },
   { type: "clash", label: "Contact", dot: "bg-amber-500" },
-  { type: "movement", label: "Track", dot: "bg-teal-300" },
+  { type: "movement", label: "Movement", dot: "bg-cyan-400" },
 ];
 
 // Build a URL preserving theater + window + visible types, overriding any.
@@ -117,7 +116,7 @@ export default async function WatchfloorPage({
         feedHref={`/app/feed?theater=${theater.id}`}
       />
       <SensorStrip />
-      <KpiRail stats={stats} />
+      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} />
 
       <div className="flex-1 min-h-0 grid grid-cols-12 grid-rows-2 gap-1.5 p-1.5">
         {/* MAP — fills cols 1-7, both rows */}
@@ -128,17 +127,16 @@ export default async function WatchfloorPage({
             zoom={mapZoom}
             visibleTypes={visibleTypes}
             palette="watch"
-            showFebA
-            showAOI
-            showRangeRings
+            showFebA={theater.id === "ukraine"}
+            showAOI={theater.id === "ukraine"}
+            showRangeRings={theater.id === "ukraine"}
           />
           <MapLegend items={legendItems} />
-          <TacticalReadout />
         </section>
 
         <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="col-span-5" />
         <LiveStream alerts={alerts} theaterId={theater.id} className="col-span-3" />
-        <SectorThreat intensity={intensity} className="col-span-2" />
+        <SectorThreat intensity={intensity} theaterId={theater.id} className="col-span-2" />
       </div>
 
       <TimeScrubber />

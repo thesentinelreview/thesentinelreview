@@ -2,6 +2,11 @@ name: Publish White Paper PDF to main
 
 on:
   workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Branch containing the PDF file to publish'
+        required: true
+        type: string
 
 jobs:
   publish:
@@ -15,10 +20,10 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Copy PDF from feature branch
+      - name: Copy PDF from source branch
         run: |
-          git fetch origin claude/resume-session-Z9hz8
-          git checkout origin/claude/resume-session-Z9hz8 -- sentinel-intel-dashboard-whitepaper.pdf
+          git fetch origin "${{ inputs.source_branch }}"
+          git checkout "origin/${{ inputs.source_branch }}" -- sentinel-intel-dashboard-whitepaper.pdf
 
       - name: Commit and push PDF
         run: |

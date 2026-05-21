@@ -52,6 +52,7 @@ export default function PostCard({
 
   const [watched, setWatched] = useState(initialWatched);
   const [pending, setPending] = useState(false);
+  const [watchError, setWatchError] = useState(false);
 
   async function toggleWatch() {
     if (pending) return;
@@ -62,7 +63,14 @@ export default function PostCard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ raw_post_id: post.id }),
       });
-      if (res.ok) setWatched((w) => !w);
+      if (res.ok) {
+        setWatched((w) => !w);
+        setWatchError(false);
+      } else {
+        console.error("[watch-toggle] failed", res.status);
+        setWatchError(true);
+        setTimeout(() => setWatchError(false), 3000);
+      }
     } finally {
       setPending(false);
     }
@@ -132,6 +140,9 @@ export default function PostCard({
             <Link href={`/event/${eventId}`} className={`${s.badge} ${s.badgeConfirmed}`}>
               ✓ Confirmed by Sentinel
             </Link>
+          )}
+          {watchError && (
+            <span className={`${s.badge} ${s.badgeWarn}`}>Failed to update</span>
           )}
         </div>
       )}

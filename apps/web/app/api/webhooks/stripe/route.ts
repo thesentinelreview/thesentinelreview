@@ -17,7 +17,8 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch {
+  } catch (err) {
+    console.error("[stripe-webhook] invalid signature", err);
     return Response.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
       await query(
         `INSERT INTO user_subscriptions
            (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, status, current_period_end)
-         VALUES ($1, $2, $3, 'analyst', 'active', ${periodEnd !== null ? "to_timestamp($4)" : "NULL"})
+         VALUES ($1, $2, $3, 'analyst', 'active', to_timestamp($4::bigint))
          ON CONFLICT (clerk_user_id) DO UPDATE
            SET stripe_customer_id      = EXCLUDED.stripe_customer_id,
                stripe_subscription_id  = EXCLUDED.stripe_subscription_id,
@@ -41,9 +42,7 @@ export async function POST(req: Request) {
                status                  = 'active',
                current_period_end      = EXCLUDED.current_period_end,
                updated_at              = now()`,
-        periodEnd !== null
-          ? [clerkUserId, session.customer, session.subscription, periodEnd]
-          : [clerkUserId, session.customer, session.subscription],
+        [clerkUserId, session.customer, session.subscription, periodEnd ?? null],
       );
       break;
     }
@@ -58,9 +57,9 @@ export async function POST(req: Request) {
 
       await query(
         `UPDATE user_subscriptions
-         SET status = $1, current_period_end = ${periodEnd !== null ? "to_timestamp($2)" : "NULL"}, updated_at = now()
-         WHERE stripe_subscription_id = ${periodEnd !== null ? "$3" : "$2"}`,
-        periodEnd !== null ? [status, periodEnd, sub.id] : [status, sub.id],
+         SET status = $1, current_period_end = to_timestamp($2::bigint), updated_at = now()
+         WHERE stripe_subscription_id = $3`,
+        [status, periodEnd ?? null, sub.id],
       );
       break;
     }
