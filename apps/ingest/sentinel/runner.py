@@ -203,8 +203,6 @@ def _maybe_send_email(
         "",
         "Check the GitHub Actions log for full details:",
         "https://github.com/thesentinelreview/thesentinelreview/actions",
-        "",
-        "Inspect live: GET /api/admin/integrity",
     ]
 
     body = "\n".join(lines)
