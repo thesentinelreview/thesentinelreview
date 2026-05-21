@@ -118,9 +118,9 @@ export default async function WatchfloorPage({
       <SensorStrip />
       <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} />
 
-      <div className="flex-1 min-h-0 grid grid-cols-12 grid-rows-2 gap-1.5 p-1.5">
-        {/* MAP — fills cols 1-7, both rows */}
-        <section className="col-span-7 row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden min-h-0">
+      <div className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
+        {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
+        <section className="h-[42vh] flex-none md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
           <MapWrapper
             events={mapEvents}
             center={mapCenter}
@@ -134,9 +134,9 @@ export default async function WatchfloorPage({
           <MapLegend items={legendItems} />
         </section>
 
-        <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="col-span-5" />
-        <LiveStream alerts={alerts} theaterId={theater.id} className="col-span-3" />
-        <SectorThreat intensity={intensity} theaterId={theater.id} className="col-span-2" />
+        <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
+        <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none md:col-span-3" />
+        <SectorThreat intensity={intensity} theaterId={theater.id} className="flex-none md:col-span-2" />
       </div>
 
       <TimeScrubber />

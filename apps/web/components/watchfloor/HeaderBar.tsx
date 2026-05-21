@@ -62,14 +62,14 @@ export default function HeaderBar({
         <SentinelMark className="text-amber-400/80 flex-none" size={24} />
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
+            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white truncate">
               Sentinel Intelligence Map
             </span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
               Beta
             </span>
           </div>
-          <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80">Watch Tier</span>
+          <span className="hidden sm:block text-[12px] tracking-[0.18em] uppercase text-amber-400/80">Watch Tier</span>
         </div>
       </div>
 
@@ -101,19 +101,21 @@ export default function HeaderBar({
           </span>
           <span className="text-red-400">LIVE</span>
         </span>
-        <span className="w-px h-5 bg-zinc-800 mx-1" />
-        <Link
-          href="/sign-in"
-          className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
-        >
-          Login
-        </Link>
-        <Link
-          href="/sign-up"
-          className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
-        >
-          Sign up
-        </Link>
+        <div className="hidden sm:flex items-center gap-2">
+          <span className="w-px h-5 bg-zinc-800 mx-1" />
+          <Link
+            href="/sign-in"
+            className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
+          >
+            Login
+          </Link>
+          <Link
+            href="/sign-up"
+            className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
     </header>
   );
