@@ -114,6 +114,7 @@ export default async function WatchfloorPage({
         windowLabel={WINDOW_LABELS[timeRange]}
         theaterOptions={theaterOptions}
         windowOptions={windowOptions}
+        feedHref={`/app/feed?theater=${theater.id}`}
       />
       <SensorStrip />
       <KpiRail stats={stats} />

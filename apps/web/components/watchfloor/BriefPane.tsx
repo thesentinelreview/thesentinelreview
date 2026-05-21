@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import type { BriefingData, Source } from "@/data/placeholder";
 
@@ -27,72 +24,39 @@ export default function BriefPane({
   theaterId: string;
   className?: string;
 }) {
-  const [aiOn, setAiOn] = useState(true);
   const topSources = sources.slice(0, 3);
   const { headline, body } = briefing ? deriveHeadline(briefing.paragraphs) : { headline: "", body: [] };
 
   return (
     <section
-      className={`flex flex-col bg-zinc-950/60 border rounded-sm overflow-hidden min-h-0 transition-colors ${
-        aiOn ? "border-emerald-500/25" : "border-zinc-900"
-      } ${className}`}
+      className={`flex flex-col bg-zinc-950/60 border border-emerald-500/25 rounded-sm overflow-hidden min-h-0 ${className}`}
     >
       <header className="px-3 py-2 border-b border-zinc-900 flex items-center justify-between flex-none gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <span
-            className={`text-[9px] font-data tracking-[0.22em] uppercase px-1.5 py-0.5 rounded-sm border ${
-              aiOn ? "bg-teal-400/[0.06] border-teal-400/30 text-teal-300" : "bg-zinc-900 border-zinc-800 text-zinc-500"
-            }`}
-          >
+          <span className="text-[9px] font-data tracking-[0.22em] uppercase px-1.5 py-0.5 rounded-sm border bg-teal-400/[0.06] border-teal-400/30 text-teal-300">
             02
           </span>
           <h3 className="text-[12px] font-semibold tracking-[0.16em] uppercase text-zinc-200 truncate">
             AI-Assisted Briefing
           </h3>
-          {aiOn && briefing && (
-            <div className="flex items-center gap-1.5 ml-2 flex-none">
-              <Link
-                href={`/briefing/${briefing.id}?theater=${theaterId}`}
-                className="px-2 py-1 text-[10px] rounded-sm border border-teal-400/30 bg-teal-400/[0.06] text-teal-300 tracking-wider uppercase font-data hover:bg-teal-400/15"
-              >
-                Open Brief
-              </Link>
-              <span className="px-2 py-1 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data">
-                Export
-              </span>
-            </div>
-          )}
         </div>
-        <button
-          type="button"
-          onClick={() => setAiOn((v) => !v)}
-          aria-pressed={aiOn}
-          aria-label="Toggle AI assistance"
-          className="inline-flex items-center gap-2 flex-none select-none"
-        >
-          <span className={`text-[9px] font-data uppercase tracking-[0.22em] transition-colors ${aiOn ? "text-emerald-300" : "text-zinc-500"}`}>
-            AI {aiOn ? "ON" : "OFF"}
-          </span>
-          <span className={`relative inline-block w-9 h-5 rounded-full border transition-colors ${aiOn ? "bg-emerald-500 border-emerald-400" : "bg-zinc-900 border-zinc-700"}`}>
-            <span className={`absolute top-[2px] w-[14px] h-[14px] rounded-full transition-all duration-200 ${aiOn ? "left-[18px] bg-white shadow-[0_0_8px_rgba(52,211,153,0.65)]" : "left-[2px] bg-zinc-500"}`} />
-          </span>
-        </button>
+        {briefing && (
+          <div className="flex items-center gap-1.5 flex-none">
+            <Link
+              href={`/briefing/${briefing.id}?theater=${theaterId}`}
+              className="px-2 py-1 text-[10px] rounded-sm border border-teal-400/30 bg-teal-400/[0.06] text-teal-300 tracking-wider uppercase font-data hover:bg-teal-400/15"
+            >
+              Open Brief
+            </Link>
+            <span className="px-2 py-1 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data">
+              Export
+            </span>
+          </div>
+        )}
       </header>
 
       <div className="flex-1 min-h-0 overflow-auto">
-        {!aiOn ? (
-          <div className="px-4 py-6 h-full flex flex-col items-center justify-center text-center gap-3">
-            <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-zinc-900 border border-zinc-700 text-zinc-500">
-              AI · Paused
-            </span>
-            <p className="text-[13px] text-zinc-400 max-w-[34ch] leading-relaxed">
-              AI assist is off. Briefings will not be drafted automatically — switch on to resume synthesis from live signals.
-            </p>
-            {briefing && (
-              <p className="text-[10px] font-data uppercase tracking-[0.2em] text-zinc-600">Last brief · {briefing.utc_time}</p>
-            )}
-          </div>
-        ) : briefing ? (
+        {briefing ? (
           <article className="px-4 py-4 flex flex-col h-full">
             <div className="flex items-center gap-2 mb-1.5 flex-none">
               <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-teal-400/[0.08] border border-teal-400/30 text-teal-300">

@@ -47,11 +47,13 @@ export default function HeaderBar({
   windowLabel,
   theaterOptions,
   windowOptions,
+  feedHref,
 }: {
   theaterLabel: string;
   windowLabel: string;
   theaterOptions: ControlOption[];
   windowOptions: ControlOption[];
+  feedHref: string;
 }) {
   return (
     <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
@@ -73,6 +75,21 @@ export default function HeaderBar({
 
       {/* Right cluster */}
       <div className="flex items-center gap-2 text-xs font-data flex-none">
+        {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
+        <div className="flex items-center rounded-sm border border-zinc-800 overflow-hidden mr-1">
+          <span
+            aria-current="page"
+            className="px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase bg-amber-500/[0.12] text-amber-300"
+          >
+            Sentinel View
+          </span>
+          <Link
+            href={feedHref}
+            className="px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase text-zinc-400 border-l border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800"
+          >
+            Source Feed
+          </Link>
+        </div>
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
         <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>

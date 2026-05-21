@@ -5,7 +5,7 @@ import s from "@/app/page.module.css";
 import f from "./feed.module.css";
 import PostCard from "@/components/PostCard";
 import { type Platform, resolveTheater, THEATERS } from "@/data/placeholder";
-import { type FeedPost, getSourceFeedPosts } from "@/lib/queries";
+import { type FeedPost, getFirehosePosts } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -107,7 +107,7 @@ export default async function SourceFeedPage({
   const before    = params.before;
   const { userId } = await auth();
 
-  const page = await getSourceFeedPosts(theater.id, { platforms, tiers, before });
+  const page = await getFirehosePosts(theater.id, { platforms, tiers, before });
   const groups = groupByDay(page.posts);
 
   // Toggle helpers — clicking a chip flips its own state.
@@ -138,16 +138,16 @@ export default async function SourceFeedPage({
         <div className={s.filters}>
           <span className={s.filterLabel}>Mode</span>
           <Link
-            href={`/app?theater=${theater.id}`}
+            href={`/?theater=${theater.id}`}
             className={s.filterChip}
           >
-            AI synthesis
+            Sentinel View
           </Link>
           <Link
             href={buildHref({ theater: theater.id, platforms, tiers })}
             className={`${s.filterChip} ${s.filterChipActive}`}
           >
-            Source feed
+            Source Feed
           </Link>
           <span className={s.filterLabel} style={{ marginLeft: 6 }}>Theater</span>
           {Object.values(THEATERS).map((t) => (
@@ -212,8 +212,8 @@ export default async function SourceFeedPage({
         <div className={f.intro}>
           <div className={f.introTitle}>{theater.mapSubtitle}</div>
           <div className={f.introMeta}>
-            Raw OSINT posts that informed published events, English-translated where needed.
-            Newest first.
+            The unfiltered firehose — every OSINT post ingested for this theater, before AI
+            synthesis. Unverified and unprocessed; English-translated where available. Newest first.
           </div>
         </div>
 
@@ -258,8 +258,9 @@ export default async function SourceFeedPage({
         )}
 
         <div className={f.disclaimer}>
-          ⚠ AI-translated content. Original-language text available via the &ldquo;Show original&rdquo; toggle on each card.
-          Events sourced from open-source reporting; locations and details unverified. Not for operational use.
+          ⚠ Raw, unverified source posts — not yet corroborated or geolocated by Sentinel.
+          AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
+          Sourced from open-source reporting. Not for operational use.
         </div>
       </div>
     </div>
