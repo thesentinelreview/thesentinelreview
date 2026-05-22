@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { UserButton } from "@clerk/nextjs";
 import SentinelMark from "./SentinelMark";
 
 export interface ControlOption {
@@ -48,12 +49,14 @@ export default function HeaderBar({
   theaterOptions,
   windowOptions,
   feedHref,
+  isAuthed = false,
 }: {
   theaterLabel: string;
   windowLabel: string;
   theaterOptions: ControlOption[];
   windowOptions: ControlOption[];
   feedHref: string;
+  isAuthed?: boolean;
 }) {
   return (
     <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
@@ -103,18 +106,24 @@ export default function HeaderBar({
         </span>
         <div className="hidden sm:flex items-center gap-2">
           <span className="w-px h-5 bg-zinc-800 mx-1" />
-          <Link
-            href="/sign-in"
-            className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
-          >
-            Login
-          </Link>
-          <Link
-            href="/sign-up"
-            className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
-          >
-            Sign up
-          </Link>
+          {isAuthed ? (
+            <UserButton />
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
+              >
+                Login
+              </Link>
+              <Link
+                href="/sign-up"
+                className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

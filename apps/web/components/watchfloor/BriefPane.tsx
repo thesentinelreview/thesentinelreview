@@ -51,8 +51,8 @@ export default function BriefPane({
             </Link>
             <ExportButton
               date={briefing.date}
-              headline={deriveHeadline(briefing.paragraphs).headline}
-              paragraphs={deriveHeadline(briefing.paragraphs).body}
+              headline={headline}
+              paragraphs={body}
             />
           </div>
         )}
