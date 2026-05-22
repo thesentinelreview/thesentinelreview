@@ -113,6 +113,12 @@ def load_stories_from_feed():
         if not title or not link:
             continue
 
+        # feedparser maps custom namespace attributes: sentinel:score → sentinel_score
+        try:
+            relevance_score = int(entry.get("sentinel_score", 10))
+        except (ValueError, TypeError):
+            relevance_score = 10
+
         stories.append({
             "title": title,
             "link": link,
@@ -121,6 +127,7 @@ def load_stories_from_feed():
             "icon": CATEGORY_ICONS.get(category, "📍"),
             "summary": summary,
             "pub_date": pub_date,
+            "relevance_score": relevance_score,
         })
 
     # Sort by recency (most recent first)
@@ -130,6 +137,13 @@ def load_stories_from_feed():
 
 def select_briefing_stories(all_stories):
     """Pick top 5 stories with diversity across categories."""
+    # Filter to stories with relevance_score >= 6; top up with score-5 if needed
+    qualified = [s for s in all_stories if s.get("relevance_score", 10) >= 6]
+    if len(qualified) < TOP_STORIES_COUNT:
+        fallback = [s for s in all_stories if s.get("relevance_score", 10) == 5]
+        qualified += fallback[: TOP_STORIES_COUNT - len(qualified)]
+    all_stories = qualified
+
     if len(all_stories) < TOP_STORIES_COUNT:
         print(f"⚠️  Only {len(all_stories)} fresh stories available (wanted {TOP_STORIES_COUNT})")
         return all_stories

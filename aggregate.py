@@ -36,13 +36,19 @@ FEEDS = [
     {"name": "Foreign Affairs",   "url": "https://www.foreignaffairs.com/rss.xml",                              "source_tag": "Foreign Affairs"},
     {"name": "38 North",          "url": "https://www.38north.org/feed/",                                       "source_tag": "38 North"},
     {"name": "ASPI Strategist",   "url": "https://www.aspistrategist.org.au/feed/",                             "source_tag": "ASPI Strategist"},
+    # === Sources added 2026-05-21 ===
+    {"name": "ISW",                "url": "https://www.understandingwar.org/rss.xml",                                                "source_tag": "ISW"},
+    {"name": "OFAC Recent Actions","url": "https://ofac.treasury.gov/recent-actions/feed",                                          "source_tag": "OFAC"},
+    {"name": "CENTCOM",            "url": "https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=1226&max=20", "source_tag": "CENTCOM"},
+    {"name": "EUCOM",              "url": "https://www.eucom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=304&max=20",   "source_tag": "EUCOM"},
+    {"name": "INDOPACOM",          "url": "https://www.pacom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=2&max=20",     "source_tag": "INDOPACOM"},
 ]
 
 CATEGORIES = {
     "Cyber":          {"icon": "🔐", "keywords": ["cyber", "ransomware", "hack", "hacker", "cisa", "exploit", "vulnerability", "malware", "phishing", "zero-day", "breach", "encryption", "apt", "ddos"]},
-    "Indo-Pacific":   {"icon": "🌏", "keywords": ["china", "taiwan", "prc ", " pla ", "indo-pacific", "japan", "korea", "beijing", "xi jinping", "south china sea", "philippines", "quad"]},
-    "Middle East":    {"icon": "🌍", "keywords": ["iran", "israel", "saudi", "yemen", "gaza", "syria", "iraq", "centcom", "hezbollah", "houthi", "tehran", "jerusalem", "hamas", "red sea"]},
-    "Europe / NATO":  {"icon": "🏴", "keywords": ["nato", "russia", "ukraine", "europe", "putin", "kyiv", "moscow", "kremlin", "baltic", "poland", " eu ", "brussels", "zelensky"]},
+    "Indo-Pacific":   {"icon": "🌏", "keywords": ["china", "taiwan", "prc ", " pla ", "indo-pacific", "japan", "korea", "beijing", "xi jinping", "south china sea", "philippines", "quad", "indopacom", "pacom"]},
+    "Middle East":    {"icon": "🌍", "keywords": ["iran", "israel", "saudi", "yemen", "gaza", "syria", "iraq", "centcom", "hezbollah", "houthi", "tehran", "jerusalem", "hamas", "red sea", "ofac", "sanctions"]},
+    "Europe / NATO":  {"icon": "🏴", "keywords": ["nato", "russia", "ukraine", "europe", "putin", "kyiv", "moscow", "kremlin", "baltic", "poland", " eu ", "brussels", "zelensky", "eucom"]},
     "Nuclear":        {"icon": "⚛️", "keywords": ["nuclear", "missile", "icbm", "warhead", "nonproliferation", "iaea", "stratcom", "hypersonic", "new start"]},
     "Homeland":       {"icon": "🛡️", "keywords": ["dhs", "fbi", "border", "terrorism", "domestic", "homeland", "extremism", "cbp"]},
     "Defense Policy": {"icon": "🏛️", "keywords": ["pentagon", "dod", "ndaa", "f-35", "army", "navy", "marine", "air force", "joint chiefs", "secdef", "congress", "hegseth", "austin"]},
@@ -214,6 +220,7 @@ def generate_rss(stories, site_url=SITE_URL, max_items=30):
         pub = s['pub_date'].strftime('%a, %d %b %Y %H:%M:%S +0000')
         icon = get_category_icon(s['category'])
         tweet_title = f"{icon} {s['title']} | {s['source']}"
+        score = s.get('relevance_score', 10)
         items_xml.append(f'''    <item>
       <title>{xml_esc(tweet_title)}</title>
       <link>{xml_esc(s['link'])}</link>
@@ -222,10 +229,11 @@ def generate_rss(stories, site_url=SITE_URL, max_items=30):
       <category>{xml_esc(s['category'])}</category>
       <source url="{xml_esc(s['link'])}">{xml_esc(s['source'])}</source>
       <description>{xml_esc(s['summary'])}</description>
+      <sentinel:score>{score}</sentinel:score>
     </item>''')
 
     return f'''<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sentinel="https://thesentinelreview.com/ns">
   <channel>
     <title>The Sentinel Review — National Security Feed</title>
     <link>{xml_esc(site_url)}</link>
@@ -356,6 +364,21 @@ def main():
     cat_counts = Counter(s['category'] for s in stories)
     for cat, n in cat_counts.most_common():
         print(f"    {cat}: {n}")
+
+    print("\nScoring stories for relevance...")
+    try:
+        from relevance_filter import score_story
+        for s in stories:
+            result = score_story(s['title'], s.get('summary', ''))
+            s['relevance_score'] = result['score']
+            s['relevance_reason'] = result['reason']
+        score_dist = Counter(s['relevance_score'] for s in stories)
+        print(f"✓ Score distribution: {dict(sorted(score_dist.items()))}")
+    except Exception as e:
+        print(f"⚠️  Relevance scoring unavailable ({e}) — defaulting all to 10")
+        for s in stories:
+            s.setdefault('relevance_score', 10)
+            s.setdefault('relevance_reason', 'scoring_unavailable')
 
     template_path = Path(__file__).parent / 'template.html'
     template = template_path.read_text(encoding='utf-8')
