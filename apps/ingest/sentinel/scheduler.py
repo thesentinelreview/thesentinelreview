@@ -13,6 +13,7 @@ Schedule:
 """
 from __future__ import annotations
 
+import os
 import signal
 import sys
 import time
@@ -52,6 +53,10 @@ def _enqueue_ingest_jobs() -> int:
             if platform == "telegram" and not settings.telegram_enabled:
                 continue
             if platform == "x" and not settings.x_enabled:
+                continue
+            if platform == "bluesky" and not (
+                os.environ.get("BLUESKY_HANDLE") and os.environ.get("BLUESKY_APP_PASSWORD")
+            ):
                 continue
             enqueue(
                 conn,

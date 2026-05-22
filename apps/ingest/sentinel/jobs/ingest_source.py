@@ -62,6 +62,16 @@ def _ingest(
     elif platform == "x":
         from sentinel.ingestors.x import XIngestor
         ingestor = XIngestor(source)
+    elif platform == "bluesky":
+        from sentinel.ingestors.bluesky import BlueskyIngestor
+        ingestor = BlueskyIngestor(source)
+    elif platform == "gdelt":
+        if source["handle"].startswith("gdelt_gkg"):
+            from sentinel.ingestors.gdelt import GdeltGkgIngestor
+            ingestor = GdeltGkgIngestor(source)
+        else:
+            from sentinel.ingestors.gdelt import GdeltEventsIngestor
+            ingestor = GdeltEventsIngestor(source)
     else:
         raise ValueError(f"Unknown platform: {platform!r}")
 

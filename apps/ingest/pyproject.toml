@@ -25,6 +25,9 @@ dependencies = [
 
     # Retry logic
     "tenacity>=9.0",
+
+    # Bluesky AT Protocol
+    "atproto>=0.0.51",
 ]
 
 [project.optional-dependencies]

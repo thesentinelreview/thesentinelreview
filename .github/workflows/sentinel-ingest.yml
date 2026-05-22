@@ -28,7 +28,8 @@ jobs:
             "pydantic>=2.9" \
             "pydantic-settings>=2.5" \
             "structlog>=24.4" \
-            "tenacity>=9.0"
+            "tenacity>=9.0" \
+            "atproto>=0.0.51"
           pip install --no-deps -e apps/ingest
 
       - name: Apply pending migrations
@@ -41,6 +42,8 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_MODEL_EXTRACT: claude-sonnet-4-6
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-ingest
 
