@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BriefingData, Source } from "@/data/placeholder";
+import type { BriefingData, Source } from "@/lib/types";
 import ExportButton from "./ExportButton";
 
 // Use the briefing's first sentence as the editorial headline; the remainder

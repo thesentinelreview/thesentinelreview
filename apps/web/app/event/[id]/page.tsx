@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
-import type { EventSource, EvidenceItem, ChangeHistoryEntry } from "@/data/placeholder";
-import { resolveTheater } from "@/data/placeholder";
+import type { EventSource, EvidenceItem, ChangeHistoryEntry } from "@/lib/types";
+import { resolveTheater } from "@/data/theaters";
 import { getEventDetail } from "@/lib/queries";
 import s from "./page.module.css";
 

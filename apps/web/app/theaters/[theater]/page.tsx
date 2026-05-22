@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
 import PostCard from "@/components/PostCard";
-import { THEATERS, type TheaterKey } from "@/data/placeholder";
-import { THEATER_CONTENT } from "@/data/theaters";
+import type { TheaterKey } from "@/lib/types";
+import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
 import {
   getStats,
   getTopSources,

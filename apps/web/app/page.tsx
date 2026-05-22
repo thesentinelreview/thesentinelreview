@@ -8,7 +8,8 @@ import LiveStream from "@/components/watchfloor/LiveStream";
 import SectorThreat from "@/components/watchfloor/SectorThreat";
 import TimeScrubber from "@/components/watchfloor/TimeScrubber";
 import MapLegend from "@/components/watchfloor/MapLegend";
-import { type EventType, resolveTheater, THEATERS } from "@/data/placeholder";
+import type { EventType } from "@/lib/types";
+import { resolveTheater, THEATERS } from "@/data/theaters";
 import {
   getStats,
   getMapEvents,
@@ -136,7 +137,7 @@ export default async function WatchfloorPage({
 
         <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
         <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none md:col-span-3" />
-        <SectorThreat intensity={intensity} theaterId={theater.id} className="flex-none md:col-span-2" />
+        <SectorThreat intensity={intensity} className="flex-none md:col-span-2" />
       </div>
 
       <TimeScrubber />

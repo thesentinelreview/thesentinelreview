@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
 import { getFullBriefing, getEventDetail } from "@/lib/queries";
-import { resolveTheater } from "@/data/placeholder";
+import { resolveTheater } from "@/data/theaters";
 import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";

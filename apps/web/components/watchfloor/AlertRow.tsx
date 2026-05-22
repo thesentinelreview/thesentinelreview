@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Alert } from "@/data/placeholder";
+import type { Alert } from "@/lib/types";
 
 // DB event_type → display label/colors. clash→Contact, movement→Track.
 const KIND: Record<Alert["event_type"], { label: string; dot: string; pill: string }> = {

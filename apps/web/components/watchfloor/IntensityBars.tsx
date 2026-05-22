@@ -1,4 +1,4 @@
-import type { IntensityDay } from "@/data/placeholder";
+import type { IntensityDay } from "@/lib/types";
 
 // 7-day intensity chart. Heights are normalized values (0–100); "hot" days
 // render with a red gradient + glow, others blue.

@@ -1,5 +1,4 @@
 import { isDatabaseConfigured, query, queryOne } from "./db";
-import * as ph from "@/data/placeholder";
 import type {
   Stats,
   MapEvent,
@@ -15,7 +14,7 @@ import type {
   EventType,
   Confidence,
   TheaterKey,
-} from "@/data/placeholder";
+} from "@/lib/types";
 
 // Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering
 const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
@@ -74,7 +73,7 @@ function fmtBriefingUTC(ts: Date): string {
 // ---------------------------------------------------------------------------
 
 export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<Stats> {
-  if (!isDatabaseConfigured()) return ph.phStats(theater);
+  if (!isDatabaseConfigured()) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval = SQL_INTERVALS[timeRange];
@@ -118,7 +117,7 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
       [minLng, minLat, maxLng, maxLat],
     );
 
-    if (!row) return ph.phStats(theater);
+    if (!row) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
     if (Number(row.events) === 0) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
     return {
@@ -128,7 +127,7 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
       vs_7d_avg_pct: Number(row.vs_7d_avg_pct) || 0,
     };
   } catch {
-    return ph.phStats(theater);
+    return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
   }
 }
 
@@ -137,7 +136,7 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 // ---------------------------------------------------------------------------
 
 export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<MapEvent[]> {
-  if (!isDatabaseConfigured()) return ph.phMapEvents(theater);
+  if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval = SQL_INTERVALS[timeRange];
@@ -180,7 +179,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
       [minLng, minLat, maxLng, maxLat],
     );
 
-    if (!rows.length) return ph.phMapEvents(theater);
+    if (!rows.length) return [];
 
     return rows.map((r) => ({
       id: r.id,
@@ -196,7 +195,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
       minutes_ago: minutesAgo(r.occurred_at),
     }));
   } catch {
-    return ph.phMapEvents(theater);
+    return [];
   }
 }
 
@@ -205,7 +204,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
 // ---------------------------------------------------------------------------
 
 export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, timeRange: TimeRange = "24h"): Promise<Alert[]> {
-  if (!isDatabaseConfigured()) return ph.phAlerts(theater);
+  if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval = SQL_INTERVALS[timeRange];
@@ -244,7 +243,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, time
       [limit, minLng, minLat, maxLng, maxLat],
     );
 
-    if (!rows.length) return ph.phAlerts(theater);
+    if (!rows.length) return [];
 
     return rows.map((r) => ({
       id: r.id,
@@ -255,7 +254,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, time
       minutes_ago: minutesAgo(r.occurred_at),
     }));
   } catch {
-    return ph.phAlerts(theater);
+    return [];
   }
 }
 
@@ -264,7 +263,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, time
 // ---------------------------------------------------------------------------
 
 export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<IntensityDay[]> {
-  if (!isDatabaseConfigured()) return ph.phIntensity(theater);
+  if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
@@ -293,7 +292,7 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 
     const counts = rows.map((r) => Number(r.count) || 0);
 
-    if (counts.every((c) => c === 0)) return ph.phIntensity(theater);
+    if (counts.every((c) => c === 0)) return [];
 
     const max = Math.max(1, ...counts);
     const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
@@ -304,7 +303,7 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
       hot: counts[i] > avg * 1.25,
     }));
   } catch {
-    return ph.phIntensity(theater);
+    return [];
   }
 }
 
@@ -313,7 +312,7 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 // ---------------------------------------------------------------------------
 
 export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5): Promise<Source[]> {
-  if (!isDatabaseConfigured()) return ph.phSources(theater);
+  if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
@@ -353,7 +352,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
       [limit, theater, minLng, minLat, maxLng, maxLat],
     );
 
-    if (!rows.length) return ph.phSources(theater);
+    if (!rows.length) return [];
 
     return rows.map((r, i) => ({
       rank: i + 1,
@@ -364,7 +363,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
       verified_rate: Number(r.verified_rate) || 0,
     }));
   } catch {
-    return ph.phSources(theater);
+    return [];
   }
 }
 
@@ -396,7 +395,7 @@ function rowToBriefing(r: BriefingRow, sourceCount: number): BriefingData {
 }
 
 export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promise<BriefingData | null> {
-  if (!isDatabaseConfigured()) return ph.phBriefing(theater);
+  if (!isDatabaseConfigured()) return null;
 
   try {
     const row = await queryOne<BriefingRow>(
@@ -410,7 +409,7 @@ export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promis
       [theater],
     );
 
-    if (!row) return ph.phBriefing(theater);
+    if (!row) return null;
 
     const countRow = await queryOne<{ count: string | number }>(
       `
@@ -423,7 +422,7 @@ export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promis
 
     return rowToBriefing(row, Number(countRow?.count) || 0);
   } catch {
-    return ph.phBriefing(theater);
+    return null;
   }
 }
 
@@ -684,7 +683,7 @@ export async function getWatchInfo(
 // ---------------------------------------------------------------------------
 
 export async function getEventDetail(id: string): Promise<EventDetail | null> {
-  if (!isDatabaseConfigured()) return ph.getEventDetail(id);
+  if (!isDatabaseConfigured()) return null;
 
   try {
     type EventRow = {
@@ -813,7 +812,7 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
       ],
     };
   } catch {
-    return ph.getEventDetail(id);
+    return null;
   }
 }
 
@@ -822,7 +821,7 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
 // ---------------------------------------------------------------------------
 
 export async function getFullBriefing(id: string): Promise<FullBriefing | null> {
-  if (!isDatabaseConfigured()) return ph.getFullBriefing(id);
+  if (!isDatabaseConfigured()) return null;
 
   try {
     const row = await queryOne<BriefingRow>(
@@ -881,7 +880,7 @@ export async function getFullBriefing(id: string): Promise<FullBriefing | null> 
       confidence_summary,
     };
   } catch {
-    return ph.getFullBriefing(id);
+    return null;
   }
 }
 
@@ -908,7 +907,7 @@ export async function getLiveDataStatus(): Promise<DataStatus> {
 // ---------------------------------------------------------------------------
 
 export async function getAllSources(): Promise<SourceDetail[]> {
-  if (!isDatabaseConfigured()) return ph.allSources;
+  if (!isDatabaseConfigured()) return [];
 
   try {
     type Row = {
@@ -975,6 +974,6 @@ export async function getAllSources(): Promise<SourceDetail[]> {
       notes: r.notes ?? "",
     }));
   } catch {
-    return ph.allSources;
+    return [];
   }
 }

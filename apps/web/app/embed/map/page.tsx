@@ -1,5 +1,6 @@
 import MapWrapper from "@/components/MapWrapper";
-import { type EventType, resolveTheater } from "@/data/placeholder";
+import type { EventType } from "@/lib/types";
+import { resolveTheater } from "@/data/theaters";
 import { getMapEvents, resolveTimeRange } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";

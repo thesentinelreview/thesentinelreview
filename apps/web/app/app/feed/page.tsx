@@ -3,7 +3,8 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import SentinelMark from "@/components/watchfloor/SentinelMark";
 import PostCard from "@/components/PostCard";
-import { type Platform, resolveTheater, THEATERS } from "@/data/placeholder";
+import type { Platform } from "@/lib/types";
+import { resolveTheater, THEATERS } from "@/data/theaters";
 import { type FeedPost, getFirehosePosts, getWatchInfo } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";

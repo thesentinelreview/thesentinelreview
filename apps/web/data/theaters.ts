@@ -1,9 +1,47 @@
 /**
- * Marketing / SEO copy per theater. Kept separate from the runtime
- * configuration in `placeholder.ts` so this file is the single place to
- * edit description prose without touching dashboard logic.
+ * Theater configuration: the runtime config (map center/zoom, labels) plus
+ * the marketing / SEO copy per theater. Single place to edit theater data.
  */
-import type { TheaterKey } from "./placeholder";
+import type { TheaterConfig, TheaterKey } from "@/lib/types";
+
+export const THEATERS: Record<TheaterKey, TheaterConfig> = {
+  ukraine: {
+    id: "ukraine",
+    label: "Ukraine",
+    mapCenter: [38.2, 48.6],
+    mapZoom: 7,
+    mapSubtitle: "Eastern Theater — Donetsk / Luhansk Oblasts",
+    briefingTitle: "Daily Briefing — Eastern Theater",
+  },
+  iran: {
+    id: "iran",
+    label: "Iran",
+    mapCenter: [53.7, 32.4],
+    mapZoom: 5,
+    mapSubtitle: "Iran Theater — Nuclear Sites and Proxy Activity",
+    briefingTitle: "Daily Briefing — Iran Theater",
+  },
+  sudan: {
+    id: "sudan",
+    label: "Sudan",
+    mapCenter: [30.0, 15.5],
+    mapZoom: 5,
+    mapSubtitle: "Sudan — SAF/RSF Civil Conflict",
+    briefingTitle: "Daily Briefing — Sudan Theater",
+  },
+  myanmar: {
+    id: "myanmar",
+    label: "Myanmar",
+    mapCenter: [96.5, 19.5],
+    mapZoom: 6,
+    mapSubtitle: "Myanmar — PDF/Tatmadaw Conflict",
+    briefingTitle: "Daily Briefing — Myanmar Theater",
+  },
+};
+
+export function resolveTheater(raw: string | undefined): TheaterConfig {
+  return THEATERS[(raw as TheaterKey) in THEATERS ? (raw as TheaterKey) : "ukraine"];
+}
 
 export interface TheaterDescriptor {
   tagline:        string;          // one line — shown on the /theaters index card

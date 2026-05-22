@@ -1,6 +1,6 @@
 import Pane from "./Pane";
 import AlertRow from "./AlertRow";
-import type { Alert } from "@/data/placeholder";
+import type { Alert } from "@/lib/types";
 
 export default function LiveStream({
   alerts,
