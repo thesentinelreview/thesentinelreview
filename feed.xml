@@ -6,8 +6,48 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 May 2026 16:38:38 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 22 May 2026 17:59:17 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🏛️ Congressional report tallies 42 US aircraft lost or damaged in Operation Epic Fury | Defense News</title>
+      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/</guid>
+      <pubDate>Fri, 22 May 2026 17:49:18 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/">Defense News</source>
+      <description>Drones took the heaviest hit, accounting for 25 of the 42 aircraft losses listed in the report.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Xi’s Flurry of Post-Trump Diplomacy | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/</guid>
+      <pubDate>Fri, 22 May 2026 16:52:49 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/">Foreign Policy</source>
+      <description>The Chinese president may be preparing for a rare and momentous trip to Pyongyang.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>⚛️ IAI’s new Diamond naval offering envisions flexible drones, missiles for small vessels | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/</guid>
+      <pubDate>Fri, 22 May 2026 16:45:00 +0000</pubDate>
+      <category>Nuclear</category>
+      <source url="https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/">Breaking Defense</source>
+      <description>The plan involves different defensive systems dispersed across small satellite ships, which can be connected to a mother ship in a disaggregated model.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 What did the Trump-Xi summit actually achieve? | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/commentary/podcast/what-did-the-trump-xi-summit-actually-achieve/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/commentary/podcast/what-did-the-trump-xi-summit-actually-achieve/</guid>
+      <pubDate>Fri, 22 May 2026 16:37:57 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.atlanticcouncil.org/commentary/podcast/what-did-the-trump-xi-summit-actually-achieve/">Atlantic Council</source>
+      <description>After months of anticipation, US President Donald Trump and Chinese President Xi Jinping finally met in Beijing. But beyond a few concrete announcements—including a Chinese pledge to buy two hundred Boeing jets—the summit raised more questions than it answered. Together with…</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
     <item>
       <title>🕵️ Helos need upgrades to perform special ops ‘quieter, with fewer aircraft’: PEO Rotary Wing | Breaking Defense</title>
       <link>https://breakingdefense.com/2026/05/helos-need-upgrades-to-perform-special-ops-quieter-with-fewer-aircraft-peo-rotary-wing/</link>
@@ -56,7 +96,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/05/general-atomics-cca-drone-returns-to-flight/">Breaking Defense</source>
       <description>Air Force Col. Timothy Helfrich said the response to the drone’s April 6 crash “validates our approach to accept acquisition/test risk instead of operational risk allowing us to accelerate the program towards fielding.”</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>⚛️ F-35B conducts flight test with British SPEAR mini-cruise missile | Breaking Defense</title>
@@ -106,7 +146,7 @@
       <category>Europe / NATO</category>
       <source url="https://breakingdefense.com/2026/05/norways-foreign-minister-warns-that-russian-nuclear-weapons-pose-direct-threat-to-all-american-cities/">Breaking Defense</source>
       <description>“It is good that Europe is doing more, but there’s a need to remind our good friends on the other side of the Atlantic that NATO is also good for them,” said the Nordic official.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Ukraine’s Parliament Is Pulling Back on LGBTQ Rights as Courts and Citizens Move Forward | Just Security</title>
@@ -126,7 +166,7 @@
       <category>Cyber</category>
       <source url="https://foreignpolicy.com/2026/05/22/cuba-war-trump-united-states-castro-indictment/">Foreign Policy</source>
       <description>Seizing Castro could prove more costly and less effective than the capture of Maduro.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 To Memorialize the Fallen, Renew the Pursuit of Peace | Just Security</title>
@@ -136,7 +176,7 @@
       <category>National Security</category>
       <source url="https://www.justsecurity.org/139596/memorializing-the-fallen-pursuit-of-peace/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=memorializing-the-fallen-pursuit-of-peace">Just Security</source>
       <description>This Memorial Day, to honor the memory of those who gave their lives in war, Americans should consider how to help mold a more peaceful future at home and abroad. The post To Memorialize the Fallen, Renew the Pursuit of Peace appeared first on Just Security.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>3</sentinel:score>
     </item>
     <item>
       <title>🌏 Project Anthracite: Analyzing North Korean Patents and Academic Journals for Evidence of Chemical Weapons Potential | 38 North</title>
@@ -156,7 +196,7 @@
       <category>Intelligence</category>
       <source url="https://www.defensenews.com/industry/techwatch/2026/05/22/socom-begins-fielding-new-battlefield-biometrics-system/">Defense News</source>
       <description>Reveal Technology’s Identifi platform allows operators to collect fingerprints, facial scans, iris data and voice recognition in the field.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 No Limits, No Good Options | Foreign Policy</title>
@@ -166,7 +206,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/22/russia-china-meeting-xi-putin-gas-oil-asymmetry/">Foreign Policy</source>
       <description>Putin’s visit to China shows that Russia is getting sucked deeper into a profoundly unequal relationship.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 Ukrainian Drone Incursions into Baltic States, Russian Electronic Warfare Countermeasures, and International Law | Just Security</title>
@@ -176,7 +216,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.justsecurity.org/139448/ukrainian-drone-incursions-russian-warfare/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukrainian-drone-incursions-russian-warfare">Just Security</source>
       <description>Experts unpack the international law implications of recent incursions of Ukrainian drones into the airspace of Baltic countries due to Russian electronic warfare tactics. The post Ukrainian Drone Incursions into Baltic States, Russian Electronic Warfare Countermeasures, and…</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Early Edition: May 22, 2026 | Just Security</title>
@@ -266,47 +306,7 @@
       <category>Cyber</category>
       <source url="https://warontherocks.com/the-pentagon-still-cannot-manage-cyber-talent-at-scale-heres-the-fix/">War on the Rocks</source>
       <description>The Department of Defense does not primarily have a cyber recruiting problem — it has a cyber talent management problem. The military already possesses serious qualification frameworks, scholarship programs, credentialing systems, and selection tools. What it still lacks is a…</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ The Kid Rock Flyby Controversy and the Erosion of Military Professionalism | War on the Rocks</title>
-      <link>https://warontherocks.com/the-kid-rock-flyby-controversy-and-the-erosion-of-military-professionalism/</link>
-      <guid isPermaLink="true">https://warontherocks.com/the-kid-rock-flyby-controversy-and-the-erosion-of-military-professionalism/</guid>
-      <pubDate>Fri, 22 May 2026 07:15:10 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://warontherocks.com/the-kid-rock-flyby-controversy-and-the-erosion-of-military-professionalism/">War on the Rocks</source>
-      <description>During Congressional testimony from Department of Defense leadership last week, Representative George Whitesides asked Secretary of Defense Pete Hegseth, “How does canceling a command-initiated review support a culture of accountability?” But before the secretary could answer,…</description>
-      <sentinel:score>2</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 US, Philippines on Cusp of Deal on Economic Security Zone, US Official Says | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/us-philippines-on-cusp-of-deal-on-economic-security-zone-us-official-says/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/us-philippines-on-cusp-of-deal-on-economic-security-zone-us-official-says/</guid>
-      <pubDate>Fri, 22 May 2026 14:40:00 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://thediplomat.com/2026/05/us-philippines-on-cusp-of-deal-on-economic-security-zone-us-official-says/">The Diplomat</source>
-      <description>Undersecretary of State Jacob Helberg&apos;s comment came days after Philippine officials shot down a U.S. proposal that the 1,260-hectare zone be placed under U.S. jurisdiction.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Rubio looks increasingly plausible for the 2028 presidential election | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/rubio-looks-increasingly-plausible-for-the-2028-presidential-election/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/rubio-looks-increasingly-plausible-for-the-2028-presidential-election/</guid>
-      <pubDate>Fri, 22 May 2026 05:30:27 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/rubio-looks-increasingly-plausible-for-the-2028-presidential-election/">ASPI Strategist</source>
-      <description>Amid the upheavals of Donald Trump’s second term, Marco Antonio Rubio is getting a fresh look as a possible Republican standard bearer in 2028. The secretary of state, speaking at the White House press podium ...</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>📍 How the West Misreads Modi’s Success | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/</guid>
-      <pubDate>Fri, 22 May 2026 04:01:32 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/">Foreign Policy</source>
-      <description>India may be less liberal now, but it remains democratic.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
   </channel>
 </rss>
