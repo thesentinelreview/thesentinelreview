@@ -56,13 +56,13 @@ export default function HeaderBar({
   feedHref: string;
 }) {
   return (
-    <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
+    <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
       {/* Left cluster */}
       <div className="flex items-center gap-3 min-w-0">
         <SentinelMark className="text-amber-400/80 flex-none" size={24} />
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white truncate">
+            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white">
               Sentinel Intelligence Map
             </span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
@@ -81,13 +81,13 @@ export default function HeaderBar({
             aria-current="page"
             className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-amber-500/[0.15] text-amber-300 border-r border-zinc-700"
           >
-            Sentinel View
+            <span className="hidden sm:inline">Sentinel </span>View
           </span>
           <Link
             href={feedHref}
             className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
           >
-            Source Feed
+            <span className="hidden sm:inline">Source </span>Feed
           </Link>
         </div>
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
