@@ -177,6 +177,8 @@ export default function MapView({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    let animFrame = 0;
+
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: STYLE,
@@ -405,6 +407,30 @@ export default function MapView({
         }
       });
 
+      // Beacon animation: outer pin ring pulses outward and fades (sawtooth),
+      // AOI outline breathes via sine. Both run in a single rAF loop.
+      const t0 = performance.now();
+      const BEACON_MS = 2000;
+      function animate() {
+        const elapsed = performance.now() - t0;
+        const t = elapsed / 1000;
+        const phase = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 sawtooth
+
+        if (map.getLayer("pin-ring")) {
+          map.setPaintProperty("pin-ring", "circle-radius", 6 + phase * 18);
+          map.setPaintProperty("pin-ring", "circle-opacity", (1 - phase) * 0.65);
+        }
+        if (showAOI) {
+          const sine = (Math.sin(t * Math.PI * 1.2) + 1) / 2;
+          if (map.getLayer("aoi-outline"))
+            map.setPaintProperty("aoi-outline", "line-opacity", 0.15 + sine * 0.55);
+          if (map.getLayer("aoi-fill"))
+            map.setPaintProperty("aoi-fill", "fill-opacity", 0.02 + sine * 0.06);
+        }
+        animFrame = requestAnimationFrame(animate);
+      }
+      animFrame = requestAnimationFrame(animate);
+
       // Sync map position to URL so the share button captures the current view.
       map.on("moveend", () => {
         const c = map.getCenter();
@@ -420,6 +446,7 @@ export default function MapView({
     mapRef.current = map;
 
     return () => {
+      cancelAnimationFrame(animFrame);
       popupRef.current?.remove();
       map.remove();
       mapRef.current = null;
