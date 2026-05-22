@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { Alert } from "@/lib/types";
 
-// DB event_type → display label/colors. clash→Contact, movement→Track.
+// DB event_type → display label/colors. clash→Contact. Colors match the
+// map pins / legend (strike red, clash amber, movement cyan).
 const KIND: Record<Alert["event_type"], { label: string; dot: string; pill: string }> = {
   strike: { label: "Strike", dot: "bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]", pill: "border-red-500/30 bg-red-500/[0.08] text-red-400" },
   clash: { label: "Contact", dot: "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.7)]", pill: "border-amber-500/30 bg-amber-500/[0.08] text-amber-400" },
-  movement: { label: "Track", dot: "bg-teal-300 shadow-[0_0_6px_rgba(34,211,238,0.7)]", pill: "border-teal-400/30 bg-teal-400/[0.08] text-teal-300" },
+  movement: { label: "Movement", dot: "bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.7)]", pill: "border-cyan-400/30 bg-cyan-400/[0.08] text-cyan-400" },
 };
 
 const CONF: Record<Alert["confidence"], { label: string; cls: string }> = {
