@@ -1,0 +1,145 @@
+regions:
+  Ukraine:
+    languages: [en, uk, ru]
+    keywords:
+      en:
+        - Ukraine
+        - Kyiv
+        - Kharkiv
+        - Dnipro
+        - Odesa
+        - Zaporizhzhia
+        - Donetsk
+        - Luhansk
+        - Crimea
+        - Shahed
+        - "glide bomb"
+        - "air defense"
+        - "missile attack"
+        - "drone attack"
+        - explosion
+        - explosions
+        - missile
+        - drone
+        - airstrike
+        - shelling
+        - "troop movement"
+      uk:
+        - Україна
+        - Київ
+        - Харків
+        - Дніпро
+        - Одеса
+        - Запоріжжя
+        - вибух
+        - вибухи
+        - ППО
+        - ракета
+        - шахед
+        - обстріл
+      ru:
+        - Украина
+        - Киев
+        - Харьков
+        - Днепр
+        - Одесса
+        - Запорожье
+        - взрыв
+        - взрывы
+        - ПВО
+        - ракета
+        - шахед
+        - обстрел
+  Iran:
+    languages: [en, fa]
+    keywords:
+      en:
+        - Iran
+        - Tehran
+        - IRGC
+        - explosion
+        - missile
+        - drone
+        - "air defense"
+        - "nuclear site"
+        - "oil depot"
+        - Hormuz
+        - "Persian Gulf"
+        - attack
+        - airstrike
+      fa:
+        - ایران
+        - تهران
+        - انفجار
+        - حمله
+        - موشک
+        - پهپاد
+        - "پدافند هوایی"
+  Sudan:
+    languages: [en, ar]
+    keywords:
+      en:
+        - Sudan
+        - Khartoum
+        - Darfur
+        - RSF
+        - SAF
+        - airstrike
+        - shelling
+        - attack
+        - drone
+        - displacement
+        - massacre
+        - "El Fasher"
+        - Omdurman
+      ar:
+        - السودان
+        - الخرطوم
+        - دارفور
+        - انفجار
+        - هجوم
+        - قصف
+        - "طائرة مسيرة"
+  Myanmar:
+    languages: [en]
+    keywords:
+      en:
+        - Myanmar
+        - Burma
+        - junta
+        - PDF
+        - airstrike
+        - drone
+        - attack
+        - Sagaing
+        - Rakhine
+        - Chin
+        - Kachin
+        - Mandalay
+        - Naypyidaw
+        - "military council"
+
+source_types:
+  - journalist
+  - osint
+  - local_media
+  - government
+  - emergency_services
+  - researcher
+  - aggregator
+
+quality_thresholds:
+  high: 75
+  medium: 50
+  low: 0
+
+windows:
+  24h: 1
+  7d: 7
+  30d: 30
+
+llm:
+  model_filter: claude-haiku-4-5-20251001
+  model_classify: claude-sonnet-4-6
+  filter_batch_size: 20
+  classify_batch_size: 5
