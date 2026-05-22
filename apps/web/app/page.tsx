@@ -128,9 +128,6 @@ export default async function WatchfloorPage({
             zoom={mapZoom}
             visibleTypes={visibleTypes}
             palette="watch"
-            showFebA={theater.id === "ukraine"}
-            showAOI={theater.id === "ukraine"}
-            showRangeRings={theater.id === "ukraine"}
           />
           <MapLegend items={legendItems} />
         </section>
