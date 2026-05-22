@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
 import SensorStrip from "@/components/watchfloor/SensorStrip";
@@ -58,7 +59,7 @@ export default async function WatchfloorPage({
     zoom?: string;
   }>;
 }) {
-  const params = await searchParams;
+  const [params, { userId }] = await Promise.all([searchParams, auth()]);
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
 
@@ -115,6 +116,7 @@ export default async function WatchfloorPage({
         theaterOptions={theaterOptions}
         windowOptions={windowOptions}
         feedHref={`/app/feed?theater=${theater.id}`}
+        isAuthed={!!userId}
       />
       <SensorStrip />
       <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} />
