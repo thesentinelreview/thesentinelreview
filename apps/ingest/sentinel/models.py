@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 EventType   = Literal["strike", "clash", "movement"]
 Confidence  = Literal["verified", "partial", "unconfirmed"]
-Platform    = Literal["x", "telegram", "rss", "wire"]
+Platform    = Literal["x", "telegram", "rss", "wire", "bluesky", "gdelt"]
 JobType     = Literal["ingest_source", "extract_events", "generate_briefing"]
 JobStatus   = Literal["pending", "running", "done", "failed"]
 Relationship = Literal["primary", "corroborating", "contradicting"]
@@ -27,6 +27,7 @@ class Source(BaseModel):
     url:          str | None
     is_active:    bool
     trust_tier:   int
+    theaters:     list[str] = []
     notes:        str | None
     created_at:   datetime
 
@@ -104,6 +105,7 @@ class ExtractedEvent(BaseModel):
     description:          str | None = None
     geolocation_signals:  GeolocationSignal = Field(default_factory=GeolocationSignal)
     is_high_impact:       bool = False  # mass casualty or escalatory — triggers held_for_review
+    relevance_score:      int | None = None
 
 
 class ConfidenceAssessment(BaseModel):

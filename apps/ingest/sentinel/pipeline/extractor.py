@@ -92,8 +92,14 @@ _TOOL: anthropic.types.ToolParam = {
                 "type": "boolean",
                 "description": "True if the event involves mass casualties (10+), use of weapons of mass destruction, or a major escalation (e.g. cross-border strike on a new country).",
             },
+            "relevance_score": {
+                "type": "integer",
+                "description": "0-10 relevance to this theater's conflict. 9-10=core event (strike/clash/official statement); 7-8=strong analysis or operational context; 5-6=indirect/political with security angle; 3-4=tangential; 0-2=off-topic. Required.",
+                "minimum": 0,
+                "maximum": 10,
+            },
         },
-        "required": ["has_event", "is_high_impact"],
+        "required": ["has_event", "is_high_impact", "relevance_score"],
     },
 }
 
@@ -235,6 +241,7 @@ def extract_event(
         description=raw.get("description"),
         geolocation_signals=geo,
         is_high_impact=raw.get("is_high_impact", False),
+        relevance_score=raw.get("relevance_score"),
     )
 
     llm_meta = {

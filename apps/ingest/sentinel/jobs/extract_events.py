@@ -88,7 +88,7 @@ def _process_post(
     result, llm_meta = extract_event(
         text_for_extraction,
         source=source,
-        theater=source.get("theater", "ukraine"),
+        theater=(source.get("theaters") or ["ukraine"])[0],
         post_timestamp=post.get("posted_at"),
     )
 
@@ -160,6 +160,7 @@ def _process_post(
         description=result.description,
         confidence=assessment.confidence,
         held_for_review=assessment.held_for_review,
+        relevance_score=result.relevance_score,
     )
 
     link_event_source(

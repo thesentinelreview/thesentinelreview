@@ -232,25 +232,26 @@ def insert_event(
     description: str,
     confidence: str,
     held_for_review: bool = False,
+    relevance_score: int | None = None,
 ) -> uuid.UUID:
     row = conn.execute(
         """
         INSERT INTO events (
             event_type, occurred_at, location,
             location_name, oblast, actor, description,
-            confidence, held_for_review, published_at
+            confidence, held_for_review, published_at, relevance_score
         )
         VALUES (
             %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326),
             %s, %s, %s, %s,
-            %s, %s, CASE WHEN %s THEN NULL ELSE now() END
+            %s, %s, CASE WHEN %s THEN NULL ELSE now() END, %s
         )
         RETURNING id
         """,
         (
             event_type, occurred_at, lng, lat,
             location_name, oblast, actor, description,
-            confidence, held_for_review, held_for_review,
+            confidence, held_for_review, held_for_review, relevance_score,
         ),
     ).fetchone()
     assert row is not None
