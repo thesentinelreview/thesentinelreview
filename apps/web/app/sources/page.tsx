@@ -1,5 +1,5 @@
 import SiteNav from "@/components/SiteNav";
-import type { SourceDetail } from "@/data/placeholder";
+import type { SourceDetail } from "@/lib/types";
 import { getAllSources } from "@/lib/queries";
 import s from "./page.module.css";
 

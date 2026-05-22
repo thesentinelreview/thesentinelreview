@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
-import { THEATERS, type TheaterConfig } from "@/data/placeholder";
-import { THEATER_CONTENT } from "@/data/theaters";
+import type { TheaterConfig } from "@/lib/types";
+import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
 import { getStats } from "@/lib/queries";
 import s from "./page.module.css";
 

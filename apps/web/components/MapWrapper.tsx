@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { MapEvent, EventType } from "@/data/placeholder";
+import type { MapEvent, EventType } from "@/lib/types";
 
 // MapLibre uses browser APIs — skip SSR entirely
 const MapView = dynamic(() => import("./MapView"), { ssr: false });

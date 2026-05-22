@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { FeedPost } from "@/lib/queries";
+import { stripHtml } from "@/lib/text";
 import s from "./PostCard.module.css";
 
 function fmtMinutesAgo(m: number): string {
@@ -48,7 +49,7 @@ export default function PostCard({
   const translationUnavailable = !isEnglish && !hasTranslation;
 
   const [showOriginal, setShowOriginal] = useState(false);
-  const body = hasTranslation && !showOriginal ? post.translated_text! : post.text;
+  const body = stripHtml(hasTranslation && !showOriginal ? post.translated_text! : post.text);
 
   const [watched, setWatched] = useState(initialWatched);
   const [pending, setPending] = useState(false);

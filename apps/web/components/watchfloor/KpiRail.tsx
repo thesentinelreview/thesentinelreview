@@ -1,5 +1,5 @@
 import Kpi from "./Kpi";
-import type { Stats } from "@/data/placeholder";
+import type { Stats } from "@/lib/types";
 
 export default function KpiRail({ stats, windowLabel }: { stats: Stats; windowLabel: string }) {
   const pct = stats.vs_7d_avg_pct;
