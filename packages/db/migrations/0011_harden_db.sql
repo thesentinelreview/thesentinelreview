@@ -13,10 +13,20 @@
 BEGIN;
 
 ALTER FUNCTION confidence_score(text) SET search_path = '';
-ALTER FUNCTION events_in_bbox(
-  double precision, double precision, double precision, double precision,
-  timestamp with time zone, timestamp with time zone
-) SET search_path = public, extensions;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname = 'events_in_bbox'
+  ) THEN
+    ALTER FUNCTION events_in_bbox(
+      double precision, double precision, double precision, double precision,
+      timestamp with time zone, timestamp with time zone
+    ) SET search_path = public, extensions;
+  END IF;
+END $$;
 
 DO $$
 BEGIN
