@@ -1,21 +1,242 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sentinel="https://thesentinelreview.com/ns">
   <channel>
     <title>The Sentinel Review — National Security Feed</title>
     <link>https://thesentinelreview.com</link>
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 May 2026 10:54:18 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 22 May 2026 16:38:38 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
+      <title>🕵️ Helos need upgrades to perform special ops ‘quieter, with fewer aircraft’: PEO Rotary Wing | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/helos-need-upgrades-to-perform-special-ops-quieter-with-fewer-aircraft-peo-rotary-wing/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/helos-need-upgrades-to-perform-special-ops-quieter-with-fewer-aircraft-peo-rotary-wing/</guid>
+      <pubDate>Fri, 22 May 2026 15:57:23 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://breakingdefense.com/2026/05/helos-need-upgrades-to-perform-special-ops-quieter-with-fewer-aircraft-peo-rotary-wing/">Breaking Defense</source>
+      <description>Special Operations Command’s fleet of MH-60Ms and MH-47Gs — operated by the 160th Nightstalkers Special Operations Aviation Regiment (SOAR) — could benefit from technology injections coming from the MV-75 Cheyenne, said PEO Rotary Wing Steve Smith.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Libya and Syria join Turkey’s flagship military exercise in historic firsts | Defense News</title>
+      <link>https://www.defensenews.com/global/europe/2026/05/22/libya-and-syria-join-turkeys-flagship-military-exercise-in-historic-firsts/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/05/22/libya-and-syria-join-turkeys-flagship-military-exercise-in-historic-firsts/</guid>
+      <pubDate>Fri, 22 May 2026 15:26:06 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.defensenews.com/global/europe/2026/05/22/libya-and-syria-join-turkeys-flagship-military-exercise-in-historic-firsts/">Defense News</source>
+      <description>Ankara framed both nations’ attendance as part of its broader military-restructuring and advisory programs in each country.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ Lockheed breaks ground on new THAAD interceptor plant, as Pentagon pushes for more weapons production | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/lockheed-breaks-ground-on-new-thaad-interceptor-plant-as-pentagon-pushes-for-more-weapons-production/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/lockheed-breaks-ground-on-new-thaad-interceptor-plant-as-pentagon-pushes-for-more-weapons-production/</guid>
+      <pubDate>Fri, 22 May 2026 15:15:00 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/05/lockheed-breaks-ground-on-new-thaad-interceptor-plant-as-pentagon-pushes-for-more-weapons-production/">Breaking Defense</source>
+      <description>“These aren’t just ideas or papers going back and forth,” Lockheed CEO Jim Taiclet said of the Pentagon’s munitions ramp. “We know it’s going to be good, and we know it’s going to happen.”</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Inside Sen. Ted Budd’s plan to boost airpower, pilot retention | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/inside-sen-ted-budds-plan-to-boost-airpower-pilot-retention/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/inside-sen-ted-budds-plan-to-boost-airpower-pilot-retention/</guid>
+      <pubDate>Fri, 22 May 2026 14:45:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://breakingdefense.com/2026/05/inside-sen-ted-budds-plan-to-boost-airpower-pilot-retention/">Breaking Defense</source>
+      <description>North Carolina Sen. Ted Budd explains why he recently introduced three bills intended to boost US fighter inventory and improve pilot retention.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ General Atomics CCA drone returns to flight | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/general-atomics-cca-drone-returns-to-flight/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/general-atomics-cca-drone-returns-to-flight/</guid>
+      <pubDate>Fri, 22 May 2026 14:30:26 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/05/general-atomics-cca-drone-returns-to-flight/">Breaking Defense</source>
+      <description>Air Force Col. Timothy Helfrich said the response to the drone’s April 6 crash “validates our approach to accept acquisition/test risk instead of operational risk allowing us to accelerate the program towards fielding.”</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>⚛️ F-35B conducts flight test with British SPEAR mini-cruise missile | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/f-35b-conducts-flight-test-with-british-spear-mini-cruise-missile/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/f-35b-conducts-flight-test-with-british-spear-mini-cruise-missile/</guid>
+      <pubDate>Fri, 22 May 2026 14:16:21 +0000</pubDate>
+      <category>Nuclear</category>
+      <source url="https://breakingdefense.com/2026/05/f-35b-conducts-flight-test-with-british-spear-mini-cruise-missile/">Breaking Defense</source>
+      <description>The first flight milestone comes four years later than originally planned, after an initial delay caused by technical troubles.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Ethiopia and Eritrea are on the brink of war again | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/blogs/africasource/ethiopia-and-eritrea-are-on-the-brink-of-war-again/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/africasource/ethiopia-and-eritrea-are-on-the-brink-of-war-again/</guid>
+      <pubDate>Fri, 22 May 2026 13:59:27 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.atlanticcouncil.org/blogs/africasource/ethiopia-and-eritrea-are-on-the-brink-of-war-again/">Atlantic Council</source>
+      <description>There is a real risk that the current war of words spirals out of control. The post Ethiopia and Eritrea are on the brink of war again appeared first on Atlantic Council.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 China’s Fallen Generals Are Getting Unexpectedly Harsh Punishments | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/22/china-xi-jinping-purge-generals-punishment-death-sentence/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/china-xi-jinping-purge-generals-punishment-death-sentence/</guid>
+      <pubDate>Fri, 22 May 2026 13:54:20 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://foreignpolicy.com/2026/05/22/china-xi-jinping-purge-generals-punishment-death-sentence/">Foreign Policy</source>
+      <description>Chinese President Xi Jinping is raising the floor for punishing purge targets.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Taiwan says it has not been told by US of arms sales delays | Defense News</title>
+      <link>https://www.defensenews.com/global/asia-pacific/2026/05/22/taiwan-says-it-has-not-been-told-by-us-of-arms-sales-delays/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/global/asia-pacific/2026/05/22/taiwan-says-it-has-not-been-told-by-us-of-arms-sales-delays/</guid>
+      <pubDate>Fri, 22 May 2026 13:39:47 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.defensenews.com/global/asia-pacific/2026/05/22/taiwan-says-it-has-not-been-told-by-us-of-arms-sales-delays/">Defense News</source>
+      <description>U.S. President Donald Trump said following a summit with China’s Xi Jinping in Beijing last week that he was undecided on whether to approve it.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Russian nukes threaten ‘almost all’ US cities, Norway’s FM says, highlighting NATO’s value | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/norways-foreign-minister-warns-that-russian-nuclear-weapons-pose-direct-threat-to-all-american-cities/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/norways-foreign-minister-warns-that-russian-nuclear-weapons-pose-direct-threat-to-all-american-cities/</guid>
+      <pubDate>Fri, 22 May 2026 13:22:14 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://breakingdefense.com/2026/05/norways-foreign-minister-warns-that-russian-nuclear-weapons-pose-direct-threat-to-all-american-cities/">Breaking Defense</source>
+      <description>“It is good that Europe is doing more, but there’s a need to remind our good friends on the other side of the Atlantic that NATO is also good for them,” said the Nordic official.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Ukraine’s Parliament Is Pulling Back on LGBTQ Rights as Courts and Citizens Move Forward | Just Security</title>
+      <link>https://www.justsecurity.org/139346/ukraines-parliament-lgbtq-rights/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraines-parliament-lgbtq-rights</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/139346/ukraines-parliament-lgbtq-rights/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraines-parliament-lgbtq-rights</guid>
+      <pubDate>Fri, 22 May 2026 13:14:00 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.justsecurity.org/139346/ukraines-parliament-lgbtq-rights/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraines-parliament-lgbtq-rights">Just Security</source>
+      <description>Ukraine’s Supreme Court recognized a same-sex family, but parliament is moving to block legal recognition for LGBTQ+ couples. The post Ukraine’s Parliament Is Pulling Back on LGBTQ Rights as Courts and Citizens Move Forward appeared first on Just Security.</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>🔐 Is the United States on the Verge of Military Intervention in Cuba? | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/22/cuba-war-trump-united-states-castro-indictment/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/cuba-war-trump-united-states-castro-indictment/</guid>
+      <pubDate>Fri, 22 May 2026 13:11:08 +0000</pubDate>
+      <category>Cyber</category>
+      <source url="https://foreignpolicy.com/2026/05/22/cuba-war-trump-united-states-castro-indictment/">Foreign Policy</source>
+      <description>Seizing Castro could prove more costly and less effective than the capture of Maduro.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 To Memorialize the Fallen, Renew the Pursuit of Peace | Just Security</title>
+      <link>https://www.justsecurity.org/139596/memorializing-the-fallen-pursuit-of-peace/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=memorializing-the-fallen-pursuit-of-peace</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/139596/memorializing-the-fallen-pursuit-of-peace/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=memorializing-the-fallen-pursuit-of-peace</guid>
+      <pubDate>Fri, 22 May 2026 13:06:13 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/139596/memorializing-the-fallen-pursuit-of-peace/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=memorializing-the-fallen-pursuit-of-peace">Just Security</source>
+      <description>This Memorial Day, to honor the memory of those who gave their lives in war, Americans should consider how to help mold a more peaceful future at home and abroad. The post To Memorialize the Fallen, Renew the Pursuit of Peace appeared first on Just Security.</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Project Anthracite: Analyzing North Korean Patents and Academic Journals for Evidence of Chemical Weapons Potential | 38 North</title>
+      <link>https://www.38north.org/2026/05/project-anthracite-analyzing-north-korean-patents-and-academic-journals-for-evidence-of-chemical-weapons-potential/</link>
+      <guid isPermaLink="true">https://www.38north.org/2026/05/project-anthracite-analyzing-north-korean-patents-and-academic-journals-for-evidence-of-chemical-weapons-potential/</guid>
+      <pubDate>Fri, 22 May 2026 13:02:48 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.38north.org/2026/05/project-anthracite-analyzing-north-korean-patents-and-academic-journals-for-evidence-of-chemical-weapons-potential/">38 North</source>
+      <description>This research draws on Project Anthracite, a multiyear initiative funded by Global Affairs ... The post Project Anthracite: Analyzing North Korean Patents and Academic Journals for Evidence of Chemical Weapons Potential appeared first on 38 North.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ SOCOM begins fielding new battlefield biometrics system | Defense News</title>
+      <link>https://www.defensenews.com/industry/techwatch/2026/05/22/socom-begins-fielding-new-battlefield-biometrics-system/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/industry/techwatch/2026/05/22/socom-begins-fielding-new-battlefield-biometrics-system/</guid>
+      <pubDate>Fri, 22 May 2026 12:56:25 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.defensenews.com/industry/techwatch/2026/05/22/socom-begins-fielding-new-battlefield-biometrics-system/">Defense News</source>
+      <description>Reveal Technology’s Identifi platform allows operators to collect fingerprints, facial scans, iris data and voice recognition in the field.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 No Limits, No Good Options | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/22/russia-china-meeting-xi-putin-gas-oil-asymmetry/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/russia-china-meeting-xi-putin-gas-oil-asymmetry/</guid>
+      <pubDate>Fri, 22 May 2026 12:53:49 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://foreignpolicy.com/2026/05/22/russia-china-meeting-xi-putin-gas-oil-asymmetry/">Foreign Policy</source>
+      <description>Putin’s visit to China shows that Russia is getting sucked deeper into a profoundly unequal relationship.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Ukrainian Drone Incursions into Baltic States, Russian Electronic Warfare Countermeasures, and International Law | Just Security</title>
+      <link>https://www.justsecurity.org/139448/ukrainian-drone-incursions-russian-warfare/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukrainian-drone-incursions-russian-warfare</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/139448/ukrainian-drone-incursions-russian-warfare/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukrainian-drone-incursions-russian-warfare</guid>
+      <pubDate>Fri, 22 May 2026 12:49:39 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.justsecurity.org/139448/ukrainian-drone-incursions-russian-warfare/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukrainian-drone-incursions-russian-warfare">Just Security</source>
+      <description>Experts unpack the international law implications of recent incursions of Ukrainian drones into the airspace of Baltic countries due to Russian electronic warfare tactics. The post Ukrainian Drone Incursions into Baltic States, Russian Electronic Warfare Countermeasures, and…</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Early Edition: May 22, 2026 | Just Security</title>
+      <link>https://www.justsecurity.org/139628/early-edition-may-22-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-22-2026</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/139628/early-edition-may-22-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-22-2026</guid>
+      <pubDate>Fri, 22 May 2026 12:07:06 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/139628/early-edition-may-22-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-22-2026">Just Security</source>
+      <description>Signup to receive the Early Edition in your inbox here. A curated weekday guide to major news and developments over the last 24 hours. Here’s today’s news: U.S. CARIBBEAN AND PACIFIC OPERATIONS President Trump and Secretary of State Marco Rubio yesterday again raised the…</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Violence Looms Over Colombia’s Election | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/22/colombia-election-president-violence-insecurity-petro/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/colombia-election-president-violence-insecurity-petro/</guid>
+      <pubDate>Fri, 22 May 2026 12:00:51 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/05/22/colombia-election-president-violence-insecurity-petro/">Foreign Policy</source>
+      <description>Three presidential candidates lead the field ahead of a first-round vote.</description>
+      <sentinel:score>3</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ RIAT canceled: Middle East ‘situation’ forces collapse of major UK air show | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/middle-east-situation-forces-cancellation-of-major-uk-air-show/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/middle-east-situation-forces-cancellation-of-major-uk-air-show/</guid>
+      <pubDate>Fri, 22 May 2026 11:42:28 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/05/middle-east-situation-forces-cancellation-of-major-uk-air-show/">Breaking Defense</source>
+      <description>“This has not been an easy decision,” but it was made after “extensive discussions” with the RAF and the US Air Force, said organizers of the Royal International Air Tattoo today.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Vyshyvanka Day celebrates Ukrainian identity amid Russia’s genocidal war | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/blogs/ukrainealert/vyshyvanka-day-celebrates-ukrainian-identity-amid-russias-genocidal-war/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/ukrainealert/vyshyvanka-day-celebrates-ukrainian-identity-amid-russias-genocidal-war/</guid>
+      <pubDate>Fri, 22 May 2026 11:30:59 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.atlanticcouncil.org/blogs/ukrainealert/vyshyvanka-day-celebrates-ukrainian-identity-amid-russias-genocidal-war/">Atlantic Council</source>
+      <description>Ukraine&apos;s annual Vyshyvanka Day holiday has emerged as a simple yet profound grassroots celebration of Ukrainian national identity at a time when Russia is attempting to destroy Ukraine as a state and as a nation, writes Peter Dickinson. The post Vyshyvanka Day celebrates…</description>
+      <sentinel:score>4</sentinel:score>
+    </item>
+    <item>
+      <title>🛡️ The future of US counterterrorism: An expert assessment of the 2026 White House strategy | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/dispatches/the-future-of-us-counterterrorism-an-expert-assessment-of-the-2026-white-house-strategy/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/the-future-of-us-counterterrorism-an-expert-assessment-of-the-2026-white-house-strategy/</guid>
+      <pubDate>Fri, 22 May 2026 11:00:00 +0000</pubDate>
+      <category>Homeland</category>
+      <source url="https://www.atlanticcouncil.org/dispatches/the-future-of-us-counterterrorism-an-expert-assessment-of-the-2026-white-house-strategy/">Atlantic Council</source>
+      <description>Members of the Atlantic Council Counterterrorism Project dig into the Trump administration’s new US Counterterrorism Strategy. The post The future of US counterterrorism: An expert assessment of the 2026 White House strategy appeared first on Atlantic Council.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
       <title>📍 Geopolitical Chaos is Wrecking Pandemic Agreements | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/trump-cdc-hantavirus-ebola-who/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/trump-cdc-hantavirus-ebola-who/</guid>
+      <link>https://foreignpolicy.com/2026/05/22/hantavirus-who-cruise-ship-outbreak-ebola-congo-trump-cdc-vaccine-inequality-geopolitics/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/hantavirus-who-cruise-ship-outbreak-ebola-congo-trump-cdc-vaccine-inequality-geopolitics/</guid>
       <pubDate>Fri, 22 May 2026 10:00:22 +0000</pubDate>
       <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/trump-cdc-hantavirus-ebola-who/">Foreign Policy</source>
+      <source url="https://foreignpolicy.com/2026/05/22/hantavirus-who-cruise-ship-outbreak-ebola-congo-trump-cdc-vaccine-inequality-geopolitics/">Foreign Policy</source>
       <description>U.S. dysfunction is undercutting attempts at equality.</description>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🏴 Sovereignty can’t be vibecoded: Why Europe must physically build to ensure resilience | Breaking Defense</title>
@@ -25,6 +246,7 @@
       <category>Europe / NATO</category>
       <source url="https://breakingdefense.com/2026/05/sovereignty-cant-be-vibecoded-why-europe-must-physically-build-to-ensure-resilience/">Breaking Defense</source>
       <description>Amid debates over budget and policy, Europe must prioritize building the physical infrastructure required to sustain technological and defense capabilities at scale, argue Elin Hammarberg and Carina Zaring.</description>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 Inside Ukraine’s Battlefield Innovation Loop | War on the Rocks</title>
@@ -34,6 +256,7 @@
       <category>Europe / NATO</category>
       <source url="https://warontherocks.com/cogs-of-war/inside-ukraines-battlefield-innovation-loop/">War on the Rocks</source>
       <description>This exclusive Cogs of War interview is with Catarina Buchatskiy, the co-founder and director of analytics at the Snake Island Institute, a Kyiv-based defense analytics center, and Viktoriia Honcharuk, the institute’s director of defense technologies. We asked them to share…</description>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🔐 The Pentagon Still Cannot Manage Cyber Talent at Scale. Here’s the Fix. | War on the Rocks</title>
@@ -43,6 +266,7 @@
       <category>Cyber</category>
       <source url="https://warontherocks.com/the-pentagon-still-cannot-manage-cyber-talent-at-scale-heres-the-fix/">War on the Rocks</source>
       <description>The Department of Defense does not primarily have a cyber recruiting problem — it has a cyber talent management problem. The military already possesses serious qualification frameworks, scholarship programs, credentialing systems, and selection tools. What it still lacks is a…</description>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ The Kid Rock Flyby Controversy and the Erosion of Military Professionalism | War on the Rocks</title>
@@ -52,6 +276,7 @@
       <category>Defense Policy</category>
       <source url="https://warontherocks.com/the-kid-rock-flyby-controversy-and-the-erosion-of-military-professionalism/">War on the Rocks</source>
       <description>During Congressional testimony from Department of Defense leadership last week, Representative George Whitesides asked Secretary of Defense Pete Hegseth, “How does canceling a command-initiated review support a culture of accountability?” But before the secretary could answer,…</description>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🌏 US, Philippines on Cusp of Deal on Economic Security Zone, US Official Says | The Diplomat</title>
@@ -61,6 +286,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/us-philippines-on-cusp-of-deal-on-economic-security-zone-us-official-says/">The Diplomat</source>
       <description>Undersecretary of State Jacob Helberg&apos;s comment came days after Philippine officials shot down a U.S. proposal that the 1,260-hectare zone be placed under U.S. jurisdiction.</description>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>📍 Rubio looks increasingly plausible for the 2028 presidential election | ASPI Strategist</title>
@@ -70,213 +296,17 @@
       <category>National Security</category>
       <source url="https://www.aspistrategist.org.au/rubio-looks-increasingly-plausible-for-the-2028-presidential-election/">ASPI Strategist</source>
       <description>Amid the upheavals of Donald Trump’s second term, Marco Antonio Rubio is getting a fresh look as a possible Republican standard bearer in 2028. The secretary of state, speaking at the White House press podium ...</description>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>📍 How the West Misreads Modi’s Success | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/west-modi-india-democracy-elections/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/west-modi-india-democracy-elections/</guid>
+      <link>https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/</guid>
       <pubDate>Fri, 22 May 2026 04:01:32 +0000</pubDate>
       <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/west-modi-india-democracy-elections/">Foreign Policy</source>
+      <source url="https://foreignpolicy.com/2026/05/22/modi-india-europe-democracy-elections-bjp-economy-western-policy/">Foreign Policy</source>
       <description>India may be less liberal now, but it remains democratic.</description>
-    </item>
-    <item>
-      <title>🌏 Why the Quad Was Doomed From the Start | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/quad-rubio-india-china/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/quad-rubio-india-china/</guid>
-      <pubDate>Fri, 22 May 2026 04:01:07 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://foreignpolicy.com/2026/05/22/quad-rubio-india-china/">Foreign Policy</source>
-      <description>The Philippines has replaced India in Washington’s security calculus on China.</description>
-    </item>
-    <item>
-      <title>📍 The Coming Contest for Asia’s Waterways | Foreign Affairs</title>
-      <link>https://www.foreignaffairs.com/china/coming-contest-asias-waterways</link>
-      <guid isPermaLink="true">https://www.foreignaffairs.com/china/coming-contest-asias-waterways</guid>
-      <pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.foreignaffairs.com/china/coming-contest-asias-waterways">Foreign Affairs</source>
-      <description>What Hormuz unleashed.</description>
-    </item>
-    <item>
-      <title>📍 Bookshelf: 2026 looks awfully like 1914 | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/bookshelf-2026-looks-awfully-like-1914/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/bookshelf-2026-looks-awfully-like-1914/</guid>
-      <pubDate>Fri, 22 May 2026 01:52:22 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/bookshelf-2026-looks-awfully-like-1914/">ASPI Strategist</source>
-      <description>Many analysts may say the world is in a new Cold War, but it isn’t, writes Odd Arne Westad in his new book, The Coming Storm: Power, Conflict and Warnings from History. Westad, a renowned ...</description>
-    </item>
-    <item>
-      <title>📍 Malaysia Puts TikTok on Notice Over ‘Offensive’ Posts About Country’s King | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/malaysia-puts-tiktok-on-notice-over-offensive-posts-about-countrys-king/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/malaysia-puts-tiktok-on-notice-over-offensive-posts-about-countrys-king/</guid>
-      <pubDate>Fri, 22 May 2026 10:39:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/05/malaysia-puts-tiktok-on-notice-over-offensive-posts-about-countrys-king/">The Diplomat</source>
-      <description>An account bearing the name “Sultan Ibrahim Ismail&quot; allegedly disseminated AI-generated videos and manipulated images that defamed the monarchy.</description>
-    </item>
-    <item>
-      <title>🏴 In shift, Trump announces deployment of 5,000 US troops to Poland | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/22/in-shift-trump-announces-deployment-of-5000-us-troops-to-poland/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/22/in-shift-trump-announces-deployment-of-5000-us-troops-to-poland/</guid>
-      <pubDate>Fri, 22 May 2026 00:13:47 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/in-shift-trump-announces-deployment-of-5000-us-troops-to-poland/">Defense News</source>
-      <description>A week after cancelling a U.S. Army deployment to Poland, Trump announces an additional 5,000 troops will be sent to the country.</description>
-    </item>
-    <item>
-      <title>🏴 As Russian losses mount in Ukraine, Putin seeks more foreign fighters | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/ukrainealert/as-russian-losses-mount-in-ukraine-putin-seeks-more-foreign-fighters/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/ukrainealert/as-russian-losses-mount-in-ukraine-putin-seeks-more-foreign-fighters/</guid>
-      <pubDate>Fri, 22 May 2026 00:01:24 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.atlanticcouncil.org/blogs/ukrainealert/as-russian-losses-mount-in-ukraine-putin-seeks-more-foreign-fighters/">Atlantic Council</source>
-      <description>With no end in sight to the invasion of Ukraine, Putin is looking to recruit more foreign fighters to counter heavy Russian losses while avoiding a politically risky mobilization, write Marc Goedemans and Katherine Spencer. The post As Russian losses mount in Ukraine, Putin…</description>
-    </item>
-    <item>
-      <title>📍 With the Strait of Hormuz closed, the Panama Canal is busier than ever. It should use this windfall wisely. | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/dispatches/with-the-strait-of-hormuz-closed-the-panama-canal-is-busier-than-ever-it-should-use-this-windfall-wisely/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/with-the-strait-of-hormuz-closed-the-panama-canal-is-busier-than-ever-it-should-use-this-windfall-wisely/</guid>
-      <pubDate>Thu, 21 May 2026 23:09:38 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/dispatches/with-the-strait-of-hormuz-closed-the-panama-canal-is-busier-than-ever-it-should-use-this-windfall-wisely/">Atlantic Council</source>
-      <description>Panama must use its revenues smartly by reinvesting in upkeep and in solutions that efficiently use the limited water resources. The post With the Strait of Hormuz closed, the Panama Canal is busier than ever. It should use this windfall wisely. appeared first on Atlantic…</description>
-    </item>
-    <item>
-      <title>🏴 Trump Hasn’t Given Up on Greenland | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/21/trump-greenland-nato-ben-gvir-israel-gaza-qatar/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/21/trump-greenland-nato-ben-gvir-israel-gaza-qatar/</guid>
-      <pubDate>Thu, 21 May 2026 22:00:56 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://foreignpolicy.com/2026/05/21/trump-greenland-nato-ben-gvir-israel-gaza-qatar/">Foreign Policy</source>
-      <description>And America’s NATO allies are still on edge about it.</description>
-    </item>
-    <item>
-      <title>🏛️ General Atomics resumes drone-wingman flights after mishap | Defense One</title>
-      <link>https://www.defenseone.com/defense-systems/2026/05/general-atomics-resumes-drone-wingman-flights-after-mishap/413717/</link>
-      <guid isPermaLink="true">https://www.defenseone.com/defense-systems/2026/05/general-atomics-resumes-drone-wingman-flights-after-mishap/413717/</guid>
-      <pubDate>Thu, 21 May 2026 17:55:15 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defenseone.com/defense-systems/2026/05/general-atomics-resumes-drone-wingman-flights-after-mishap/413717/">Defense One</source>
-      <description>An investigation by the Air Force and the defense contractor led to a software change.</description>
-    </item>
-    <item>
-      <title>📍 Inside SOCOM’s Search For New Machine Guns, Rifles And Ammo | The War Zone</title>
-      <link>https://www.twz.com/land/inside-socoms-search-for-new-machine-guns-rifles-and-ammo</link>
-      <guid isPermaLink="true">https://www.twz.com/land/inside-socoms-search-for-new-machine-guns-rifles-and-ammo</guid>
-      <pubDate>Thu, 21 May 2026 17:38:25 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.twz.com/land/inside-socoms-search-for-new-machine-guns-rifles-and-ammo">The War Zone</source>
-      <description>Lt. Col. Alan Wood, SOCOM&apos;s Program Manager for Lethality, offers some exclusive insights into the future of SOCOM small arms. The post Inside SOCOM’s Search For New Machine Guns, Rifles And Ammo appeared first on The War Zone.</description>
-    </item>
-    <item>
-      <title>🌏 Boots on the moon needed to beat ‘belligerent’ China: Mitchell Institute | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/boots-on-the-moon-needed-to-beat-belligerent-china-mitchell-institute/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/boots-on-the-moon-needed-to-beat-belligerent-china-mitchell-institute/</guid>
-      <pubDate>Thu, 21 May 2026 21:17:45 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://breakingdefense.com/2026/05/boots-on-the-moon-needed-to-beat-belligerent-china-mitchell-institute/">Breaking Defense</source>
-      <description>“[F]uture American space security is at risk. China’s military-led human space flight progression is positioning the People’s Liberation Army to achieve strategic advantage in lunar access, infrastructure, and resources,” Kyle Puma, Mitchell Institute senior resident fellow for…</description>
-    </item>
-    <item>
-      <title>📍 Every country should understand space as a warfighting domain | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/every-country-should-understand-space-as-a-wafighting-domain/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/every-country-should-understand-space-as-a-wafighting-domain/</guid>
-      <pubDate>Thu, 21 May 2026 21:09:08 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/every-country-should-understand-space-as-a-wafighting-domain/">ASPI Strategist</source>
-      <description>Touring Normandy beaches shortly after D-Day in 1944, General Dwight D Eisenhower reportedly said, ‘If I didn’t have air supremacy, I wouldn’t be here.’ Today, space power has achieved the decisiveness of air power, and ...</description>
-    </item>
-    <item>
-      <title>🏛️ Poland joins Pentagon’s counter-drone marketplace amid unexpected US deployment cancellation | Defense News</title>
-      <link>https://www.defensenews.com/news/your-military/2026/05/21/poland-joins-pentagons-counter-drone-marketplace-amid-unexpected-us-deployment-cancellation/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/05/21/poland-joins-pentagons-counter-drone-marketplace-amid-unexpected-us-deployment-cancellation/</guid>
-      <pubDate>Thu, 21 May 2026 21:05:59 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/your-military/2026/05/21/poland-joins-pentagons-counter-drone-marketplace-amid-unexpected-us-deployment-cancellation/">Defense News</source>
-      <description>The Army is continuing to expand military cooperation with Poland through the Pentagon’s counter-drone initiative, the service announced on Wednesday.</description>
-    </item>
-    <item>
-      <title>🌍 Israeli Minister’s Taunting of Detained Flotilla Activists Sparks Foreign Backlash | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/21/ben-gvir-video-israel-detained-activists-global-sumud-flotilla/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/21/ben-gvir-video-israel-detained-activists-global-sumud-flotilla/</guid>
-      <pubDate>Thu, 21 May 2026 20:15:05 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://foreignpolicy.com/2026/05/21/ben-gvir-video-israel-detained-activists-global-sumud-flotilla/">Foreign Policy</source>
-      <description>Foreign leaders and Israeli officials are condemning Itamar Ben-Gvir’s treatment of Global Sumud Flotilla activists.</description>
-    </item>
-    <item>
-      <title>🏛️ Pentagon considers restoring Army aviation cuts | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/pentagon-considers-restoring-army-aviation-cuts-announced-just-last-year/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/pentagon-considers-restoring-army-aviation-cuts-announced-just-last-year/</guid>
-      <pubDate>Thu, 21 May 2026 20:13:42 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://breakingdefense.com/2026/05/pentagon-considers-restoring-army-aviation-cuts-announced-just-last-year/">Breaking Defense</source>
-      <description>Pentagon reporter Ashley Roque shares three things to know about the U.S. Army’s latest aviation plans.</description>
-    </item>
-    <item>
-      <title>🕵️ Night Stalker MH-47 Chinooks May Get Aerial Refueling Tanker Role | The War Zone</title>
-      <link>https://www.twz.com/air/night-stalker-mh-47-chinooks-may-get-aerial-refueling-tanker-role</link>
-      <guid isPermaLink="true">https://www.twz.com/air/night-stalker-mh-47-chinooks-may-get-aerial-refueling-tanker-role</guid>
-      <pubDate>Thu, 21 May 2026 16:00:50 +0000</pubDate>
-      <category>Intelligence</category>
-      <source url="https://www.twz.com/air/night-stalker-mh-47-chinooks-may-get-aerial-refueling-tanker-role">The War Zone</source>
-      <description>Special ops MH-47 Chinooks that could refuel other aircraft midair would give the Night Stalkers their own organic tanker capability. The post Night Stalker MH-47 Chinooks May Get Aerial Refueling Tanker Role appeared first on The War Zone.</description>
-    </item>
-    <item>
-      <title>🏛️ Strait of Hormuz escort missions would ‘exceed’ Navy’s capacity, CNO says | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/strait-of-hormuz-escort-missions-would-exceed-navys-capacity-cno-says/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/strait-of-hormuz-escort-missions-would-exceed-navys-capacity-cno-says/</guid>
-      <pubDate>Thu, 21 May 2026 19:58:41 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://breakingdefense.com/2026/05/strait-of-hormuz-escort-missions-would-exceed-navys-capacity-cno-says/">Breaking Defense</source>
-      <description>President Donald Trump had floated the idea of a naval escort months ago, but Adm. Daryl Caudle said today it would be a “very challenging mission.”</description>
-    </item>
-    <item>
-      <title>📍 Georgia’s Dogs Are Disappearing | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/21/georgia-dogs-government-protests-georgian-dream-russia/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/21/georgia-dogs-government-protests-georgian-dream-russia/</guid>
-      <pubDate>Thu, 21 May 2026 19:44:44 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/21/georgia-dogs-government-protests-georgian-dream-russia/">Foreign Policy</source>
-      <description>A botched government program has become a PR disaster.</description>
-    </item>
-    <item>
-      <title>🏴 No, Russia’s Economy Is Not About to Collapse | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/21/russia-ukraine-war-economy-putin-tooze/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/21/russia-ukraine-war-economy-putin-tooze/</guid>
-      <pubDate>Thu, 21 May 2026 19:37:37 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://foreignpolicy.com/2026/05/21/russia-ukraine-war-economy-putin-tooze/">Foreign Policy</source>
-      <description>The war with Ukraine has slowed growth, but Moscow remains stable.</description>
-    </item>
-    <item>
-      <title>📍 The White House Ballroom Is A Deep Fortress In Disguise (Updated) | The War Zone</title>
-      <link>https://www.twz.com/news-features/the-white-house-ballroom-is-a-deep-fortress-in-disguise</link>
-      <guid isPermaLink="true">https://www.twz.com/news-features/the-white-house-ballroom-is-a-deep-fortress-in-disguise</guid>
-      <pubDate>Thu, 21 May 2026 15:23:05 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.twz.com/news-features/the-white-house-ballroom-is-a-deep-fortress-in-disguise">The War Zone</source>
-      <description>We now know the building goes six floors underground and will have &quot;the greatest drone empire you&apos;ve ever seen that&apos;s going to protect Washington&quot; on its roof. The post The White House Ballroom Is A Deep Fortress In Disguise (Updated) appeared first on The War Zone.</description>
-    </item>
-    <item>
-      <title>📍 For a sustained ceasefire or truce in Sudan, remember: Trust, but verify | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/africasource/for-a-sustained-ceasefire-or-truce-in-sudan-remember-trust-but-verify/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/africasource/for-a-sustained-ceasefire-or-truce-in-sudan-remember-trust-but-verify/</guid>
-      <pubDate>Thu, 21 May 2026 19:10:31 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/blogs/africasource/for-a-sustained-ceasefire-or-truce-in-sudan-remember-trust-but-verify/">Atlantic Council</source>
-      <description>Negotiators should insist any ceasefire or truce agreement allows for a dedicated, on-the-ground monitoring mechanism. The post For a sustained ceasefire or truce in Sudan, remember: Trust, but verify appeared first on Atlantic Council.</description>
-    </item>
-    <item>
-      <title>📍 To train for contested environments, SOCOM and SOUTHCOM want more ranges, authority | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/to-train-for-contested-environments-socom-and-southcom-want-more-ranges-authority/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/to-train-for-contested-environments-socom-and-southcom-want-more-ranges-authority/</guid>
-      <pubDate>Thu, 21 May 2026 19:07:39 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://breakingdefense.com/2026/05/to-train-for-contested-environments-socom-and-southcom-want-more-ranges-authority/">Breaking Defense</source>
-      <description>“[W]e have to find places where these kind of more sophisticated projections of force can be rehearsed and can be tested and tried,” Adm. Frank Bradley said.</description>
+      <sentinel:score>2</sentinel:score>
     </item>
   </channel>
 </rss>
