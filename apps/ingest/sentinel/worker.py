@@ -5,6 +5,7 @@ import signal
 import sys
 import time
 import uuid
+from typing import NamedTuple
 
 import structlog
 
@@ -52,16 +53,31 @@ signal.signal(signal.SIGINT, _handle_signal)
 # Worker loop
 # ---------------------------------------------------------------------------
 
-def _process_one() -> bool:
-    """Claim and process one job. Returns True if a job was processed."""
+class JobOutcome(NamedTuple):
+    """Result of attempting one job. ``processed`` is False only when the queue
+    was empty (no job claimed). On a handler exception ``failed`` is True and
+    the exception type/message are captured so callers can report them without
+    re-reading the jobs table."""
+
+    processed: bool
+    job_type: str | None = None
+    source_id: str | None = None
+    failed: bool = False
+    error_type: str | None = None
+    error: str | None = None
+
+
+def _process_one() -> JobOutcome:
+    """Claim and process one job. Returns a JobOutcome describing the result."""
     with get_conn() as conn:
         job = claim_job(conn)
         if job is None:
-            return False
+            return JobOutcome(processed=False)
 
     job_id: uuid.UUID = job["id"]
     job_type: str = job["job_type"]
     payload: dict = job["payload"]
+    source_id = payload.get("source_id") if isinstance(payload, dict) else None
 
     log.info("job_started", job_id=str(job_id), job_type=job_type)
 
@@ -76,8 +92,21 @@ def _process_one() -> bool:
         log.exception("job_failed", job_id=str(job_id), job_type=job_type, error=str(exc))
         with get_conn() as conn:
             fail_job(conn, job_id, str(exc))
+        return JobOutcome(
+            processed=True,
+            job_type=job_type,
+            source_id=str(source_id) if source_id else None,
+            failed=True,
+            error_type=type(exc).__name__,
+            error=str(exc),
+        )
 
-    return True
+    return JobOutcome(
+        processed=True,
+        job_type=job_type,
+        source_id=str(source_id) if source_id else None,
+        failed=False,
+    )
 
 
 def main() -> None:
@@ -96,7 +125,7 @@ def main() -> None:
 
     while _running:
         try:
-            did_work = _process_one()
+            did_work = _process_one().processed
         except Exception as exc:
             log.exception("worker_loop_error", error=str(exc))
             did_work = False

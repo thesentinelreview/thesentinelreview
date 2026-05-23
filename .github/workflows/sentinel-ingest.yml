@@ -49,6 +49,9 @@ jobs:
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION }}
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          # Repo variable; unset → strict (exit non-zero on a zero-write run).
+          # Set repository variable SENTINEL_STRICT_MODE=false to disable.
+          SENTINEL_STRICT_MODE: ${{ vars.SENTINEL_STRICT_MODE }}
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-ingest
 
