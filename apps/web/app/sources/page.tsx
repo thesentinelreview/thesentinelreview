@@ -21,6 +21,7 @@ function platformLabel(p: string): string {
   if (p === "x") return "X";
   if (p === "telegram") return "TG";
   if (p === "rss") return "RSS";
+  if (p === "bluesky") return "BSky";
   return "WIRE";
 }
 
@@ -28,6 +29,7 @@ function platClass(p: string, s: Record<string, string>): string {
   if (p === "x") return s.platX;
   if (p === "telegram") return s.platTelegram;
   if (p === "rss") return s.platRss;
+  if (p === "bluesky") return s.platBluesky ?? s.platWire;
   return s.platWire;
 }
 

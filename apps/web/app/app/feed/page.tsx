@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import SentinelMark from "@/components/watchfloor/SentinelMark";
+import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
 import PostCard from "@/components/PostCard";
 import type { Platform } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
@@ -9,7 +10,7 @@ import { type FeedPost, getFirehosePosts, getWatchInfo } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire"];
+const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky"];
 const ALL_TIERS: Array<1 | 2 | 3> = [1, 2, 3];
 
 const PLATFORM_LABEL: Record<Platform, string> = {
@@ -17,6 +18,7 @@ const PLATFORM_LABEL: Record<Platform, string> = {
   rss:      "RSS",
   x:        "X",
   wire:     "Wire",
+  bluesky:  "Bluesky",
 };
 
 // Shared chip styling, matching the watchfloor header controls.
@@ -170,15 +172,14 @@ export default async function SourceFeedPage({
           <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
             Theater
           </span>
-          {Object.values(THEATERS).map((t) => (
-            <Link
-              key={t.id}
-              href={buildHref({ theater: t.id, platforms, tiers })}
-              className={`${CHIP} ${theater.id === t.id ? CHIP_ON : CHIP_OFF}`}
-            >
-              {t.label}
-            </Link>
-          ))}
+          <TheaterDropdown
+            current={theater.label}
+            options={Object.values(THEATERS).map((t) => ({
+              label: t.label,
+              href: buildHref({ theater: t.id, platforms, tiers }),
+              active: theater.id === t.id,
+            }))}
+          />
 
           <span className="w-px h-5 bg-zinc-800 mx-1" />
           {userId ? (
