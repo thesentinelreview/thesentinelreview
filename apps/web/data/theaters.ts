@@ -16,8 +16,8 @@ export const THEATERS: Record<TheaterKey, TheaterConfig> = {
   iran: {
     id: "iran",
     label: "Iran",
-    mapCenter: [53.7, 32.4],
-    mapZoom: 5,
+    mapCenter: [47, 30],
+    mapZoom: 4,
     mapSubtitle: "Iran Theater — Nuclear Sites and Proxy Activity",
     briefingTitle: "Daily Briefing — Iran Theater",
   },
