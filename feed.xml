@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 May 2026 10:00:52 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 23 May 2026 17:07:28 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌏 How K-Pop and AI Are Reshaping the Dokdo/Takeshima Dispute | The Diplomat</title>
@@ -26,7 +26,27 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japans-frigate-diplomacy-and-what-it-could-mean-for-taiwan/">The Diplomat</source>
       <description>Can Japan become a second major democratic partner for Taiwan’s defense industry?</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Space Force needs to prepare for an ‘in-person’ moon conflict with China, new report argues | Defense One</title>
+      <link>https://www.defenseone.com/threats/2026/05/space-force-needs-prepare-person-moon-conflict-china-new-report-argues/413747/</link>
+      <guid isPermaLink="true">https://www.defenseone.com/threats/2026/05/space-force-needs-prepare-person-moon-conflict-china-new-report-argues/413747/</guid>
+      <pubDate>Sat, 23 May 2026 08:00:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.defenseone.com/threats/2026/05/space-force-needs-prepare-person-moon-conflict-china-new-report-argues/413747/">Defense One</source>
+      <description>Guardians need a human spaceflight program for future lunar missions, Mitchell Institute says.</description>
       <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Federal Education Support Centers Still Fill Key State Gaps | RAND</title>
+      <link>https://www.rand.org/pubs/commentary/2026/05/federal-education-support-centers-still-fill-key-state.html</link>
+      <guid isPermaLink="true">https://www.rand.org/pubs/commentary/2026/05/federal-education-support-centers-still-fill-key-state.html</guid>
+      <pubDate>Sat, 23 May 2026 08:00:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.rand.org/pubs/commentary/2026/05/federal-education-support-centers-still-fill-key-state.html">RAND</source>
+      <description>Federal policymakers are rethinking education technical assistance to states—and even taking steps to dismantle parts of it. We asked state agency leaders about their experience with federal technical assistance: What works? What doesn&apos;t? What can they not afford to lose?</description>
+      <sentinel:score>0</sentinel:score>
     </item>
     <item>
       <title>🌏 The US-China Summit from a Japanese Perspective | The Diplomat</title>
@@ -46,7 +66,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japan-and-south-korea-friends-with-limits/">The Diplomat</source>
       <description>The two neighbors are drawing closer, but North Korea remains a dividing line.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 Bunker Talk: Memorial Day Weekend Edition | The War Zone</title>
@@ -56,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-memorial-day-weekend-edition-3">The War Zone</source>
       <description>This weekend, we remember those who gave their lives so we could live our&apos;s. The post Bunker Talk: Memorial Day Weekend Edition appeared first on The War Zone.</description>
-      <sentinel:score>3</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🌏 Pyongyang Recalibrates: North Korea Between Russia, the United States, and Japan | The Diplomat</title>
@@ -116,7 +136,7 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/">Defense News</source>
       <description>The itinerary is set to include briefings at Pituffik Space Base in Greenland on Arctic defense and strategic competition in the region.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 The Iran problem won’t be solved without a counter-drone coalition | Atlantic Council</title>
@@ -126,7 +146,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/dispatches/the-iran-problem-wont-be-solved-without-a-counter-drone-coalition/">Atlantic Council</source>
       <description>The United States should form a partnership with Ukraine and Gulf partners around the idea of counter-drone-as-a-service, instead of selling counter-drone hardware alone. The post The Iran problem won’t be solved without a counter-drone coalition appeared first on Atlantic…</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Trump’s About-Face on U.S. Troops in Poland Mystifies Allies | Foreign Policy</title>
@@ -146,7 +166,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/">Defense News</source>
       <description>Secretary of State Marco Rubio is casting new doubt on NATO&apos;s relevance after key allies recoiled from backing Washington’s “Operation Epic Fury.”</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 What the U.S. Should Have Learned From Past Ebola Outbreaks | Foreign Policy</title>
@@ -176,7 +196,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/">Defense One</source>
       <description>With new DAWG initiative, the DOD is attempting to fix a historically slow-moving, broken acquisition pipeline.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏛️ US Marine Corps tests using helicopter as mobile drone command center | Defense News</title>
@@ -216,7 +236,7 @@
       <category>Defense Policy</category>
       <source url="https://www.atlanticcouncil.org/dispatches/golden-dome-needs-a-price-tag-and-a-clear-objective-to-succeed/">Atlantic Council</source>
       <description>Congress, the Pentagon and the broader Trump administration have different ideas and cost estimates for this new missile defense effort. The post Golden Dome needs a price tag and a clear objective to succeed appeared first on Atlantic Council.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 Loitering munitions, launched effects had strong presence at SOF Week 2026 | Breaking Defense</title>
@@ -276,7 +296,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/">Defense News</source>
       <description>Drones took the heaviest hit, accounting for 25 of the 42 aircraft losses listed in the report.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 The Next Pandemic Will Come From a Conflict Zone | Foreign Policy</title>
@@ -287,26 +307,6 @@
       <source url="https://foreignpolicy.com/2026/05/22/ebola-outbreak-congo-uganda-pandemic-preparedness-conflict/">Foreign Policy</source>
       <description>The latest Ebola outbreak underscores a central flaw with the global preparedness model.</description>
       <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Xi’s Flurry of Post-Trump Diplomacy | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/</guid>
-      <pubDate>Fri, 22 May 2026 16:52:49 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/xi-north-korea-putin-trump-beijing-visit/">Foreign Policy</source>
-      <description>The Chinese president may be preparing for a rare and momentous trip to Pyongyang.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>⚛️ IAI’s new Diamond naval offering envisions flexible drones, missiles for small vessels | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/</guid>
-      <pubDate>Fri, 22 May 2026 16:45:00 +0000</pubDate>
-      <category>Nuclear</category>
-      <source url="https://breakingdefense.com/2026/05/iais-new-diamond-naval-offering-envisions-flexible-drones-missiles-for-small-vessels/">Breaking Defense</source>
-      <description>The plan involves different defensive systems dispersed across small satellite ships, which can be connected to a mother ship in a disaggregated model.</description>
-      <sentinel:score>8</sentinel:score>
     </item>
   </channel>
 </rss>
