@@ -26,7 +26,11 @@ function fmtAbsolute(iso: string): string {
 }
 
 function platformLabel(p: FeedPost["source_platform"]): string {
-  return p === "x" ? "X" : p === "rss" ? "RSS" : p === "wire" ? "Wire" : "Telegram";
+  if (p === "x")        return "X";
+  if (p === "rss")      return "RSS";
+  if (p === "wire")     return "Wire";
+  if (p === "bluesky")  return "Bluesky";
+  return "Telegram";
 }
 
 export default function PostCard({

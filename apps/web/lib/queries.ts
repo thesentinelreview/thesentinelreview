@@ -42,6 +42,12 @@ const SQL_INTERVALS: Record<TimeRange, string> = {
   "30d": "30 days",
 };
 
+const WINDOW_DAYS: Record<TimeRange, number> = {
+  "24h": 1,
+  "7d":  7,
+  "30d": 30,
+};
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -76,7 +82,8 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
   if (!isDatabaseConfigured()) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
-  const interval = SQL_INTERVALS[timeRange];
+  const interval   = SQL_INTERVALS[timeRange];
+  const windowDays = WINDOW_DAYS[timeRange];
 
   try {
     type Row = {
@@ -88,7 +95,7 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 
     const row = await queryOne<Row>(
       `
-      WITH window_24h AS (
+      WITH window_events AS (
         SELECT *
         FROM events
         WHERE published_at IS NOT NULL
@@ -103,18 +110,18 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       )
       SELECT
-        (SELECT count(*) FROM window_24h)::int AS events,
-        (SELECT count(*) FROM window_24h WHERE event_type = 'strike')::int AS strikes,
+        (SELECT count(*) FROM window_events)::int AS events,
+        (SELECT count(*) FROM window_events WHERE event_type = 'strike')::int AS strikes,
         (SELECT COALESCE(round(
            100.0 * count(*) FILTER (WHERE confidence = 'verified')::numeric
            / NULLIF(count(*), 0)
-         ), 0)::int FROM window_24h) AS verified_pct,
+         ), 0)::int FROM window_events) AS verified_pct,
         (SELECT COALESCE(round(
-           100.0 * ((SELECT count(*) FROM window_24h)::numeric - daily_avg)
+           100.0 * ((SELECT count(*) FROM window_events)::numeric / $5::numeric - daily_avg)
            / NULLIF(daily_avg, 0)
          ), 0)::int FROM prev_7d) AS vs_7d_avg_pct
       `,
-      [minLng, minLat, maxLng, maxLat],
+      [minLng, minLat, maxLng, maxLat, windowDays],
     );
 
     if (!row) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
@@ -341,15 +348,22 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
         JOIN events e ON e.id = es.event_id
         WHERE e.occurred_at > now() - INTERVAL '24 hours'
           AND e.published_at IS NOT NULL
-          AND ST_Within(e.location, ST_MakeEnvelope($3, $4, $5, $6, 4326))
+          AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
       WHERE s.is_active = true
-        AND s.theater = $2
+        AND s.id IN (
+          SELECT DISTINCT es2.source_id
+          FROM event_sources es2
+          JOIN events e2 ON e2.id = es2.event_id
+          WHERE e2.published_at IS NOT NULL
+            AND e2.occurred_at > now() - INTERVAL '30 days'
+            AND ST_Within(e2.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
+        )
       ORDER BY events_count DESC, verified_rate DESC
       LIMIT $1
       `,
-      [limit, theater, minLng, minLat, maxLng, maxLat],
+      [limit, minLng, minLat, maxLng, maxLat],
     );
 
     if (!rows.length) return [];
