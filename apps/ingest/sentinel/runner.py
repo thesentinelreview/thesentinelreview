@@ -12,13 +12,14 @@ import sys
 from datetime import UTC, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 import httpx
 import structlog
 
 if TYPE_CHECKING:
     from sentinel.checks import CheckResult
+    from sentinel.worker import JobOutcome
 
 log = structlog.get_logger()
 
@@ -35,32 +36,167 @@ def _configure_logging() -> None:
     )
 
 
-def _drain_queue() -> int:
-    """Process all pending jobs until queue empty. Returns jobs processed."""
-    from sentinel.worker import _process_one
+class _AllJobsFailed(RuntimeError):
+    """Raised by _drain_queue when every job processed in a run raised."""
 
-    count = 0
+    def __init__(self, outcomes: list[JobOutcome]) -> None:
+        self.outcomes = outcomes
+        modes = sorted({f"{o.error_type}: {o.error}" for o in outcomes if o.failed})
+        super().__init__(f"all {len(outcomes)} job(s) failed — " + " | ".join(modes))
+
+
+def _drain_queue() -> list[JobOutcome]:
+    """Process all ready jobs until the queue drains; return per-job outcomes.
+
+    A failing *source* (handler exception) is recorded but does not stop the
+    run: the worker marks its job failed/retry and draining continues to the
+    next job. A failing *plumbing* call (claim/complete/fail) stops the drain
+    so we don't spin in a hot loop. If every processed job failed, this raises
+    _AllJobsFailed so the caller can surface a total wipeout loudly.
+    """
+    from sentinel.worker import JobOutcome, _process_one
+
+    outcomes: list[JobOutcome] = []
     while True:
         try:
-            did_work = _process_one()
-        except Exception:
-            log.exception("job_error")
-            did_work = False
-        if not did_work:
+            outcome = _process_one()
+        except Exception as exc:  # claim/complete/fail plumbing failure
+            log.exception("drain_loop_error")
+            outcomes.append(
+                JobOutcome(
+                    processed=True,
+                    failed=True,
+                    error_type=type(exc).__name__,
+                    error=str(exc),
+                )
+            )
             break
-        count += 1
-    return count
+        if not outcome.processed:
+            break
+        if outcome.failed:
+            log.warning(
+                "ingest_source_failed",
+                job_type=outcome.job_type,
+                source_id=outcome.source_id,
+                error_type=outcome.error_type,
+                error=outcome.error,
+            )
+        outcomes.append(outcome)
+
+    processed = [o for o in outcomes if o.processed]
+    if processed and all(o.failed for o in processed):
+        raise _AllJobsFailed(processed)
+    return outcomes
+
+
+def _strict_mode_enabled() -> bool:
+    """SENTINEL_STRICT_MODE kill-switch (default on). Set to a falsy value to
+    let a zero-write run exit 0 — for debugging without alert fatigue."""
+    return os.environ.get("SENTINEL_STRICT_MODE", "true").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+
+
+class _RunSummary(NamedTuple):
+    posts_written_total: int
+    sources_attempted: int
+    sources_succeeded: int
+    sources_empty: int
+    sources_failed_with_error: int
+
+
+def _summarize(outcomes: list[JobOutcome], posts_by_source: dict[str, int]) -> _RunSummary:
+    """Classify each attempted source as succeeded (wrote posts), empty (ran
+    clean but wrote nothing), or failed (raised). A source that both failed and
+    wrote posts counts as failed — the error is the signal worth surfacing."""
+    ingest = [o for o in outcomes if o.job_type == "ingest_source"]
+    attempted = {o.source_id for o in ingest if o.source_id}
+    failed = {o.source_id for o in ingest if o.failed and o.source_id}
+    succeeded = {s for s in attempted if s not in failed and posts_by_source.get(s, 0) > 0}
+    empty = {s for s in attempted if s not in failed and posts_by_source.get(s, 0) == 0}
+    return _RunSummary(
+        posts_written_total=sum(posts_by_source.values()),
+        sources_attempted=len(attempted),
+        sources_succeeded=len(succeeded),
+        sources_empty=len(empty),
+        sources_failed_with_error=len(failed),
+    )
+
+
+def _db_now() -> datetime:
+    """Server clock, so the run-start boundary matches raw_posts.ingested_at
+    (also a DB now()) and we don't trip over host/DB clock skew."""
+    from sentinel.db import get_conn
+
+    with get_conn() as conn:
+        row = conn.execute("SELECT now() AS now").fetchone()
+    assert row is not None
+    return cast("datetime", cast("dict[str, Any]", row)["now"])
+
+
+def _posts_written_since(since: datetime) -> dict[str, int]:
+    """raw_posts inserted at/after `since`, counted per source id (as str)."""
+    from sentinel.db import get_conn
+
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT source_id, COUNT(*) AS n FROM raw_posts "
+            "WHERE ingested_at >= %s GROUP BY source_id",
+            (since,),
+        ).fetchall()
+    data = cast("list[dict[str, Any]]", rows)
+    return {str(r["source_id"]): int(r["n"]) for r in data}
 
 
 def run_ingest() -> None:
-    """Enqueue all active-source ingest jobs then process until queue empty."""
+    """Enqueue all active-source ingest jobs, drain the queue, then report.
+
+    Exits non-zero (in strict mode) when the run wrote zero raw_posts, so a
+    silently-broken pipeline shows up as a failed workflow instead of green.
+    """
     _configure_logging()
     from sentinel.scheduler import _enqueue_ingest_jobs
 
-    count = _enqueue_ingest_jobs()
-    log.info("ingest_jobs_enqueued", count=count)
-    processed = _drain_queue()
-    log.info("ingest_complete", jobs_processed=processed)
+    strict = _strict_mode_enabled()
+    run_start = _db_now()
+
+    enqueued = _enqueue_ingest_jobs()
+    log.info("ingest_jobs_enqueued", count=enqueued)
+
+    try:
+        outcomes = _drain_queue()
+    except _AllJobsFailed as exc:
+        outcomes = exc.outcomes
+        log.error("ingest_all_jobs_failed", error=str(exc))
+
+    posts_by_source = _posts_written_since(run_start)
+    summary = _summarize(outcomes, posts_by_source)
+
+    log.info(
+        "ingest_complete",
+        posts_written_total=summary.posts_written_total,
+        sources_succeeded=summary.sources_succeeded,
+        sources_empty=summary.sources_empty,
+        sources_failed_with_error=summary.sources_failed_with_error,
+        jobs_enqueued=enqueued,
+        jobs_processed=len(outcomes),
+        strict_mode=strict,
+    )
+
+    if summary.posts_written_total == 0:
+        log.error(
+            "ingest_zero_write",
+            jobs_enqueued=enqueued,
+            sources_attempted=summary.sources_attempted,
+            sources_failed_with_error=summary.sources_failed_with_error,
+            strict_mode=strict,
+        )
+        if strict:
+            sys.exit(1)
+
     sys.exit(0)
 
 
@@ -71,8 +207,12 @@ def run_briefing() -> None:
 
     _enqueue_briefing_job()
     log.info("briefing_job_enqueued")
-    processed = _drain_queue()
-    log.info("briefing_complete", jobs_processed=processed)
+    try:
+        outcomes = _drain_queue()
+    except _AllJobsFailed as exc:
+        log.error("briefing_all_jobs_failed", error=str(exc))
+        sys.exit(1)
+    log.info("briefing_complete", jobs_processed=len(outcomes))
     sys.exit(0)
 
 
