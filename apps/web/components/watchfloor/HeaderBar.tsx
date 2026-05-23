@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
 import { UserButton } from "@clerk/nextjs";
 import SentinelMark from "./SentinelMark";
 
@@ -8,7 +11,6 @@ export interface ControlOption {
   active: boolean;
 }
 
-// Native disclosure dropdown — no client JS. Options are links that set URL params.
 function HeaderDropdown({
   srLabel,
   current,
@@ -18,8 +20,11 @@ function HeaderDropdown({
   current: string;
   options: ControlOption[];
 }) {
+  const ref = useRef<HTMLDetailsElement>(null);
+  const close = () => ref.current?.removeAttribute("open");
+
   return (
-    <details className="relative [&_summary::-webkit-details-marker]:hidden">
+    <details ref={ref} className="relative [&_summary::-webkit-details-marker]:hidden">
       <summary
         className="list-none cursor-pointer bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300 select-none hover:border-zinc-700"
         aria-label={srLabel}
@@ -31,6 +36,7 @@ function HeaderDropdown({
           <Link
             key={o.label}
             href={o.href}
+            onClick={close}
             className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
               o.active ? "text-amber-300 bg-amber-500/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
             }`}
