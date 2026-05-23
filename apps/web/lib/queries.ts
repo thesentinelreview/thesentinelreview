@@ -921,7 +921,6 @@ export async function getAllSources(): Promise<SourceDetail[]> {
       events_30d: string | number;
       last_event_at: Date | null;
       events_today: string | number;
-      events_7d: string | number;
     };
 
     const rows = await query<Row>(`
@@ -935,8 +934,7 @@ export async function getAllSources(): Promise<SourceDetail[]> {
         COALESCE(sr.verified_rate_30d, 0)::int  AS verified_rate,
         COALESCE(sr.events_30d, 0)::int         AS events_30d,
         sr.last_event_at                        AS last_event_at,
-        COALESCE(today.cnt, 0)::int             AS events_today,
-        COALESCE(week.cnt, 0)::int              AS events_7d
+        COALESCE(today.cnt, 0)::int             AS events_today
       FROM sources s
       LEFT JOIN source_reliability sr ON sr.source_id = s.id
       LEFT JOIN (
@@ -947,14 +945,6 @@ export async function getAllSources(): Promise<SourceDetail[]> {
           AND e.published_at IS NOT NULL
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
-      LEFT JOIN (
-        SELECT es.source_id, COUNT(DISTINCT es.event_id) AS cnt
-        FROM event_sources es
-        JOIN events e ON e.id = es.event_id
-        WHERE e.occurred_at > now() - INTERVAL '7 days'
-          AND e.published_at IS NOT NULL
-        GROUP BY es.source_id
-      ) week ON week.source_id = s.id
       WHERE s.is_active = true
       ORDER BY events_30d DESC, verified_rate DESC, s.handle ASC
     `);
@@ -967,9 +957,8 @@ export async function getAllSources(): Promise<SourceDetail[]> {
       events_count: Number(r.events_today) || 0,
       verified_rate: Number(r.verified_rate) || 0,
       url: r.url ?? "",
-      events_7d: Number(r.events_7d) || 0,
       events_30d: Number(r.events_30d) || 0,
-      last_event_at: r.last_event_at ? new Date(r.last_event_at).toISOString() : new Date(0).toISOString(),
+      last_event_at: r.last_event_at ? new Date(r.last_event_at).toISOString() : null,
       trust_tier: (r.trust_tier as 1 | 2 | 3) ?? 2,
       notes: r.notes ?? "",
     }));

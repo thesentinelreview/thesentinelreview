@@ -5,7 +5,8 @@ import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-function fmtRelativeDate(iso: string): string {
+function fmtRelativeDate(iso: string | null): string {
+  if (!iso) return "—";
   const d = new Date(iso);
   if (!d.getTime()) return "—";
   const mins = Math.floor((Date.now() - d.getTime()) / 60000);

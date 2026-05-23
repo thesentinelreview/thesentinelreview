@@ -1,66 +1,84 @@
 import type { Metadata } from "next";
-import {
-  IBM_Plex_Sans,
-  IBM_Plex_Mono,
-  IBM_Plex_Sans_Condensed,
-  Playfair_Display,
-  Source_Sans_3,
-  Courier_Prime,
-  Inter,
-  JetBrains_Mono,
-} from "next/font/google";
+import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import DemoBanner from "@/components/DemoBanner";
 import { getLiveDataStatus } from "@/lib/queries";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
-  weight: ["400", "500", "600"],
-  subsets: ["latin"],
+const plexSans = localFont({
+  src: [
+    { path: "../public/fonts/ibm-plex-sans/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/ibm-plex-sans/500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/ibm-plex-sans/600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-plex-sans",
 });
 
-const plexMono = IBM_Plex_Mono({
-  weight: ["400", "500", "600"],
-  subsets: ["latin"],
+const plexMono = localFont({
+  src: [
+    { path: "../public/fonts/ibm-plex-mono/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/ibm-plex-mono/500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/ibm-plex-mono/600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-plex-mono",
 });
 
-const plexCondensed = IBM_Plex_Sans_Condensed({
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
+const plexCondensed = localFont({
+  src: [
+    { path: "../public/fonts/ibm-plex-sans-condensed/500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/ibm-plex-sans-condensed/600.woff2", weight: "600", style: "normal" },
+    { path: "../public/fonts/ibm-plex-sans-condensed/700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-plex-condensed",
 });
 
-const playfair = Playfair_Display({
-  weight: ["400", "700", "900"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
+const playfair = localFont({
+  src: [
+    { path: "../public/fonts/playfair-display/400.woff2",        weight: "400", style: "normal" },
+    { path: "../public/fonts/playfair-display/700.woff2",        weight: "700", style: "normal" },
+    { path: "../public/fonts/playfair-display/900.woff2",        weight: "900", style: "normal" },
+    { path: "../public/fonts/playfair-display/400-italic.woff2", weight: "400", style: "italic" },
+    { path: "../public/fonts/playfair-display/700-italic.woff2", weight: "700", style: "italic" },
+    { path: "../public/fonts/playfair-display/900-italic.woff2", weight: "900", style: "italic" },
+  ],
   variable: "--font-playfair",
 });
 
-const sourceSans = Source_Sans_3({
-  weight: ["300", "400", "600"],
-  subsets: ["latin"],
+const sourceSans = localFont({
+  src: [
+    { path: "../public/fonts/source-sans-3/300.woff2", weight: "300", style: "normal" },
+    { path: "../public/fonts/source-sans-3/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/source-sans-3/600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-source-sans",
 });
 
-const courierPrime = Courier_Prime({
-  weight: ["400", "700"],
-  subsets: ["latin"],
+const courierPrime = localFont({
+  src: [
+    { path: "../public/fonts/courier-prime/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/courier-prime/700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-courier-prime",
 });
 
 // Watchfloor dashboard fonts
-const inter = Inter({
-  weight: ["400", "500", "600", "700", "800"],
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    { path: "../public/fonts/inter/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/inter/500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/inter/600.woff2", weight: "600", style: "normal" },
+    { path: "../public/fonts/inter/700.woff2", weight: "700", style: "normal" },
+    { path: "../public/fonts/inter/800.woff2", weight: "800", style: "normal" },
+  ],
   variable: "--font-inter",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  weight: ["400", "500", "600"],
-  subsets: ["latin"],
+const jetbrainsMono = localFont({
+  src: [
+    { path: "../public/fonts/jetbrains-mono/400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/jetbrains-mono/500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/jetbrains-mono/600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-jetbrains",
 });
 

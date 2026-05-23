@@ -110,9 +110,8 @@ export interface FullBriefing extends BriefingData {
 
 export interface SourceDetail extends Source {
   url: string;
-  events_7d: number;
   events_30d: number;
-  last_event_at: string;
+  last_event_at: string | null;
   trust_tier: 1 | 2 | 3;
   notes: string;
 }

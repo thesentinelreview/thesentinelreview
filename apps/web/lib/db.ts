@@ -2,7 +2,6 @@ import { Pool, type QueryResultRow } from "pg";
 
 // Store on globalThis so Next.js HMR module re-evaluations don't leak pools.
 declare global {
-  // eslint-disable-next-line no-var
   var __pgPool: Pool | undefined;
 }
 

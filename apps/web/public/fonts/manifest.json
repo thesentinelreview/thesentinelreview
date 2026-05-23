@@ -1,0 +1,214 @@
+{
+  "ibm-plex-sans": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/ibm-plex-sans/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-sans/500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-sans/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      }
+    ]
+  },
+  "ibm-plex-mono": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/ibm-plex-mono/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-mono/500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-mono/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      }
+    ]
+  },
+  "ibm-plex-sans-condensed": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/ibm-plex-sans-condensed/500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-sans-condensed/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/ibm-plex-sans-condensed/700.woff2",
+        "weight": "700",
+        "style": "normal"
+      }
+    ]
+  },
+  "playfair-display": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/playfair-display/400-italic.woff2",
+        "weight": "400",
+        "style": "italic"
+      },
+      {
+        "file": "/fonts/playfair-display/700-italic.woff2",
+        "weight": "700",
+        "style": "italic"
+      },
+      {
+        "file": "/fonts/playfair-display/900-italic.woff2",
+        "weight": "900",
+        "style": "italic"
+      },
+      {
+        "file": "/fonts/playfair-display/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/playfair-display/700.woff2",
+        "weight": "700",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/playfair-display/900.woff2",
+        "weight": "900",
+        "style": "normal"
+      }
+    ]
+  },
+  "source-sans-3": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/source-sans-3/300.woff2",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/source-sans-3/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/source-sans-3/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      }
+    ]
+  },
+  "courier-prime": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/courier-prime/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/courier-prime/700.woff2",
+        "weight": "700",
+        "style": "normal"
+      }
+    ]
+  },
+  "inter": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/inter/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/inter/500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/inter/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/inter/700.woff2",
+        "weight": "700",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/inter/800.woff2",
+        "weight": "800",
+        "style": "normal"
+      }
+    ]
+  },
+  "jetbrains-mono": {
+    "isVariable": false,
+    "weights": [],
+    "styles": [
+      "normal"
+    ],
+    "files": [
+      {
+        "file": "/fonts/jetbrains-mono/400.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/jetbrains-mono/500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "/fonts/jetbrains-mono/600.woff2",
+        "weight": "600",
+        "style": "normal"
+      }
+    ]
+  }
+}

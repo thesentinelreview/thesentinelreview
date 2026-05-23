@@ -35,3 +35,4 @@ packages = ["src/bsky_osint"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
