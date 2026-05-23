@@ -53,3 +53,26 @@ jobs:
           SENTINEL_ALERT_WEBHOOK_URL: ${{ secrets.SENTINEL_ALERT_WEBHOOK_URL }}
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-checks
+
+  notify-failure:
+    needs: [ingest]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          BODY="**Workflow:** Sentinel — Ingest Sources
+          **Run:** ${RUN_URL}
+          **Time:** $(date -u '+%Y-%m-%d %H:%M UTC')
+
+          Fetch the run logs at the link above, identify the failing step, and push a fix."
+          gh issue create \
+            --repo "$REPO" \
+            --title "pipeline failure: Sentinel — Ingest Sources ($(date -u '+%Y-%m-%d %H:%M UTC'))" \
+            --body "$BODY"
