@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 May 2026 03:38:20 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 23 May 2026 10:00:52 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌏 How K-Pop and AI Are Reshaping the Dokdo/Takeshima Dispute | The Diplomat</title>
@@ -56,7 +56,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-memorial-day-weekend-edition-3">The War Zone</source>
       <description>This weekend, we remember those who gave their lives so we could live our&apos;s. The post Bunker Talk: Memorial Day Weekend Edition appeared first on The War Zone.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>3</sentinel:score>
     </item>
     <item>
       <title>🌏 Pyongyang Recalibrates: North Korea Between Russia, the United States, and Japan | The Diplomat</title>
@@ -76,7 +76,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japan-doubles-down-on-maritime-security-cooperation/">The Diplomat</source>
       <description>A recent visit highlights Tokyo’s seriousness.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ Navy green lights seven MUSV marketplace submissions to advance to prototype phase | Breaking Defense</title>
@@ -86,7 +86,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/05/navy-green-lights-seven-musv-marketplace-submissions-to-advance-to-prototype-phase/">Breaking Defense</source>
       <description>The Navy did not reveal which companies’ designs were selected to advance.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Washington’s latest force posture moves have Europeans feeling whiplash | Atlantic Council</title>
@@ -116,7 +116,7 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/">Defense News</source>
       <description>The itinerary is set to include briefings at Pituffik Space Base in Greenland on Arctic defense and strategic competition in the region.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🌍 The Iran problem won’t be solved without a counter-drone coalition | Atlantic Council</title>
@@ -176,7 +176,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/">Defense One</source>
       <description>With new DAWG initiative, the DOD is attempting to fix a historically slow-moving, broken acquisition pipeline.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ US Marine Corps tests using helicopter as mobile drone command center | Defense News</title>
@@ -246,7 +246,7 @@
       <category>Intelligence</category>
       <source url="https://www.defenseone.com/policy/2026/05/gabbard-resign-director-national-intelligence-citing-husbands-health/413736/">Defense One</source>
       <description>Her exit marks the end of a 16-month tenure overseeing the nation’s spy agencies.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 ‘Entry Into the Kyrgyz Republic Is Closed’: US Professor Denied Entry to Kyrgyzstan | The Diplomat</title>
@@ -266,7 +266,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/22/atropia-movie-film-review-iran-war-us-military-iraq/">Foreign Policy</source>
       <description>For a movie set 20 years ago, it has a surprising amount to say about today’s wars in the Middle East.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>3</sentinel:score>
     </item>
     <item>
       <title>🏛️ Congressional report tallies 42 US aircraft lost or damaged in Operation Epic Fury | Defense News</title>
@@ -276,7 +276,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/">Defense News</source>
       <description>Drones took the heaviest hit, accounting for 25 of the 42 aircraft losses listed in the report.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 The Next Pandemic Will Come From a Conflict Zone | Foreign Policy</title>
