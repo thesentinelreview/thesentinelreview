@@ -6,7 +6,7 @@ import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
 import PostCard from "@/components/PostCard";
 import type { Platform } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
-import { type FeedPost, getFirehosePosts, getWatchInfo } from "@/lib/queries";
+import { type FeedPost, getSourceFeedPosts, getWatchInfo } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +114,7 @@ export default async function SourceFeedPage({
   const before    = params.before;
   const { userId } = await auth();
 
-  const page = await getFirehosePosts(theater.id, { platforms, tiers, before });
+  const page = await getSourceFeedPosts(theater.id, { platforms, tiers, before });
   const groups = groupByDay(page.posts);
   const watchInfo = userId
     ? await getWatchInfo(userId, page.posts.map((p) => p.id))
@@ -227,8 +227,8 @@ export default async function SourceFeedPage({
             {theater.mapSubtitle}
           </div>
           <div className="text-[13px] text-zinc-400 leading-relaxed">
-            The unfiltered firehose — every OSINT post ingested for this theater, before AI
-            synthesis. Unverified and unprocessed; English-translated where available. Newest first.
+            Source posts linked to published events for this theater. Unverified and unprocessed;
+            English-translated where available. Newest first.
           </div>
         </div>
 
