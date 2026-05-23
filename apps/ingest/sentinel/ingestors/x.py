@@ -1,27 +1,26 @@
 """
-X / Twitter ingestor — STUB
+X / Twitter ingestor.
 
-X API v2 requires a paid subscription (Basic tier: ~$100/month) for useful
-read-access rate limits. This stub raises a clear error if called so the
-worker doesn't silently skip X sources.
+Uses the Twitter v2 /tweets/search/recent endpoint with bearer token auth.
+Requires a Basic tier API subscription (~$100/month) for useful rate limits.
 
-When ready to implement:
-  - Set X_BEARER_TOKEN in .env
-  - Replace the body of XIngestor.fetch() with calls to the v2 /tweets/search/recent
-    endpoint using httpx and the bearer token.
-  - Rate limit: 1 request / 15 min on Basic tier (~10 results/req)
-  - Consider archiving each tweet URL via web.archive.org at ingest time.
-
-See: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
+Set X_BEARER_TOKEN in .env to enable. Rate limit: 1 request / 15 min per
+endpoint on Basic tier, up to 100 results per request with pagination.
 """
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
+import httpx
 import structlog
 
 from sentinel.config import settings
 from sentinel.ingestors.base import BaseIngestor, RawPostData
 
 log = structlog.get_logger()
+
+_SEARCH_URL = "https://api.twitter.com/2/tweets/search/recent"
+_MAX_RESULTS = 100
 
 
 class XIngestor(BaseIngestor):
@@ -34,8 +33,47 @@ class XIngestor(BaseIngestor):
             )
             return []
 
-        # TODO: implement when API budget is approved
-        raise NotImplementedError(
-            "X ingestor not yet implemented. Set X_BEARER_TOKEN and implement "
-            "the v2 /tweets/search/recent call in sentinel/ingestors/x.py"
-        )
+        handle = self.source["handle"].lstrip("@")
+        since_dt = datetime.now(tz=timezone.utc) - timedelta(hours=since_hours)
+        start_time = since_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        headers = {"Authorization": f"Bearer {settings.x_bearer_token}"}
+        params: dict[str, str | int] = {
+            "query": f"from:{handle}",
+            "tweet.fields": "created_at,lang",
+            "max_results": _MAX_RESULTS,
+            "start_time": start_time,
+        }
+
+        results: list[RawPostData] = []
+        try:
+            with httpx.Client(timeout=30) as client:
+                while True:
+                    resp = client.get(_SEARCH_URL, headers=headers, params=params)
+                    if resp.status_code == 429:
+                        log.warning("x_rate_limited", handle=handle)
+                        break
+                    resp.raise_for_status()
+                    data = resp.json()
+                    for tweet in data.get("data") or []:
+                        results.append(
+                            RawPostData(
+                                external_id=tweet["id"],
+                                posted_at=datetime.fromisoformat(
+                                    tweet["created_at"].replace("Z", "+00:00")
+                                ),
+                                text=tweet["text"],
+                                media_urls=[],
+                                archive_url=f"https://x.com/{handle}/status/{tweet['id']}",
+                                lang=tweet.get("lang"),
+                            )
+                        )
+                    next_token = data.get("meta", {}).get("next_token")
+                    if not next_token:
+                        break
+                    params["pagination_token"] = next_token
+        except httpx.HTTPError as exc:
+            log.error("x_fetch_error", handle=handle, error=str(exc))
+
+        log.debug("x_fetched", handle=handle, count=len(results))
+        return results
