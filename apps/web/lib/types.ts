@@ -1,6 +1,6 @@
 export type EventType = "strike" | "clash" | "movement";
 export type Confidence = "verified" | "partial" | "unconfirmed";
-export type Platform = "x" | "telegram" | "rss" | "wire";
+export type Platform = "x" | "telegram" | "rss" | "wire" | "bluesky";
 export type TheaterKey = "ukraine" | "iran" | "sudan" | "myanmar";
 
 export interface TheaterConfig {
