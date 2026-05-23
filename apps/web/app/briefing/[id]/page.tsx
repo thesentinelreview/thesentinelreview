@@ -48,7 +48,7 @@ export default async function BriefingPage({
           <div className={s.title}>{theater.briefingTitle}</div>
           <div className={s.actions}>
             <span className={s.badge}>{brief.reviewed ? "Reviewed" : "AI Draft"}</span>
-            <span className={`${s.badge} ${s.badgeAction}`}>Embed ↗</span>
+            <a href="#embed-this-briefing" className={`${s.badge} ${s.badgeAction}`}>Embed ↗</a>
           </div>
         </div>
         <div className={s.byline}>
@@ -67,7 +67,7 @@ export default async function BriefingPage({
               <p key={i} className={s.briefingP}>{p}</p>
             ))}
 
-            <div className={s.embedCode}>
+            <div className={s.embedCode} id="embed-this-briefing">
               <div className={s.embedLabel}>Embed this briefing</div>
               <textarea
                 className={s.embedInput}

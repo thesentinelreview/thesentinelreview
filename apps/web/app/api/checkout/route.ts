@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
+import { tierForPriceId } from "@/lib/stripe";
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -12,9 +13,12 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { priceId } = (await req.json()) as { priceId: string };
+  const { priceId } = (await req.json()) as { priceId?: string };
   if (!priceId) {
     return Response.json({ error: "priceId required" }, { status: 400 });
+  }
+  if (!tierForPriceId(priceId)) {
+    return Response.json({ error: "Unknown priceId" }, { status: 400 });
   }
 
   try {

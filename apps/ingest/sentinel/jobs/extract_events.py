@@ -109,9 +109,13 @@ def _process_post(
         log.debug("post_skipped", post_id=str(post_id), reason=result.skip_reason)
         return
 
-    # All required fields must be present
-    if not all([result.event_type, result.occurred_at, result.lat, result.lng,
-                result.location_name, result.oblast, result.description]):
+    # All required fields must be present. Use `is None` so that a legitimate
+    # 0.0 latitude/longitude (equator/prime meridian) is not treated as missing.
+    required = [
+        result.event_type, result.occurred_at, result.lat, result.lng,
+        result.location_name, result.oblast, result.description,
+    ]
+    if any(v is None for v in required):
         mark_post_processed(conn, post_id, skip_reason="incomplete_extraction")
         log.warning("incomplete_extraction", post_id=str(post_id))
         return
@@ -191,8 +195,7 @@ def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> 
             e.confidence,
             e.held_for_review,
             COUNT(DISTINCT es.source_id)                             AS source_count,
-            COUNT(DISTINCT s.platform)                               AS platform_count,
-            MAX(s.trust_tier)                                        AS min_trust_tier
+            COUNT(DISTINCT s.platform)                               AS platform_count
         FROM events e
         JOIN event_sources es ON es.event_id = e.id
         JOIN sources s        ON s.id = es.source_id

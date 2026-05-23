@@ -188,7 +188,10 @@ export default async function EventDetailPage({
               </div>
               <div className={s.metaRow}>
                 <div className={s.metaLabel}>Coordinates</div>
-                <div className={s.metaValue}>{evt.lat.toFixed(4)}°N {evt.lng.toFixed(4)}°E</div>
+                <div className={s.metaValue}>
+                  {Math.abs(evt.lat).toFixed(4)}°{evt.lat >= 0 ? "N" : "S"}{" "}
+                  {Math.abs(evt.lng).toFixed(4)}°{evt.lng >= 0 ? "E" : "W"}
+                </div>
               </div>
               <div className={s.metaRow}>
                 <div className={s.metaLabel}>Occurred at</div>
