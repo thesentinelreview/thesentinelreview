@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 May 2026 17:07:28 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 24 May 2026 04:00:05 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌏 How K-Pop and AI Are Reshaping the Dokdo/Takeshima Dispute | The Diplomat</title>
@@ -36,7 +36,7 @@
       <category>Indo-Pacific</category>
       <source url="https://www.defenseone.com/threats/2026/05/space-force-needs-prepare-person-moon-conflict-china-new-report-argues/413747/">Defense One</source>
       <description>Guardians need a human spaceflight program for future lunar missions, Mitchell Institute says.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Federal Education Support Centers Still Fill Key State Gaps | RAND</title>
@@ -56,7 +56,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/the-us-china-summit-from-a-japanese-perspective/">The Diplomat</source>
       <description>Tensions are unlikely to ease.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🌏 Japan and South Korea: Friends, With Limits | The Diplomat</title>
@@ -66,7 +66,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japan-and-south-korea-friends-with-limits/">The Diplomat</source>
       <description>The two neighbors are drawing closer, but North Korea remains a dividing line.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>📍 Bunker Talk: Memorial Day Weekend Edition | The War Zone</title>
@@ -96,7 +96,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japan-doubles-down-on-maritime-security-cooperation/">The Diplomat</source>
       <description>A recent visit highlights Tokyo’s seriousness.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏛️ Navy green lights seven MUSV marketplace submissions to advance to prototype phase | Breaking Defense</title>
@@ -106,7 +106,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/05/navy-green-lights-seven-musv-marketplace-submissions-to-advance-to-prototype-phase/">Breaking Defense</source>
       <description>The Navy did not reveal which companies’ designs were selected to advance.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Washington’s latest force posture moves have Europeans feeling whiplash | Atlantic Council</title>
@@ -136,7 +136,7 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/">Defense News</source>
       <description>The itinerary is set to include briefings at Pituffik Space Base in Greenland on Arctic defense and strategic competition in the region.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🌍 The Iran problem won’t be solved without a counter-drone coalition | Atlantic Council</title>
@@ -146,7 +146,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/dispatches/the-iran-problem-wont-be-solved-without-a-counter-drone-coalition/">Atlantic Council</source>
       <description>The United States should form a partnership with Ukraine and Gulf partners around the idea of counter-drone-as-a-service, instead of selling counter-drone hardware alone. The post The Iran problem won’t be solved without a counter-drone coalition appeared first on Atlantic…</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 Trump’s About-Face on U.S. Troops in Poland Mystifies Allies | Foreign Policy</title>
@@ -166,7 +166,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/">Defense News</source>
       <description>Secretary of State Marco Rubio is casting new doubt on NATO&apos;s relevance after key allies recoiled from backing Washington’s “Operation Epic Fury.”</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 What the U.S. Should Have Learned From Past Ebola Outbreaks | Foreign Policy</title>
@@ -206,7 +206,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/your-marine-corps/2026/05/22/us-marine-corps-tests-using-helicopter-as-mobile-drone-command-center/">Defense News</source>
       <description>During the test, troops launched a Neros Archer FPV drone from the ground before transferring control to operators aboard a helicopter orbiting miles away.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🕵️ We Finally See The Mysterious Object Shot Down By F-16s Over Lake Huron | The War Zone</title>
@@ -286,7 +286,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/22/atropia-movie-film-review-iran-war-us-military-iraq/">Foreign Policy</source>
       <description>For a movie set 20 years ago, it has a surprising amount to say about today’s wars in the Middle East.</description>
-      <sentinel:score>3</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🏛️ Congressional report tallies 42 US aircraft lost or damaged in Operation Epic Fury | Defense News</title>
@@ -306,7 +306,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/22/ebola-outbreak-congo-uganda-pandemic-preparedness-conflict/">Foreign Policy</source>
       <description>The latest Ebola outbreak underscores a central flaw with the global preparedness model.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
   </channel>
 </rss>
