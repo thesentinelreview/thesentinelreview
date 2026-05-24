@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 24 May 2026 04:00:05 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 24 May 2026 10:02:44 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌏 How K-Pop and AI Are Reshaping the Dokdo/Takeshima Dispute | The Diplomat</title>
@@ -26,6 +26,16 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japans-frigate-diplomacy-and-what-it-could-mean-for-taiwan/">The Diplomat</source>
       <description>Can Japan become a second major democratic partner for Taiwan’s defense industry?</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ Smaller, easier, smarter: what special operations forces need from AI, now | Defense One</title>
+      <link>https://www.defenseone.com/technology/2026/05/smaller-easier-smarter-what-special-operations-forces-need-ai-now/413748/</link>
+      <guid isPermaLink="true">https://www.defenseone.com/technology/2026/05/smaller-easier-smarter-what-special-operations-forces-need-ai-now/413748/</guid>
+      <pubDate>Sun, 24 May 2026 04:37:39 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.defenseone.com/technology/2026/05/smaller-easier-smarter-what-special-operations-forces-need-ai-now/413748/">Defense One</source>
+      <description>AI agents are coming to a special operations mission near you—if they can fit in the pack.</description>
       <sentinel:score>8</sentinel:score>
     </item>
     <item>
@@ -56,7 +66,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/the-us-china-summit-from-a-japanese-perspective/">The Diplomat</source>
       <description>Tensions are unlikely to ease.</description>
-      <sentinel:score>4</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🌏 Japan and South Korea: Friends, With Limits | The Diplomat</title>
@@ -106,7 +116,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/05/navy-green-lights-seven-musv-marketplace-submissions-to-advance-to-prototype-phase/">Breaking Defense</source>
       <description>The Navy did not reveal which companies’ designs were selected to advance.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Washington’s latest force posture moves have Europeans feeling whiplash | Atlantic Council</title>
@@ -136,7 +146,7 @@
       <category>National Security</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/">Defense News</source>
       <description>The itinerary is set to include briefings at Pituffik Space Base in Greenland on Arctic defense and strategic competition in the region.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🌍 The Iran problem won’t be solved without a counter-drone coalition | Atlantic Council</title>
@@ -156,7 +166,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/22/trump-troops-poland-deployment-hegseth-nato-rutte-rubio/">Foreign Policy</source>
       <description>The abrupt policy reversal leaves NATO allies wondering to what extent the United States will defend Europe.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 Rubio ratchets up pressure on NATO at key summit | Defense News</title>
@@ -166,7 +176,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/">Defense News</source>
       <description>Secretary of State Marco Rubio is casting new doubt on NATO&apos;s relevance after key allies recoiled from backing Washington’s “Operation Epic Fury.”</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 What the U.S. Should Have Learned From Past Ebola Outbreaks | Foreign Policy</title>
@@ -196,7 +206,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/">Defense One</source>
       <description>With new DAWG initiative, the DOD is attempting to fix a historically slow-moving, broken acquisition pipeline.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ US Marine Corps tests using helicopter as mobile drone command center | Defense News</title>
@@ -206,7 +216,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/your-marine-corps/2026/05/22/us-marine-corps-tests-using-helicopter-as-mobile-drone-command-center/">Defense News</source>
       <description>During the test, troops launched a Neros Archer FPV drone from the ground before transferring control to operators aboard a helicopter orbiting miles away.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🕵️ We Finally See The Mysterious Object Shot Down By F-16s Over Lake Huron | The War Zone</title>
@@ -266,7 +276,7 @@
       <category>Intelligence</category>
       <source url="https://www.defenseone.com/policy/2026/05/gabbard-resign-director-national-intelligence-citing-husbands-health/413736/">Defense One</source>
       <description>Her exit marks the end of a 16-month tenure overseeing the nation’s spy agencies.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 ‘Entry Into the Kyrgyz Republic Is Closed’: US Professor Denied Entry to Kyrgyzstan | The Diplomat</title>
@@ -297,16 +307,6 @@
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/congressional-report-tallies-42-us-aircraft-lost-or-damaged-in-operation-epic-fury/">Defense News</source>
       <description>Drones took the heaviest hit, accounting for 25 of the 42 aircraft losses listed in the report.</description>
       <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>📍 The Next Pandemic Will Come From a Conflict Zone | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/ebola-outbreak-congo-uganda-pandemic-preparedness-conflict/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/ebola-outbreak-congo-uganda-pandemic-preparedness-conflict/</guid>
-      <pubDate>Fri, 22 May 2026 17:10:58 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/ebola-outbreak-congo-uganda-pandemic-preparedness-conflict/">Foreign Policy</source>
-      <description>The latest Ebola outbreak underscores a central flaw with the global preparedness model.</description>
-      <sentinel:score>5</sentinel:score>
     </item>
   </channel>
 </rss>
