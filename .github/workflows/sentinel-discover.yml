@@ -1,0 +1,40 @@
+name: sentinel-discover
+
+# Runs the mention-mining discovery job once per day.
+# Populates candidate_sources + candidate_mentions from raw_posts
+# ingested in the last 24h. Idempotent — safe to re-trigger.
+
+on:
+  schedule:
+    - cron: '15 5 * * *'   # 05:15 UTC daily (after the 5:00 ingest cycle)
+  workflow_dispatch:
+    inputs:
+      since_hours:
+        description: 'Look-back window in hours'
+        required: false
+        default: '24'
+
+jobs:
+  discover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "structlog>=24.4"
+          pip install --no-deps -e apps/ingest
+
+      - name: Discover candidate sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DISCOVER_SINCE_HOURS: ${{ github.event.inputs.since_hours || '24' }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m sentinel.jobs.discover_candidates
