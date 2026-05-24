@@ -86,13 +86,34 @@ class RSSIngestor(BaseIngestor):
         return results
 
 
+# Browser-like headers to bypass aggressive WAF / Cloudflare bot detection.
+# Polite "RSS aggregator" UAs are now widely flagged. Most public news feeds
+# only respond normally to UAs that look like a real desktop browser.
+# Pinning a specific Chrome version stays stable across runs and matches what
+# most automated tools use in 2026.
+_BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    ),
+    "Accept": (
+        "application/rss+xml, application/atom+xml, application/xml;q=0.9, "
+        "text/xml;q=0.9, text/html;q=0.8, */*;q=0.7"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+}
+
+
 def _fetch_feed(url: str, *, handle: str) -> bytes | None:
     try:
         response = httpx.get(
             url,
             timeout=_TIMEOUT,
             follow_redirects=True,
-            headers={"User-Agent": "Mozilla/5.0 (compatible; SentinelReview/0.1; RSS aggregator)"},
+            headers=_BROWSER_HEADERS,
         )
         response.raise_for_status()
         # Warn if the response doesn't look like a feed. Cloudflare challenge pages
