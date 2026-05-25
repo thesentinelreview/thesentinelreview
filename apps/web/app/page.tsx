@@ -9,6 +9,7 @@ import LiveStream from "@/components/watchfloor/LiveStream";
 import SectorThreat from "@/components/watchfloor/SectorThreat";
 import TimeScrubber from "@/components/watchfloor/TimeScrubber";
 import MapLegend from "@/components/watchfloor/MapLegend";
+import TimelineProvider from "@/components/watchfloor/TimelineProvider";
 import type { EventType } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
 import {
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
 const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
 const WATCH_WINDOWS: TimeRange[] = ["24h", "7d"];
 const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30d": "30D" };
+const WINDOW_MS: Record<TimeRange, number> = { "24h": 86_400_000, "7d": 604_800_000, "30d": 2_592_000_000 };
 
 const TYPE_META: { type: EventType; label: string; dot: string }[] = [
   { type: "strike", label: "Strike", dot: "bg-red-500" },
@@ -123,25 +125,27 @@ export default async function WatchfloorPage({
       <SensorStrip />
       <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} />
 
-      <div className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
-        {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
-        <section className="h-[42vh] flex-none md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
-          <MapWrapper
-            events={mapEvents}
-            center={mapCenter}
-            zoom={mapZoom}
-            visibleTypes={visibleTypes}
-            palette="watch"
-          />
-          <MapLegend items={legendItems} />
-        </section>
+      <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
+        <div className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
+          {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
+          <section className="h-[42vh] flex-none md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+            <MapWrapper
+              events={mapEvents}
+              center={mapCenter}
+              zoom={mapZoom}
+              visibleTypes={visibleTypes}
+              palette="watch"
+            />
+            <MapLegend items={legendItems} />
+          </section>
 
-        <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
-        <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none md:col-span-3" />
-        <SectorThreat intensity={intensity} className="flex-none md:col-span-2" />
-      </div>
+          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
+          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none md:col-span-3" />
+          <SectorThreat intensity={intensity} className="flex-none md:col-span-2" />
+        </div>
 
-      <TimeScrubber />
+        <TimeScrubber />
+      </TimelineProvider>
     </div>
   );
 }
