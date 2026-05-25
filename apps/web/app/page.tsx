@@ -141,7 +141,7 @@ export default async function WatchfloorPage({
           </section>
 
           <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
-          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none max-h-[280px] md:col-span-3" />
+          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none max-h-[280px] md:max-h-none md:col-span-3" />
           <SectorThreat intensity={intensity} className="flex-none md:col-span-2" />
         </div>
 
