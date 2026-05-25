@@ -146,6 +146,98 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 }
 
 // ---------------------------------------------------------------------------
+// Fusion rate — share of window events corroborated by 2+ distinct sources
+// ---------------------------------------------------------------------------
+
+export async function getFusionRate(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange = "24h",
+): Promise<number | null> {
+  if (!isDatabaseConfigured()) return null;
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
+
+  try {
+    const row = await queryOne<{ total: string | number; fused: string | number }>(
+      `
+      WITH we AS (
+        SELECT e.id
+        FROM events e
+        WHERE e.published_at IS NOT NULL
+          AND e.occurred_at > now() - INTERVAL '${interval}'
+          AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      ),
+      sc AS (
+        SELECT we.id, count(DISTINCT es.source_id) AS sources
+        FROM we
+        LEFT JOIN event_sources es ON es.event_id = we.id
+        GROUP BY we.id
+      )
+      SELECT
+        count(*)::int                             AS total,
+        count(*) FILTER (WHERE sources >= 2)::int AS fused
+      FROM sc
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    const total = Number(row?.total) || 0;
+    if (total === 0) return null;            // no events → render "—", not "0%"
+    return Math.round((Number(row?.fused) || 0) / total * 100);
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Median TTV — median(published_at − primary source's posted_at), in minutes
+// ---------------------------------------------------------------------------
+
+export async function getMedianTTV(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange = "24h",
+): Promise<number | null> {
+  if (!isDatabaseConfigured()) return null;
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
+
+  try {
+    const row = await queryOne<{ median_minutes: string | number | null }>(
+      `
+      WITH we AS (
+        SELECT e.id, e.published_at
+        FROM events e
+        WHERE e.published_at IS NOT NULL
+          AND e.occurred_at > now() - INTERVAL '${interval}'
+          AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      ),
+      prim AS (
+        -- One row per event: time from the (earliest) primary source post to
+        -- publication. Events without a primary source row are skipped.
+        SELECT we.published_at - min(rp.posted_at) AS ttv
+        FROM we
+        JOIN event_sources es ON es.event_id = we.id AND es.relationship = 'primary'
+        JOIN raw_posts rp     ON rp.id = es.raw_post_id
+        GROUP BY we.id, we.published_at
+      )
+      SELECT percentile_cont(0.5) WITHIN GROUP (
+               ORDER BY EXTRACT(EPOCH FROM ttv) / 60.0
+             ) AS median_minutes
+      FROM prim
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    if (row?.median_minutes == null) return null;
+    return Math.round(Number(row.median_minutes));
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Map events (last 24h)
 // ---------------------------------------------------------------------------
 
