@@ -68,6 +68,12 @@ export interface Stats {
   vs_7d_avg_pct: number;
 }
 
+export interface SensorStripData {
+  platforms: { tg: number; x: number; rss: number; gdelt: number; bsky: number };
+  latency_seconds: number | null; // median age of posts in the last 30 min
+  tracks: number;                  // distinct actors in the last 24h
+}
+
 export interface BriefingData {
   id: string;
   date: string;
