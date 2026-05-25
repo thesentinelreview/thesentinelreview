@@ -81,7 +81,7 @@ export default function BriefPane({
             </h2>
 
             <div
-              className="mt-3 text-[12.5px] text-zinc-300 leading-relaxed space-y-2.5 flex-1 min-h-0 overflow-y-auto pr-1"
+              className="mt-3 text-[12.5px] text-zinc-300 leading-relaxed space-y-2.5 flex-1 min-h-0 max-h-[280px] overflow-y-auto pr-1"
               style={{ textWrap: "pretty" }}
             >
               {body.map((p, i) => (
