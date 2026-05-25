@@ -22,6 +22,7 @@ import {
   getLatestBriefing,
   getFusionRate,
   getMedianTTV,
+  getSensorStripData,
   resolveTimeRange,
   type TimeRange,
 } from "@/lib/queries";
@@ -89,7 +90,7 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv] = await Promise.all([
+  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv, sensorData] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
     // Live Event Stream is always the last 24h, independent of the dashboard window.
@@ -100,6 +101,7 @@ export default async function WatchfloorPage({
     getSectors(theater.id),
     getFusionRate(theater.id, timeRange),
     getMedianTTV(theater.id, timeRange),
+    getSensorStripData(theater.id),
   ]);
 
   // Control models (server-driven via URL params).
@@ -134,7 +136,7 @@ export default async function WatchfloorPage({
         feedHref={`/app/feed?theater=${theater.id}`}
         isAuthed={!!userId}
       />
-      <SensorStrip />
+      <SensorStrip data={sensorData} />
       <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} />
 
       <TimelineProvider windowMs={WINDOW_MS[timeRange]}>

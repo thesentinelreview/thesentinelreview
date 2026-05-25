@@ -1,6 +1,7 @@
 import { isDatabaseConfigured, query, queryOne } from "./db";
 import type {
   Stats,
+  SensorStripData,
   MapEvent,
   Alert,
   IntensityDay,
@@ -234,6 +235,116 @@ export async function getMedianTTV(
     return Math.round(Number(row.median_minutes));
   } catch {
     return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sensor strip — live source-activity pulse for the selected theater
+// ---------------------------------------------------------------------------
+//
+// Scoping: raw_posts carry no location. A post in the last 30 min counts toward
+// the selected theater if either (a) it has produced a published event inside
+// the theater bbox, or (b) it has not produced any event yet and its source's
+// "majority theater" — the theater where most of that source's historical
+// published events land — is the selected theater. Sources with no event
+// history fall back to their first assigned theater (sources.theaters[1]).
+
+export async function getSensorStripData(theater: TheaterKey = "ukraine"): Promise<SensorStripData> {
+  const empty: SensorStripData = {
+    platforms: { tg: 0, x: 0, rss: 0, gdelt: 0, bsky: 0 },
+    latency_seconds: null,
+    tracks: 0,
+  };
+  if (!isDatabaseConfigured()) return empty;
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+
+  try {
+    type Row = {
+      tg: number; x: number; rss: number; gdelt: number; bsky: number;
+      latency_seconds: number | null;
+      tracks: number;
+    };
+
+    const row = await queryOne<Row>(
+      `
+      WITH src_theater AS (
+        SELECT es.source_id,
+          CASE
+            WHEN ST_Within(e.location, ST_MakeEnvelope(22, 44, 40, 52, 4326)) THEN 'ukraine'
+            WHEN ST_Within(e.location, ST_MakeEnvelope(92,  9,102, 29, 4326)) THEN 'myanmar'
+            WHEN ST_Within(e.location, ST_MakeEnvelope(21,  8, 42, 23, 4326)) THEN 'sudan'
+            WHEN ST_Within(e.location, ST_MakeEnvelope(32, 10, 64, 42, 4326)) THEN 'iran'
+          END AS theater
+        FROM event_sources es
+        JOIN events e ON e.id = es.event_id
+        WHERE e.published_at IS NOT NULL
+      ),
+      src_majority AS (
+        SELECT source_id, theater FROM (
+          SELECT source_id, theater,
+            row_number() OVER (PARTITION BY source_id ORDER BY count(*) DESC) AS rn
+          FROM src_theater
+          WHERE theater IS NOT NULL
+          GROUP BY source_id, theater
+        ) t WHERE rn = 1
+      ),
+      recent AS (
+        SELECT rp.posted_at, s.platform,
+          (
+            EXISTS (
+              SELECT 1 FROM event_sources es
+              JOIN events e ON e.id = es.event_id
+              WHERE es.raw_post_id = rp.id
+                AND e.published_at IS NOT NULL
+                AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+            )
+            OR (
+              NOT EXISTS (SELECT 1 FROM event_sources es2 WHERE es2.raw_post_id = rp.id)
+              AND COALESCE(
+                    (SELECT theater FROM src_majority sm WHERE sm.source_id = s.id),
+                    s.theaters[1]
+                  ) = $5
+            )
+          ) AS in_theater
+        FROM raw_posts rp
+        JOIN sources s ON s.id = rp.source_id
+        WHERE rp.posted_at > now() - INTERVAL '30 minutes'
+          AND s.is_active
+      ),
+      sel AS (SELECT * FROM recent WHERE in_theater)
+      SELECT
+        count(*) FILTER (WHERE platform = 'telegram')::int AS tg,
+        count(*) FILTER (WHERE platform = 'x')::int        AS x,
+        count(*) FILTER (WHERE platform = 'rss')::int      AS rss,
+        count(*) FILTER (WHERE platform = 'gdelt')::int    AS gdelt,
+        count(*) FILTER (WHERE platform = 'bluesky')::int  AS bsky,
+        round(EXTRACT(EPOCH FROM percentile_cont(0.5) WITHIN GROUP (ORDER BY (now() - posted_at))))::int AS latency_seconds,
+        (SELECT count(DISTINCT actor)::int FROM events
+           WHERE published_at IS NOT NULL
+             AND occurred_at > now() - INTERVAL '24 hours'
+             AND actor IS NOT NULL
+             AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))) AS tracks
+      FROM sel
+      `,
+      [minLng, minLat, maxLng, maxLat, theater],
+    );
+
+    if (!row) return empty;
+
+    return {
+      platforms: {
+        tg: Number(row.tg) || 0,
+        x: Number(row.x) || 0,
+        rss: Number(row.rss) || 0,
+        gdelt: Number(row.gdelt) || 0,
+        bsky: Number(row.bsky) || 0,
+      },
+      latency_seconds: row.latency_seconds == null ? null : Number(row.latency_seconds),
+      tracks: Number(row.tracks) || 0,
+    };
+  } catch {
+    return empty;
   }
 }
 
