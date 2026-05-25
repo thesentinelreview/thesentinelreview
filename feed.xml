@@ -6,8 +6,68 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 25 May 2026 04:11:40 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2026 11:59:22 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🏴 Europe Is Slowly Getting Ready to Ditch America | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/25/europe-trump-nato-leadership/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/25/europe-trump-nato-leadership/</guid>
+      <pubDate>Mon, 25 May 2026 11:00:20 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://foreignpolicy.com/2026/05/25/europe-trump-nato-leadership/">Foreign Policy</source>
+      <description>Trump’s bad bargains have shaken a complacent continent.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The Lessons of Sacrifice | War on the Rocks</title>
+      <link>https://warontherocks.com/the-lessons-of-sacrifice/</link>
+      <guid isPermaLink="true">https://warontherocks.com/the-lessons-of-sacrifice/</guid>
+      <pubDate>Mon, 25 May 2026 07:30:19 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://warontherocks.com/the-lessons-of-sacrifice/">War on the Rocks</source>
+      <description>On this Memorial Day, American servicemembers remain deployed across the world. Many are in harm’s way. This simple fact makes the day less abstract, more real. Memorial Day is not only about wars filed away in history, but also about lives lost in service to the nation and the…</description>
+      <sentinel:score>4</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The Political Truths of Literary Friendship | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/25/harold-bloom-friendship-review-literature-politics/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/25/harold-bloom-friendship-review-literature-politics/</guid>
+      <pubDate>Mon, 25 May 2026 07:26:16 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/05/25/harold-bloom-friendship-review-literature-politics/">Foreign Policy</source>
+      <description>The private letters of famed literary critic Harold Bloom offer an ethical guide for politics.</description>
+      <sentinel:score>0</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 The Philippines in 2026: Between Alliance Commitment and Strategic Hedging | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/the-philippines-in-2026-between-alliance-commitment-and-strategic-hedging/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/the-philippines-in-2026-between-alliance-commitment-and-strategic-hedging/</guid>
+      <pubDate>Mon, 25 May 2026 14:57:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://thediplomat.com/2026/05/the-philippines-in-2026-between-alliance-commitment-and-strategic-hedging/">The Diplomat</source>
+      <description>Despite holding fast to its alliance with the United States, several recent developments suggest that Manila has not forgotten how to hedge.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Japan, Philippines to Begin Negotiations on Intelligence Sharing Agreement | The Diplomat</title>
+      <link>https://thediplomat.com/2026/05/japan-philippines-to-begin-negotiations-on-intelligence-sharing-agreement/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/05/japan-philippines-to-begin-negotiations-on-intelligence-sharing-agreement/</guid>
+      <pubDate>Mon, 25 May 2026 14:36:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://thediplomat.com/2026/05/japan-philippines-to-begin-negotiations-on-intelligence-sharing-agreement/">The Diplomat</source>
+      <description>A General Security of Military Information Agreement (GSOMIA) is expected to be high on the agenda when President Ferdinand Marcos Jr. visits Japan later this week.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Australia is not prepared for the war over perception | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/australia-is-not-prepared-for-the-war-over-perception/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/australia-is-not-prepared-for-the-war-over-perception/</guid>
+      <pubDate>Mon, 25 May 2026 05:30:27 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.aspistrategist.org.au/australia-is-not-prepared-for-the-war-over-perception/">ASPI Strategist</source>
+      <description>Australia’s defence strategy risks overlooking the increasing influence of perception and cognition in conflict. Adversaries are increasingly using digital information environments to shape how crises are interpreted and responded to. Australia must prepare for the ...</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
     <item>
       <title>📍 ‘One man, one vote’? Maybe Not in Trump’s America | Foreign Policy</title>
       <link>https://foreignpolicy.com/2026/05/25/warren-court-one-man-one-vote-supreme-court/</link>
@@ -16,7 +76,27 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/25/warren-court-one-man-one-vote-supreme-court/">Foreign Policy</source>
       <description>A recent Supreme Court decision threatens a core democratic principle.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Japan’s Point of No Return | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/japan/japans-point-no-return</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/japan/japans-point-no-return</guid>
+      <pubDate>Mon, 25 May 2026 00:00:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.foreignaffairs.com/japan/japans-point-no-return">Foreign Affairs</source>
+      <description>Will Washington squander Tokyo’s new security commitment?</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The Middle Power Delusion | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/united-states/middle-power-delusion</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/united-states/middle-power-delusion</guid>
+      <pubDate>Mon, 25 May 2026 00:00:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.foreignaffairs.com/united-states/middle-power-delusion">Foreign Affairs</source>
+      <description>Not choosing is not an option.</description>
+      <sentinel:score>3</sentinel:score>
     </item>
     <item>
       <title>🌏 No, the Quad isn’t dead. This week’s foreign ministers’ meeting proves it | ASPI Strategist</title>
@@ -76,7 +156,7 @@
       <category>Indo-Pacific</category>
       <source url="https://www.aspistrategist.org.au/japanese-training-at-darwin-offers-more-combined-force-value-than-townsville/">ASPI Strategist</source>
       <description>Japan’s decision to train again in Townsville makes operational sense. Still, it exposes a deeper strategic problem in how Australia is shaping its northern defence posture. The choice aligns with Japan’s immediate training needs. Yet ...</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>⚛️ Supercarrier USS Gerald R. Ford To Act As Floating Nuclear Power Plant For Facilities On Land | The War Zone</title>
@@ -106,7 +186,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/how-k-pop-and-ai-are-reshaping-the-dokdo-takeshima-dispute/">The Diplomat</source>
       <description>AI-generated K-pop songs about the disputed islands are turning historical grievances between South Korea and Japan into viral digital nationalism.</description>
-      <sentinel:score>3</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🌏 Japan’s Frigate Diplomacy — and What It Could Mean for Taiwan | The Diplomat</title>
@@ -116,7 +196,7 @@
       <category>Indo-Pacific</category>
       <source url="https://thediplomat.com/2026/05/japans-frigate-diplomacy-and-what-it-could-mean-for-taiwan/">The Diplomat</source>
       <description>Can Japan become a second major democratic partner for Taiwan’s defense industry?</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🕵️ Smaller, easier, smarter: what special operations forces need from AI, now | Defense One</title>
@@ -206,7 +286,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/05/navy-green-lights-seven-musv-marketplace-submissions-to-advance-to-prototype-phase/">Breaking Defense</source>
       <description>The Navy did not reveal which companies’ designs were selected to advance.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Washington’s latest force posture moves have Europeans feeling whiplash | Atlantic Council</title>
@@ -216,7 +296,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.atlanticcouncil.org/dispatches/washingtons-latest-force-posture-moves-have-europeans-feeling-whiplash/">Atlantic Council</source>
       <description>The announcement on sending US troops to Poland didn&apos;t stop Washington&apos;s other force posture decisions from generating concern among NATO allies. The post Washington’s latest force posture moves have Europeans feeling whiplash appeared first on Atlantic Council.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🌍 Iran Now Trying To Cement Long-Term Control Over Strait Via Fees | The War Zone</title>
@@ -227,86 +307,6 @@
       <source url="https://www.twz.com/news-features/iran-now-trying-to-cement-long-term-control-over-strait-via-fees">The War Zone</source>
       <description>Iran&apos;s move to impose service fees on ships transiting the Strait comes as Pakistani and Qatari negotiators are in Tehran trying to get a deal to officially end the war. The post Iran Now Trying To Cement Long-Term Control Over Strait Via Fees appeared first on The War Zone.</description>
       <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>📍 All-female Senate delegation sets off for High North amid growing military tensions | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/</guid>
-      <pubDate>Fri, 22 May 2026 20:24:36 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/all-female-senate-delegation-sets-off-for-high-north-amid-growing-military-tensions/">Defense News</source>
-      <description>The itinerary is set to include briefings at Pituffik Space Base in Greenland on Arctic defense and strategic competition in the region.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 The Iran problem won’t be solved without a counter-drone coalition | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/dispatches/the-iran-problem-wont-be-solved-without-a-counter-drone-coalition/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/the-iran-problem-wont-be-solved-without-a-counter-drone-coalition/</guid>
-      <pubDate>Fri, 22 May 2026 20:22:16 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.atlanticcouncil.org/dispatches/the-iran-problem-wont-be-solved-without-a-counter-drone-coalition/">Atlantic Council</source>
-      <description>The United States should form a partnership with Ukraine and Gulf partners around the idea of counter-drone-as-a-service, instead of selling counter-drone hardware alone. The post The Iran problem won’t be solved without a counter-drone coalition appeared first on Atlantic…</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Trump’s About-Face on U.S. Troops in Poland Mystifies Allies | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/trump-troops-poland-deployment-hegseth-nato-rutte-rubio/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/trump-troops-poland-deployment-hegseth-nato-rutte-rubio/</guid>
-      <pubDate>Fri, 22 May 2026 20:19:25 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://foreignpolicy.com/2026/05/22/trump-troops-poland-deployment-hegseth-nato-rutte-rubio/">Foreign Policy</source>
-      <description>The abrupt policy reversal leaves NATO allies wondering to what extent the United States will defend Europe.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Rubio ratchets up pressure on NATO at key summit | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/</guid>
-      <pubDate>Fri, 22 May 2026 20:15:15 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/22/rubio-ratchets-up-pressure-on-nato-at-key-summit/">Defense News</source>
-      <description>Secretary of State Marco Rubio is casting new doubt on NATO&apos;s relevance after key allies recoiled from backing Washington’s “Operation Epic Fury.”</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>📍 What the U.S. Should Have Learned From Past Ebola Outbreaks | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/africa-ebola-outbreak-history-congo-us-foreign-aid/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/africa-ebola-outbreak-history-congo-us-foreign-aid/</guid>
-      <pubDate>Fri, 22 May 2026 19:27:42 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/africa-ebola-outbreak-history-congo-us-foreign-aid/">Foreign Policy</source>
-      <description>The West’s shortsightedness in Africa is more apparent than ever.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>📍 ‘The Boys’ Turned Superhero Satire Against American Politics | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/22/the-boys-tv-series-review-trump-homelander-superhero/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/22/the-boys-tv-series-review-trump-homelander-superhero/</guid>
-      <pubDate>Fri, 22 May 2026 19:00:30 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/05/22/the-boys-tv-series-review-trump-homelander-superhero/">Foreign Policy</source>
-      <description>The series has been the most on-the-nose fictional take on Trumpism so far.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ The Pentagon’s $54 billion bet on autonomous warfare | Defense One</title>
-      <link>https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/</link>
-      <guid isPermaLink="true">https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/</guid>
-      <pubDate>Fri, 22 May 2026 14:59:41 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defenseone.com/ideas/2026/05/pentagons-54-billion-bet-autonomous-warfare/413735/">Defense One</source>
-      <description>With new DAWG initiative, the DOD is attempting to fix a historically slow-moving, broken acquisition pipeline.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ US Marine Corps tests using helicopter as mobile drone command center | Defense News</title>
-      <link>https://www.defensenews.com/news/your-marine-corps/2026/05/22/us-marine-corps-tests-using-helicopter-as-mobile-drone-command-center/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/your-marine-corps/2026/05/22/us-marine-corps-tests-using-helicopter-as-mobile-drone-command-center/</guid>
-      <pubDate>Fri, 22 May 2026 18:59:00 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.defensenews.com/news/your-marine-corps/2026/05/22/us-marine-corps-tests-using-helicopter-as-mobile-drone-command-center/">Defense News</source>
-      <description>During the test, troops launched a Neros Archer FPV drone from the ground before transferring control to operators aboard a helicopter orbiting miles away.</description>
-      <sentinel:score>9</sentinel:score>
     </item>
   </channel>
 </rss>
