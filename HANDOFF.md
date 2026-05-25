@@ -1,3 +1,57 @@
+# Dashboard Session Handoff — 2026-05-25
+
+Scope: the Next.js watchfloor dashboard (`apps/web`) and ingest scoring (`apps/ingest`).
+All shipped work below is **merged to `main` and live in production** (Vercel →
+`dashboard.thesentinelreview.com`). DB is Supabase/Postgres (project `ugpqgfvdqupttqhogavc`).
+
+## Shipped (merged to `main`)
+
+| PR | Squash commit | What |
+|----|---------------|------|
+| #114 | `1ebc6cf` | **Sector Threat board** — `getSectors()` groups events by `oblast` within the theater bbox (7d): events, strikes, level, week-over-week trend (`NEW` when no prior week). Replaced the dead "No sector data available" stub (mock data stripped in #61). |
+| #115 | `5481dc6` | **`source_reliability` auto-refresh** — migration `0014_schedule_source_reliability_refresh.sql` registers a pg_cron job (`refresh-source-reliability`, every 30 min). The matview had *never* auto-refreshed (the schedule in `0001_init.sql` was left commented out), so confidence/activity stats went stale for days. |
+| #116 | `4934b9c` | **Confidence consistency** — extracted `classify()` into `scorer.py`; `_maybe_upgrade_confidence` now reuses it. Previously the corroboration re-score promoted to `verified` on source/platform counts alone, dropping the strong-signal requirement `score_confidence` enforces. +7 `classify` unit tests (29 pass). |
+| #117 | `850d4f1` | **Fusion + Median TTV KPIs** — `getFusionRate()` (% of events with ≥2 distinct sources) and `getMedianTTV()` (median `published_at` − primary source `posted_at`). KpiRail trimmed to 5 chips; **Contacts/Movements removed**. Rail = Events · Strikes · Verified · Fusion · Median TTV. |
+| #118 | `8682210` | **Live SensorStrip** — `getSensorStripData()` drives 5 platform chips (**TG · X · RSS · GDELT · BSKY**), live LAT (median post age) + TRK (24h distinct actors). Removed the fake "FUSION 0.92". Spec said WIRE; swapped to **GDELT** (WIRE has no active sources; GDELT is the highest-volume feed). |
+
+**Ops actions taken (not in git):**
+- One-off `REFRESH MATERIALIZED VIEW CONCURRENTLY source_reliability` to unstick stale data immediately (iran confidence 0% → 16.7%).
+- Two empty `chore: redeploy` commits on `main` (`e464ba8`, `8559f05`) to refresh the prod runtime during a transient DB blip. (Harmless; can be ignored.)
+
+**Last verified live (anon/Watch-tier render, Ukraine/24h):** Events 41 · Strikes 30 · Verified 7% · Fusion 20% · Median TTV 1h 4m · Sector Threat populated · SensorStrip live (TRK 12). Logged-out (Watch tier) and signed-in both serve the same data — confirmed.
+
+## Key findings / context
+- **Why thin theaters read ~0% confidence/fusion:** confidence is corroboration-gated, and iran/myanmar/sudan have ~**0% multi-source events**. `apps/ingest/sentinel/pipeline/dedup.py` only merges posts into one event when they share the same `event_type` within **5 km / 6 h** — too strict, so corroboration rarely fires. #116 fixed the consistency bug but **not** this root cause.
+- **The "production all-panels-empty" incident** was a transient DB-connectivity/cache blip during deploy churn — **not** a code bug and **not** auth/tier gating. `/` (the watchfloor) is public by design: `apps/web/proxy.ts` only gates `/api/*` and `/app/*` (except `/app/feed`). Resolved by redeploys.
+
+## Open TODOs (prioritized)
+1. **`/admin/tieout` Fusion Events table** (requested in the KPI spec) — **BLOCKED**: no `admin` route exists in the repo (it was removed; `proxy.ts` notes a "reintroduced admin route" must re-add its own admin-role check). Decision needed: recreate the admin page (auth/role gating + scope of "Section 1 KPI Tie-Out"), or confirm where it should live. Table spec: columns `event_id, occurred_at, event_type, location_name, source_count (distinct source_ids), confidence`, sorted by `source_count` desc; Fusion % must tie out to `/`.
+2. **`/app` 5-chip acceptance** — `/app` has no KPI rail (only `/app/feed` exists). The rail lives solely on `/`. Confirm whether the watchfloor should also be mounted at `/app`.
+3. **Loosen dedup** — the real lever for thin-theater fusion/confidence. Options: bump `RADIUS_KM` (~5→15–20), widen `WINDOW_HOURS`, relax exact `event_type` match, or add the description/embedding similarity the file's own v0.2 note describes. Needs sign-off (risk: merging genuinely distinct events). File: `apps/ingest/sentinel/pipeline/dedup.py`.
+4. **Persisted `has_strong_signal` flag on events** — optional, for airtight re-score semantics. #116 currently reconstructs the signal conservatively from the event's current confidence; a stored boolean (migration + `insert_event` + `_maybe_upgrade_confidence`) removes the one transitional edge case.
+5. **Verify migration 0014 applied** — it auto-runs via the ingest workflow's `migrate.py` (`.github/workflows/sentinel-ingest.yml`, every 30 min). Confirm with `SELECT jobname, schedule, active FROM cron.job;` → expect `refresh-source-reliability`.
+6. **Watch: Vercel↔Supabase connection fragility** — the empty blip suggests the `pg` pool (`apps/web/lib/db.ts`, `max:5`, direct connection) can hiccup around deploys/cold starts. If it recurs, point `DATABASE_URL` at the Supavisor pooler (port 6543) and/or add connection retry handling. Not currently broken.
+
+## Orientation (where things live)
+- Watchfloor page (the `/` route): `apps/web/app/page.tsx` (`force-dynamic`; fetches everything in one `Promise.all`).
+- Data layer: `apps/web/lib/queries.ts` — `getStats`, `getSectors`, `getFusionRate`, `getMedianTTV`, `getSensorStripData`, `getMapEvents`, `getAlerts`, `getIntensity`, `getTopSources`, `getLatestBriefing`. Each is theater-scoped via `THEATER_BBOX` and swallows errors → empty default.
+- Components: `apps/web/components/watchfloor/` — `KpiRail`, `Kpi`, `SensorStrip`, `SectorThreat`, `SectorRow`, etc.
+- Types: `apps/web/lib/types.ts` (`Stats`, `Sector`, `SensorStripData`, …).
+- DB pool: `apps/web/lib/db.ts`. Middleware/auth: `apps/web/proxy.ts`, `apps/web/lib/auth.ts`.
+- Scoring: `apps/ingest/sentinel/pipeline/scorer.py` (`classify`, `score_confidence`), `apps/ingest/sentinel/jobs/extract_events.py` (`_maybe_upgrade_confidence`), `apps/ingest/sentinel/pipeline/dedup.py`.
+- Migrations: `packages/db/migrations/` (latest is `0014`). Runner: `packages/db/migrate.py`.
+
+## Conventions / how to verify
+- Branch `fix/<desc>` → PR into `main` → **squash merge**. Production deploys from `main` on every push.
+- Web checks: from `apps/web`, `npx tsc --noEmit` and `npx eslint <files>`. Ingest tests: `python -m pytest apps/ingest/tests` (needs `pip install pytest pydantic pydantic-settings structlog` + editable install; some suites need `feedparser`/`httpx`/`psycopg`).
+- No pytest/CI gate runs on PRs — only Cloudflare Pages + Vercel preview build checks (which only build the web app).
+- **PR previews are SSO-gated** and the MCP bypass doesn't work on them. Verify rendered output on **production**: Vercel MCP `web_fetch_vercel_url` against `https://dashboard.thesentinelreview.com/?theater=ukraine` (append `&cb=<nonce>` to bust the fetch cache). Anonymous render == Watch-tier == what the public sees.
+- SQL validation against prod: Supabase MCP `execute_sql` (project `ugpqgfvdqupttqhogavc`).
+
+---
+
+# (Earlier handoff preserved below)
+
 # Dashboard Fix Handoff — 2026-05-17
 
 ## Symptom
