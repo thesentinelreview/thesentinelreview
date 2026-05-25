@@ -84,6 +84,13 @@ function buildGeoJSON(events: MapEvent[]): GeoJSON.FeatureCollection {
   };
 }
 
+// Events visible at the current playhead: matching type and already occurred.
+function visibleEvents(events: MapEvent[], types: EventType[], cursorMs: number): MapEvent[] {
+  return events.filter(
+    (e) => types.includes(e.event_type) && new Date(e.occurred_at).getTime() <= cursorMs,
+  );
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -149,6 +156,7 @@ interface Props {
   center: [number, number];
   zoom: number;
   visibleTypes: EventType[];
+  cursorMs?: number;
   palette?: "app" | "watch";
   showFebA?: boolean;
   showAOI?: boolean;
@@ -160,6 +168,7 @@ export default function MapView({
   center,
   zoom,
   visibleTypes,
+  cursorMs = Infinity,
   palette = "app",
   showFebA = false,
   showAOI = false,
@@ -170,10 +179,12 @@ export default function MapView({
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const eventsRef = useRef(events);
   const visibleTypesRef = useRef(visibleTypes);
+  const cursorRef = useRef(cursorMs);
   // Keep refs current so the map's long-lived event handlers read fresh props.
   useEffect(() => {
     eventsRef.current = events;
     visibleTypesRef.current = visibleTypes;
+    cursorRef.current = cursorMs;
   });
 
   // Initialize map once on mount; teardown on unmount.
@@ -201,9 +212,7 @@ export default function MapView({
 
     map.on("load", () => {
       const pal = PALETTE[palette];
-      const filteredOnLoad = eventsRef.current.filter(e =>
-        visibleTypesRef.current.includes(e.event_type),
-      );
+      const filteredOnLoad = visibleEvents(eventsRef.current, visibleTypesRef.current, cursorRef.current);
 
       map.addSource("events", {
         type: "geojson",
@@ -457,14 +466,14 @@ export default function MapView({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update visible events when data or type filter changes.
+  // Update visible events when data, type filter, or the playhead changes.
   useEffect(() => {
     const map = mapRef.current;
     if (!map?.isStyleLoaded()) return;
-    const visible = events.filter(e => visibleTypes.includes(e.event_type));
+    const visible = visibleEvents(events, visibleTypes, cursorMs);
     (map.getSource("events") as maplibregl.GeoJSONSource | undefined)
       ?.setData(buildGeoJSON(visible));
-  }, [events, visibleTypes]);
+  }, [events, visibleTypes, cursorMs]);
 
   // Fly to the new theater center when center/zoom change.
   useEffect(() => {

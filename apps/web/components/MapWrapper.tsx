@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { MapEvent, EventType } from "@/lib/types";
+import { useTimeline } from "./watchfloor/TimelineProvider";
 
 // MapLibre uses browser APIs — skip SSR entirely
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -17,26 +18,9 @@ interface Props {
   showRangeRings?: boolean;
 }
 
-export default function MapWrapper({
-  events,
-  center,
-  zoom,
-  visibleTypes,
-  palette,
-  showFebA,
-  showAOI,
-  showRangeRings,
-}: Props) {
-  return (
-    <MapView
-      events={events}
-      center={center}
-      zoom={zoom}
-      visibleTypes={visibleTypes}
-      palette={palette}
-      showFebA={showFebA}
-      showAOI={showAOI}
-      showRangeRings={showRangeRings}
-    />
-  );
+export default function MapWrapper(props: Props) {
+  // On the watchfloor this tracks the time scrubber; with no provider (e.g. the
+  // embed map) useTimeline() returns cursor = +Infinity, so all events show.
+  const { cursorMs } = useTimeline();
+  return <MapView {...props} cursorMs={cursorMs} />;
 }
