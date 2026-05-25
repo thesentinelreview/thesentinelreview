@@ -41,6 +41,15 @@ export interface IntensityDay {
   hot: boolean;
 }
 
+export interface Sector {
+  name: string;
+  level: string;
+  trend: string;
+  pct: number; // 0–100, relative to the busiest sector in view
+  events: number;
+  strikes: number;
+}
+
 export interface Source {
   rank: number;
   handle: string;

@@ -13,7 +13,7 @@ export default function SectorRow({
   events: number;
   strikes: number;
 }) {
-  const trendUp = trend.trim().startsWith("+");
+  const trendUp = trend.trim().startsWith("+") || trend.trim() === "NEW";
   const bar =
     pct > 80
       ? "bg-gradient-to-r from-amber-500 to-red-500"

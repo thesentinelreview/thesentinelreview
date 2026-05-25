@@ -17,6 +17,7 @@ import {
   getMapEvents,
   getAlerts,
   getIntensity,
+  getSectors,
   getTopSources,
   getLatestBriefing,
   resolveTimeRange,
@@ -86,7 +87,7 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
+  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
     // Live Event Stream is always the last 24h, independent of the dashboard window.
@@ -94,6 +95,7 @@ export default async function WatchfloorPage({
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),
+    getSectors(theater.id),
   ]);
 
   // Control models (server-driven via URL params).
@@ -147,7 +149,7 @@ export default async function WatchfloorPage({
 
           <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
           <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none max-h-[280px] md:max-h-none md:col-span-3" />
-          <SectorThreat intensity={intensity} className="flex-none md:col-span-2" />
+          <SectorThreat sectors={sectors} intensity={intensity} className="flex-none md:col-span-2" />
         </div>
 
         <TimeScrubber />
