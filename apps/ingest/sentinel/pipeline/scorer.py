@@ -16,6 +16,30 @@ from __future__ import annotations
 from sentinel.models import Confidence, ConfidenceAssessment, GeolocationSignal
 
 
+def classify(
+    *,
+    source_count: int,
+    platform_count: int,
+    min_trust_tier: int,
+    strong_signal: bool,
+) -> Confidence:
+    """Map corroboration signals to a confidence level (handoff doc section 4).
+
+    Shared by score_confidence (new events) and the corroboration re-score in
+    extract_events._maybe_upgrade_confidence so a level — `verified` in
+    particular — means the same thing on both paths.
+    """
+    if source_count >= 2 and platform_count >= 2 and strong_signal:
+        return "verified"      # independent, cross-platform, strong evidence
+    if source_count >= 2 and platform_count >= 2:
+        return "partial"       # cross-platform but no strong signal
+    if source_count >= 2 and strong_signal:
+        return "partial"       # same platform, but a strong signal helps
+    if source_count == 1 and min_trust_tier == 1 and strong_signal:
+        return "partial"       # single tier-1 source with strong evidence
+    return "unconfirmed"
+
+
 def score_confidence(
     *,
     source: dict,
@@ -35,19 +59,13 @@ def score_confidence(
 
     strong_signal = has_geolocation or has_official_ack or has_matching_press
 
-    # ── Apply verification rules ──────────────────────────────────────────────
-    confidence: Confidence
-
-    if source_count >= 2 and platform_count >= 2 and strong_signal:
-        confidence = "verified"
-    elif source_count >= 2 and platform_count >= 2:
-        confidence = "partial"      # multi-platform but no geo signal
-    elif source_count >= 2 and strong_signal:
-        confidence = "partial"      # same platform, but geo signal helps
-    elif source_count == 1 and min_trust_tier == 1 and strong_signal:
-        confidence = "partial"      # single tier-1 source with geo evidence
-    else:
-        confidence = "unconfirmed"
+    # ── Apply verification rules (shared with the corroboration re-score) ─────
+    confidence = classify(
+        source_count=source_count,
+        platform_count=platform_count,
+        min_trust_tier=min_trust_tier,
+        strong_signal=strong_signal,
+    )
 
     # Dashboard runs autonomously — no human review gate.
     held = False

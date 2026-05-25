@@ -15,7 +15,7 @@ from __future__ import annotations
 import pytest
 
 from sentinel.models import GeolocationSignal
-from sentinel.pipeline.scorer import _build_reasoning, score_confidence
+from sentinel.pipeline.scorer import _build_reasoning, classify, score_confidence
 
 
 # ---------------------------------------------------------------------------
@@ -278,3 +278,35 @@ class TestReasoning:
         assert "geolocated" in text
         assert "official acknowledgment" in text
         assert "matching press" not in text
+
+
+# ---------------------------------------------------------------------------
+# classify — the rule shared by score_confidence (new events) and the
+# corroboration re-score in extract_events. Pins that `verified` requires a
+# strong signal so the two paths can't drift apart again.
+# ---------------------------------------------------------------------------
+
+class TestClassify:
+    def test_verified_requires_strong_signal(self) -> None:
+        assert classify(source_count=2, platform_count=2, min_trust_tier=2, strong_signal=True) == "verified"
+        # identical counts, no strong signal → partial, never verified
+        assert classify(source_count=2, platform_count=2, min_trust_tier=2, strong_signal=False) == "partial"
+
+    def test_never_verified_without_strong_signal(self) -> None:
+        # no number of sources/platforms can reach verified without a strong signal
+        assert classify(source_count=5, platform_count=4, min_trust_tier=1, strong_signal=False) == "partial"
+
+    def test_same_platform_no_signal_is_unconfirmed(self) -> None:
+        assert classify(source_count=3, platform_count=1, min_trust_tier=2, strong_signal=False) == "unconfirmed"
+
+    def test_same_platform_with_signal_is_partial(self) -> None:
+        assert classify(source_count=2, platform_count=1, min_trust_tier=2, strong_signal=True) == "partial"
+
+    def test_single_tier1_with_signal_is_partial(self) -> None:
+        assert classify(source_count=1, platform_count=1, min_trust_tier=1, strong_signal=True) == "partial"
+
+    def test_single_tier2_with_signal_is_unconfirmed(self) -> None:
+        assert classify(source_count=1, platform_count=1, min_trust_tier=2, strong_signal=True) == "unconfirmed"
+
+    def test_single_source_no_signal_is_unconfirmed(self) -> None:
+        assert classify(source_count=1, platform_count=1, min_trust_tier=1, strong_signal=False) == "unconfirmed"
