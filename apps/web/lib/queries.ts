@@ -4,6 +4,7 @@ import type {
   MapEvent,
   Alert,
   IntensityDay,
+  Sector,
   Source,
   BriefingData,
   EventDetail,
@@ -315,6 +316,82 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
       value: Math.round((counts[i] / max) * 100),
       hot: counts[i] > avg * 1.25,
     }));
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sector threat (oblast breakdown, last 7 days vs. the prior 7)
+// ---------------------------------------------------------------------------
+
+export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Promise<Sector[]> {
+  if (!isDatabaseConfigured()) return [];
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+
+  try {
+    type Row = {
+      name: string;
+      events: string | number;
+      strikes: string | number;
+      prev: string | number;
+    };
+
+    const rows = await query<Row>(
+      `
+      WITH curr AS (
+        SELECT
+          oblast                                        AS name,
+          count(*)                                      AS events,
+          count(*) FILTER (WHERE event_type = 'strike') AS strikes
+        FROM events
+        WHERE published_at IS NOT NULL
+          AND occurred_at > now() - INTERVAL '7 days'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND oblast IS NOT NULL
+          AND btrim(oblast) <> ''
+          AND lower(btrim(oblast)) NOT IN ('unknown', '<unknown>', 'n/a', 'multiple')
+        GROUP BY oblast
+      ),
+      prev AS (
+        SELECT oblast AS name, count(*) AS events
+        FROM events
+        WHERE published_at IS NOT NULL
+          AND occurred_at BETWEEN now() - INTERVAL '14 days' AND now() - INTERVAL '7 days'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND oblast IS NOT NULL
+        GROUP BY oblast
+      )
+      SELECT
+        c.name                      AS name,
+        c.events::int               AS events,
+        c.strikes::int              AS strikes,
+        COALESCE(p.events, 0)::int  AS prev
+      FROM curr c
+      LEFT JOIN prev p ON p.name = c.name
+      ORDER BY c.events DESC, c.strikes DESC
+      LIMIT $5
+      `,
+      [minLng, minLat, maxLng, maxLat, limit],
+    );
+
+    if (!rows.length) return [];
+
+    const counts = rows.map((r) => Number(r.events) || 0);
+    const max = Math.max(1, ...counts);
+
+    return rows.map((r) => {
+      const events = Number(r.events) || 0;
+      const strikes = Number(r.strikes) || 0;
+      const prev = Number(r.prev) || 0;
+      const pct = Math.round((events / max) * 100);
+      const level =
+        pct > 80 ? "Critical" : pct > 50 ? "Elevated" : pct > 25 ? "Moderate" : "Reduced";
+      const delta = prev > 0 ? Math.round(((events - prev) / prev) * 100) : null;
+      const trend = delta === null ? "NEW" : `${delta >= 0 ? "+" : "−"}${Math.abs(delta)}%`;
+      return { name: r.name, level, trend, pct, events, strikes };
+    });
   } catch {
     return [];
   }
