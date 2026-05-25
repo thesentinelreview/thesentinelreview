@@ -38,6 +38,14 @@ export function resolveTimeRange(raw: string | undefined): TimeRange {
   return VALID_RANGES.includes(raw as TimeRange) ? (raw as TimeRange) : "24h";
 }
 
+// The /admin/tieout page exposes 24h/7d plus an all-time option. "all" skips the
+// occurred_at lower bound entirely so the page can report lifetime fusion metrics.
+export type TieoutWindow = "24h" | "7d" | "all";
+
+export function resolveTieoutWindow(raw: string | undefined): TieoutWindow {
+  return raw === "7d" ? "7d" : raw === "all" ? "all" : "24h";
+}
+
 const SQL_INTERVALS: Record<TimeRange, string> = {
   "24h": "24 hours",
   "7d":  "7 days",
@@ -49,6 +57,15 @@ const WINDOW_DAYS: Record<TimeRange, number> = {
   "7d":  7,
   "30d": 30,
 };
+
+// SQL fragment for the events.occurred_at lower bound, shared by the fusion +
+// tie-out queries so they filter identically. Empty for "all" (no lower bound).
+// The interpolated interval is a hardcoded constant, never user input.
+function occurredAtClause(window: TimeRange | "all"): string {
+  return window === "all"
+    ? ""
+    : `AND e.occurred_at > now() - INTERVAL '${SQL_INTERVALS[window]}'`;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -150,14 +167,18 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 // Fusion rate — share of window events corroborated by 2+ distinct sources
 // ---------------------------------------------------------------------------
 
-export async function getFusionRate(
+export type FusionCounts = { total: number; multiSource: number };
+
+// Raw fusion counts for a theater/window: total published events in the bbox and
+// how many have >= 2 distinct sources. Exposed so /admin/tieout can tie out at the
+// count level (rounding-immune) rather than comparing pre-rounded percentages.
+export async function getFusionCounts(
   theater: TheaterKey = "ukraine",
-  timeRange: TimeRange = "24h",
-): Promise<number | null> {
+  timeRange: TimeRange | "all" = "24h",
+): Promise<FusionCounts | null> {
   if (!isDatabaseConfigured()) return null;
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
-  const interval = SQL_INTERVALS[timeRange];
 
   try {
     const row = await queryOne<{ total: string | number; fused: string | number }>(
@@ -166,7 +187,7 @@ export async function getFusionRate(
         SELECT e.id
         FROM events e
         WHERE e.published_at IS NOT NULL
-          AND e.occurred_at > now() - INTERVAL '${interval}'
+          ${occurredAtClause(timeRange)}
           AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
       ),
       sc AS (
@@ -183,12 +204,103 @@ export async function getFusionRate(
       [minLng, minLat, maxLng, maxLat],
     );
 
-    const total = Number(row?.total) || 0;
-    if (total === 0) return null;            // no events → render "—", not "0%"
-    return Math.round((Number(row?.fused) || 0) / total * 100);
+    if (!row) return null;
+    return { total: Number(row.total) || 0, multiSource: Number(row.fused) || 0 };
   } catch {
     return null;
   }
+}
+
+export async function getFusionRate(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange | "all" = "24h",
+): Promise<number | null> {
+  const counts = await getFusionCounts(theater, timeRange);
+  if (!counts || counts.total === 0) return null;   // no events → render "—", not "0%"
+  return Math.round((counts.multiSource / counts.total) * 100);
+}
+
+// ---------------------------------------------------------------------------
+// Tie-out rows — every window event with its distinct source count, for the
+// /admin/tieout audit page + export. Uses the same filter + join as
+// getFusionCounts so the Fusion KPI ties out by construction.
+// ---------------------------------------------------------------------------
+
+export type TieoutRow = {
+  event_id: string;
+  occurred_at: string;       // ISO
+  event_type: string;
+  location_name: string | null;
+  source_count: number;      // distinct source_id
+  confidence: string;        // verified | partial | unconfirmed
+};
+
+export async function getTieoutRows(
+  theater: TheaterKey = "ukraine",
+  window: TieoutWindow = "24h",
+): Promise<TieoutRow[]> {
+  if (!isDatabaseConfigured()) return [];
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+
+  try {
+    type Row = {
+      event_id: string;
+      occurred_at: Date;
+      event_type: EventType;
+      location_name: string | null;
+      source_count: string | number;
+      confidence: Confidence;
+    };
+
+    const rows = await query<Row>(
+      `
+      SELECT
+        e.id::text                        AS event_id,
+        e.occurred_at                     AS occurred_at,
+        e.event_type                      AS event_type,
+        e.location_name                   AS location_name,
+        COUNT(DISTINCT es.source_id)::int AS source_count,
+        e.confidence                      AS confidence
+      FROM events e
+      LEFT JOIN event_sources es ON es.event_id = e.id
+      WHERE e.published_at IS NOT NULL
+        ${occurredAtClause(window)}
+        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      GROUP BY e.id
+      ORDER BY source_count DESC, e.occurred_at DESC
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    return rows.map((r) => ({
+      event_id: r.event_id,
+      occurred_at: new Date(r.occurred_at).toISOString(),
+      event_type: r.event_type,
+      location_name: r.location_name,
+      source_count: Number(r.source_count) || 0,
+      confidence: r.confidence,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Method B: derive the fusion totals from the visible tie-out rows. Rounds the
+// same way getFusionRate does (JS Math.round over integer counts), so Method A
+// and Method B agree whenever their underlying counts agree.
+export function tieoutSummary(rows: TieoutRow[]): {
+  total: number;
+  multiSource: number;
+  fusionPct: number | null;
+} {
+  const total = rows.length;
+  const multiSource = rows.filter((r) => r.source_count >= 2).length;
+  return {
+    total,
+    multiSource,
+    fusionPct: total === 0 ? null : Math.round((multiSource / total) * 100),
+  };
 }
 
 // ---------------------------------------------------------------------------
