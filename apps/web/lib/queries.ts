@@ -210,7 +210,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
 // Alerts (latest 3)
 // ---------------------------------------------------------------------------
 
-export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, timeRange: TimeRange = "24h"): Promise<Alert[]> {
+export async function getAlerts(theater: TheaterKey = "ukraine", limit: number | null = 3, timeRange: TimeRange = "24h"): Promise<Alert[]> {
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -245,7 +245,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit = 3, time
         AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
-      LIMIT $1
+      LIMIT $1::bigint
       `,
       [limit, minLng, minLat, maxLng, maxLat],
     );
