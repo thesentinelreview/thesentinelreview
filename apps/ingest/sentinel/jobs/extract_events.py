@@ -25,7 +25,7 @@ from sentinel.db import (
 from sentinel.models import ExtractEventsPayload
 from sentinel.pipeline.dedup import find_duplicate
 from sentinel.pipeline.extractor import extract_event
-from sentinel.pipeline.scorer import score_confidence
+from sentinel.pipeline.scorer import classify, score_confidence
 from sentinel.pipeline.translator import translate_post
 
 log = structlog.get_logger()
@@ -188,19 +188,30 @@ def _process_post(
 
 
 def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> None:
-    """Re-score an event's confidence now that it has an additional corroborating source."""
+    """Re-score an event's confidence now that it has an additional corroborating source.
+
+    Uses the same `classify` rule as initial scoring so `verified` requires a
+    strong signal on both paths — previously this path promoted to `verified`
+    on source/platform counts alone, disagreeing with score_confidence.
+
+    The strong signal isn't persisted on the event, so recover it from the
+    current confidence: per the scorer's rules the only way a single-source
+    event leaves `unconfirmed` is a strong geo signal, so a non-`unconfirmed`
+    event is known to carry one. This is conservative — it never grants
+    `verified` without prior evidence of a strong signal.
+    """
     row = conn.execute(
         """
         SELECT
             e.confidence,
-            e.held_for_review,
-            COUNT(DISTINCT es.source_id)                             AS source_count,
-            COUNT(DISTINCT s.platform)                               AS platform_count
+            COUNT(DISTINCT es.source_id) AS source_count,
+            COUNT(DISTINCT s.platform)   AS platform_count,
+            MIN(s.trust_tier)            AS min_trust_tier
         FROM events e
         JOIN event_sources es ON es.event_id = e.id
         JOIN sources s        ON s.id = es.source_id
         WHERE e.id = %s
-        GROUP BY e.id, e.confidence, e.held_for_review
+        GROUP BY e.id, e.confidence
         """,
         (event_id,),
     ).fetchone()
@@ -208,16 +219,12 @@ def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> 
     if row is None:
         return
 
-    source_count: int = row["source_count"]
-    platform_count: int = row["platform_count"]
-
-    new_confidence: str
-    if source_count >= 2 and platform_count >= 2:
-        new_confidence = "verified"
-    elif source_count >= 2:
-        new_confidence = "partial"
-    else:
-        new_confidence = row["confidence"]   # no change
+    new_confidence = classify(
+        source_count=row["source_count"],
+        platform_count=row["platform_count"],
+        min_trust_tier=row["min_trust_tier"],
+        strong_signal=row["confidence"] != "unconfirmed",
+    )
 
     if new_confidence != row["confidence"]:
         conn.execute(
