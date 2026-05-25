@@ -20,6 +20,8 @@ import {
   getSectors,
   getTopSources,
   getLatestBriefing,
+  getFusionRate,
+  getMedianTTV,
   resolveTimeRange,
   type TimeRange,
 } from "@/lib/queries";
@@ -87,7 +89,7 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors] = await Promise.all([
+  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
     // Live Event Stream is always the last 24h, independent of the dashboard window.
@@ -96,6 +98,8 @@ export default async function WatchfloorPage({
     getTopSources(theater.id),
     getLatestBriefing(theater.id),
     getSectors(theater.id),
+    getFusionRate(theater.id, timeRange),
+    getMedianTTV(theater.id, timeRange),
   ]);
 
   // Control models (server-driven via URL params).
@@ -131,7 +135,7 @@ export default async function WatchfloorPage({
         isAuthed={!!userId}
       />
       <SensorStrip />
-      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} />
+      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} />
 
       <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
         <div className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
