@@ -38,7 +38,7 @@ function HeaderDropdown({
             href={o.href}
             onClick={close}
             className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
-              o.active ? "text-amber-300 bg-amber-500/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
+              o.active ? "text-teal-300 bg-teal-400/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
             }`}
           >
             {o.label}
@@ -85,16 +85,16 @@ export default function HeaderBar({
       {/* Right cluster */}
       <div className="flex items-center gap-2 text-xs font-data flex-none">
         {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
-        <div className="flex items-center rounded-sm border border-zinc-700 overflow-hidden mr-1">
+        <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden mr-1">
           <span
             aria-current="page"
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-amber-500/[0.15] text-amber-300 border-r border-zinc-700"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-r border-zinc-800"
           >
             <span className="hidden sm:inline">Sentinel </span>View
           </span>
           <Link
             href={feedHref}
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
           >
             <span className="hidden sm:inline">Source </span>Feed
           </Link>

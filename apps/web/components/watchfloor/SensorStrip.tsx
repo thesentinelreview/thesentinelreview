@@ -40,6 +40,11 @@ export default function SensorStrip() {
             {s.on ? "●" : "○"} {s.name}
           </button>
         ))}
+        <span className="ml-2 text-zinc-500">
+          FUSION <span className="text-teal-300">0.92</span>
+        </span>
+        <span className="text-zinc-700">|</span>
+        <span className="text-zinc-500">LAT 4.2s</span>
         <span className="text-zinc-700">|</span>
         <span className="text-zinc-500">{activeCount} TRK</span>
       </div>

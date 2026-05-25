@@ -71,15 +71,20 @@ export default async function WatchfloorPage({
     : ALL_TYPES;
   const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
 
-  // Honor the map's URL-persisted position (written by MapView on pan/zoom).
+  // Honor the map's URL-persisted position (written by MapView on pan/zoom), but only when
+  // lat/lng/zoom are all present and valid together. Ignore a saved zoom that's more zoomed-out
+  // than the theater's default so a reload or shared link never strands the user at a world view.
   const urlLat = params.lat ? parseFloat(params.lat) : NaN;
   const urlLng = params.lng ? parseFloat(params.lng) : NaN;
   const urlZoom = params.zoom ? parseFloat(params.zoom) : NaN;
-  const mapCenter: [number, number] =
-    !isNaN(urlLat) && !isNaN(urlLng) && urlLat >= -90 && urlLat <= 90 && urlLng >= -180 && urlLng <= 180
-      ? [urlLng, urlLat]
-      : theater.mapCenter;
-  const mapZoom = !isNaN(urlZoom) && urlZoom >= 0 && urlZoom <= 28 ? urlZoom : theater.mapZoom;
+  const urlViewValid =
+    !isNaN(urlLat) && !isNaN(urlLng) && !isNaN(urlZoom) &&
+    urlLat >= -90 && urlLat <= 90 &&
+    urlLng >= -180 && urlLng <= 180 &&
+    urlZoom >= 0 && urlZoom <= 28 &&
+    urlZoom >= theater.mapZoom;
+  const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
+  const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
     getStats(theater.id, timeRange),

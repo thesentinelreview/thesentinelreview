@@ -32,7 +32,7 @@ export default function TheaterDropdown({
             onClick={close}
             className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
               o.active
-                ? "text-amber-300 bg-amber-500/[0.06]"
+                ? "text-teal-300 bg-teal-400/[0.06]"
                 : "text-zinc-300 hover:bg-zinc-800"
             }`}
           >

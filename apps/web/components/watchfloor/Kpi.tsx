@@ -30,7 +30,7 @@ export default function Kpi({
           </span>
         )}
       </div>
-      {hint && <div className="text-[10px] text-zinc-600 mt-1.5">{hint}</div>}
+      <div className="text-[10px] text-zinc-600 mt-1.5 min-h-[12px]">{hint ?? ""}</div>
     </div>
   );
 }

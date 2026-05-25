@@ -24,7 +24,7 @@ const PLATFORM_LABEL: Record<Platform, string> = {
 // Shared chip styling, matching the watchfloor header controls.
 const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
 const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
-const CHIP_ON = "border-amber-500/40 bg-amber-500/[0.08] text-amber-300";
+const CHIP_ON = "border-teal-400/40 bg-teal-400/[0.08] text-teal-300";
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -154,16 +154,16 @@ export default async function SourceFeedPage({
 
         <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
           {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
-          <div className="flex items-center rounded-sm border border-zinc-800 overflow-hidden">
+          <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
             <Link
               href={`/?theater=${theater.id}`}
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
             >
               Sentinel View
             </Link>
             <span
               aria-current="page"
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-amber-500/[0.12] text-amber-300 border-l border-zinc-800"
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-l border-zinc-800"
             >
               Source Feed
             </span>

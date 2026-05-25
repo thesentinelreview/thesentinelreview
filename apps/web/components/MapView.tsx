@@ -294,9 +294,9 @@ export default function MapView({
         source: "events",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": "#e6e4dc",
+          "circle-color": palette === "watch" ? "#ef4444" : "#e6e4dc",
           "circle-radius": ["step", ["get", "point_count"], 14, 5, 18, 10, 22],
-          "circle-opacity": 0.9,
+          "circle-opacity": 0.85,
         },
       });
 
@@ -310,23 +310,49 @@ export default function MapView({
           "text-field": "{point_count_abbreviated}",
           "text-size": 11,
         },
-        paint: { "text-color": "#0c0d10" },
+        paint: { "text-color": palette === "watch" ? "#fafafa" : "#0c0d10" },
       });
 
-      // Glow ring (outer)
+      // Glow ring (outer) — static for low-priority pins
       map.addLayer({
-        id: "pin-ring",
+        id: "pin-ring-static",
         type: "circle",
         source: "events",
-        filter: ["!", ["has", "point_count"]],
+        filter: [
+          "all",
+          ["!", ["has", "point_count"]],
+          [
+            "any",
+            ["!=", ["get", "event_type"], "strike"],
+            ["<", ["coalesce", ["get", "source_count"], 0], 3],
+          ],
+        ],
         paint: {
-          "circle-radius": 13,
+          "circle-radius": 10,
           "circle-color": [
             "match", ["get", "event_type"],
             "strike", pal.dim.strike,
             "clash",  pal.dim.clash,
             pal.dim.movement,
           ],
+          "circle-opacity": 0.45,
+        },
+      });
+
+      // Glow ring (outer) — pulsing only for corroborated strikes (source_count >= 3)
+      map.addLayer({
+        id: "pin-ring-pulse",
+        type: "circle",
+        source: "events",
+        filter: [
+          "all",
+          ["!", ["has", "point_count"]],
+          ["==", ["get", "event_type"], "strike"],
+          [">=", ["coalesce", ["get", "source_count"], 0], 3],
+        ],
+        paint: {
+          "circle-radius": 13,
+          "circle-color": pal.dim.strike,
         },
       });
 
@@ -354,7 +380,13 @@ export default function MapView({
         source: "events",
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-radius": 4,
+          // Strike cores grow with corroboration; contacts/movements stay fixed.
+          "circle-radius": [
+            "case",
+            ["==", ["get", "event_type"], "strike"],
+            ["min", 12, ["max", 4, ["+", 2, ["*", ["coalesce", ["get", "source_count"], 1], 0.9]]]],
+            4,
+          ],
           "circle-color": [
             "match", ["get", "event_type"],
             "strike", pal.core.strike,
@@ -419,8 +451,12 @@ export default function MapView({
         }
       });
 
-      // Beacon animation: outer pin ring pulses outward and fades (sawtooth),
-      // AOI outline breathes via sine. Both run in a single rAF loop.
+      // Beacon animation: the high-priority strike ring pulses outward and fades
+      // (sawtooth), AOI outline breathes via sine. Both run in a single rAF loop —
+      // unless the user prefers reduced motion, in which case everything holds steady.
+      const prefersReduced =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const t0 = performance.now();
       const BEACON_MS = 2000;
       function animate() {
@@ -428,9 +464,9 @@ export default function MapView({
         const t = elapsed / 1000;
         const phase = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 sawtooth
 
-        if (map.getLayer("pin-ring")) {
-          map.setPaintProperty("pin-ring", "circle-radius", 6 + phase * 18);
-          map.setPaintProperty("pin-ring", "circle-opacity", (1 - phase) * 0.65);
+        if (map.getLayer("pin-ring-pulse")) {
+          map.setPaintProperty("pin-ring-pulse", "circle-radius", 6 + phase * 18);
+          map.setPaintProperty("pin-ring-pulse", "circle-opacity", (1 - phase) * 0.65);
         }
         if (showAOI) {
           const sine = (Math.sin(t * Math.PI * 1.2) + 1) / 2;
@@ -441,7 +477,15 @@ export default function MapView({
         }
         animFrame = requestAnimationFrame(animate);
       }
-      animFrame = requestAnimationFrame(animate);
+      if (prefersReduced) {
+        // Hold the pulse ring at a calm steady state; skip the rAF loop entirely.
+        if (map.getLayer("pin-ring-pulse")) {
+          map.setPaintProperty("pin-ring-pulse", "circle-radius", 13);
+          map.setPaintProperty("pin-ring-pulse", "circle-opacity", 0.45);
+        }
+      } else {
+        animFrame = requestAnimationFrame(animate);
+      }
 
       // Sync map position to URL so the share button captures the current view.
       map.on("moveend", () => {
