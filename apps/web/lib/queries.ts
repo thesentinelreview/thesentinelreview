@@ -79,7 +79,7 @@ function fmtBriefingUTC(ts: Date): string {
 // ---------------------------------------------------------------------------
 
 export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<Stats> {
-  if (!isDatabaseConfigured()) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+  if (!isDatabaseConfigured()) return { events: 0, strikes: 0, contacts: 0, movements: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
   const interval   = SQL_INTERVALS[timeRange];
@@ -89,6 +89,8 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
     type Row = {
       events: string | number;
       strikes: string | number;
+      contacts: string | number;
+      movements: string | number;
       verified_pct: string | number | null;
       vs_7d_avg_pct: string | number | null;
     };
@@ -112,6 +114,8 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
       SELECT
         (SELECT count(*) FROM window_events)::int AS events,
         (SELECT count(*) FROM window_events WHERE event_type = 'strike')::int AS strikes,
+        (SELECT count(*) FROM window_events WHERE event_type = 'clash')::int AS contacts,
+        (SELECT count(*) FROM window_events WHERE event_type = 'movement')::int AS movements,
         (SELECT COALESCE(round(
            100.0 * count(*) FILTER (WHERE confidence = 'verified')::numeric
            / NULLIF(count(*), 0)
@@ -124,17 +128,19 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
       [minLng, minLat, maxLng, maxLat, windowDays],
     );
 
-    if (!row) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
-    if (Number(row.events) === 0) return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+    if (!row) return { events: 0, strikes: 0, contacts: 0, movements: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+    if (Number(row.events) === 0) return { events: 0, strikes: 0, contacts: 0, movements: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
     return {
       events: Number(row.events) || 0,
       strikes: Number(row.strikes) || 0,
+      contacts: Number(row.contacts) || 0,
+      movements: Number(row.movements) || 0,
       verified_pct: Number(row.verified_pct) || 0,
       vs_7d_avg_pct: Number(row.vs_7d_avg_pct) || 0,
     };
   } catch {
-    return { events: 0, strikes: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
+    return { events: 0, strikes: 0, contacts: 0, movements: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
   }
 }
 

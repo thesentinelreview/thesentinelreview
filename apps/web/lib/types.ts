@@ -53,6 +53,8 @@ export interface Source {
 export interface Stats {
   events: number;
   strikes: number;
+  contacts: number;
+  movements: number;
   verified_pct: number;
   vs_7d_avg_pct: number;
 }
