@@ -82,7 +82,7 @@ export default async function WatchfloorPage({
   const [stats, mapEvents, alerts, intensity, sources, briefing] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
-    getAlerts(theater.id, 4, timeRange),
+    getAlerts(theater.id, null, timeRange),
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),

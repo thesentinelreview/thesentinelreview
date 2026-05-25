@@ -18,7 +18,7 @@ export default function LiveStream({
           No active alerts
         </div>
       ) : (
-        alerts.slice(0, 4).map((a) => <AlertRow key={a.id} alert={a} theaterId={theaterId} />)
+        alerts.map((a) => <AlertRow key={a.id} alert={a} theaterId={theaterId} />)
       )}
     </Pane>
   );
