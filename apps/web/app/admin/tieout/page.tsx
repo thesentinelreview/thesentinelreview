@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
-import { resolveTheater, THEATERS } from "@/data/theaters";
+import { resolveTieoutTheater, THEATERS } from "@/data/theaters";
 import {
   getFusionCounts,
   getTieoutRows,
   resolveTieoutWindow,
   tieoutSummary,
+  type TieoutTheater,
   type TieoutWindow,
 } from "@/lib/queries";
-import type { TheaterKey } from "@/lib/types";
 import Kpi from "@/components/watchfloor/Kpi";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +17,14 @@ export const dynamic = "force-dynamic";
 const WINDOWS: TieoutWindow[] = ["24h", "7d", "all"];
 const WINDOW_LABELS: Record<TieoutWindow, string> = { "24h": "24H", "7d": "7D", all: "ALL" };
 
-function buildHref(theater: TheaterKey, window: TieoutWindow): string {
+function buildHref(theater: TieoutTheater, window: TieoutWindow): string {
   const p = new URLSearchParams();
   p.set("theater", theater);
   if (window !== "24h") p.set("window", window);
   return `/admin/tieout?${p}`;
 }
 
-function exportHref(format: "csv" | "xlsx", theater: TheaterKey, window: TieoutWindow): string {
+function exportHref(format: "csv" | "xlsx", theater: TieoutTheater, window: TieoutWindow): string {
   const p = new URLSearchParams({ format, theater, window });
   return `/admin/tieout/export?${p}`;
 }
@@ -63,7 +63,7 @@ export default async function TieoutPage({
   if (!(await isAdmin())) redirect("/sign-in");
 
   const params = await searchParams;
-  const theater = resolveTheater(params.theater);
+  const theater = resolveTieoutTheater(params.theater);
   const window = resolveTieoutWindow(params.window);
 
   const [rows, fusionCounts] = await Promise.all([
@@ -97,7 +97,7 @@ export default async function TieoutPage({
             </div>
           </div>
           <Link
-            href={`/?theater=${theater.id}${window === "24h" ? "" : `&window=${window === "all" ? "7d" : window}`}`}
+            href={`/?theater=${theater.id === "all" ? "ukraine" : theater.id}${window === "24h" ? "" : `&window=${window === "all" ? "7d" : window}`}`}
             className="text-[11px] text-zinc-400 hover:text-zinc-200 tracking-[0.08em] uppercase font-data self-start sm:self-auto"
           >
             ← Watchfloor
@@ -151,6 +151,9 @@ export default async function TieoutPage({
                   {t.label}
                 </Link>
               ))}
+              <Link key="all" href={buildHref("all", window)} className={chipClass(theater.id === "all")}>
+                Global
+              </Link>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[10px] uppercase tracking-[0.22em] text-zinc-500 mr-1">

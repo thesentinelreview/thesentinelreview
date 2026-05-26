@@ -43,6 +43,17 @@ export function resolveTheater(raw: string | undefined): TheaterConfig {
   return THEATERS[(raw as TheaterKey) in THEATERS ? (raw as TheaterKey) : "ukraine"];
 }
 
+// /admin/tieout adds a "Global" (all-theaters) view on top of the four real
+// theaters. Opt-in for that page only — resolveTheater and TheaterKey are left
+// unchanged, so the watchfloor (/) and feed are unaffected.
+export function resolveTieoutTheater(
+  raw: string | undefined,
+): { id: TheaterKey | "all"; label: string } {
+  if (raw === "all") return { id: "all", label: "Global" };
+  const t = resolveTheater(raw);
+  return { id: t.id, label: t.label };
+}
+
 export interface TheaterDescriptor {
   tagline:        string;          // one line — shown on the /theaters index card
   since:          string;          // e.g. "February 24, 2022"
