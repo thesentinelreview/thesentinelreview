@@ -70,9 +70,16 @@ export interface Stats {
 
 export interface SensorStripData {
   platforms: { tg: number; x: number; rss: number; gdelt: number; bsky: number };
-  latency_seconds: number | null; // median age of posts in the last 30 min
+  latency_seconds: number | null; // age of the most recent post for the theater (freshness)
   tracks: number;                  // distinct actors in the last 24h
 }
+
+// Sensor-strip pill window. A platform pill is "active" when that platform
+// delivered at least one post for the selected theater within this window.
+// Sized to observed feed cadence: theater sources (especially Telegram) post in
+// multi-hour bursts, so a sub-day window reads as falsely dead even when
+// ingestion is healthy. Real-time freshness is shown separately by LAT.
+export const PILL_WINDOW_MINUTES = 1440;
 
 export interface BriefingData {
   id: string;

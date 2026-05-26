@@ -1,4 +1,8 @@
 import type { SensorStripData } from "@/lib/types";
+import { PILL_WINDOW_MINUTES } from "@/lib/types";
+
+const WINDOW_LABEL =
+  PILL_WINDOW_MINUTES % 60 === 0 ? `${PILL_WINDOW_MINUTES / 60}h` : `${PILL_WINDOW_MINUTES}m`;
 
 const PLATFORMS: { key: keyof SensorStripData["platforms"]; label: string }[] = [
   { key: "tg",    label: "TG" },
@@ -24,7 +28,7 @@ export default function SensorStrip({ data }: { data: SensorStripData }) {
           return (
             <span
               key={key}
-              title={`${label}: ${count} posts in last 30 min`}
+              title={`${label}: ${count} posts in last ${WINDOW_LABEL}`}
               className={`px-1.5 py-0.5 rounded-sm border tracking-[0.16em] ${
                 active
                   ? "border-teal-400/30 text-teal-300 bg-teal-400/[0.04]"
@@ -35,7 +39,7 @@ export default function SensorStrip({ data }: { data: SensorStripData }) {
             </span>
           );
         })}
-        <span className="ml-2 text-zinc-500">
+        <span className="ml-2 text-zinc-500" title="LAT — age of the most recent post for this theater (freshest, not median)">
           LAT <span className="text-teal-300">{formatLat(data.latency_seconds)}</span>
         </span>
         <span className="text-zinc-700">|</span>
