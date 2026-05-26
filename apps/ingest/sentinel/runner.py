@@ -246,6 +246,25 @@ def run_dryrun_weapon_type() -> None:
     sys.exit(0)
 
 
+def run_backfill_weapon_type() -> None:
+    """One-shot backfill of events.weapon_type for historical rows (Threat Axes PR 2).
+
+    Re-runs the live extractor on each unclassified event's primary source post and
+    persists the resulting weapon_type. Always exits 0 — the tally is the deliverable.
+    """
+    _configure_logging()
+    from sentinel.pipeline.weapon_type_backfill import run_backfill
+
+    stats = run_backfill()
+    dist = " ".join(f"{k}={v}" for k, v in sorted(stats.dist.items())) or "—"
+    print(
+        f"\nWEAPON BACKFILL: considered={stats.considered} classified={stats.classified} "
+        f"null={stats.null} no_event={stats.no_event} failed={stats.failed} | dist: {dist}",
+        flush=True,
+    )
+    sys.exit(0)
+
+
 def run_checks() -> None:
     """Run all data integrity checks; exit 1 if any critical check fails."""
     _configure_logging()

@@ -280,6 +280,19 @@ def link_event_source(
     )
 
 
+def update_event_weapon_type(
+    conn: psycopg.Connection,
+    event_id: uuid.UUID,
+    *,
+    weapon_type: str | None,
+) -> None:
+    """Persist a (back)filled weapon_type onto an existing event row."""
+    conn.execute(
+        "UPDATE events SET weapon_type = %s WHERE id = %s",
+        (weapon_type, event_id),
+    )
+
+
 _THEATER_BBOX: dict[str, tuple[float, float, float, float]] = {
     "ukraine": (22, 44, 40, 52),
     # iran spans the proxy theater (Lebanon→Yemen), matching the web dashboard
