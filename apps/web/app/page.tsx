@@ -93,12 +93,11 @@ export default async function WatchfloorPage({
   const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv, sensorData] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
-    // Live Event Stream is always the last 24h, independent of the dashboard window.
-    getAlerts(theater.id, null, "24h"),
+    getAlerts(theater.id, null, timeRange),
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),
-    getSectors(theater.id),
+    getSectors(theater.id, timeRange),
     getFusionRate(theater.id, timeRange),
     getMedianTTV(theater.id, timeRange),
     getSensorStripData(theater.id),
@@ -155,7 +154,7 @@ export default async function WatchfloorPage({
 
           <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none min-w-0 md:col-span-5" />
           <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none min-w-0 max-h-[280px] md:max-h-none md:col-span-3" />
-          <SectorThreat sectors={sectors} intensity={intensity} className="flex-none min-w-0 md:col-span-2" />
+          <SectorThreat sectors={sectors} intensity={intensity} windowLabel={WINDOW_LABELS[timeRange]} className="flex-none min-w-0 md:col-span-2" />
         </div>
 
         <TimeScrubber />

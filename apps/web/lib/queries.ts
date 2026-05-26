@@ -624,13 +624,14 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 }
 
 // ---------------------------------------------------------------------------
-// Sector threat (oblast breakdown, last 7 days vs. the prior 7)
+// Sector threat (oblast breakdown, current window vs. the prior window)
 // ---------------------------------------------------------------------------
 
-export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Promise<Sector[]> {
+export async function getSectors(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h", limit = 6): Promise<Sector[]> {
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
 
   try {
     type Row = {
@@ -649,7 +650,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Pr
           count(*) FILTER (WHERE event_type = 'strike') AS strikes
         FROM events
         WHERE published_at IS NOT NULL
-          AND occurred_at > now() - INTERVAL '7 days'
+          AND occurred_at > now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
           AND oblast IS NOT NULL
           AND btrim(oblast) <> ''
@@ -660,7 +661,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Pr
         SELECT oblast AS name, count(*) AS events
         FROM events
         WHERE published_at IS NOT NULL
-          AND occurred_at BETWEEN now() - INTERVAL '14 days' AND now() - INTERVAL '7 days'
+          AND occurred_at BETWEEN now() - INTERVAL '${interval}' * 2 AND now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
           AND oblast IS NOT NULL
         GROUP BY oblast
