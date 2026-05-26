@@ -346,8 +346,12 @@ export default function MapView({
           ["==", ["get", "event_type"], "strike"],
         ],
         paint: {
+          // Solid fill (not the ~0.18-alpha dim variant) so the rAF opacity
+          // envelope below is the sole alpha control — the dim color made the
+          // pulse read as nearly invisible at default zoom.
           "circle-radius": 13,
-          "circle-color": pal.dim.strike,
+          "circle-color": pal.core.strike,
+          "circle-opacity": 0.5,
         },
       });
 
@@ -460,8 +464,8 @@ export default function MapView({
         const phase = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 sawtooth
 
         if (map.getLayer("pin-ring-pulse")) {
-          map.setPaintProperty("pin-ring-pulse", "circle-radius", 6 + phase * 18);
-          map.setPaintProperty("pin-ring-pulse", "circle-opacity", (1 - phase) * 0.65);
+          map.setPaintProperty("pin-ring-pulse", "circle-radius", 6 + phase * 22);
+          map.setPaintProperty("pin-ring-pulse", "circle-opacity", (1 - phase) * 0.85);
         }
         if (showAOI) {
           const sine = (Math.sin(t * Math.PI * 1.2) + 1) / 2;
@@ -476,7 +480,7 @@ export default function MapView({
         // Hold the pulse ring at a calm steady state; skip the rAF loop entirely.
         if (map.getLayer("pin-ring-pulse")) {
           map.setPaintProperty("pin-ring-pulse", "circle-radius", 13);
-          map.setPaintProperty("pin-ring-pulse", "circle-opacity", 0.45);
+          map.setPaintProperty("pin-ring-pulse", "circle-opacity", 0.5);
         }
       } else {
         animFrame = requestAnimationFrame(animate);
