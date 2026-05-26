@@ -16,6 +16,14 @@ JobType     = Literal["ingest_source", "extract_events", "generate_briefing"]
 JobStatus   = Literal["pending", "running", "done", "failed"]
 Relationship = Literal["primary", "corroborating", "contradicting"]
 
+# Coarse kinetic-capability classes for the Threat Axes feature. The extractor's
+# tool schema constrains the LLM to these values; `other` absorbs anything kinetic
+# outside the six (IEDs, mines, EW, …). Stored as free TEXT with no DB CHECK so the
+# vocabulary can grow without a migration. None = no identifiable kinetic capability.
+WEAPON_TYPES: tuple[str, ...] = (
+    "artillery", "drone", "missile", "armor", "infantry", "naval", "other",
+)
+
 
 # ── Database row models ────────────────────────────────────────────────────────
 
@@ -57,6 +65,7 @@ class Event(BaseModel):
     oblast:               str
     actor:                str | None
     description:          str
+    weapon_type:          str | None = None
     confidence:           Confidence
     published_at:         datetime | None
     human_reviewed_at:    datetime | None
@@ -106,6 +115,7 @@ class ExtractedEvent(BaseModel):
     geolocation_signals:  GeolocationSignal = Field(default_factory=GeolocationSignal)
     is_high_impact:       bool = False  # mass casualty or escalatory — triggers held_for_review
     relevance_score:      int | None = None
+    weapon_type:          str | None = None  # coarse kinetic class; None when none identifiable
 
 
 class ConfidenceAssessment(BaseModel):

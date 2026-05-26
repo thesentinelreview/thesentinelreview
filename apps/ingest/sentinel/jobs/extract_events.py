@@ -165,6 +165,7 @@ def _process_post(
         confidence=assessment.confidence,
         held_for_review=assessment.held_for_review,
         relevance_score=result.relevance_score,
+        weapon_type=result.weapon_type,
     )
 
     link_event_source(
