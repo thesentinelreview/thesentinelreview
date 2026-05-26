@@ -1,32 +1,7 @@
-// One KPI cell in the rail: label, large value, optional unit/delta, and either
-// a tiny inline-SVG sparkline (events/strikes) or a hint line. The bottom row is
-// a fixed height so sparked and non-sparked cells stay vertically aligned.
-function SparkBars({ data, color }: { data: number[]; color: string }) {
-  const max = Math.max(1, ...data);
-  const n = data.length;
-  const gap = n > 12 ? 1 : 2;
-  const bw = (100 - gap * (n - 1)) / n;
-  return (
-    <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-5 w-full" aria-hidden="true">
-      {data.map((v, i) => {
-        const h = (v / max) * 20;
-        return (
-          <rect
-            key={i}
-            x={i * (bw + gap)}
-            y={20 - Math.max(h, v > 0 ? 1.5 : 0.75)}
-            width={bw}
-            height={Math.max(h, v > 0 ? 1.5 : 0.75)}
-            rx={0.5}
-            fill={color}
-            opacity={v > 0 ? 0.85 : 0.25}
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
+// One KPI cell in the rail: label, large value, an optional unit + delta, and an
+// optional hint line (used by /admin/tieout). A per-cell sparkline was removed in
+// P2.E; its bucket query is retained as getKpiSparklines in lib/queries.ts should
+// the sparklines be reinstated with a different design.
 export default function Kpi({
   label,
   value,
@@ -34,8 +9,6 @@ export default function Kpi({
   delta,
   deltaColor,
   hint,
-  spark,
-  sparkColor = "#71717a",
 }: {
   label: string;
   value: string | number;
@@ -43,8 +16,6 @@ export default function Kpi({
   delta?: string;
   deltaColor?: "red" | "green";
   hint?: string;
-  spark?: number[];
-  sparkColor?: string;
 }) {
   return (
     <div className="flex-1 px-4 py-3 rounded-sm bg-zinc-950/60 border border-zinc-800/80">
@@ -62,13 +33,9 @@ export default function Kpi({
           </span>
         )}
       </div>
-      <div className="mt-2 h-5">
-        {spark && spark.length > 0 ? (
-          <SparkBars data={spark} color={sparkColor} />
-        ) : (
-          <div className="text-[10px] text-zinc-600 leading-5 truncate">{hint ?? ""}</div>
-        )}
-      </div>
+      {hint && (
+        <div className="mt-2 h-5 text-[10px] text-zinc-600 leading-5 truncate">{hint}</div>
+      )}
     </div>
   );
 }

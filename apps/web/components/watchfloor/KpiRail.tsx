@@ -1,6 +1,6 @@
 import Kpi from "./Kpi";
 import type { Stats } from "@/lib/types";
-import type { KpiSparklines, KpiDeltas } from "@/lib/queries";
+import type { KpiDeltas } from "@/lib/queries";
 
 function formatTtv(minutes: number | null): string {
   if (minutes == null) return "—";
@@ -23,14 +23,12 @@ export default function KpiRail({
   windowLabel,
   fusionPct,
   medianTtvMinutes,
-  sparklines,
   deltas,
 }: {
   stats: Stats;
   windowLabel: string;
   fusionPct: number | null;
   medianTtvMinutes: number | null;
-  sparklines: KpiSparklines;
   deltas: KpiDeltas;
 }) {
   // All deltas compare the current window to the equal-length window before it.
@@ -44,33 +42,26 @@ export default function KpiRail({
   return (
     <div className="overflow-x-auto border-b border-zinc-900 bg-zinc-900">
       <div className="flex items-stretch gap-px min-w-max">
-        {/* Sparked: more activity reads as escalation → red delta. */}
+        {/* More activity reads as escalation → red delta. */}
         <Kpi
           label={`${windowLabel} Events`}
           value={stats.events}
           delta={eventsDeltaPct === null ? (deltas.events > 0 ? "NEW" : undefined) : signedPct(eventsDeltaPct)}
           deltaColor={eventsDeltaPct === null || eventsDeltaPct >= 0 ? "red" : "green"}
-          spark={sparklines.events}
-          sparkColor="#22d3ee"
         />
         <Kpi
           label="Strikes"
           value={deltas.strikes}
           delta={signedNum(strikesDelta)}
           deltaColor={strikesDelta >= 0 ? "red" : "green"}
-          spark={sparklines.strikes}
-          sparkColor="#ef4444"
         />
-        {/* Higher verification share is good → green delta (in points). The spark
-            counts verified events per bucket; it's sparse by nature. */}
+        {/* Higher verification share is good → green delta (in points). */}
         <Kpi
           label="Verified"
           value={deltas.verifiedPct}
           unit="%"
           delta={`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
           deltaColor={verifiedDelta >= 0 ? "green" : "red"}
-          spark={sparklines.verified}
-          sparkColor="#34d399"
         />
         <Kpi
           label="Fusion"

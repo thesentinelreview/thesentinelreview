@@ -193,9 +193,12 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 
 // Per-metric bucket counts for the KPI sparklines: 24 hourly buckets in 24h
 // mode, one daily bucket per day otherwise. Generalizes getIntensity's
-// generate_series / date_trunc pattern. Buckets EVENTS, STRIKES, and VERIFIED;
-// verified events are sparse (often 0/bucket), so its spark reads as a near-flat
-// baseline — that honestly reflects how rare verification is.
+// generate_series / date_trunc pattern. Buckets EVENTS, STRIKES, and VERIFIED.
+//
+// RETAINED, CURRENTLY UNCALLED: the KPI-rail sparklines were removed in P2.E
+// (the bars didn't communicate their meaning at that size). This query is kept
+// intact so the sparklines can be reinstated with a different design without
+// rebuilding the data layer; it is intentionally not referenced by the app.
 export type KpiSparklines = { events: number[]; strikes: number[]; verified: number[] };
 
 export async function getKpiSparklines(
