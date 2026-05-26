@@ -294,7 +294,7 @@ export default function MapView({
         source: "events",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": palette === "watch" ? "#ef4444" : "#e6e4dc",
+          "circle-color": palette === "watch" ? "#71717a" : "#e6e4dc",
           "circle-radius": ["step", ["get", "point_count"], 14, 5, 18, 10, 22],
           "circle-opacity": 0.85,
         },
@@ -313,7 +313,7 @@ export default function MapView({
         paint: { "text-color": palette === "watch" ? "#fafafa" : "#0c0d10" },
       });
 
-      // Glow ring (outer) — static for low-priority pins
+      // Glow ring (outer) — static for non-strike pins (contacts + movements)
       map.addLayer({
         id: "pin-ring-static",
         type: "circle",
@@ -321,11 +321,7 @@ export default function MapView({
         filter: [
           "all",
           ["!", ["has", "point_count"]],
-          [
-            "any",
-            ["!=", ["get", "event_type"], "strike"],
-            ["<", ["coalesce", ["get", "source_count"], 0], 3],
-          ],
+          ["!=", ["get", "event_type"], "strike"],
         ],
         paint: {
           "circle-radius": 10,
@@ -339,7 +335,7 @@ export default function MapView({
         },
       });
 
-      // Glow ring (outer) — pulsing only for corroborated strikes (source_count >= 3)
+      // Glow ring (outer) — pulsing for all strikes
       map.addLayer({
         id: "pin-ring-pulse",
         type: "circle",
@@ -348,7 +344,6 @@ export default function MapView({
           "all",
           ["!", ["has", "point_count"]],
           ["==", ["get", "event_type"], "strike"],
-          [">=", ["coalesce", ["get", "source_count"], 0], 3],
         ],
         paint: {
           "circle-radius": 13,
