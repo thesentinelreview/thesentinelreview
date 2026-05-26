@@ -61,7 +61,7 @@ export default function TimeScrubber() {
           ▶▶
         </button>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div className="relative h-4 flex items-center">
           <div className="relative h-1 w-full rounded-full bg-zinc-800">
             <div

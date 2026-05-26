@@ -86,7 +86,7 @@ export default function HeaderBar({
       </div>
 
       {/* Right cluster */}
-      <div className="flex items-center gap-2 text-xs font-data flex-none">
+      <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-data min-w-0">
         {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
         <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden mr-1">
           <span
