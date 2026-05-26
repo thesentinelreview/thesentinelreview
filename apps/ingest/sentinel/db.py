@@ -289,8 +289,13 @@ def get_recent_events(
     *,
     hours: int = 24,
     theater: str = "ukraine",
+    confidence: tuple[str, ...] = ("verified", "partial"),
 ) -> list[dict]:
-    """Events for the briefing generator — includes source count."""
+    """Events for the briefing generator — includes source count.
+
+    `confidence` selects which confidence levels to include; the briefing
+    generator widens it through a cascade when the strict set is empty.
+    """
     bbox = _THEATER_BBOX.get(theater, _THEATER_BBOX["ukraine"])
     min_lng, min_lat, max_lng, max_lat = bbox
     return conn.execute(
@@ -303,12 +308,12 @@ def get_recent_events(
         FROM events e
         LEFT JOIN event_sources es ON es.event_id = e.id
         WHERE e.occurred_at > now() - (%s * interval '1 hour')
-          AND e.confidence IN ('verified', 'partial')
+          AND e.confidence = ANY(%s)
           AND ST_Within(e.location, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
         GROUP BY e.id
         ORDER BY e.occurred_at DESC
         """,
-        (hours, min_lng, min_lat, max_lng, max_lat),
+        (hours, list(confidence), min_lng, min_lat, max_lng, max_lat),
     ).fetchall()  # type: ignore[return-value]
 
 

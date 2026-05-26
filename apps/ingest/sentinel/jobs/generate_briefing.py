@@ -1,8 +1,10 @@
 """
 generate_briefing job
 ---------------------
-Pulls the last N hours of verified/partial events, builds structured input
-for the LLM, generates a draft briefing, and saves it to the briefings table.
+Selects events for the theater via a confidence/window cascade (recent
+verified/partial -> recent all-confidence -> 7-day verified/partial -> 7-day
+all-confidence), builds structured input for the LLM, generates a draft
+briefing, and saves it to the briefings table.
 
 Saves directly as status='published' — briefings go live immediately on creation.
 
@@ -27,15 +29,43 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
     params = GenerateBriefingPayload.model_validate(payload)
 
     period_end = datetime.now(tz=timezone.utc)
-    period_start = period_end - timedelta(hours=params.period_hours)
 
-    events = get_recent_events(conn, hours=params.period_hours, theater=params.theater)
+    # Confidence/window cascade: prefer recent corroborated events, but fall back
+    # through unconfirmed and a 7-day window so quiet theaters (Iran, Sudan) still
+    # get a briefing instead of being silently skipped. The CONFIDENCE BREAKDOWN in
+    # the UI plus the standing "not for operational use" disclaimer cover the lower
+    # tiers, so no separate draft-gating is applied.
+    verified_partial = ("verified", "partial")
+    all_confidence = ("verified", "partial", "unconfirmed")
+    week_hours = 24 * 7
+    tiers = [
+        (params.period_hours, verified_partial, f"{params.period_hours}h+verified"),
+        (params.period_hours, all_confidence, f"{params.period_hours}h+unconfirmed"),
+        (week_hours, verified_partial, "7d+verified"),
+        (week_hours, all_confidence, "7d+unconfirmed"),
+    ]
+
+    events: list = []
+    tier_label = "none"
+    window_hours = params.period_hours
+    for hrs, confidence, label in tiers:
+        events = get_recent_events(conn, hours=hrs, theater=params.theater, confidence=confidence)
+        if events:
+            tier_label, window_hours = label, hrs
+            break
+
+    # One line per theater per cycle showing which tier produced the briefing.
+    log.info(
+        "briefing_event_selection", theater=params.theater, tier=tier_label, events=len(events)
+    )
 
     if not events:
-        log.info("no_events_for_briefing", theater=params.theater, hours=params.period_hours)
         return
 
-    log.info("generating_briefing", event_count=len(events), theater=params.theater)
+    period_start = period_end - timedelta(hours=window_hours)
+    log.info(
+        "generating_briefing", event_count=len(events), theater=params.theater, tier=tier_label
+    )
 
     # Build 7-day baseline per oblast for context
     baseline = _compute_baseline(conn, theater=params.theater)
