@@ -18,10 +18,10 @@ Relationship = Literal["primary", "corroborating", "contradicting"]
 
 # Coarse kinetic-capability classes for the Threat Axes feature. The extractor's
 # tool schema constrains the LLM to these values; `other` absorbs anything kinetic
-# outside the six (IEDs, mines, EW, …). Stored as free TEXT with no DB CHECK so the
+# outside the seven (IEDs, mines, EW, …). Stored as free TEXT with no DB CHECK so the
 # vocabulary can grow without a migration. None = no identifiable kinetic capability.
 WEAPON_TYPES: tuple[str, ...] = (
-    "artillery", "drone", "missile", "armor", "infantry", "naval", "other",
+    "artillery", "drone", "missile", "armor", "infantry", "naval", "aircraft", "other",
 )
 
 
