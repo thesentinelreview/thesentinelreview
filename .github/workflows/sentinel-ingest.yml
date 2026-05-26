@@ -33,6 +33,12 @@ jobs:
             "telethon>=1.36"
           pip install --no-deps -e apps/ingest
 
+      - name: Verify DB target
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EXPECTED_DB_HOST_SUBSTRING: ${{ vars.EXPECTED_DB_HOST_SUBSTRING }}
+        run: sentinel-preflight
+
       - name: Apply pending migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -58,6 +64,7 @@ jobs:
       - name: Run integrity checks
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Optional; set in repo secrets to receive Slack alerts on critical failures.
           SENTINEL_ALERT_WEBHOOK_URL: ${{ secrets.SENTINEL_ALERT_WEBHOOK_URL }}
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-checks

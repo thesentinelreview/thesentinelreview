@@ -45,6 +45,7 @@ dev = [
 [project.scripts]
 sentinel-worker = "sentinel.worker:main"
 sentinel-scheduler = "sentinel.scheduler:main"
+sentinel-preflight = "sentinel.preflight:verify_database_target"
 sentinel-run-ingest = "sentinel.runner:run_ingest"
 sentinel-run-briefing = "sentinel.runner:run_briefing"
 sentinel-run-checks = "sentinel.runner:run_checks"

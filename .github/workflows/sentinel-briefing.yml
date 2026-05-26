@@ -32,6 +32,12 @@ jobs:
             "tenacity>=9.0"
           pip install --no-deps -e apps/ingest
 
+      - name: Verify DB target
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EXPECTED_DB_HOST_SUBSTRING: ${{ vars.EXPECTED_DB_HOST_SUBSTRING }}
+        run: sentinel-preflight
+
       - name: Generate briefing
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
