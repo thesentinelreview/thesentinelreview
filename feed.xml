@@ -6,8 +6,68 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 May 2026 15:29:29 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 May 2026 18:34:04 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌏 South Korea Getting Nuclear Submarines Is A Huge Deal | The War Zone</title>
+      <link>https://www.twz.com/sea/south-korea-getting-nuclear-submarines-is-a-huge-deal</link>
+      <guid isPermaLink="true">https://www.twz.com/sea/south-korea-getting-nuclear-submarines-is-a-huge-deal</guid>
+      <pubDate>Tue, 26 May 2026 14:14:56 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.twz.com/sea/south-korea-getting-nuclear-submarines-is-a-huge-deal">The War Zone</source>
+      <description>Nuclear propulsion will give South Korea more capable subs, but it will also lay the groundwork for a future sea-based nuclear deterrent option. The post South Korea Getting Nuclear Submarines Is A Huge Deal appeared first on The War Zone.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Why the U.S. Should Wind Down Military Aid to Israel | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/05/26/israel-united-states-military-aid-gaza-trump-netanyahu/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/26/israel-united-states-military-aid-gaza-trump-netanyahu/</guid>
+      <pubDate>Tue, 26 May 2026 17:54:50 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://foreignpolicy.com/2026/05/26/israel-united-states-military-aid-gaza-trump-netanyahu/">Foreign Policy</source>
+      <description>Washington should no longer be liable for Israeli misdeeds.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Banned Russian Submunitions Found After Mali’s Military Announces Airstrikes | Bellingcat</title>
+      <link>https://www.bellingcat.com/news/africa/2026/05/26/banned-russian-submunitions-found-after-malis-military-announces-airstrikes/</link>
+      <guid isPermaLink="true">https://www.bellingcat.com/news/africa/2026/05/26/banned-russian-submunitions-found-after-malis-military-announces-airstrikes/</guid>
+      <pubDate>Tue, 26 May 2026 17:01:39 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.bellingcat.com/news/africa/2026/05/26/banned-russian-submunitions-found-after-malis-military-announces-airstrikes/">Bellingcat</source>
+      <description>This investigation is a collaboration between Bellingcat and Jeune Afrique. You can read Jeune Afrique’s article in French here. Unexploded Russian-made cluster munition bomblets, as well as damage consistent with bomblet impacts, have been found in a village in northern Mali –…</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 South Korea outlines nuclear-powered submarine plan | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/south-korea-outlines-nuclear-powered-submarine-plan/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/south-korea-outlines-nuclear-powered-submarine-plan/</guid>
+      <pubDate>Tue, 26 May 2026 16:30:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://breakingdefense.com/2026/05/south-korea-outlines-nuclear-powered-submarine-plan/">Breaking Defense</source>
+      <description>South Korea’s Ministry of National Defense expects its first nuclear-powered submarine to enter service in the mid-2030s.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🔐 Air Force sees another year delay for next-gen engines | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/air-force-sees-another-year-delay-for-next-gen-engines/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/air-force-sees-another-year-delay-for-next-gen-engines/</guid>
+      <pubDate>Tue, 26 May 2026 15:43:00 +0000</pubDate>
+      <category>Cyber</category>
+      <source url="https://breakingdefense.com/2026/05/air-force-sees-another-year-delay-for-next-gen-engines/">Breaking Defense</source>
+      <description>The Next Generation Adaptive Propulsion program is now projected to complete prototyping work in 2031, a cumulative delay of three years compared to earlier projections.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Understanding the Value of Ukrainian Railways | War on the Rocks</title>
+      <link>https://warontherocks.com/understanding-the-value-of-ukrainian-railways/</link>
+      <guid isPermaLink="true">https://warontherocks.com/understanding-the-value-of-ukrainian-railways/</guid>
+      <pubDate>Tue, 26 May 2026 15:30:21 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://warontherocks.com/understanding-the-value-of-ukrainian-railways/">War on the Rocks</source>
+      <description>Welcome to The Ukraine Compass, a weekly digest of Ukrainian commentary and analysis from across the political spectrum only for War on the Rocks members. Each Monday, we bring you a curated selection of articles from Ukrainian media offering insight into how Ukrainians…</description>
+      <sentinel:score>3</sentinel:score>
+    </item>
     <item>
       <title>🏴 Ground robots in Latvia and the history of manned-unmanned teaming | Breaking Defense</title>
       <link>https://breakingdefense.com/2026/05/ground-robots-in-latvia-and-the-history-of-manned-unmanned-teaming/</link>
@@ -26,7 +86,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/26/report-us-to-cut-strategic-bombers-and-warships-available-to-nato-in-a-crisis/">Defense News</source>
       <description>The number of U.S. fighter jets is set to fall by a third, Spiegel cited U.S. envoy Alexander Velez-Green as saying during the closed-door meeting.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Lipsky quoted in a Bloomberg article explaining that stablecoins will not uphold the dollar’s outsized global role on their own, with its fundamental pillars still laying with trust in institutions. | Atlantic Council</title>
@@ -86,7 +146,7 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/lipsky-cited-in-a-new-york-times-article-on-the-specter-of-trumps-tariffs-over-g7-ministers-meeting/">Atlantic Council</source>
       <description>Read the full article here. The post Lipsky cited in a New York Times article on the specter of Trump’s tariffs over G7 ministers meeting. appeared first on Atlantic Council.</description>
-      <sentinel:score>4</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ Australia starts ‘high-risk’ life extension of its submarine fleet | Defense News</title>
@@ -96,7 +156,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/global/asia-pacific/2026/05/26/australia-starts-high-risk-life-extension-of-its-submarine-fleet/">Defense News</source>
       <description>The Australian National Audit Office (ANAO) has issued a damning verdict on Department of Defence planning for the life-extension program.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Amid FPV threat, Aussie company to offer Ukraine armored roofs for ATVs | Breaking Defense</title>
@@ -146,7 +206,7 @@
       <category>Nuclear</category>
       <source url="https://www.defensenews.com/global/asia-pacific/2026/05/26/india-boosts-drone-warfare-capability-with-compact-missile/">Defense News</source>
       <description>Indian Defense Minister Rajnath Singh called the successful development trials a “strategic milestone” toward self-reliance in defense.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Planning for America’s Democratic Renewal Must Start Now: Lessons from Poland | Just Security</title>
@@ -166,7 +226,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/05/despite-peak-hype-orbital-data-centers-for-ai-not-yet-ready-for-natsec-prime-time/">Breaking Defense</source>
       <description>One expert summed up the defense market viewpoint of AI data centers in space as: “If they build it, we might come.”</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 Early Edition: May 26, 2022 | Just Security</title>
@@ -176,7 +236,7 @@
       <category>Middle East</category>
       <source url="https://www.justsecurity.org/139670/early-edition-may-26-2022-2/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-may-26-2022-2">Just Security</source>
       <description>Signup to receive the Early Edition in your inbox here. A curated guide to major news and developments over the weekend. Here’s today’s news: IRAN WAR – CEASEFIRE President Trump signaled on Saturday that a deal with Iran was imminent, writing in a post on social media that…</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏛️ An Inconvenient Reality: Climate-Preparedness Cuts Are Lethality Cuts | War on the Rocks</title>
@@ -226,7 +286,7 @@
       <category>Indo-Pacific</category>
       <source url="https://www.foreignaffairs.com/united-states/g-2-reality">Foreign Affairs</source>
       <description>America and China cannot dominate or exclude each other.</description>
-      <sentinel:score>3</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>📍 The War in Ethiopia Isn’t Over | Foreign Affairs</title>
@@ -247,66 +307,6 @@
       <source url="https://www.twz.com/news-features/another-battle-damaged-kc-135-tanker-seen-passing-through-raf-mildenhall">The War Zone</source>
       <description>The images of the shrapnel-peppered KC-135 are another example of the damage inflicted by Iran during the now-paused war. The post Another Battle Damaged KC-135 Tanker Seen Passing Through RAF Mildenhall appeared first on The War Zone.</description>
       <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🛡️ Cambodia to Mark May 28 as the Beginning of its Border War With Thailand | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/cambodia-to-mark-may-28-as-the-beginning-of-its-border-war-with-thailand/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/cambodia-to-mark-may-28-as-the-beginning-of-its-border-war-with-thailand/</guid>
-      <pubDate>Tue, 26 May 2026 10:07:00 +0000</pubDate>
-      <category>Homeland</category>
-      <source url="https://thediplomat.com/2026/05/cambodia-to-mark-may-28-as-the-beginning-of-its-border-war-with-thailand/">The Diplomat</source>
-      <description>The country&apos;s ruling party is using an unnecessary conflict as a chance to build up its political myth.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 After the Canvas breach, security takes centre stage for SaaS providers | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/after-the-canvas-breach-security-takes-centre-stage-for-saas-providers/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/after-the-canvas-breach-security-takes-centre-stage-for-saas-providers/</guid>
-      <pubDate>Tue, 26 May 2026 01:01:26 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://www.aspistrategist.org.au/after-the-canvas-breach-security-takes-centre-stage-for-saas-providers/">ASPI Strategist</source>
-      <description>When a software-as-a-service (SaaS) platform fails, it doesn’t just fail one customer; it fails whole sectors. That’s the security problem hiding inside organisations becoming more and more dependent on SaaS providers. Customers need to focus on ...</description>
-      <sentinel:score>2</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Hun Sen Feels the Heat | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/hun-sen-feels-the-heat/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/hun-sen-feels-the-heat/</guid>
-      <pubDate>Tue, 26 May 2026 09:41:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/05/hun-sen-feels-the-heat/">The Diplomat</source>
-      <description>The Cambodian autocrat’s anti-scam rhetoric and pardoning of Kem Sokha suggest that outside pressure is starting to work. That&apos;s all the more reason to intensify it.</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Indonesia Bans Polymarket After Site Offers Bets on President’s Ouster | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/indonesia-bans-polymarket-after-site-offers-bets-on-presidents-ouster/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/indonesia-bans-polymarket-after-site-offers-bets-on-presidents-ouster/</guid>
-      <pubDate>Tue, 26 May 2026 09:33:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/05/indonesia-bans-polymarket-after-site-offers-bets-on-presidents-ouster/">The Diplomat</source>
-      <description>The country has become the second in Southeast Asia to block access to the controversial prediction market.</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Former Cambodian Opposition Leader Kem Sokha Granted Royal Pardon | The Diplomat</title>
-      <link>https://thediplomat.com/2026/05/cambodian-former-opposition-leader-kem-sokha-granted-royal-pardon/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/05/cambodian-former-opposition-leader-kem-sokha-granted-royal-pardon/</guid>
-      <pubDate>Tue, 26 May 2026 08:04:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/05/cambodian-former-opposition-leader-kem-sokha-granted-royal-pardon/">The Diplomat</source>
-      <description>The move comes as the country&apos;s government faces growing scrutiny for its role in handling an explosion of online scam centers and organized crime.</description>
-      <sentinel:score>2</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Who has authority to deal with drones? In most of Europe, that’s unclear | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/who-has-authority-to-deal-with-drones-in-most-of-europe-thats-unclear/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/who-has-authority-to-deal-with-drones-in-most-of-europe-thats-unclear/</guid>
-      <pubDate>Mon, 25 May 2026 20:00:19 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.aspistrategist.org.au/who-has-authority-to-deal-with-drones-in-most-of-europe-thats-unclear/">ASPI Strategist</source>
-      <description>Europe’s growing drone problem is a governance problem. The hardware exists. What is missing, across most of the continent, is the legal authority to deploy it, the jurisdictional clarity to coordinate it, and the political ...</description>
-      <sentinel:score>6</sentinel:score>
     </item>
   </channel>
 </rss>
