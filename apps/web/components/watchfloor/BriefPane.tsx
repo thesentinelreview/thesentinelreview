@@ -18,11 +18,17 @@ export default function BriefPane({
   briefing,
   sources,
   theaterId,
+  theaterLabel,
+  windowLabel,
+  eventCount,
   className = "",
 }: {
   briefing: BriefingData | null;
   sources: Source[];
   theaterId: string;
+  theaterLabel: string;
+  windowLabel: string;
+  eventCount: number;
   className?: string;
 }) {
   const topSources = sources.slice(0, 3);
@@ -122,7 +128,7 @@ export default function BriefPane({
               No Brief
             </span>
             <p className="text-[13px] text-zinc-400 max-w-[32ch] leading-relaxed">
-              No briefing has been generated yet for this theater.
+              No briefing published for {theaterLabel} yet. {eventCount} {eventCount === 1 ? "event" : "events"} logged in the last {windowLabel}.
             </p>
           </div>
         )}

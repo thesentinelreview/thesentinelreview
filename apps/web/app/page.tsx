@@ -153,7 +153,7 @@ export default async function WatchfloorPage({
             <MapLegend items={legendItems} />
           </section>
 
-          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} className="flex-none md:col-span-5" />
+          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} eventCount={stats.events} className="flex-none md:col-span-5" />
           <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none max-h-[280px] md:max-h-none md:col-span-3" />
           <SectorThreat sectors={sectors} intensity={intensity} className="flex-none md:col-span-2" />
         </div>
