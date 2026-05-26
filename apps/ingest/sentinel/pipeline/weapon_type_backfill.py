@@ -19,11 +19,16 @@ backfillable (we need the original post text to re-extract); events without one
 are not selected.
 
 Configured via env vars:
+  SENTINEL_BACKFILL_DRYRUN       (default true) — classify + print only, NO DB writes
+  SENTINEL_BACKFILL_MAX_EVENTS   (default 50)   — safety cap; 0 means no cap
   SENTINEL_BACKFILL_DAYS         (default 30)   — only events with occurred_at in this window
   SENTINEL_BACKFILL_RATE_LIMIT   (default 4.0)  — max extract_event calls per second
   SENTINEL_BACKFILL_BATCH_SIZE   (default 100)  — events fetched per DB roundtrip
-  SENTINEL_BACKFILL_MAX_EVENTS   (default 0)    — safety cap; 0 means no cap
   SENTINEL_BACKFILL_THEATER      (default "")   — restrict to one theater; "" = all
+
+Safe by default: a bare run is a capped dry-run (<=50 events, no writes). Committing
+the full backfill takes two intentional overrides — SENTINEL_BACKFILL_DRYRUN=false
+AND a raised SENTINEL_BACKFILL_MAX_EVENTS (0 = the whole window).
 
 Designed to run from GitHub Actions via the sentinel-backfill-weapon-type
 workflow, but importable for local invocation or unit tests.
@@ -54,12 +59,20 @@ THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar")
 @dataclass
 class BackfillStats:
     """Summary of one weapon_type backfill run. Useful for tests and operator review."""
-    considered: int = 0                                  # events pulled from the DB
-    classified: int = 0                                  # got a concrete weapon_type, persisted
-    null:       int = 0                                  # re-extraction found an event but no weapon
-    no_event:   int = 0                                  # re-extraction no longer finds an event
-    failed:     int = 0                                  # extractor raised
-    dist: Counter[str] = field(default_factory=Counter)  # weapon_type -> count (classified only)
+    considered: int = 0   # events pulled from the DB
+    classified: int = 0   # concrete weapon_type (persisted unless dry-run)
+    null:       int = 0   # event found, but no identifiable weapon
+    no_event:   int = 0   # re-extraction no longer finds an event
+    failed:     int = 0   # extractor raised
+    dist: Counter[str] = field(default_factory=Counter)  # weapon_type -> count
+    dry_run:    bool = True   # run mode; no DB writes when True
+
+
+def _env_bool(name: str, *, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None or raw.strip() == "":
+        return default
+    return raw.strip().lower() in ("1", "true", "yes", "on")
 
 
 def _config() -> dict:
@@ -69,10 +82,11 @@ def _config() -> dict:
         log.warning("weapon_backfill_unknown_theater", given=raw_theater, valid=list(THEATERS))
         theater = None
     return {
+        "dry_run":    _env_bool("SENTINEL_BACKFILL_DRYRUN", default=True),
         "days":       int(os.environ.get("SENTINEL_BACKFILL_DAYS", "30")),
         "rate_rps":   float(os.environ.get("SENTINEL_BACKFILL_RATE_LIMIT", "4.0")),
         "batch_size": int(os.environ.get("SENTINEL_BACKFILL_BATCH_SIZE", "100")),
-        "max_events": int(os.environ.get("SENTINEL_BACKFILL_MAX_EVENTS", "0")),
+        "max_events": int(os.environ.get("SENTINEL_BACKFILL_MAX_EVENTS", "50")),
         "theater":    theater,
     }
 
@@ -93,7 +107,7 @@ def _fetch_batch(
     more than one. Filtering on `weapon_type IS NULL` makes successful runs
     idempotent.
     """
-    params: list = [days]
+    params: list[object] = [days]
     theater_clause = ""
     if theater is not None:
         theater_clause = "AND %s = ANY (s.theaters)"
@@ -129,7 +143,8 @@ def _fetch_batch(
         ORDER BY e.id ASC, es.created_at ASC
         LIMIT %s
     """
-    return conn.execute(sql, tuple(params)).fetchall()  # type: ignore[return-value]
+    rows = conn.execute(sql, tuple(params)).fetchall()
+    return rows  # type: ignore[return-value]
 
 
 def _iter_events(
@@ -169,8 +184,9 @@ def _process_one(
     *,
     event: dict,
     stats: BackfillStats,
+    dry_run: bool,
 ) -> None:
-    """Re-classify one event and persist its weapon_type. Never raises."""
+    """Re-classify one event and (unless dry_run) persist its weapon_type. Never raises."""
     text = event["translated_text"] or event["text"]
     source = {
         "display_name": event["display_name"],
@@ -191,41 +207,61 @@ def _process_one(
         stats.failed += 1
         return
 
-    log_llm_call(
-        conn,
-        purpose="weapon_type_backfill",
-        model=llm_meta["model"],
-        prompt=llm_meta["prompt"],
-        response=llm_meta["response"],
-        prompt_tokens=llm_meta.get("prompt_tokens"),
-        completion_tokens=llm_meta.get("completion_tokens"),
-        job_id=None,
-        raw_post_id=event["raw_post_id"],
-    )
+    # Dry-run issues NO database writes at all — not the audit log, not the
+    # UPDATE, not a commit — so the only effect is the printed classification.
+    if not dry_run:
+        log_llm_call(
+            conn,
+            purpose="weapon_type_backfill",
+            model=llm_meta["model"],
+            prompt=llm_meta["prompt"],
+            response=llm_meta["response"],
+            prompt_tokens=llm_meta.get("prompt_tokens"),
+            completion_tokens=llm_meta.get("completion_tokens"),
+            job_id=None,
+            raw_post_id=event["raw_post_id"],
+        )
 
     if not extracted.has_event:
         stats.no_event += 1
     elif extracted.weapon_type is None:
         stats.null += 1
     else:
-        update_event_weapon_type(conn, event["event_id"], weapon_type=extracted.weapon_type)
+        if not dry_run:
+            update_event_weapon_type(conn, event["event_id"], weapon_type=extracted.weapon_type)
         stats.classified += 1
         stats.dist[extracted.weapon_type] += 1
 
-    conn.commit()
+    if dry_run:
+        print(
+            f"[dry-run] {event['event_id']} ({theater}) "
+            f"has_event={extracted.has_event} weapon_type={extracted.weapon_type}",
+            flush=True,
+        )
+    else:
+        conn.commit()
 
 
-def run_backfill(conn: psycopg.Connection | None = None) -> BackfillStats:
+def run_backfill(
+    conn: psycopg.Connection | None = None,
+    *,
+    dry_run: bool | None = None,
+) -> BackfillStats:
     """
     Execute the backfill. If `conn` is None, opens its own connection.
+
+    `dry_run` overrides SENTINEL_BACKFILL_DRYRUN when given (used by tests); when
+    None the env-derived default applies (True — classify + print, no DB writes).
 
     Returns BackfillStats so callers (the GitHub Actions wrapper, tests) can log
     the final tally.
     """
     cfg = _config()
+    if dry_run is not None:
+        cfg["dry_run"] = dry_run
     log.info("weapon_backfill_start", **cfg)
 
-    stats = BackfillStats()
+    stats = BackfillStats(dry_run=cfg["dry_run"])
     next_call_at = time.monotonic()
     interval = 1.0 / cfg["rate_rps"] if cfg["rate_rps"] > 0 else 0.0
 
@@ -249,7 +285,7 @@ def run_backfill(conn: psycopg.Connection | None = None) -> BackfillStats:
                 time.sleep(next_call_at - now)
             next_call_at = time.monotonic() + interval
 
-            _process_one(conn, event=event, stats=stats)
+            _process_one(conn, event=event, stats=stats, dry_run=cfg["dry_run"])
 
             if stats.considered % 100 == 0:
                 log.info(

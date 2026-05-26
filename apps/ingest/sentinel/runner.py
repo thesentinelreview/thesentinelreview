@@ -256,9 +256,10 @@ def run_backfill_weapon_type() -> None:
     from sentinel.pipeline.weapon_type_backfill import run_backfill
 
     stats = run_backfill()
+    mode = "DRY-RUN — no writes" if stats.dry_run else "COMMIT"
     dist = " ".join(f"{k}={v}" for k, v in sorted(stats.dist.items())) or "—"
     print(
-        f"\nWEAPON BACKFILL: considered={stats.considered} classified={stats.classified} "
+        f"\nWEAPON BACKFILL [{mode}]: considered={stats.considered} classified={stats.classified} "
         f"null={stats.null} no_event={stats.no_event} failed={stats.failed} | dist: {dist}",
         flush=True,
     )

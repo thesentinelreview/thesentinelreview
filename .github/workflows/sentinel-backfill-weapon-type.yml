@@ -8,6 +8,15 @@ name: Sentinel — Backfill Weapon-type
 on:
   workflow_dispatch:
     inputs:
+      dryrun:
+        description: 'Dry-run: classify + print only, NO database writes (uncheck to commit)'
+        type: boolean
+        required: false
+        default: true
+      max_events:
+        description: 'Safety cap on events processed (0 = no cap). Raise only for a committed full run.'
+        required: false
+        default: '50'
       days:
         description: 'Window of events to classify, by occurred_at, in days (default 30)'
         required: false
@@ -16,10 +25,6 @@ on:
         description: 'Max extract calls per second (default 4)'
         required: false
         default: '4'
-      max_events:
-        description: 'Safety cap on events processed (0 = no cap)'
-        required: false
-        default: '0'
       theater:
         description: 'Restrict to one theater (ukraine|iran|sudan|myanmar); blank = all'
         required: false
@@ -60,9 +65,10 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_MODEL_EXTRACT: claude-sonnet-4-6
+          SENTINEL_BACKFILL_DRYRUN: ${{ github.event.inputs.dryrun }}
+          SENTINEL_BACKFILL_MAX_EVENTS: ${{ github.event.inputs.max_events }}
           SENTINEL_BACKFILL_DAYS: ${{ github.event.inputs.days }}
           SENTINEL_BACKFILL_RATE_LIMIT: ${{ github.event.inputs.rate_limit }}
-          SENTINEL_BACKFILL_MAX_EVENTS: ${{ github.event.inputs.max_events }}
           SENTINEL_BACKFILL_THEATER: ${{ github.event.inputs.theater }}
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-backfill-weapon-type

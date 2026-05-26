@@ -8,7 +8,7 @@ to verify the backfill wires them together correctly.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -26,7 +26,7 @@ def _event(
         "raw_post_id": raw_post_id or uuid.uuid4(),
         "text": "Su-25 carried out an airstrike on the town.",
         "translated_text": None,
-        "posted_at": datetime(2026, 5, 1, 12, 0, tzinfo=timezone.utc),
+        "posted_at": datetime(2026, 5, 1, 12, 0, tzinfo=UTC),
         "display_name": "Clash Report",
         "platform": "telegram",
         "trust_tier": 2,
@@ -77,7 +77,7 @@ class TestBackfillLoop:
             _meta(),
         )
 
-        stats = run_backfill(conn=_fake_conn())
+        stats = run_backfill(conn=_fake_conn(), dry_run=False)
 
         assert stats.considered == 1
         assert stats.classified == 1
@@ -116,7 +116,7 @@ class TestBackfillLoop:
             _meta(),
         )
 
-        stats = run_backfill(conn=_fake_conn())
+        stats = run_backfill(conn=_fake_conn(), dry_run=False)
 
         assert stats.considered == 1
         assert stats.classified == 0
@@ -140,7 +140,7 @@ class TestBackfillLoop:
         mock_iter.return_value = iter([_event()])
         mock_extract.return_value = (ExtractedEvent(has_event=False), _meta())
 
-        stats = run_backfill(conn=_fake_conn())
+        stats = run_backfill(conn=_fake_conn(), dry_run=False)
 
         assert stats.considered == 1
         assert stats.no_event == 1
@@ -168,7 +168,7 @@ class TestBackfillLoop:
             (ExtractedEvent(has_event=True, weapon_type="drone"), _meta()),
         ]
 
-        stats = run_backfill(conn=_fake_conn())
+        stats = run_backfill(conn=_fake_conn(), dry_run=False)
 
         # One exception, one success — backfill keeps going.
         assert stats.considered == 2
@@ -176,6 +176,40 @@ class TestBackfillLoop:
         assert stats.classified == 1
         assert mock_update.call_count == 1
         assert mock_log.call_count == 1     # no log for the failed extract
+
+
+class TestDryRun:
+    @patch("sentinel.pipeline.weapon_type_backfill.update_event_weapon_type")
+    @patch("sentinel.pipeline.weapon_type_backfill.log_llm_call")
+    @patch("sentinel.pipeline.weapon_type_backfill.extract_event")
+    @patch("sentinel.pipeline.weapon_type_backfill._iter_events")
+    def test_dry_run_classifies_but_makes_no_writes(
+        self,
+        mock_iter: MagicMock,
+        mock_extract: MagicMock,
+        mock_log: MagicMock,
+        mock_update: MagicMock,
+    ) -> None:
+        from sentinel.pipeline.weapon_type_backfill import run_backfill
+
+        conn = _fake_conn()
+        mock_iter.return_value = iter([_event(), _event()])
+        mock_extract.return_value = (
+            ExtractedEvent(has_event=True, weapon_type="aircraft"),
+            _meta(),
+        )
+
+        stats = run_backfill(conn=conn, dry_run=True)
+
+        # Classification still tallied so the operator can preview the outcome...
+        assert stats.considered == 2
+        assert stats.classified == 2
+        assert stats.dist["aircraft"] == 2
+        assert stats.dry_run is True
+        # ...but NOTHING is written: no UPDATE, no audit log, no commit.
+        mock_update.assert_not_called()
+        mock_log.assert_not_called()
+        conn.commit.assert_not_called()
 
 
 class TestMaxEventsCap:
@@ -201,10 +235,36 @@ class TestMaxEventsCap:
             _meta(),
         )
 
-        stats = run_backfill(conn=_fake_conn())
+        stats = run_backfill(conn=_fake_conn(), dry_run=False)
 
         assert stats.considered == 2
         assert mock_extract.call_count == 2
+
+
+class TestConfig:
+    def test_safe_defaults(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A bare run must default to a capped dry-run."""
+        from sentinel.pipeline.weapon_type_backfill import _config
+
+        monkeypatch.delenv("SENTINEL_BACKFILL_DRYRUN", raising=False)
+        monkeypatch.delenv("SENTINEL_BACKFILL_MAX_EVENTS", raising=False)
+
+        cfg = _config()
+        assert cfg["dry_run"] is True
+        assert cfg["max_events"] == 50
+
+    @pytest.mark.parametrize(
+        "value,expected",
+        [("false", False), ("0", False), ("no", False),
+         ("true", True), ("1", True), ("yes", True)],
+    )
+    def test_dryrun_env_parsing(
+        self, monkeypatch: pytest.MonkeyPatch, value: str, expected: bool
+    ) -> None:
+        from sentinel.pipeline.weapon_type_backfill import _config
+
+        monkeypatch.setenv("SENTINEL_BACKFILL_DRYRUN", value)
+        assert _config()["dry_run"] is expected
 
 
 class TestPickTheater:
