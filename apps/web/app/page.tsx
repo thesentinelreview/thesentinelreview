@@ -23,7 +23,6 @@ import {
   getFusionRate,
   getMedianTTV,
   getSensorStripData,
-  getKpiSparklines,
   getKpiDeltas,
   resolveTimeRange,
   type TimeRange,
@@ -92,7 +91,7 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv, sensorData, kpiSparklines, kpiDeltas] = await Promise.all([
+  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, fusionPct, medianTtv, sensorData, kpiDeltas] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
     getAlerts(theater.id, null, timeRange),
@@ -103,7 +102,6 @@ export default async function WatchfloorPage({
     getFusionRate(theater.id, timeRange),
     getMedianTTV(theater.id, timeRange),
     getSensorStripData(theater.id),
-    getKpiSparklines(theater.id, timeRange),
     getKpiDeltas(theater.id, timeRange),
   ]);
 
@@ -140,7 +138,7 @@ export default async function WatchfloorPage({
         isAuthed={!!userId}
       />
       <SensorStrip data={sensorData} />
-      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} sparklines={kpiSparklines} deltas={kpiDeltas} />
+      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} deltas={kpiDeltas} />
 
       <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
         <div className="flex-1 min-w-0 min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">

@@ -35,7 +35,7 @@ export default function AlertRow({ alert, theaterId }: { alert: Alert; theaterId
             <span className="text-[13px] font-semibold text-zinc-100 truncate">{alert.title}</span>
             <span className="text-[10px] font-data text-zinc-500 flex-none">{fmtTime(alert.minutes_ago)}</span>
           </div>
-          <div className="mt-3 flex items-center gap-2 flex-wrap text-[9px] font-data uppercase tracking-[0.2em]">
+          <div className="mt-4 flex items-center gap-2 flex-wrap text-[9px] font-data uppercase tracking-[0.2em]">
             <span className={`px-1.5 py-px rounded-sm border ${kind.pill}`}>{kind.label}</span>
             <span className="text-zinc-500">{alert.source_count} src</span>
             <span className={conf.cls}>{conf.label}</span>
