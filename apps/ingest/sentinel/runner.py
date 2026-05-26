@@ -230,6 +230,22 @@ def run_backfill_translations() -> None:
     sys.exit(0)
 
 
+def run_dryrun_weapon_type() -> None:
+    """One-shot dry-run of the weapon_type classifier (PR 1 verification gate).
+
+    Read-only: prints a per-theater distribution + sample classifications. Always
+    exits 0 — the report is the deliverable; the operator decides on the merge gate.
+    """
+    _configure_logging()
+    from sentinel.pipeline.weapon_type_dryrun import run_dryrun
+
+    results = run_dryrun()
+    worst = max((r.null_pct for r in results if r.events), default=0.0)
+    tally = " ".join(f"{r.theater}={r.events}ev/{r.null_pct:.0f}%null" for r in results)
+    print(f"\nWEAPON DRY-RUN: {tally} | worst_null={worst:.0f}%", flush=True)
+    sys.exit(0)
+
+
 def run_checks() -> None:
     """Run all data integrity checks; exit 1 if any critical check fails."""
     _configure_logging()

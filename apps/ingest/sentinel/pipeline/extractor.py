@@ -13,7 +13,7 @@ import anthropic
 import structlog
 
 from sentinel.config import settings
-from sentinel.models import ExtractedEvent, GeolocationSignal
+from sentinel.models import WEAPON_TYPES, ExtractedEvent, GeolocationSignal
 
 log = structlog.get_logger()
 
@@ -98,6 +98,16 @@ _TOOL: anthropic.types.ToolParam = {
                 "minimum": 0,
                 "maximum": 10,
             },
+            "weapon_type": {
+                "type": "string",
+                "enum": list(WEAPON_TYPES),
+                "description": (
+                    "Primary kinetic capability involved in the event. Pick the dominant "
+                    "system if several are present. OMIT this field entirely when no kinetic "
+                    "capability is identifiable (e.g. troop repositioning with no engagement, "
+                    "official statements, humanitarian-only reports)."
+                ),
+            },
         },
         "required": ["has_event", "is_high_impact", "relevance_score"],
     },
@@ -120,6 +130,7 @@ Rules:
 - The "oblast" field must be the Ukrainian oblast name (e.g. Donetsk, Kharkiv, Zaporizhzhia).
 - Descriptions must be factual and neutral. Never add adjectives like "devastating" or "brutal" not present in the source.
 - is_high_impact must be true for: mass-casualty events (10+ killed/wounded claimed), strikes on nuclear facilities, use of chemical/biological/radiological weapons, or attacks on a country not previously targeted in this conflict.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), or other (kinetic but outside the six — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
 
 You MUST call the record_event tool exactly once.""",
 
@@ -136,6 +147,7 @@ Rules:
 - For coordinates: use your knowledge of Iranian and regional geography. The "oblast" field must be the Iranian province name (e.g. Isfahan Province, Tehran Province, Hormozgan Province) or, for proxy activity outside Iran, the country and region (e.g. South Lebanon, Deir ez-Zor, Syria).
 - Descriptions must be factual and neutral.
 - is_high_impact must be true for: strikes on nuclear facilities, mass-casualty events (10+ killed/wounded claimed), use of ballistic missiles or drones against a new country, or any confirmed cross-border escalation.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), or other (kinetic but outside the six — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
 
 You MUST call the record_event tool exactly once.""",
 
@@ -152,6 +164,7 @@ Rules:
 - For coordinates: use your knowledge of Sudanese geography. Key locations include Khartoum, Omdurman, El Fasher, Nyala, El Obeid, Wad Madani, Port Sudan, Kassala. The "oblast" field must be the Sudanese state name (e.g. Khartoum State, North Darfur, South Kordofan, Blue Nile, River Nile).
 - Descriptions must be factual and neutral.
 - is_high_impact must be true for: mass-casualty events (10+ killed/wounded claimed), attacks on displacement camps or humanitarian convoys, siege events affecting large civilian populations, or use of prohibited weapons.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), or other (kinetic but outside the six — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
 
 You MUST call the record_event tool exactly once.""",
 
@@ -168,6 +181,7 @@ Rules:
 - For coordinates: use your knowledge of Myanmar geography. Key conflict areas include Sagaing Region, Shan State (north and east), Karen/Kayin State, Chin State, Rakhine State, Kayah/Karenni State, and Mandalay Region. The "oblast" field must be the Myanmar region or state name (e.g. Sagaing Region, Northern Shan State, Kayin State, Chin State).
 - Descriptions must be factual and neutral.
 - is_high_impact must be true ONLY for: mass-casualty events (10+ killed/wounded claimed), confirmed use of chemical/biological/radiological weapons, or an unprecedented cross-border escalation targeting a country not previously struck in this conflict. Routine airstrikes, clashes, and territorial changes are NOT high-impact regardless of location.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), or other (kinetic but outside the six — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
 
 You MUST call the record_event tool exactly once.""",
 }
@@ -242,6 +256,7 @@ def extract_event(
         geolocation_signals=geo,
         is_high_impact=raw.get("is_high_impact", False),
         relevance_score=raw.get("relevance_score"),
+        weapon_type=raw.get("weapon_type"),
     )
 
     llm_meta = {
