@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import { isAdmin } from "@/lib/auth";
-import { resolveTheater } from "@/data/theaters";
+import { resolveTieoutTheater } from "@/data/theaters";
 import {
   getFusionCounts,
   getTieoutRows,
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   if (!(await isAdmin())) return new Response("Forbidden", { status: 403 });
 
   const url = new URL(req.url);
-  const theater = resolveTheater(url.searchParams.get("theater") ?? undefined);
+  const theater = resolveTieoutTheater(url.searchParams.get("theater") ?? undefined);
   const window = resolveTieoutWindow(url.searchParams.get("window") ?? undefined);
   const format = url.searchParams.get("format") === "xlsx" ? "xlsx" : "csv";
 
@@ -63,6 +63,7 @@ export async function GET(req: Request) {
   // Self-documenting summary block so the file is audit-defensible on its own.
   const summary: [string, string | number][] = [
     ["theater", theater.id],
+    ["theater_label", theater.label],
     ["window", window],
     ["generated_at", generatedAt],
     ["total_events", b.total],

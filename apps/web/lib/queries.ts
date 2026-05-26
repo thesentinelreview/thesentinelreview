@@ -67,6 +67,29 @@ function occurredAtClause(window: TimeRange | "all"): string {
     : `AND e.occurred_at > now() - INTERVAL '${SQL_INTERVALS[window]}'`;
 }
 
+// Theater id accepted by the tie-out functions: the four real theaters plus
+// "all" (Global), which unions the four bboxes. "all" is opt-in by /admin/tieout
+// only — the watchfloor (/) and feed never pass it, so TheaterKey is unchanged.
+export type TieoutTheater = TheaterKey | "all";
+
+// PostGIS bbox predicate + positional params for a tie-out query. For "all" it
+// emits an OR-union of the four theater bboxes (ST_Within against any counts).
+// References the `e` alias on events. Callers either select DISTINCT e.id or
+// GROUP BY e.id, so an event inside two overlapping bboxes is never double-counted.
+function theaterPredicate(theater: TieoutTheater): { sql: string; params: number[] } {
+  const keys: TheaterKey[] =
+    theater === "all" ? ["ukraine", "iran", "sudan", "myanmar"] : [theater];
+  const parts: string[] = [];
+  const params: number[] = [];
+  let i = 1;
+  for (const key of keys) {
+    const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[key];
+    parts.push(`ST_Within(e.location, ST_MakeEnvelope($${i++}, $${i++}, $${i++}, $${i++}, 4326))`);
+    params.push(minLng, minLat, maxLng, maxLat);
+  }
+  return { sql: parts.length > 1 ? `(${parts.join(" OR ")})` : parts[0], params };
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -173,22 +196,22 @@ export type FusionCounts = { total: number; multiSource: number };
 // how many have >= 2 distinct sources. Exposed so /admin/tieout can tie out at the
 // count level (rounding-immune) rather than comparing pre-rounded percentages.
 export async function getFusionCounts(
-  theater: TheaterKey = "ukraine",
+  theater: TieoutTheater = "ukraine",
   timeRange: TimeRange | "all" = "24h",
 ): Promise<FusionCounts | null> {
   if (!isDatabaseConfigured()) return null;
 
-  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const pred = theaterPredicate(theater);
 
   try {
     const row = await queryOne<{ total: string | number; fused: string | number }>(
       `
       WITH we AS (
-        SELECT e.id
+        SELECT DISTINCT e.id
         FROM events e
         WHERE e.published_at IS NOT NULL
           ${occurredAtClause(timeRange)}
-          AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ${pred.sql}
       ),
       sc AS (
         SELECT we.id, count(DISTINCT es.source_id) AS sources
@@ -201,7 +224,7 @@ export async function getFusionCounts(
         count(*) FILTER (WHERE sources >= 2)::int AS fused
       FROM sc
       `,
-      [minLng, minLat, maxLng, maxLat],
+      pred.params,
     );
 
     if (!row) return null;
@@ -212,7 +235,7 @@ export async function getFusionCounts(
 }
 
 export async function getFusionRate(
-  theater: TheaterKey = "ukraine",
+  theater: TieoutTheater = "ukraine",
   timeRange: TimeRange | "all" = "24h",
 ): Promise<number | null> {
   const counts = await getFusionCounts(theater, timeRange);
@@ -236,12 +259,12 @@ export type TieoutRow = {
 };
 
 export async function getTieoutRows(
-  theater: TheaterKey = "ukraine",
+  theater: TieoutTheater = "ukraine",
   window: TieoutWindow = "24h",
 ): Promise<TieoutRow[]> {
   if (!isDatabaseConfigured()) return [];
 
-  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const pred = theaterPredicate(theater);
 
   try {
     type Row = {
@@ -266,11 +289,11 @@ export async function getTieoutRows(
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
         ${occurredAtClause(window)}
-        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND ${pred.sql}
       GROUP BY e.id
       ORDER BY source_count DESC, e.occurred_at DESC
       `,
-      [minLng, minLat, maxLng, maxLat],
+      pred.params,
     );
 
     return rows.map((r) => ({
