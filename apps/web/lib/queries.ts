@@ -188,6 +188,156 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 }
 
 // ---------------------------------------------------------------------------
+// KPI strip — sparkline buckets + prior-window deltas
+// ---------------------------------------------------------------------------
+
+// Per-metric bucket counts for the KPI sparklines: 24 hourly buckets in 24h
+// mode, one daily bucket per day otherwise. Generalizes getIntensity's
+// generate_series / date_trunc pattern; only EVENTS and STRIKES are sparked
+// (VERIFIED is too sparse to read as a trend, so it renders value + delta only).
+export type KpiSparklines = { events: number[]; strikes: number[] };
+
+export async function getKpiSparklines(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange = "24h",
+): Promise<KpiSparklines> {
+  const empty: KpiSparklines = { events: [], strikes: [] };
+  if (!isDatabaseConfigured()) return empty;
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  // unit/step/span are derived from the whitelisted timeRange, never user input.
+  const unit = timeRange === "24h" ? "hour" : "day";
+  const step = timeRange === "24h" ? "1 hour" : "1 day";
+  const span = timeRange === "24h" ? "23 hours" : timeRange === "7d" ? "6 days" : "29 days";
+
+  try {
+    type Row = { events: string | number; strikes: string | number };
+
+    const rows = await query<Row>(
+      `
+      SELECT
+        COUNT(e.id)::int AS events,
+        COUNT(e.id) FILTER (WHERE e.event_type = 'strike')::int AS strikes
+      FROM generate_series(
+        date_trunc('${unit}', now() AT TIME ZONE 'UTC') - INTERVAL '${span}',
+        date_trunc('${unit}', now() AT TIME ZONE 'UTC'),
+        '${step}'::interval
+      ) AS g(bucket)
+      LEFT JOIN events e
+        ON date_trunc('${unit}', e.occurred_at AT TIME ZONE 'UTC') = g.bucket
+       AND e.published_at IS NOT NULL
+       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      GROUP BY g.bucket
+      ORDER BY g.bucket ASC
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    return {
+      events: rows.map((r) => Number(r.events) || 0),
+      strikes: rows.map((r) => Number(r.strikes) || 0),
+    };
+  } catch {
+    return empty;
+  }
+}
+
+// Current vs. prior-window aggregates for the non-spark KPI deltas. The prior
+// window is the equal-length span immediately before the current one (mirrors
+// getSectors' prev-window comparison). Active sectors = distinct real oblasts.
+export type KpiDeltas = {
+  events: number;
+  eventsPrev: number;
+  strikes: number;
+  strikesPrev: number;
+  verifiedPct: number;
+  verifiedPrevPct: number;
+  activeSectors: number;
+  activeSectorsPrev: number;
+};
+
+export async function getKpiDeltas(
+  theater: TheaterKey = "ukraine",
+  timeRange: TimeRange = "24h",
+): Promise<KpiDeltas> {
+  const empty: KpiDeltas = {
+    events: 0, eventsPrev: 0, strikes: 0, strikesPrev: 0, verifiedPct: 0, verifiedPrevPct: 0, activeSectors: 0, activeSectorsPrev: 0,
+  };
+  if (!isDatabaseConfigured()) return empty;
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
+
+  try {
+    type Row = {
+      events: number; events_prev: number;
+      strikes: number; strikes_prev: number;
+      verified_pct: number; verified_prev_pct: number;
+      active_sectors: number; active_sectors_prev: number;
+    };
+
+    const row = await queryOne<Row>(
+      `
+      WITH curr AS (
+        SELECT
+          count(*)::int AS events,
+          count(*) FILTER (WHERE event_type = 'strike')::int AS strikes,
+          COALESCE(round(
+            100.0 * count(*) FILTER (WHERE confidence = 'verified')::numeric / NULLIF(count(*), 0)
+          ), 0)::int AS verified_pct,
+          count(DISTINCT oblast) FILTER (
+            WHERE oblast IS NOT NULL AND btrim(oblast) <> ''
+              AND lower(btrim(oblast)) NOT IN ('unknown', '<unknown>', 'n/a', 'multiple')
+          )::int AS active_sectors
+        FROM events
+        WHERE published_at IS NOT NULL
+          AND occurred_at > now() - INTERVAL '${interval}'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      ),
+      prev AS (
+        SELECT
+          count(*)::int AS events,
+          count(*) FILTER (WHERE event_type = 'strike')::int AS strikes,
+          COALESCE(round(
+            100.0 * count(*) FILTER (WHERE confidence = 'verified')::numeric / NULLIF(count(*), 0)
+          ), 0)::int AS verified_pct,
+          count(DISTINCT oblast) FILTER (
+            WHERE oblast IS NOT NULL AND btrim(oblast) <> ''
+              AND lower(btrim(oblast)) NOT IN ('unknown', '<unknown>', 'n/a', 'multiple')
+          )::int AS active_sectors
+        FROM events
+        WHERE published_at IS NOT NULL
+          AND occurred_at BETWEEN now() - INTERVAL '${interval}' * 2 AND now() - INTERVAL '${interval}'
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+      )
+      SELECT
+        curr.events, prev.events AS events_prev,
+        curr.strikes, prev.strikes AS strikes_prev,
+        curr.verified_pct, prev.verified_pct AS verified_prev_pct,
+        curr.active_sectors, prev.active_sectors AS active_sectors_prev
+      FROM curr, prev
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    if (!row) return empty;
+
+    return {
+      events: Number(row.events) || 0,
+      eventsPrev: Number(row.events_prev) || 0,
+      strikes: Number(row.strikes) || 0,
+      strikesPrev: Number(row.strikes_prev) || 0,
+      verifiedPct: Number(row.verified_pct) || 0,
+      verifiedPrevPct: Number(row.verified_prev_pct) || 0,
+      activeSectors: Number(row.active_sectors) || 0,
+      activeSectorsPrev: Number(row.active_sectors_prev) || 0,
+    };
+  } catch {
+    return empty;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Fusion rate — share of window events corroborated by 2+ distinct sources
 // ---------------------------------------------------------------------------
 
