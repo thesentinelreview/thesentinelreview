@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       sample_per_theater:
-        description: 'Most-recent posts sampled per theater (default 50)'
+        description: 'Most-recent posts sampled per theater (default 100)'
         required: false
-        default: '50'
+        default: '100'
       rate_limit:
         description: 'Max extract calls per second (default 4)'
         required: false
