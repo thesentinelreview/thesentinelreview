@@ -17,6 +17,7 @@ import type {
   Confidence,
   TheaterKey,
 } from "@/lib/types";
+import { PILL_WINDOW_MINUTES } from "@/lib/types";
 
 // Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering
 const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
@@ -374,15 +375,15 @@ export async function getMedianTTV(
 }
 
 // ---------------------------------------------------------------------------
-// Sensor strip — live source-activity pulse for the selected theater
+// Sensor strip — source-activity pulse for the selected theater
 // ---------------------------------------------------------------------------
 //
-// Scoping: raw_posts carry no location. A post in the last 30 min counts toward
-// the selected theater if either (a) it has produced a published event inside
-// the theater bbox, or (b) it has not produced any event yet and its source's
-// "majority theater" — the theater where most of that source's historical
-// published events land — is the selected theater. Sources with no event
-// history fall back to their first assigned theater (sources.theaters[1]).
+// Scoping: raw_posts carry no location, so a platform pill counts posts from
+// active sources assigned to the selected theater (theater = ANY sources.theaters)
+// within PILL_WINDOW_MINUTES. This counts feed volume regardless of whether a
+// post became an event (e.g. GDELT is ~100% LLM-skipped yet is still a live
+// feed). LAT reports the age of the most recent such post; TRK counts distinct
+// event actors in the theater bbox over the last 24h.
 
 export async function getSensorStripData(theater: TheaterKey = "ukraine"): Promise<SensorStripData> {
   const empty: SensorStripData = {
@@ -403,66 +404,29 @@ export async function getSensorStripData(theater: TheaterKey = "ukraine"): Promi
 
     const row = await queryOne<Row>(
       `
-      WITH src_theater AS (
-        SELECT es.source_id,
-          CASE
-            WHEN ST_Within(e.location, ST_MakeEnvelope(22, 44, 40, 52, 4326)) THEN 'ukraine'
-            WHEN ST_Within(e.location, ST_MakeEnvelope(92,  9,102, 29, 4326)) THEN 'myanmar'
-            WHEN ST_Within(e.location, ST_MakeEnvelope(21,  8, 42, 23, 4326)) THEN 'sudan'
-            WHEN ST_Within(e.location, ST_MakeEnvelope(32, 10, 64, 42, 4326)) THEN 'iran'
-          END AS theater
-        FROM event_sources es
-        JOIN events e ON e.id = es.event_id
-        WHERE e.published_at IS NOT NULL
-      ),
-      src_majority AS (
-        SELECT source_id, theater FROM (
-          SELECT source_id, theater,
-            row_number() OVER (PARTITION BY source_id ORDER BY count(*) DESC) AS rn
-          FROM src_theater
-          WHERE theater IS NOT NULL
-          GROUP BY source_id, theater
-        ) t WHERE rn = 1
-      ),
-      recent AS (
-        SELECT rp.posted_at, s.platform,
-          (
-            EXISTS (
-              SELECT 1 FROM event_sources es
-              JOIN events e ON e.id = es.event_id
-              WHERE es.raw_post_id = rp.id
-                AND e.published_at IS NOT NULL
-                AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
-            )
-            OR (
-              NOT EXISTS (SELECT 1 FROM event_sources es2 WHERE es2.raw_post_id = rp.id)
-              AND COALESCE(
-                    (SELECT theater FROM src_majority sm WHERE sm.source_id = s.id),
-                    s.theaters[1]
-                  ) = $5
-            )
-          ) AS in_theater
+      WITH recent AS (
+        SELECT rp.posted_at, s.platform
         FROM raw_posts rp
         JOIN sources s ON s.id = rp.source_id
-        WHERE rp.posted_at > now() - INTERVAL '30 minutes'
-          AND s.is_active
-      ),
-      sel AS (SELECT * FROM recent WHERE in_theater)
+        WHERE s.is_active
+          AND $1 = ANY(s.theaters)
+          AND rp.posted_at > now() - ($2::int * INTERVAL '1 minute')
+      )
       SELECT
         count(*) FILTER (WHERE platform = 'telegram')::int AS tg,
         count(*) FILTER (WHERE platform = 'x')::int        AS x,
         count(*) FILTER (WHERE platform = 'rss')::int      AS rss,
         count(*) FILTER (WHERE platform = 'gdelt')::int    AS gdelt,
         count(*) FILTER (WHERE platform = 'bluesky')::int  AS bsky,
-        round(EXTRACT(EPOCH FROM percentile_cont(0.5) WITHIN GROUP (ORDER BY (now() - posted_at))))::int AS latency_seconds,
+        round(EXTRACT(EPOCH FROM (now() - max(posted_at))))::int AS latency_seconds,
         (SELECT count(DISTINCT actor)::int FROM events
            WHERE published_at IS NOT NULL
              AND occurred_at > now() - INTERVAL '24 hours'
              AND actor IS NOT NULL
-             AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))) AS tracks
-      FROM sel
+             AND ST_Within(location, ST_MakeEnvelope($3, $4, $5, $6, 4326))) AS tracks
+      FROM recent
       `,
-      [minLng, minLat, maxLng, maxLat, theater],
+      [theater, PILL_WINDOW_MINUTES, minLng, minLat, maxLng, maxLat],
     );
 
     if (!row) return empty;
@@ -660,13 +624,14 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 }
 
 // ---------------------------------------------------------------------------
-// Sector threat (oblast breakdown, last 7 days vs. the prior 7)
+// Sector threat (oblast breakdown, current window vs. the prior window)
 // ---------------------------------------------------------------------------
 
-export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Promise<Sector[]> {
+export async function getSectors(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h", limit = 6): Promise<Sector[]> {
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
 
   try {
     type Row = {
@@ -685,7 +650,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Pr
           count(*) FILTER (WHERE event_type = 'strike') AS strikes
         FROM events
         WHERE published_at IS NOT NULL
-          AND occurred_at > now() - INTERVAL '7 days'
+          AND occurred_at > now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
           AND oblast IS NOT NULL
           AND btrim(oblast) <> ''
@@ -696,7 +661,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", limit = 6): Pr
         SELECT oblast AS name, count(*) AS events
         FROM events
         WHERE published_at IS NOT NULL
-          AND occurred_at BETWEEN now() - INTERVAL '14 days' AND now() - INTERVAL '7 days'
+          AND occurred_at BETWEEN now() - INTERVAL '${interval}' * 2 AND now() - INTERVAL '${interval}'
           AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
           AND oblast IS NOT NULL
         GROUP BY oblast

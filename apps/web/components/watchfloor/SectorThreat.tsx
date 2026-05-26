@@ -6,14 +6,16 @@ import type { IntensityDay, Sector } from "@/lib/types";
 export default function SectorThreat({
   sectors,
   intensity,
+  windowLabel,
   className = "",
 }: {
   sectors: Sector[];
   intensity: IntensityDay[];
+  windowLabel: string;
   className?: string;
 }) {
   return (
-    <Pane tag="04" title="Sector Threat" sub="7d trend" className={className}>
+    <Pane tag="04" title="Sector Threat" sub={`${windowLabel} trend`} className={className}>
       <div>
         {sectors.length > 0 ? (
           sectors.map((s) => <SectorRow key={s.name} {...s} />)
