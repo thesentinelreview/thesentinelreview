@@ -1,0 +1,74 @@
+name: Sentinel — Backfill Weapon-type
+
+# One-shot backfill of events.weapon_type for events that predate the weapon_type
+# extractor (migration 0017 / PR #135). Re-runs the live extractor on each event's
+# primary source post and writes back the resulting class. Manual trigger only —
+# never on a schedule. Idempotent on classified rows (filters weapon_type IS NULL).
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryrun:
+        description: 'Dry-run: classify + print only, NO database writes (uncheck to commit)'
+        type: boolean
+        required: false
+        default: true
+      max_events:
+        description: 'Safety cap on events processed (0 = no cap). Raise only for a committed full run.'
+        required: false
+        default: '50'
+      days:
+        description: 'Window of events to classify, by occurred_at, in days (default 30)'
+        required: false
+        default: '30'
+      rate_limit:
+        description: 'Max extract calls per second (default 4)'
+        required: false
+        default: '4'
+      theater:
+        description: 'Restrict to one theater (ukraine|iran|sudan|myanmar); blank = all'
+        required: false
+        default: ''
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "anthropic>=0.40" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0"
+          pip install --no-deps -e apps/ingest
+
+      - name: Apply pending migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python packages/db/migrate.py
+
+      - name: Run weapon-type backfill
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL_EXTRACT: claude-sonnet-4-6
+          SENTINEL_BACKFILL_DRYRUN: ${{ github.event.inputs.dryrun }}
+          SENTINEL_BACKFILL_MAX_EVENTS: ${{ github.event.inputs.max_events }}
+          SENTINEL_BACKFILL_DAYS: ${{ github.event.inputs.days }}
+          SENTINEL_BACKFILL_RATE_LIMIT: ${{ github.event.inputs.rate_limit }}
+          SENTINEL_BACKFILL_THEATER: ${{ github.event.inputs.theater }}
+          PYTHONUNBUFFERED: '1'
+        run: sentinel-run-backfill-weapon-type
