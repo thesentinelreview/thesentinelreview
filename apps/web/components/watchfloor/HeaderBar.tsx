@@ -68,7 +68,10 @@ export default function HeaderBar({
     <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
       {/* Left cluster */}
       <div className="flex items-center gap-3 min-w-0">
-        <SentinelMark className="text-amber-400/80 flex-none" size={24} />
+        <SentinelMark
+          className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
+          size={24}
+        />
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white">
