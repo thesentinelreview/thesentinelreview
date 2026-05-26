@@ -278,7 +278,9 @@ def link_event_source(
 
 _THEATER_BBOX: dict[str, tuple[float, float, float, float]] = {
     "ukraine": (22, 44, 40, 52),
-    "iran":    (44, 25, 64, 40),
+    # iran spans the proxy theater (Lebanon→Yemen), matching the web dashboard
+    # and the extraction prompt scope — not just Iran proper.
+    "iran":    (32, 10, 64, 42),
     "sudan":   (21,  8, 42, 23),
     "myanmar": (92,  9, 102, 29),
 }
