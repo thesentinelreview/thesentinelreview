@@ -106,9 +106,9 @@ export default function BriefPane({
                 <div className="grid grid-cols-3 gap-2">
                   {topSources.map((s) => (
                     <div key={s.rank} className="min-w-0 border border-emerald-400/40 bg-emerald-400/[0.04] rounded-sm px-2 py-1.5">
-                      <div className="flex items-center justify-between text-[10.5px]">
-                        <span className="truncate text-emerald-200">{s.display_name}</span>
-                        <span className="font-data tabular-nums ml-1 text-emerald-200">{s.verified_rate}%</span>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="min-w-0 flex-1 truncate text-[10px] text-emerald-200/70">{s.display_name}</span>
+                        <span className="flex-none font-data tabular-nums text-[18px] font-semibold leading-none text-emerald-200">{s.verified_rate}%</span>
                       </div>
                       <div className="h-[3px] mt-1 rounded-full bg-zinc-800 overflow-hidden">
                         <div
