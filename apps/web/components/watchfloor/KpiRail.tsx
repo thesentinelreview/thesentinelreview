@@ -61,13 +61,16 @@ export default function KpiRail({
           spark={sparklines.strikes}
           sparkColor="#ef4444"
         />
-        {/* Higher verification share is good → green delta (in points). */}
+        {/* Higher verification share is good → green delta (in points). The spark
+            counts verified events per bucket; it's sparse by nature. */}
         <Kpi
           label="Verified"
           value={deltas.verifiedPct}
           unit="%"
           delta={`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
           deltaColor={verifiedDelta >= 0 ? "green" : "red"}
+          spark={sparklines.verified}
+          sparkColor="#34d399"
         />
         <Kpi
           label="Fusion"

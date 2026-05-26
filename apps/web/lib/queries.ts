@@ -193,15 +193,16 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
 
 // Per-metric bucket counts for the KPI sparklines: 24 hourly buckets in 24h
 // mode, one daily bucket per day otherwise. Generalizes getIntensity's
-// generate_series / date_trunc pattern; only EVENTS and STRIKES are sparked
-// (VERIFIED is too sparse to read as a trend, so it renders value + delta only).
-export type KpiSparklines = { events: number[]; strikes: number[] };
+// generate_series / date_trunc pattern. Buckets EVENTS, STRIKES, and VERIFIED;
+// verified events are sparse (often 0/bucket), so its spark reads as a near-flat
+// baseline — that honestly reflects how rare verification is.
+export type KpiSparklines = { events: number[]; strikes: number[]; verified: number[] };
 
 export async function getKpiSparklines(
   theater: TheaterKey = "ukraine",
   timeRange: TimeRange = "24h",
 ): Promise<KpiSparklines> {
-  const empty: KpiSparklines = { events: [], strikes: [] };
+  const empty: KpiSparklines = { events: [], strikes: [], verified: [] };
   if (!isDatabaseConfigured()) return empty;
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -211,13 +212,14 @@ export async function getKpiSparklines(
   const span = timeRange === "24h" ? "23 hours" : timeRange === "7d" ? "6 days" : "29 days";
 
   try {
-    type Row = { events: string | number; strikes: string | number };
+    type Row = { events: string | number; strikes: string | number; verified: string | number };
 
     const rows = await query<Row>(
       `
       SELECT
         COUNT(e.id)::int AS events,
-        COUNT(e.id) FILTER (WHERE e.event_type = 'strike')::int AS strikes
+        COUNT(e.id) FILTER (WHERE e.event_type = 'strike')::int AS strikes,
+        COUNT(e.id) FILTER (WHERE e.confidence = 'verified')::int AS verified
       FROM generate_series(
         date_trunc('${unit}', now() AT TIME ZONE 'UTC') - INTERVAL '${span}',
         date_trunc('${unit}', now() AT TIME ZONE 'UTC'),
@@ -236,6 +238,7 @@ export async function getKpiSparklines(
     return {
       events: rows.map((r) => Number(r.events) || 0),
       strikes: rows.map((r) => Number(r.strikes) || 0),
+      verified: rows.map((r) => Number(r.verified) || 0),
     };
   } catch {
     return empty;
