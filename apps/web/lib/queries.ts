@@ -6,6 +6,8 @@ import type {
   Alert,
   IntensityDay,
   Sector,
+  ThreatAxes,
+  WeaponType,
   Source,
   BriefingData,
   EventDetail,
@@ -37,6 +39,14 @@ const VALID_RANGES: TimeRange[] = ["24h", "7d", "30d"];
 
 export function resolveTimeRange(raw: string | undefined): TimeRange {
   return VALID_RANGES.includes(raw as TimeRange) ? (raw as TimeRange) : "24h";
+}
+
+// Which view the Sector Threat panel shows. "sectors" (oblast breakdown) is the
+// default so a bookmarked URL with no `threat` param is unchanged.
+export type ThreatView = "sectors" | "axes";
+
+export function resolveThreatView(raw: string | undefined): ThreatView {
+  return raw === "axes" ? "axes" : "sectors";
 }
 
 // The /admin/tieout page exposes 24h/7d plus an all-time option. "all" skips the
@@ -853,6 +863,45 @@ export async function getSectors(theater: TheaterKey = "ukraine", timeRange: Tim
     });
   } catch {
     return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Threat axes (weapon_type breakdown for the selected theater — peer of Sectors)
+// ---------------------------------------------------------------------------
+//
+// Same theater/window/published scoping as getSectors so the AXES toggle is a
+// true peer of SECTORS. Theater resolution reuses THEATER_BBOX + ST_Within (no
+// parallel path). Only classified events (weapon_type IS NOT NULL) are counted;
+// GROUP BY returns present classes only, so empty axes never render.
+export async function getThreatAxes(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<ThreatAxes> {
+  if (!isDatabaseConfigured()) return { rows: [], total: 0 };
+
+  const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
+  const interval = SQL_INTERVALS[timeRange];
+
+  try {
+    type Row = { weapon_type: WeaponType; n: string | number };
+
+    const rows = await query<Row>(
+      `
+      SELECT weapon_type, COUNT(*)::int AS n
+      FROM events
+      WHERE published_at IS NOT NULL
+        AND occurred_at > now() - INTERVAL '${interval}'
+        AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND weapon_type IS NOT NULL
+      GROUP BY weapon_type
+      ORDER BY n DESC
+      `,
+      [minLng, minLat, maxLng, maxLat],
+    );
+
+    const out = rows.map((r) => ({ weapon_type: r.weapon_type, n: Number(r.n) || 0 }));
+    const total = out.reduce((sum, r) => sum + r.n, 0);
+    return { rows: out, total };
+  } catch {
+    return { rows: [], total: 0 };
   }
 }
 

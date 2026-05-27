@@ -50,6 +50,32 @@ export interface Sector {
   strikes: number;
 }
 
+// ---------------------------------------------------------------------------
+// Threat Axes — weapon_type breakdown for the selected theater (peer of Sector)
+// ---------------------------------------------------------------------------
+
+// Coarse kinetic-capability classes. The canonical source of truth is
+// WEAPON_TYPES in apps/ingest/sentinel/models.py (constrained at LLM extraction
+// time); this mirror exists only because the web app can't import the Python
+// module — keep the two in sync. `aircraft` (manned strike aircraft) was added
+// in PR #136; `other` absorbs kinetic capabilities outside the named classes.
+// A NULL weapon_type means no identifiable kinetic capability and is excluded.
+export const WEAPON_TYPES = [
+  "artillery", "drone", "missile", "armor", "infantry", "naval", "aircraft", "other",
+] as const;
+
+export type WeaponType = (typeof WEAPON_TYPES)[number];
+
+export interface ThreatAxisRow {
+  weapon_type: WeaponType;
+  n: number;
+}
+
+export interface ThreatAxes {
+  rows: ThreatAxisRow[]; // present classes only, sorted by n desc
+  total: number;         // classified events in the window (sum of rows)
+}
+
 export interface Source {
   rank: number;
   handle: string;
