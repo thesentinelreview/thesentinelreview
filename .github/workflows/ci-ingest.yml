@@ -1,0 +1,47 @@
+name: CI — Ingest
+
+on:
+  pull_request:
+    paths:
+      - 'apps/ingest/**'
+      - 'packages/db/**'
+      - '.github/workflows/ci-ingest.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ingest/**'
+      - 'packages/db/**'
+      - '.github/workflows/ci-ingest.yml'
+  workflow_dispatch:
+
+jobs:
+  ingest-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/ingest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: apps/ingest/pyproject.toml
+
+      - name: Install dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Mypy
+        # Report-only: ~104 pre-existing strict-mode errors across 18 files.
+        # See tracking issue "Pre-existing ingest test debt" for the cleanup
+        # plan. Flip to blocking once the residual count is small.
+        continue-on-error: true
+        run: mypy --strict sentinel
+
+      - name: Pytest
+        run: pytest -m "not integration"
