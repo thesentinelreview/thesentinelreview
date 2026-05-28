@@ -122,7 +122,12 @@ def check_orphaned_published(conn: psycopg.Connection) -> CheckResult:
 
 
 def check_future_occurred_at(conn: psycopg.Connection) -> CheckResult:
-    """Events with occurred_at more than 1h in the future — LLM date extraction error."""
+    """Events with occurred_at more than 1h in the future — LLM date extraction error.
+
+    Backstop only: the primary guard is the write-time clamp in
+    sentinel.jobs.extract_events._clamp_future_occurred_at. A single mis-dated
+    row that slips past the clamp isn't worth halting the pipeline over.
+    """
     row = conn.execute(
         """
         SELECT COUNT(*) AS n
@@ -134,7 +139,7 @@ def check_future_occurred_at(conn: psycopg.Connection) -> CheckResult:
     return CheckResult(
         name="future_occurred_at",
         passed=count == 0,
-        severity="critical",
+        severity="warning",
         detail=f"{count} event(s) have occurred_at in the future" if count else "no events with future timestamps",
         value=count,
     )

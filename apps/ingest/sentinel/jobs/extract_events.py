@@ -9,6 +9,7 @@ Payload schema: ExtractEventsPayload
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timedelta
 
 import psycopg
 import structlog
@@ -29,6 +30,38 @@ from sentinel.pipeline.scorer import classify, score_confidence
 from sentinel.pipeline.translator import translate_post
 
 log = structlog.get_logger()
+
+# Tolerance for occurred_at slightly exceeding posted_at — covers clock skew
+# and timezone rounding so legitimately-recent events aren't perturbed.
+_FUTURE_OCCURRED_AT_TOLERANCE = timedelta(hours=1)
+
+
+def _clamp_future_occurred_at(
+    occurred_at: datetime | None,
+    *,
+    posted_at: datetime | None,
+    post_id: uuid.UUID,
+) -> datetime | None:
+    """Clamp an LLM-extracted occurred_at to posted_at when it lands more than
+    `_FUTURE_OCCURRED_AT_TOLERANCE` after the reporting post. An event cannot
+    have occurred meaningfully after the post that reports it; this is the
+    write-time backstop for checks.check_future_occurred_at, guarding against
+    the LLM lifting a garbled future date verbatim from hostile source text.
+
+    Returns occurred_at unchanged when it is None, when posted_at is None, or
+    when it is at or before posted_at + tolerance.
+    """
+    if occurred_at is None or posted_at is None:
+        return occurred_at
+    if occurred_at <= posted_at + _FUTURE_OCCURRED_AT_TOLERANCE:
+        return occurred_at
+    log.warning(
+        "future_occurred_at_clamped",
+        post_id=str(post_id),
+        extracted_occurred_at=occurred_at.isoformat(),
+        clamped_to=posted_at.isoformat(),
+    )
+    return posted_at
 
 
 def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
@@ -120,12 +153,18 @@ def _process_post(
         log.warning("incomplete_extraction", post_id=str(post_id))
         return
 
+    occurred_at = _clamp_future_occurred_at(
+        result.occurred_at,
+        posted_at=post.get("posted_at"),
+        post_id=post_id,
+    )
+
     # ── Deduplication ────────────────────────────────────────────────────────
     duplicate_id = find_duplicate(
         conn,
         lng=result.lng,         # type: ignore[arg-type]
         lat=result.lat,         # type: ignore[arg-type]
-        occurred_at=result.occurred_at,
+        occurred_at=occurred_at,  # type: ignore[arg-type]
         event_type=result.event_type,  # type: ignore[arg-type]
     )
 
@@ -155,7 +194,7 @@ def _process_post(
     event_id = insert_event(
         conn,
         event_type=result.event_type,   # type: ignore[arg-type]
-        occurred_at=result.occurred_at,
+        occurred_at=occurred_at,        # type: ignore[arg-type]
         lng=result.lng,                 # type: ignore[arg-type]
         lat=result.lat,                 # type: ignore[arg-type]
         location_name=result.location_name,
