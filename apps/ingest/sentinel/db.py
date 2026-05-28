@@ -170,6 +170,32 @@ def get_unprocessed_posts(
     ).fetchall()  # type: ignore[return-value]
 
 
+def get_unprocessed_post_ids(
+    conn: psycopg.Connection,
+    limit: int | None = None,
+) -> list[dict]:
+    """Every unprocessed post across all sources, oldest-first.
+
+    Unlike get_unprocessed_posts (per-source, newest-first), this feeds the
+    one-shot extraction drain: it selects any raw_post that has neither been
+    turned into an event nor skipped, regardless of source or ingested_at age,
+    so posts written outside the normal ingest->extract path (e.g. a backfill)
+    still get processed. Oldest-first so the backlog drains in chronological
+    order; ``limit`` caps a single drain run (None = no cap).
+    """
+    sql = """
+        SELECT id, source_id FROM raw_posts
+        WHERE processed_at IS NULL
+          AND skip_reason IS NULL
+        ORDER BY posted_at ASC
+    """
+    params: tuple = ()
+    if limit is not None:
+        sql += "        LIMIT %s\n"
+        params = (limit,)
+    return conn.execute(sql, params).fetchall()  # type: ignore[return-value]
+
+
 def mark_post_processed(
     conn: psycopg.Connection,
     raw_post_id: uuid.UUID,

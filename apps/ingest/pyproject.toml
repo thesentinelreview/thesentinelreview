@@ -52,6 +52,7 @@ sentinel-run-checks = "sentinel.runner:run_checks"
 sentinel-run-backfill-translations = "sentinel.runner:run_backfill_translations"
 sentinel-run-weapon-type-dryrun = "sentinel.runner:run_dryrun_weapon_type"
 sentinel-run-backfill-weapon-type = "sentinel.runner:run_backfill_weapon_type"
+sentinel-run-drain-extraction = "sentinel.runner:run_drain_extraction"
 
 [tool.ruff]
 line-length = 100
