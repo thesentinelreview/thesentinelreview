@@ -36,6 +36,10 @@ const AOI_POLY: [number, number][] = [
 const RING_CENTER: [number, number] = [37.71, 48.07]; // primary Pokrovsk strike
 const RING_KM = [15, 25, 40];
 
+// Strike radar-ping sizing: the ring rests at this circle-radius and expands to
+// 2.2× over the active phase, then rests invisibly (sonar blip-then-rest).
+const PULSE_REST_R = 10;
+
 function ringPolygon(center: [number, number], km: number, points = 64): [number, number][] {
   const [lng, lat] = center;
   const latDeg = km / 111.32;
@@ -335,31 +339,29 @@ export default function MapView({
         },
       });
 
-      // Radar-ping rings — every strike emanates two staggered outline rings that
-      // expand outward and fade (sonar sweep). Transparent fill so the rAF
-      // stroke-opacity envelope is the sole alpha control; circle-radius +
-      // circle-stroke-opacity only (GPU-cheap, no box-shadow). Added before
-      // pin-mid so both rings sit beneath the mid ring and the static core dot.
-      for (const id of ["pin-ring-pulse", "pin-ring-pulse-2"]) {
-        map.addLayer({
-          id,
-          type: "circle",
-          source: "events",
-          filter: [
-            "all",
-            ["!", ["has", "point_count"]],
-            ["==", ["get", "event_type"], "strike"],
-          ],
-          paint: {
-            "circle-radius": 10,
-            "circle-color": pal.core.strike,
-            "circle-opacity": 0, // transparent fill → outline only
-            "circle-stroke-width": 1.5,
-            "circle-stroke-color": pal.core.strike,
-            "circle-stroke-opacity": 0.7,
-          },
-        });
-      }
+      // Radar ping — every strike emits a single outline ring that expands outward,
+      // fades, then rests (sonar blip: ping … rest … ping). Transparent fill so the
+      // rAF circle-stroke-opacity envelope is the sole alpha control; animates
+      // circle-radius + circle-stroke-opacity only (GPU-cheap, no box-shadow). Added
+      // before pin-mid so the ring sits beneath the mid ring and the static core dot.
+      map.addLayer({
+        id: "pin-ring-pulse",
+        type: "circle",
+        source: "events",
+        filter: [
+          "all",
+          ["!", ["has", "point_count"]],
+          ["==", ["get", "event_type"], "strike"],
+        ],
+        paint: {
+          "circle-radius": PULSE_REST_R,
+          "circle-color": pal.core.strike,
+          "circle-opacity": 0, // transparent fill → outline only
+          "circle-stroke-width": 1.5,
+          "circle-stroke-color": pal.core.strike,
+          "circle-stroke-opacity": 0.7,
+        },
+      });
 
       // Mid ring
       map.addLayer({
@@ -456,27 +458,28 @@ export default function MapView({
         }
       });
 
-      // Radar ping: two strike rings sweep outward and fade, staggered half a cycle
-      // apart (ease-out sawtooth); AOI outline breathes via sine. Both run in a single
-      // rAF loop — unless the user prefers reduced motion, in which case it holds steady.
+      // Radar ping: each strike ring expands outward with ease-out over the first 80%
+      // of the cycle, then holds invisible for the final 20% — a sonar blip with a rest
+      // beat (ping … rest … ping), not a continuous throb. AOI outline breathes via sine.
+      // All run in one rAF loop — unless the user prefers reduced motion (holds steady).
       const prefersReduced =
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const t0 = performance.now();
-      const BEACON_MS = 2000;
+      const BEACON_MS = 2400;
       function animate() {
         const elapsed = performance.now() - t0;
         const t = elapsed / 1000;
-        const phase = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 sawtooth
+        const raw = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 linear sawtooth
+        // ease-out expansion over the first 80%, then hold at 1 for the rest beat
+        const phase = raw < 0.8 ? 1 - Math.pow(1 - raw / 0.8, 2) : 1;
 
-        const ping = (id: string, p: number) => {
-          if (!map.getLayer(id)) return;
-          const eased = 1 - (1 - p) * (1 - p); // ease-out
-          map.setPaintProperty(id, "circle-radius", 10 + eased * 24); // 10 → 34
-          map.setPaintProperty(id, "circle-stroke-opacity", (1 - p) * 0.7);
-        };
-        ping("pin-ring-pulse", phase);
-        ping("pin-ring-pulse-2", (phase + 0.5) % 1); // staggered half-cycle
+        if (map.getLayer("pin-ring-pulse")) {
+          // restingRadius → 2.2× over the active phase, held at 2.2× during the rest
+          map.setPaintProperty("pin-ring-pulse", "circle-radius", PULSE_REST_R * (1 + phase * 1.2));
+          // 0.7 → 0, held at 0 (invisible) during the rest beat
+          map.setPaintProperty("pin-ring-pulse", "circle-stroke-opacity", (1 - phase) * 0.7);
+        }
         if (showAOI) {
           const sine = (Math.sin(t * Math.PI * 1.2) + 1) / 2;
           if (map.getLayer("aoi-outline"))
@@ -487,13 +490,10 @@ export default function MapView({
         animFrame = requestAnimationFrame(animate);
       }
       if (prefersReduced) {
-        // Reduced motion: hold a single calm steady outline ring; no rAF, no sweep.
+        // Reduced motion: hold one calm steady outline ring; no rAF, no sweep.
         if (map.getLayer("pin-ring-pulse")) {
-          map.setPaintProperty("pin-ring-pulse", "circle-radius", 13);
+          map.setPaintProperty("pin-ring-pulse", "circle-radius", PULSE_REST_R);
           map.setPaintProperty("pin-ring-pulse", "circle-stroke-opacity", 0.45);
-        }
-        if (map.getLayer("pin-ring-pulse-2")) {
-          map.setPaintProperty("pin-ring-pulse-2", "circle-stroke-opacity", 0);
         }
       } else {
         animFrame = requestAnimationFrame(animate);
