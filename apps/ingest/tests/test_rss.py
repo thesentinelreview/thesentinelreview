@@ -10,12 +10,10 @@ from __future__ import annotations
 
 import hashlib
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from typing import Any
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from sentinel.ingestors.rss import (
     RSSIngestor,
@@ -24,18 +22,16 @@ from sentinel.ingestors.rss import (
     _parse_entry,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-_NOW = datetime.now(tz=timezone.utc)
+_NOW = datetime.now(tz=UTC)
 _RECENT = _NOW - timedelta(hours=1)
 _OLD = _NOW - timedelta(hours=48)
 
 
 def _time_struct(dt: datetime) -> time.struct_time:
-    import calendar
     ts = dt.timestamp()
     return time.gmtime(ts)
 
@@ -65,7 +61,7 @@ class TestParseDate:
         entry = _entry(published_parsed=_time_struct(_RECENT))
         result = _parse_date(entry)
         assert result is not None
-        assert result.tzinfo == timezone.utc
+        assert result.tzinfo == UTC
 
     def test_falls_back_to_updated_parsed(self) -> None:
         entry = _entry(published_parsed=None, updated_parsed=_time_struct(_RECENT))
@@ -87,7 +83,7 @@ class TestParseDate:
         assert result is None
 
     def test_timestamp_is_correct(self) -> None:
-        ref = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+        ref = datetime(2024, 6, 1, 12, 0, 0, tzinfo=UTC)
         entry = _entry(published_parsed=_time_struct(ref))
         result = _parse_date(entry)
         assert result is not None
@@ -102,48 +98,52 @@ class TestParseEntry:
     def test_returns_none_for_old_entry(self) -> None:
         entry = _entry(published_parsed=_time_struct(_OLD))
         cutoff = _cutoff_dt(since_hours=24)
-        assert _parse_entry(entry, cutoff=cutoff) is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "too_old"
 
     def test_returns_post_for_recent_entry(self) -> None:
         entry = _entry(published_parsed=_time_struct(_RECENT))
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
+        assert reason is None
         assert result["text"] == "Test title\n\nTest summary"
 
     def test_text_title_only_when_no_summary(self) -> None:
         entry = _entry(summary="")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
         assert result["text"] == "Test title"
 
     def test_returns_none_when_no_text(self) -> None:
         entry = _entry(title="", summary="")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "no_text"
 
     def test_external_id_from_entry_id(self) -> None:
         entry = _entry(id="https://example.com/1")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
         assert result["external_id"] == "https://example.com/1"
 
     def test_external_id_falls_back_to_link(self) -> None:
         entry = _entry(id=None, link="https://example.com/link")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
         assert result["external_id"] == "https://example.com/link"
 
     def test_external_id_falls_back_to_sha1(self) -> None:
         entry = _entry(id=None, link=None)
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
-        expected = hashlib.sha1("Test title\n\nTest summary".encode()).hexdigest()
+        expected = hashlib.sha1(b"Test title\n\nTest summary").hexdigest()
         assert result["external_id"] == expected
 
     def test_media_urls_from_enclosures(self) -> None:
@@ -151,7 +151,7 @@ class TestParseEntry:
         enc2 = SimpleNamespace(href="https://cdn.example.com/img2.jpg")
         entry = _entry(enclosures=[enc1, enc2])
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
         assert result["media_urls"] == [
             "https://cdn.example.com/img1.jpg",
@@ -161,15 +161,16 @@ class TestParseEntry:
     def test_archive_url_set_to_link(self) -> None:
         entry = _entry(link="https://example.com/story")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
+        result, _reason = _parse_entry(entry, cutoff=cutoff)
         assert result is not None
         assert result["archive_url"] == "https://example.com/story"
 
     def test_returns_none_when_date_missing(self) -> None:
         entry = _entry(published_parsed=None, updated_parsed=None, created_parsed=None)
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "no_date"
 
 
 # ---------------------------------------------------------------------------

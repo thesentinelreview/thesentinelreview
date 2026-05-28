@@ -102,7 +102,10 @@ def check_no_published_events_48h(conn: psycopg.Connection) -> CheckResult:
 
 
 def check_orphaned_published(conn: psycopg.Connection) -> CheckResult:
-    """Events with published_at=NULL and held_for_review=false — should be impossible post-migration-0005."""
+    """Events with published_at=NULL and held_for_review=false.
+
+    Should be impossible post-migration-0005.
+    """
     row = conn.execute(
         """
         SELECT COUNT(*) AS n
@@ -112,11 +115,15 @@ def check_orphaned_published(conn: psycopg.Connection) -> CheckResult:
         """,
     ).fetchone()
     count = row["n"] if row else 0
+    detail = (
+        f"{count} event(s) are not held but have NULL published_at"
+        if count else "all non-held events have published_at"
+    )
     return CheckResult(
         name="orphaned_published",
         passed=count == 0,
         severity="critical",
-        detail=f"{count} event(s) are not held but have NULL published_at" if count else "all non-held events have published_at",
+        detail=detail,
         value=count,
     )
 
@@ -136,11 +143,15 @@ def check_future_occurred_at(conn: psycopg.Connection) -> CheckResult:
         """,
     ).fetchone()
     count = row["n"] if row else 0
+    detail = (
+        f"{count} event(s) have occurred_at in the future"
+        if count else "no events with future timestamps"
+    )
     return CheckResult(
         name="future_occurred_at",
         passed=count == 0,
         severity="warning",
-        detail=f"{count} event(s) have occurred_at in the future" if count else "no events with future timestamps",
+        detail=detail,
         value=count,
     )
 
@@ -239,11 +250,15 @@ def check_held_events(conn: psycopg.Connection) -> CheckResult:
         """,
     ).fetchone()
     count = row["n"] if row else 0
+    detail = (
+        f"{count} event(s) still held for review (should be 0 — run migration 0007)"
+        if count else "no events held for review"
+    )
     return CheckResult(
         name="held_events",
         passed=count == 0,
         severity="warning",
-        detail=f"{count} event(s) still held for review (should be 0 — run migration 0007)" if count else "no events held for review",
+        detail=detail,
         value=count,
     )
 
@@ -265,11 +280,15 @@ def check_silent_active_sources(conn: psycopg.Connection) -> CheckResult:
     count = row["n"] if row else 0
     threshold = 5
     passed = count <= threshold
+    detail = (
+        f"{count} active source(s) produced no posts in last 72h"
+        if count else "all active sources have recent posts"
+    )
     return CheckResult(
         name="silent_active_sources",
         passed=passed,
         severity="warning",
-        detail=f"{count} active source(s) produced no posts in last 72h" if count else "all active sources have recent posts",
+        detail=detail,
         value=count,
     )
 

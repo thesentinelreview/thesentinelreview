@@ -13,14 +13,12 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from sentinel.models import GeolocationSignal
-
 
 # ---------------------------------------------------------------------------
 # Helpers to build fake Anthropic response objects

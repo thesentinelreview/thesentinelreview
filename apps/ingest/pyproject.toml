@@ -60,6 +60,14 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
 
+# Long LLM system prompts are written as multi-thousand-character single-line
+# string literals — they are prose-as-code and don't wrap meaningfully.
+# Suppressing E501 here only; the global line-length rule still applies elsewhere.
+[tool.ruff.lint.per-file-ignores]
+"sentinel/pipeline/extractor.py" = ["E501"]
+"sentinel/pipeline/translator.py" = ["E501"]
+"sentinel/pipeline/briefing.py" = ["E501"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true

@@ -16,7 +16,7 @@ Requires: telethon
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
@@ -50,10 +50,11 @@ class TelegramIngestor(BaseIngestor):
 
 async def _fetch_channel(channel: str, *, since_hours: int) -> list[RawPostData]:
     from datetime import timedelta
+
     from telethon import TelegramClient
     from telethon.sessions import StringSession
 
-    cutoff = datetime.now(tz=timezone.utc) - timedelta(hours=since_hours)
+    cutoff = datetime.now(tz=UTC) - timedelta(hours=since_hours)
 
     session = StringSession(settings.telegram_session or "")
     client = TelegramClient(
@@ -74,7 +75,7 @@ async def _fetch_channel(channel: str, *, since_hours: int) -> list[RawPostData]
         ):
             if message.date is None:
                 continue
-            posted_at = message.date.replace(tzinfo=timezone.utc)
+            posted_at = message.date.replace(tzinfo=UTC)
             if posted_at < cutoff:
                 break       # messages are returned newest-first
 

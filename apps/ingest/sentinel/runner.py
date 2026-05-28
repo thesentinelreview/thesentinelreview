@@ -338,7 +338,12 @@ def _maybe_send_webhook(
     }
 
     try:
-        resp = httpx.post(url, content=json.dumps(payload), headers={"Content-Type": "application/json"}, timeout=10)
+        resp = httpx.post(
+            url,
+            content=json.dumps(payload),
+            headers={"Content-Type": "application/json"},
+            timeout=10,
+        )
         resp.raise_for_status()
         log.info("webhook_sent", status=resp.status_code)
     except Exception as exc:
