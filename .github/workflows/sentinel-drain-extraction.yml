@@ -1,0 +1,59 @@
+name: Sentinel — Drain Extraction
+
+# One-shot, manual-only. Runs the real extractor over raw_posts that were never
+# enqueued for extraction (steady-state extraction is id-driven off the current
+# ingest cycle, so posts written by other means — e.g. the Neon->Supabase
+# backfill — are never picked up). Selects unprocessed posts
+# (processed_at IS NULL AND skip_reason IS NULL) oldest-first up to max_posts,
+# and drives the unchanged extract_events path, creating events / event_sources
+# / llm_logs. Idempotent — each post is marked processed (or skip_reason'd), so a
+# re-run never reprocesses one. Re-run until the unprocessed count trends to ~0.
+# Never on a schedule.
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_posts:
+        description: 'Per-run cap on unprocessed posts to drain, oldest-first (0 = drain all in one run)'
+        required: false
+        default: '250'
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "anthropic>=0.40" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0"
+          pip install --no-deps -e apps/ingest
+
+      - name: Apply pending migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python packages/db/migrate.py
+
+      - name: Run extraction drain
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL_EXTRACT: claude-sonnet-4-6
+          ANTHROPIC_MODEL_TRANSLATE: claude-haiku-4-5
+          SENTINEL_DRAIN_MAX_POSTS: ${{ github.event.inputs.max_posts }}
+          PYTHONUNBUFFERED: '1'
+        run: sentinel-run-drain-extraction

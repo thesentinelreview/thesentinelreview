@@ -200,6 +200,111 @@ def run_ingest() -> None:
     sys.exit(0)
 
 
+def _drain_max_posts() -> int | None:
+    """Per-run cap on posts pulled into the extraction drain.
+
+    SENTINEL_DRAIN_MAX_POSTS <= 0 (or unparseable) means no cap — drain
+    everything in one run. Default 250 keeps a single run bounded.
+    """
+    raw = os.environ.get("SENTINEL_DRAIN_MAX_POSTS", "250").strip()
+    try:
+        n = int(raw)
+    except ValueError:
+        return 250
+    return None if n <= 0 else n
+
+
+def run_drain_extraction() -> None:
+    """One-shot: run the real extractor over raw_posts that were never enqueued.
+
+    Steady-state extraction is id-driven — ingest_source enqueues extract_events
+    for the ids it just inserted — so posts written by other means (e.g. the
+    Neon->Supabase backfill) are never picked up. This selects unprocessed posts
+    directly (processed_at IS NULL AND skip_reason IS NULL), oldest-first, up to
+    a per-run cap, groups them by source, and drives the unchanged extract_events
+    path (translate -> extract -> future-date clamp -> dedup -> score -> insert),
+    creating real events / event_sources / llm_logs. Re-run until the unprocessed
+    count trends to ~0. Idempotent: each post is marked processed (or
+    skip_reason'd), so a re-run never reprocesses one.
+    """
+    _configure_logging()
+    from collections import defaultdict
+
+    from sentinel.config import settings
+    from sentinel.db import enqueue, get_conn, get_unprocessed_post_ids
+
+    cap = _drain_max_posts()
+
+    def _counts() -> tuple[int, int]:
+        with get_conn() as conn:
+            unprocessed = conn.execute(
+                "SELECT count(*) AS n FROM raw_posts "
+                "WHERE processed_at IS NULL AND skip_reason IS NULL"
+            ).fetchone()["n"]
+            events = conn.execute("SELECT count(*) AS n FROM events").fetchone()["n"]
+        return int(unprocessed), int(events)
+
+    unprocessed_before, events_before = _counts()
+
+    with get_conn() as conn:
+        rows = get_unprocessed_post_ids(conn, limit=cap)
+
+    by_source: dict[str, list[str]] = defaultdict(list)
+    for row in rows:
+        by_source[str(row["source_id"])].append(str(row["id"]))
+
+    batch_size = settings.worker_batch_size
+    enqueued = 0
+    with get_conn() as conn:
+        for source_id, ids in by_source.items():
+            for i in range(0, len(ids), batch_size):
+                enqueue(
+                    conn,
+                    "extract_events",
+                    {"raw_post_ids": ids[i : i + batch_size], "source_id": source_id},
+                )
+                enqueued += 1
+
+    log.info(
+        "drain_enqueued",
+        selected_posts=len(rows),
+        sources=len(by_source),
+        extract_jobs=enqueued,
+        unprocessed_before=unprocessed_before,
+        cap=cap or 0,
+    )
+
+    all_failed = False
+    try:
+        outcomes = _drain_queue()
+    except _AllJobsFailed as exc:
+        outcomes = exc.outcomes
+        all_failed = True
+        log.error("drain_all_jobs_failed", error=str(exc))
+
+    unprocessed_after, events_after = _counts()
+    jobs_failed = sum(1 for o in outcomes if o.failed)
+
+    log.info(
+        "drain_complete",
+        selected_posts=len(rows),
+        jobs_processed=len(outcomes),
+        jobs_failed=jobs_failed,
+        unprocessed_before=unprocessed_before,
+        unprocessed_after=unprocessed_after,
+        drained=unprocessed_before - unprocessed_after,
+        events_created=events_after - events_before,
+    )
+    print(
+        f"\nDRAIN: selected={len(rows)} sources={len(by_source)} extract_jobs={enqueued} "
+        f"jobs_failed={jobs_failed} | unprocessed {unprocessed_before}->{unprocessed_after} "
+        f"(drained {unprocessed_before - unprocessed_after}) | "
+        f"events {events_before}->{events_after} (+{events_after - events_before})",
+        flush=True,
+    )
+    sys.exit(1 if all_failed else 0)
+
+
 def run_briefing() -> None:
     """Enqueue and process today's daily briefing."""
     _configure_logging()
