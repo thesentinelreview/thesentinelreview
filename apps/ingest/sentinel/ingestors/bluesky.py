@@ -12,7 +12,7 @@ early when posts fall before the since_hours cutoff.
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import structlog
 
@@ -75,7 +75,7 @@ def _extract_media_urls(post: object) -> list[str]:
 class BlueskyIngestor(BaseIngestor):
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
         handle = self.source["handle"]
-        cutoff = datetime.now(tz=timezone.utc) - timedelta(hours=since_hours)
+        cutoff = datetime.now(tz=UTC) - timedelta(hours=since_hours)
 
         try:
             client = _get_client()

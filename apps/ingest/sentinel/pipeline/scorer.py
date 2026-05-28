@@ -53,7 +53,11 @@ def score_confidence(
     platform_count = len(platforms)
     min_trust_tier = min(s["trust_tier"] for s in all_sources)
 
-    has_geolocation = geo_signals.geolocated_footage or geo_signals.coordinates_given or geo_signals.landmarks_visible
+    has_geolocation = (
+        geo_signals.geolocated_footage
+        or geo_signals.coordinates_given
+        or geo_signals.landmarks_visible
+    )
     has_official_ack = geo_signals.official_acknowledgment
     has_matching_press = geo_signals.matching_press
 

@@ -16,7 +16,7 @@ from __future__ import annotations
 import csv
 import io
 import zipfile
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 
 import httpx
 import structlog
@@ -102,7 +102,7 @@ def _download_and_unzip(url: str) -> bytes:
 def _parse_gdelt_date(date_str: str) -> datetime | None:
     """Parse GDELT DATEADDED format: yyyymmddHHMMSS"""
     try:
-        return datetime.strptime(date_str[:14], "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+        return datetime.strptime(date_str[:14], "%Y%m%d%H%M%S").replace(tzinfo=UTC)
     except (ValueError, IndexError):
         return None
 

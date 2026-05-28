@@ -27,7 +27,9 @@ def _text_block(text: str) -> SimpleNamespace:
     return SimpleNamespace(type="text", text=text)
 
 
-def _make_response(text: str, *, input_tokens: int = 50, output_tokens: int = 25) -> SimpleNamespace:
+def _make_response(
+    text: str, *, input_tokens: int = 50, output_tokens: int = 25
+) -> SimpleNamespace:
     usage = SimpleNamespace(input_tokens=input_tokens, output_tokens=output_tokens)
     return SimpleNamespace(
         content=[_text_block(text)],
@@ -138,7 +140,10 @@ class TestTranslateRussian:
 
         from sentinel.pipeline.translator import translate_post
 
-        text = "По данным украинских источников, российские войска якобы вошли в восточные окраины Покровска."
+        text = (
+            "По данным украинских источников, российские войска якобы вошли "
+            "в восточные окраины Покровска."
+        )
         result, meta = translate_post(text, source=_source())
 
         assert result.language == "ru"

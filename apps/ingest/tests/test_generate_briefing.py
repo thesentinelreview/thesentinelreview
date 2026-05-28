@@ -6,10 +6,7 @@ Only the pure/side-effect-free functions are tested here:
 """
 from __future__ import annotations
 
-import pytest
-
 from sentinel.jobs.generate_briefing import _notable_shifts
-
 
 # ---------------------------------------------------------------------------
 # Helpers

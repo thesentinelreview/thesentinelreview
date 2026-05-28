@@ -142,7 +142,9 @@ def insert_raw_post(
     """Insert a raw post. Returns the new id, or None if the post already exists."""
     row = conn.execute(
         """
-        INSERT INTO raw_posts (source_id, external_id, posted_at, text, media_urls, archive_url, lang)
+        INSERT INTO raw_posts (
+            source_id, external_id, posted_at, text, media_urls, archive_url, lang
+        )
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (source_id, external_id) DO NOTHING
         RETURNING id

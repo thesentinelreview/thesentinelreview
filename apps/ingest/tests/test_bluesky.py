@@ -8,20 +8,17 @@ Covers:
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from sentinel.ingestors.bluesky import BlueskyIngestor, _extract_media_urls
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-_NOW = datetime.now(tz=timezone.utc)
+_NOW = datetime.now(tz=UTC)
 _RECENT = _NOW - timedelta(hours=1)
 _OLD = _NOW - timedelta(hours=48)
 
@@ -209,7 +206,7 @@ class TestBlueskyIngestorFetch:
         page = _make_feed([_make_feed_item(post)], cursor=None)
         mock_client = self._patch_client([page])
         with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
-            result = ingestor.fetch(since_hours=24)
+            ingestor.fetch(since_hours=24)
         assert mock_client.get_author_feed.call_count == 1
 
     def test_skips_malformed_post_continues(self) -> None:

@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import os
 import re
-from datetime import datetime, timezone, timedelta
-from typing import Iterator
+from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 
 import psycopg
 import structlog
@@ -149,7 +149,7 @@ def run(since_hours: int = 24, db_url: str | None = None) -> dict:
         'skipped_self_reference': 0,
     }
 
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
+    cutoff = datetime.now(UTC) - timedelta(hours=since_hours)
 
     with psycopg.connect(db_url, row_factory=dict_row, autocommit=False) as conn:
         # Cache existing sources (case-insensitive, @-prefix-insensitive) so we
@@ -241,8 +241,9 @@ def run(since_hours: int = 24, db_url: str | None = None) -> dict:
                             candidate_id, mentioning_source_id, mentioning_post_id,
                             mention_type, mention_context
                         ) VALUES (%s, %s, %s, %s, %s)
-                        ON CONFLICT (candidate_id, mentioning_source_id, mentioning_post_id, mention_type)
-                          DO NOTHING
+                        ON CONFLICT (
+                            candidate_id, mentioning_source_id, mentioning_post_id, mention_type
+                        ) DO NOTHING
                         RETURNING id
                         """,
                         (candidate_id, post['source_id'], post['id'], mention_type, context),

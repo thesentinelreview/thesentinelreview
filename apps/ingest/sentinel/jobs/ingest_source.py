@@ -14,7 +14,7 @@ import psycopg
 import structlog
 
 from sentinel.config import settings
-from sentinel.db import enqueue, get_source, get_unprocessed_posts, insert_raw_post
+from sentinel.db import enqueue, get_source, insert_raw_post
 from sentinel.models import IngestSourcePayload
 
 log = structlog.get_logger()
