@@ -335,25 +335,31 @@ export default function MapView({
         },
       });
 
-      // Glow ring (outer) — pulsing for all strikes
-      map.addLayer({
-        id: "pin-ring-pulse",
-        type: "circle",
-        source: "events",
-        filter: [
-          "all",
-          ["!", ["has", "point_count"]],
-          ["==", ["get", "event_type"], "strike"],
-        ],
-        paint: {
-          // Solid fill (not the ~0.18-alpha dim variant) so the rAF opacity
-          // envelope below is the sole alpha control — the dim color made the
-          // pulse read as nearly invisible at default zoom.
-          "circle-radius": 13,
-          "circle-color": pal.core.strike,
-          "circle-opacity": 0.5,
-        },
-      });
+      // Radar-ping rings — every strike emanates two staggered outline rings that
+      // expand outward and fade (sonar sweep). Transparent fill so the rAF
+      // stroke-opacity envelope is the sole alpha control; circle-radius +
+      // circle-stroke-opacity only (GPU-cheap, no box-shadow). Added before
+      // pin-mid so both rings sit beneath the mid ring and the static core dot.
+      for (const id of ["pin-ring-pulse", "pin-ring-pulse-2"]) {
+        map.addLayer({
+          id,
+          type: "circle",
+          source: "events",
+          filter: [
+            "all",
+            ["!", ["has", "point_count"]],
+            ["==", ["get", "event_type"], "strike"],
+          ],
+          paint: {
+            "circle-radius": 10,
+            "circle-color": pal.core.strike,
+            "circle-opacity": 0, // transparent fill → outline only
+            "circle-stroke-width": 1.5,
+            "circle-stroke-color": pal.core.strike,
+            "circle-stroke-opacity": 0.7,
+          },
+        });
+      }
 
       // Mid ring
       map.addLayer({
@@ -450,9 +456,9 @@ export default function MapView({
         }
       });
 
-      // Beacon animation: the high-priority strike ring pulses outward and fades
-      // (sawtooth), AOI outline breathes via sine. Both run in a single rAF loop —
-      // unless the user prefers reduced motion, in which case everything holds steady.
+      // Radar ping: two strike rings sweep outward and fade, staggered half a cycle
+      // apart (ease-out sawtooth); AOI outline breathes via sine. Both run in a single
+      // rAF loop — unless the user prefers reduced motion, in which case it holds steady.
       const prefersReduced =
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -463,10 +469,14 @@ export default function MapView({
         const t = elapsed / 1000;
         const phase = (elapsed % BEACON_MS) / BEACON_MS; // 0→1 sawtooth
 
-        if (map.getLayer("pin-ring-pulse")) {
-          map.setPaintProperty("pin-ring-pulse", "circle-radius", 6 + phase * 22);
-          map.setPaintProperty("pin-ring-pulse", "circle-opacity", (1 - phase) * 0.85);
-        }
+        const ping = (id: string, p: number) => {
+          if (!map.getLayer(id)) return;
+          const eased = 1 - (1 - p) * (1 - p); // ease-out
+          map.setPaintProperty(id, "circle-radius", 10 + eased * 24); // 10 → 34
+          map.setPaintProperty(id, "circle-stroke-opacity", (1 - p) * 0.7);
+        };
+        ping("pin-ring-pulse", phase);
+        ping("pin-ring-pulse-2", (phase + 0.5) % 1); // staggered half-cycle
         if (showAOI) {
           const sine = (Math.sin(t * Math.PI * 1.2) + 1) / 2;
           if (map.getLayer("aoi-outline"))
@@ -477,10 +487,13 @@ export default function MapView({
         animFrame = requestAnimationFrame(animate);
       }
       if (prefersReduced) {
-        // Hold the pulse ring at a calm steady state; skip the rAF loop entirely.
+        // Reduced motion: hold a single calm steady outline ring; no rAF, no sweep.
         if (map.getLayer("pin-ring-pulse")) {
           map.setPaintProperty("pin-ring-pulse", "circle-radius", 13);
-          map.setPaintProperty("pin-ring-pulse", "circle-opacity", 0.5);
+          map.setPaintProperty("pin-ring-pulse", "circle-stroke-opacity", 0.45);
+        }
+        if (map.getLayer("pin-ring-pulse-2")) {
+          map.setPaintProperty("pin-ring-pulse-2", "circle-stroke-opacity", 0);
         }
       } else {
         animFrame = requestAnimationFrame(animate);
