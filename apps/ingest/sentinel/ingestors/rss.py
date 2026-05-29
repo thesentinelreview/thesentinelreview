@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import datetime, timezone
+from typing import NamedTuple
 
 import feedparser
 import httpx
@@ -23,19 +24,39 @@ _TIMEOUT = 30       # seconds
 _MAX_ENTRIES = 200  # hard cap per fetch to avoid runaway memory
 
 
+class _FetchResult(NamedTuple):
+    """Outcome of an HTTP fetch — carries enough to classify the feed's health
+    (LIVE / MOVED / BLOCKED / unparseable) instead of collapsing every failure
+    into a bare ``None``."""
+    content:         bytes | None
+    http_status:     int | None
+    content_type:    str
+    transport_error: str | None   # set on connect/timeout/DNS/SSL or HTTP >= 400
+    final_url:       str | None   # post-redirect URL (surfaces MOVED feeds)
+
+
 class RSSIngestor(BaseIngestor):
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
         handle = self.source["handle"]
         url = self.source.get("url")
         if not url:
             log.warning("rss_no_url", source=handle)
+            self.last_fetch_meta = _meta(transport_error="no url configured")
             return []
 
-        raw_xml = _fetch_feed(url, handle=handle)
-        if raw_xml is None:
+        fr = _fetch_feed(url, handle=handle)
+        if fr.content is None:
+            # Transport failure or HTTP >= 400 — record why so the source row
+            # shows the real reason instead of a silent 0-yield.
+            self.last_fetch_meta = _meta(
+                http_status=fr.http_status,
+                content_type=fr.content_type,
+                transport_error=fr.transport_error,
+                final_url=fr.final_url,
+            )
             return []
 
-        feed = feedparser.parse(raw_xml)
+        feed = feedparser.parse(fr.content)
         cutoff = _cutoff_dt(since_hours)
         results: list[RawPostData] = []
 
@@ -83,6 +104,18 @@ class RSSIngestor(BaseIngestor):
             bozo_reason=bozo_reason,
             since_hours=since_hours,
         )
+
+        self.last_fetch_meta = _meta(
+            http_status=fr.http_status,
+            content_type=fr.content_type,
+            raw_entries=len(feed.entries),
+            results=len(results),
+            drops=dict(drops),
+            bozo=bool(getattr(feed, "bozo", False)),
+            bozo_reason=bozo_reason,
+            newest_posted_at=max((p["posted_at"] for p in results), default=None),
+            final_url=fr.final_url,
+        )
         return results
 
 
@@ -107,7 +140,35 @@ _BROWSER_HEADERS = {
 }
 
 
-def _fetch_feed(url: str, *, handle: str) -> bytes | None:
+def _meta(
+    *,
+    http_status: int | None = None,
+    content_type: str = "",
+    transport_error: str | None = None,
+    raw_entries: int = 0,
+    results: int = 0,
+    drops: dict | None = None,
+    bozo: bool = False,
+    bozo_reason: str | None = None,
+    newest_posted_at: datetime | None = None,
+    final_url: str | None = None,
+) -> dict:
+    """Build a uniform last_fetch_meta dict (so every fetch path stamps the same shape)."""
+    return {
+        "http_status": http_status,
+        "content_type": content_type,
+        "transport_error": transport_error,
+        "raw_entries": raw_entries,
+        "results": results,
+        "drops": drops or {},
+        "bozo": bozo,
+        "bozo_reason": bozo_reason,
+        "newest_posted_at": newest_posted_at,
+        "final_url": final_url,
+    }
+
+
+def _fetch_feed(url: str, *, handle: str) -> _FetchResult:
     try:
         response = httpx.get(
             url,
@@ -115,23 +176,30 @@ def _fetch_feed(url: str, *, handle: str) -> bytes | None:
             follow_redirects=True,
             headers=_BROWSER_HEADERS,
         )
-        response.raise_for_status()
-        # Warn if the response doesn't look like a feed. Cloudflare challenge pages
-        # return 200 OK with text/html; feedparser silently returns 0 entries.
-        content_type = response.headers.get("content-type", "").lower()
-        if "html" in content_type and "xml" not in content_type:
-            log.warning(
-                "rss_non_xml_response",
-                source=handle,
-                url=url,
-                content_type=content_type,
-                status=response.status_code,
-                bytes=len(response.content),
-            )
-        return response.content
     except httpx.HTTPError as exc:
         log.error("rss_fetch_error", source=handle, url=url, error=str(exc))
-        return None
+        return _FetchResult(None, None, "", f"{type(exc).__name__}: {exc}", None)
+
+    content_type = response.headers.get("content-type", "").lower()
+    final_url = str(response.url)
+    status = response.status_code
+    if status >= 400:
+        # 403 is the classic WAF / .mil UA-or-IP gate; 404 a moved/dead feed.
+        log.error("rss_fetch_error", source=handle, url=url, status=status)
+        return _FetchResult(None, status, content_type, f"HTTP {status}", final_url)
+
+    # Warn if the response doesn't look like a feed. Cloudflare challenge pages
+    # return 200 OK with text/html; feedparser silently returns 0 entries.
+    if "html" in content_type and "xml" not in content_type:
+        log.warning(
+            "rss_non_xml_response",
+            source=handle,
+            url=url,
+            content_type=content_type,
+            status=status,
+            bytes=len(response.content),
+        )
+    return _FetchResult(response.content, status, content_type, None, final_url)
 
 
 def _parse_entry(

@@ -17,6 +17,10 @@ class RawPostData(TypedDict):
 class BaseIngestor(ABC):
     def __init__(self, source: dict) -> None:
         self.source = source
+        # Per-fetch diagnostics, populated by fetch(). Read by the ingest_source
+        # job to stamp source health (see db.record_source_fetch). Rich for RSS;
+        # other platforms may leave it None, which yields a basic health stamp.
+        self.last_fetch_meta: dict | None = None
 
     @abstractmethod
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
