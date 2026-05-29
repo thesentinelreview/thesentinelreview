@@ -27,6 +27,7 @@ from sentinel.models import ExtractEventsPayload
 from sentinel.pipeline.dedup import find_duplicate
 from sentinel.pipeline.extractor import extract_event
 from sentinel.pipeline.scorer import classify, score_confidence
+from sentinel.pipeline.theater_router import classify_theater
 from sentinel.pipeline.translator import translate_post
 
 log = structlog.get_logger()
@@ -117,11 +118,35 @@ def _process_post(
     # the original text when translation was skipped (English source) or failed.
     text_for_extraction = translation.translation or post["text"]
 
+    # ── Theater routing ──────────────────────────────────────────────────────
+    # Route by CONTENT (source.theaters is only a prior) so a multi-theater
+    # source's off-primary content — e.g. an ISW post about Iran — is judged
+    # under the right theater instead of the source's first theater.
+    theater, classify_meta = classify_theater(text_for_extraction, source=source)
+    log_llm_call(
+        conn,
+        purpose="theater_classify",
+        model=classify_meta["model"],
+        prompt=classify_meta["prompt"],
+        response=classify_meta["response"],
+        prompt_tokens=classify_meta.get("prompt_tokens"),
+        completion_tokens=classify_meta.get("completion_tokens"),
+        job_id=job_id,
+        raw_post_id=post_id,
+    )
+    if theater is None:
+        # Confidently off all four theaters — short-circuit before the expensive
+        # Sonnet extract. The router is biased to inclusion, so this fires only on
+        # clearly off-topic posts that would skip anyway.
+        mark_post_processed(conn, post_id, skip_reason="off_theater")
+        log.debug("post_off_theater", post_id=str(post_id))
+        return
+
     # ── LLM extraction ───────────────────────────────────────────────────────
     result, llm_meta = extract_event(
         text_for_extraction,
         source=source,
-        theater=(source.get("theaters") or ["ukraine"])[0],
+        theater=theater,
         post_timestamp=post.get("posted_at"),
     )
 

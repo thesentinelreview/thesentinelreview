@@ -160,10 +160,23 @@ def _prefilter(text: str) -> TranslationResult | None:
 # Response parsing
 # ---------------------------------------------------------------------------
 
+_CODE_FENCE_RE = re.compile(r"^\s*```(?:json)?\s*\n?(.*?)\n?\s*```\s*$", re.DOTALL | re.IGNORECASE)
+
+
+def _strip_code_fences(text: str) -> str:
+    """Strip a Markdown ```json … ``` wrapper if the model added one despite the
+    instruction not to. Returns the inner content, or the stripped input when
+    there is no fence. Without this a fenced reply fails json.loads and nulls the
+    translation (translator_invalid_json), so the extractor limps on raw
+    foreign-language text — degrading Arabic/Burmese (Sudan/Myanmar) coverage."""
+    match = _CODE_FENCE_RE.match(text.strip())
+    return match.group(1).strip() if match else text.strip()
+
+
 def _parse_response(response_text: str, *, source_text: str) -> TranslationResult:
     """Parse the model's JSON response with defensive checks. Never raises."""
     try:
-        parsed = json.loads(response_text.strip())
+        parsed = json.loads(_strip_code_fences(response_text))
     except json.JSONDecodeError:
         log.warning("translator_invalid_json", response_preview=response_text[:200])
         return TranslationResult()

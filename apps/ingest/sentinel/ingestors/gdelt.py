@@ -143,14 +143,23 @@ class GdeltEventsIngestor(BaseIngestor):
                 event_id = row[_COL_EVENT_ID]
                 geo_name = row[_COL_GEO_NAME] or "Unknown location"
                 source_url = row[_COL_SOURCE_URL]
-                cameo_label = _CAMEO_LABELS.get(row[_COL_ROOT_CODE], row[_COL_ROOT_CODE])
+                root_code = row[_COL_ROOT_CODE]
+                cameo_label = _CAMEO_LABELS.get(root_code, root_code)
                 num_mentions = row[_COL_NUM_MENTIONS] if len(row) > _COL_NUM_MENTIONS else ""
                 avg_tone = row[_COL_AVG_TONE] if len(row) > _COL_AVG_TONE else ""
+                lat = row[_COL_LAT] if len(row) > _COL_LAT else ""
+                lng = row[_COL_LNG] if len(row) > _COL_LNG else ""
 
+                # Include the geo + coordinates GDELT already provides so the
+                # extractor can fill location_name/lat/lng/oblast rather than skip
+                # as incomplete; the CAMEO action gives the event type explicitly.
+                coord_line = f"Coordinates (WGS84): {lat}, {lng}\n" if lat and lng else ""
                 text = (
-                    f"{cameo_label} in {geo_name}.\n"
-                    f"Mentions: {num_mentions}  Tone: {avg_tone}\n"
-                    f"Source: {source_url}"
+                    f"{cameo_label} reported in {geo_name} ({theater} theater).\n"
+                    f"{coord_line}"
+                    f"GDELT CAMEO event code {root_code} ({cameo_label}); "
+                    f"mentions: {num_mentions}; average tone: {avg_tone}.\n"
+                    f"Source article: {source_url}"
                 )
 
                 results.append(
