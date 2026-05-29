@@ -56,17 +56,21 @@ _GKG_THEMES = {
     "WAR", "CONFLICT", "NUCLEAR",
 }
 
-# GDELT Events CSV column indices (zero-based)
-_COL_EVENT_ID    = 0
-_COL_DATE_ADDED  = 1
-_COL_ROOT_CODE   = 28
-_COL_COUNTRY     = 51
-_COL_GEO_NAME    = 53
-_COL_LAT         = 55
-_COL_LNG         = 56
-_COL_SOURCE_URL  = 57
-_COL_NUM_MENTIONS = 31
-_COL_AVG_TONE    = 34
+# GDELT 2.0 Event Database column indices (zero-based), per the official CSV
+# layout (61 columns). NOTE: the geography block (cols 35-60) must match GDELT
+# 2.0 exactly. A prior mis-indexing read ActionGeo_Type (col 51, an int 0-5) as
+# the country code and SQLDATE (col 1, yyyymmdd) as DATEADDED, so every row was
+# discarded for every theater. Spec: GDELT-Event_Codebook-v2.0.
+_COL_EVENT_ID     = 0    # GLOBALEVENTID
+_COL_ROOT_CODE    = 28   # EventRootCode
+_COL_NUM_MENTIONS = 31   # NumMentions
+_COL_AVG_TONE     = 34   # AvgTone
+_COL_GEO_NAME     = 52   # ActionGeo_FullName
+_COL_COUNTRY      = 53   # ActionGeo_CountryCode
+_COL_LAT          = 56   # ActionGeo_Lat
+_COL_LNG          = 57   # ActionGeo_Long
+_COL_DATE_ADDED   = 59   # DATEADDED (yyyymmddHHMMSS)
+_COL_SOURCE_URL   = 60   # SOURCEURL
 
 # GDELT GKG v2.1 CSV column indices (zero-based)
 # https://blog.gdeltproject.org/gdelt-2-0-our-global-world-in-realtime/
