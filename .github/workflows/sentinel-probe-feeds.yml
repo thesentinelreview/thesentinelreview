@@ -8,12 +8,6 @@ name: Sentinel — Probe Feed URLs
 
 on:
   workflow_dispatch:
-  # TEMPORARY (Phase C): workflow_dispatch is only triggerable once a workflow is
-  # on the default branch, so this push trigger lets the probe run on the feature
-  # branch without merging first. Reverted to dispatch-only in the 0019 commit,
-  # before this PR merges.
-  push:
-    branches: [claude/recover-silent-rss-feeds]
 
 jobs:
   probe:
