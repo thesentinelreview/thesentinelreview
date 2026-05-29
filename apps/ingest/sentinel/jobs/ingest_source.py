@@ -14,7 +14,7 @@ import psycopg
 import structlog
 
 from sentinel.config import settings
-from sentinel.db import enqueue, get_source, get_unprocessed_posts, insert_raw_post
+from sentinel.db import enqueue, get_source, insert_raw_post, record_source_fetch
 from sentinel.models import IngestSourcePayload
 
 log = structlog.get_logger()
@@ -75,9 +75,16 @@ def _ingest(
     else:
         raise ValueError(f"Unknown platform: {platform!r}")
 
-    posts = ingestor.fetch(since_hours=since_hours)
-    new_ids: list[uuid.UUID] = []
+    try:
+        posts = ingestor.fetch(since_hours=since_hours)
+    except Exception as exc:
+        # Hard fetch failure (missing dep, platform client error, …): stamp the
+        # source so it isn't a silent 0, then re-raise so the job is still marked
+        # failed and the error lands in jobs.error.
+        _stamp(conn, source, posts_inserted=0, meta={"transport_error": f"{type(exc).__name__}: {exc}"})
+        raise
 
+    new_ids: list[uuid.UUID] = []
     for post in posts:
         inserted_id = insert_raw_post(
             conn,
@@ -92,5 +99,18 @@ def _ingest(
         if inserted_id:
             new_ids.append(inserted_id)
 
+    # Commit inserts first, then stamp health separately — a stamp failure must
+    # never roll back ingested posts.
     conn.commit()
+    _stamp(conn, source, posts_inserted=len(new_ids), meta=getattr(ingestor, "last_fetch_meta", None))
     return new_ids
+
+
+def _stamp(conn: psycopg.Connection, source: dict, *, posts_inserted: int, meta: dict | None) -> None:
+    """Best-effort per-source health stamp; never let it break ingest."""
+    try:
+        record_source_fetch(conn, source["id"], posts_inserted=posts_inserted, meta=meta)
+        conn.commit()
+    except Exception as exc:
+        conn.rollback()
+        log.warning("source_health_stamp_failed", source=source.get("handle"), error=str(exc))

@@ -124,6 +124,90 @@ def get_source(conn: psycopg.Connection, source_id: uuid.UUID) -> dict | None:
     ).fetchone()  # type: ignore[return-value]
 
 
+# Maps a fetch outcome to a sources.health_status value. Allowed by the CHECK
+# constraint from migration 0015: unknown | healthy | silent | erroring |
+# handle_invalid | url_broken.
+def _classify_fetch(
+    posts_inserted: int, meta: dict | None
+) -> tuple[str, str | None, datetime | None, bool]:
+    """Return (health_status, detail, newest_posted_at, is_error)."""
+    if meta is None:
+        # Non-RSS ingestor (telegram/x/bluesky/gdelt): basic stamp by yield.
+        if posts_inserted > 0:
+            return "healthy", None, None, False
+        return "silent", "0 new posts this cycle", None, False
+
+    transport = meta.get("transport_error")
+    status = meta.get("http_status")
+    ctype = meta.get("content_type") or ""
+    raw = int(meta.get("raw_entries") or 0)
+    results = int(meta.get("results") or 0)
+    drops = meta.get("drops") or {}
+    newest = meta.get("newest_posted_at")
+
+    if transport:
+        # HTTP >= 400 is an "erroring" feed (reachable host, refused); a bare
+        # transport error (DNS/conn/SSL/timeout) means the URL itself is broken.
+        health = "erroring" if isinstance(status, int) and 400 <= status < 600 else "url_broken"
+        return health, transport, None, True
+    if raw == 0:
+        if "html" in ctype and "xml" not in ctype:
+            return "url_broken", f"non-XML response (HTML/challenge), content-type={ctype}", None, True
+        if meta.get("bozo"):
+            return "url_broken", f"unparseable feed (bozo: {meta.get('bozo_reason')})", None, True
+        return "silent", "feed reachable but empty (0 entries)", None, False
+    if results > 0:
+        return "healthy", None, newest, False
+    # Entries present but none ingestable — reachable but yields nothing.
+    drop_str = ", ".join(f"{k}={v}" for k, v in drops.items() if v) or "all filtered"
+    return "silent", f"{raw} entries, 0 ingestable ({drop_str})", None, False
+
+
+def record_source_fetch(
+    conn: psycopg.Connection,
+    source_id: uuid.UUID,
+    *,
+    posts_inserted: int,
+    meta: dict | None,
+) -> None:
+    """Stamp per-source fetch health onto the sources row after every ingest
+    attempt (success or failure). Without this a silent 0-yield feed looks
+    identical to a healthy one — the bug this fixes. Writes the health columns
+    added in migration 0015 plus last_fetch_at (0018). `meta` is the ingestor's
+    last_fetch_meta (rich for RSS, None for other platforms).
+
+    Caller is responsible for committing and for isolating this from the
+    raw_posts insert transaction so a stamp failure never loses posts.
+    """
+    health, detail, newest, is_error = _classify_fetch(posts_inserted, meta)
+    if is_error:
+        conn.execute(
+            """
+            UPDATE sources
+            SET last_fetch_at      = now(),
+                health_status      = %s,
+                last_error_at      = now(),
+                last_error_message = %s,
+                consecutive_errors = consecutive_errors + 1
+            WHERE id = %s
+            """,
+            (health, (detail or "")[:1000], source_id),
+        )
+    else:
+        conn.execute(
+            """
+            UPDATE sources
+            SET last_fetch_at      = now(),
+                health_status      = %s,
+                last_error_message = %s,
+                consecutive_errors = 0,
+                last_post_at       = COALESCE(%s, last_post_at)
+            WHERE id = %s
+            """,
+            (health, detail, newest, source_id),
+        )
+
+
 # ---------------------------------------------------------------------------
 # Raw posts
 # ---------------------------------------------------------------------------
