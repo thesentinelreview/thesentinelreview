@@ -1,19 +1,18 @@
 # Deployment Runbook
 
-Stack: **Neon** (Postgres) · **Vercel** (Next.js frontend) · **Railway** (Python workers)
+Stack: **Supabase** (Postgres) · **Vercel** (Next.js frontend) · **Railway** (Python workers)
 
 Estimated time: ~30 minutes. Do these steps in order — each depends on the one before.
 
 ---
 
-## 1. Database — Neon
+## 1. Database — Supabase
 
-1. Go to [neon.tech](https://neon.tech) → **Create account** (free, no credit card).
-2. Create a new project: name it `sentinel`, region `US East (N. Virginia)`.
-3. On the project dashboard, copy the **Connection string** (psql format).
-   It looks like: `postgresql://sentinel:<password>@<host>.neon.tech/neondb?sslmode=require`
-4. Enable the PostGIS extension:
-   - In the Neon console, open **SQL Editor**
+1. Go to [supabase.com](https://supabase.com) → **Create account** (free tier available).
+2. Create a new project: pick a name, set a strong DB password, region `EU West (London)` or your nearest.
+3. In **Project Settings → Database**, copy the **session-mode pooler** connection string (port 5432).
+   It looks like: `postgresql://postgres.<ref>:<password>@aws-1-eu-west-2.pooler.supabase.com:5432/postgres`
+4. Enable extensions via the SQL Editor (PostGIS is pre-installed but disabled by default):
    - Run: `CREATE EXTENSION IF NOT EXISTS postgis;`
    - Run: `CREATE EXTENSION IF NOT EXISTS pg_trgm;`
    - Run: `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
@@ -38,7 +37,7 @@ Estimated time: ~30 minutes. Do these steps in order — each depends on the one
 5. Add environment variables:
    | Key | Value |
    |-----|-------|
-   | `DATABASE_URL` | Your Neon connection string (from step 1) |
+   | `DATABASE_URL` | Your Supabase pooler connection string (from step 1) |
    | `NEXT_PUBLIC_SITE_URL` | `https://thesentinelreview.com` (or your Vercel preview URL until you have a domain) |
 6. Click **Deploy**. First deploy takes ~2 minutes.
 7. Once live, visit the URL and confirm the dashboard loads with placeholder data (if DB is empty) or real data.
@@ -69,7 +68,7 @@ You need two Railway services: one running `sentinel-worker`, one running `senti
 5. Add environment variables (Settings → Variables):
    | Key | Value |
    |-----|-------|
-   | `DATABASE_URL` | Neon connection string |
+   | `DATABASE_URL` | Supabase pooler connection string |
    | `ANTHROPIC_API_KEY` | Your key from [console.anthropic.com](https://console.anthropic.com) |
    | `ANTHROPIC_MODEL_EXTRACT` | `claude-sonnet-4-6` |
    | `ANTHROPIC_MODEL_BRIEFING` | `claude-opus-4-7` |
@@ -132,13 +131,13 @@ Cost estimate for v0.1 at low volume:
 ### `apps/web` (Vercel)
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | Neon postgres connection string |
+| `DATABASE_URL` | Yes | Supabase Postgres pooler connection string |
 | `NEXT_PUBLIC_SITE_URL` | No | Used in embed code output |
 
 ### `apps/ingest` (Railway)
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Yes | Same Neon connection string |
+| `DATABASE_URL` | Yes | Same Supabase pooler connection string as `apps/web` |
 | `ANTHROPIC_API_KEY` | Yes | From console.anthropic.com |
 | `ANTHROPIC_MODEL_EXTRACT` | No | Default: `claude-sonnet-4-6` |
 | `ANTHROPIC_MODEL_BRIEFING` | No | Default: `claude-opus-4-7` |

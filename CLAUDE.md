@@ -1,8 +1,11 @@
 # The Sentinel Review — Claude Code session guide
 
 Conflict-monitoring pipeline: GitHub Actions fetch posts from 53 OSINT sources every 30 min,
-run LLM extraction via Anthropic API, and write conflict events to a Neon (PostgreSQL) database.
-A Next.js dashboard on Vercel serves the data to subscribers.
+run LLM extraction via Anthropic API, and write conflict events to a Supabase Postgres database
+(project `ugpqgfvdqupttqhogavc`, region `eu-west-2`). A Next.js dashboard on Vercel serves the
+data to subscribers. The ingest workflow runs `sentinel-preflight` first, which aborts if
+`DATABASE_URL` doesn't point at the expected Supabase host
+(`apps/ingest/sentinel/preflight.py`, added after the 2026-05-25 rogue-host incident).
 
 ## If this session was triggered by a pipeline failure issue
 
@@ -37,7 +40,7 @@ A Next.js dashboard on Vercel serves the data to subscribers.
 
 | Secret | Purpose |
 |---|---|
-| `DATABASE_URL` | Neon PostgreSQL connection string |
+| `DATABASE_URL` | Supabase Postgres connection string (session-mode pooler, `aws-1-eu-west-2.pooler.supabase.com:5432`) |
 | `ANTHROPIC_API_KEY` | LLM calls (extraction + briefings) |
 | `SENTINEL_ALERT_WEBHOOK_URL` | Slack-compatible alert webhook posted to on critical integrity failure |
 

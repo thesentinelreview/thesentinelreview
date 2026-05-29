@@ -1,0 +1,25 @@
+{
+  "_comment": "Maps Neon Sentinel Dashboard source_ids to Supabase Sentinel Map source_ids. Used for backfilling 342 raw_posts from rogue Neon to Supabase. All 18 sources have direct 1:1 mapping by handle.",
+  "_neon_project": "tiny-night-97017367 (ep-empty-leaf-ap4p0pzo, us-east-1)",
+  "_supabase_project": "ugpqgfvdqupttqhogavc (Sentinel Map, eu-west-2)",
+  "mapping": {
+    "992e22cf-33f6-4860-8e5f-63a2072342e0": {"supabase_id": "5a087387-394a-459f-86d5-9ba6a8098065", "handle": "@ChrisO_wiki", "platform": "x"},
+    "89015786-b704-4412-8664-fed3ef38a181": {"supabase_id": "3daac513-8aa1-44c1-a9f5-c2c9b79fb2e5", "handle": "@Danspiun", "platform": "x"},
+    "995495f7-203d-4b17-a1ef-ce3242ecb685": {"supabase_id": "8c136767-b751-4ef8-a289-cf18fb2066a2", "handle": "@KofmanMichael", "platform": "x"},
+    "0bc9d067-2aa4-456a-ba66-b1ddaaa77093": {"supabase_id": "a576bb0a-4bc8-42c0-a5d0-a55985f446b5", "handle": "@Militarylandnet", "platform": "x"},
+    "6bdb59bb-a740-4bb1-8d02-1b8ddea42543": {"supabase_id": "6562b521-f17b-48fd-8619-d1a95fc930cf", "handle": "@OSINTtechnical", "platform": "x"},
+    "1ad40fc9-21b2-4f5d-b8ab-b39691a1d8a6": {"supabase_id": "2920caaf-c253-49bb-b091-ca28552de0a9", "handle": "@RALee85", "platform": "x"},
+    "983293e6-60c0-489d-b214-673bb89fe4d1": {"supabase_id": "605040f7-a73e-40b3-818d-f3d1673be13d", "handle": "@TheStudyofWar", "platform": "x"},
+    "0e68e3a4-eb67-4a42-b06d-eaf54417b658": {"supabase_id": "6c072095-11e0-41b2-aaef-b4c3098ada40", "handle": "@neonhandrail", "platform": "x"},
+    "572d46ae-89c8-4d80-acf6-be1c48e2d9c9": {"supabase_id": "6294446d-266a-4eff-bc64-4ac097e26c90", "handle": "@war_mapper", "platform": "x"},
+    "cbcab740-e670-417d-a677-a44c58601a60": {"supabase_id": "dcb0182f-2040-453d-b931-28c5a3d4e557", "handle": "afp_africa_rss", "platform": "rss"},
+    "9f644ae2-a71c-43c8-89b2-83b341e4e2df": {"supabase_id": "3534dd87-4275-49b1-8dc0-e50e820d9bec", "handle": "afp_ukraine_rss", "platform": "rss"},
+    "80b81c71-fa45-4fc3-8ad4-d71933e2ccf6": {"supabase_id": "f6e02b49-ea26-4097-b5fb-afaecbcc9b29", "handle": "dvb_rss", "platform": "rss"},
+    "dd67dbe5-4ffc-4aaa-a885-3a71cc92f215": {"supabase_id": "c7f84a32-876f-4110-9295-2be3876c9199", "handle": "meduza_rss", "platform": "rss"},
+    "5f3c0325-c48f-4369-bec7-61bed1c2acc3": {"supabase_id": "dce6816a-7eff-4a71-8fc8-119c8b70447b", "handle": "reuters_africa_rss", "platform": "rss"},
+    "225d1869-7ee8-40e1-9556-5763a502e72d": {"supabase_id": "aa9ec515-d5df-4ec9-b2c6-0529a52e3998", "handle": "reuters_ukraine_rss", "platform": "rss"},
+    "e77bc506-6c14-495b-bd5d-d1b0d7cfd8f3": {"supabase_id": "56a38550-8a26-4588-a87a-d2a157f2dab9", "handle": "rfa_myanmar_rss", "platform": "rss"},
+    "977a293b-6ba3-47cf-8220-2b0bc76dc00e": {"supabase_id": "9212a525-334d-4e5d-ae74-6bbc747de7f3", "handle": "sudanwarmonitor_rss", "platform": "rss"},
+    "d1c26753-f07d-4bf7-9385-418bcaf14d41": {"supabase_id": "479e5491-baed-46d4-a703-113dfe0ca7c9", "handle": "tass_rss", "platform": "rss"}
+  }
+}
