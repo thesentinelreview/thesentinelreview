@@ -305,6 +305,19 @@ def run_drain_extraction() -> None:
     sys.exit(1 if all_failed else 0)
 
 
+def run_probe_feeds() -> None:
+    """One-shot, read-only probe of candidate RSS URLs (Phase C URL discovery).
+
+    Fetches the candidate feed URLs from the Actions runner's egress and records
+    HTTP status / content-type / parse / entry count to the feed_probe_results
+    scratch table for review. Read-only w.r.t. sources; no drain/extraction.
+    """
+    _configure_logging()
+    from sentinel.probe_feeds import run
+
+    run()
+
+
 def run_briefing() -> None:
     """Enqueue and process today's daily briefing."""
     _configure_logging()
