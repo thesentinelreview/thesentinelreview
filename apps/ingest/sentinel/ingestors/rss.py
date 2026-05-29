@@ -9,6 +9,7 @@ Requires: feedparser, httpx
 from __future__ import annotations
 
 import hashlib
+import time
 from datetime import datetime, timezone
 from typing import NamedTuple
 
@@ -168,18 +169,42 @@ def _meta(
     }
 
 
-def _fetch_feed(url: str, *, handle: str) -> _FetchResult:
+def _retry_after_seconds(response: httpx.Response, *, default: int = 5, cap: int = 10) -> int:
+    """Seconds to wait before a single 429 retry. Honors a small integer
+    Retry-After header; falls back to `default` for absent/HTTP-date values.
+    Capped so one rate-limited feed can't stall the whole ingest cycle."""
+    raw = response.headers.get("Retry-After", "")
     try:
-        response = httpx.get(
-            url,
-            timeout=_TIMEOUT,
-            follow_redirects=True,
-            headers=_BROWSER_HEADERS,
-        )
-    except httpx.HTTPError as exc:
-        log.error("rss_fetch_error", source=handle, url=url, error=str(exc))
-        return _FetchResult(None, None, "", f"{type(exc).__name__}: {exc}", None)
+        return max(0, min(int(raw), cap))
+    except (TypeError, ValueError):
+        return default
 
+
+def _fetch_feed(url: str, *, handle: str) -> _FetchResult:
+    response: httpx.Response | None = None
+    for attempt in (1, 2):
+        try:
+            response = httpx.get(
+                url,
+                timeout=_TIMEOUT,
+                follow_redirects=True,
+                headers=_BROWSER_HEADERS,
+            )
+        except httpx.HTTPError as exc:
+            log.error("rss_fetch_error", source=handle, url=url, error=str(exc))
+            return _FetchResult(None, None, "", f"{type(exc).__name__}: {exc}", None)
+
+        # Single polite retry on 429 (rate-limited): honor Retry-After when it's a
+        # small int, else ~5s. One retry only — let the next cron pick it up rather
+        # than hammer the host in-cycle.
+        if response.status_code == 429 and attempt == 1:
+            delay = _retry_after_seconds(response)
+            log.warning("rss_rate_limited", source=handle, url=url, retry_after=delay)
+            time.sleep(delay)
+            continue
+        break
+
+    assert response is not None  # loop always assigns or returns
     content_type = response.headers.get("content-type", "").lower()
     final_url = str(response.url)
     status = response.status_code

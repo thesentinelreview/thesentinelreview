@@ -29,16 +29,19 @@ log = structlog.get_logger()
 _INGEST_INTERVAL_MINUTES = 30   # poll each source every 30 minutes
 _BRIEFING_HOUR_UTC = 6          # generate daily briefing at 06:00 UTC
 
-# Per-fetch look-back window. High-volume feeds clear a 2h window every poll;
-# tier-1 official RSS feeds (ISW ~daily, COCOM press releases rarely) usually
-# have nothing in any given 2h window, so widen theirs to 24h. Insert dedup on
-# (source_id, external_id) makes the wider re-pull a no-op for posts we've seen.
+# Per-fetch look-back window. Widen it to 24h for tier-1/2 RSS feeds: low-frequency
+# official feeds (ISW ~daily, COCOM press releases rarely) and slower news feeds
+# (e.g. unian) routinely have nothing in a 2h window, so a narrow window starves
+# them. Tier-3 (e.g. tass, very high volume) stays at 2h to avoid a large one-time
+# backlog burst. Insert dedup on (source_id, external_id) makes wider re-pulls
+# no-ops for posts already seen.
 _DEFAULT_SINCE_HOURS = 2
 _LOW_VOLUME_SINCE_HOURS = 24
 
 
 def _since_hours_for(source: dict) -> int:
-    if source.get("platform") == "rss" and source.get("trust_tier") == 1:
+    tier = source.get("trust_tier")
+    if source.get("platform") == "rss" and tier is not None and tier <= 2:
         return _LOW_VOLUME_SINCE_HOURS
     return _DEFAULT_SINCE_HOURS
 

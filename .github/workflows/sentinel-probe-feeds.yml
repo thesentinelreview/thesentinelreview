@@ -1,0 +1,40 @@
+name: Sentinel — Probe Feed URLs
+
+# One-shot, manual-only. Read-only URL discovery for the Phase C silent-feed
+# recovery: fetches candidate RSS URLs from the Actions runner's egress (the only
+# vantage that matches the live pipeline) and writes results to the
+# feed_probe_results scratch table for review. Does NOT modify sources and does
+# NOT run migrations. Never on a schedule.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "feedparser>=6.0" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4"
+          pip install --no-deps -e apps/ingest
+
+      - name: Probe candidate feed URLs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PYTHONUNBUFFERED: '1'
+        run: sentinel-probe-feeds
