@@ -13,7 +13,7 @@ Payload schema: GenerateBriefingPayload
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import psycopg
 import structlog
@@ -28,7 +28,7 @@ log = structlog.get_logger()
 def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
     params = GenerateBriefingPayload.model_validate(payload)
 
-    period_end = datetime.now(tz=timezone.utc)
+    period_end = datetime.now(tz=UTC)
 
     # Confidence/window cascade: prefer recent corroborated events, but fall back
     # through unconfirmed and a 7-day window so quiet theaters (Iran, Sudan) still

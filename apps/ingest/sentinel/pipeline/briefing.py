@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import timezone
+from datetime import UTC
 
 import anthropic
 import structlog
@@ -121,8 +121,8 @@ def generate_briefing_draft(
 
 
 def _build_user_message(inp: BriefingInput) -> str:
-    period_start = inp.period_start.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    period_end = inp.period_end.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    period_start = inp.period_start.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    period_end = inp.period_end.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     conf_counts: dict[str, int] = {"verified": 0, "partial": 0, "unconfirmed": 0}
     for e in inp.events:

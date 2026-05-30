@@ -9,7 +9,7 @@ endpoint on Basic tier, up to 100 results per request with pagination.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import httpx
 import structlog
@@ -57,7 +57,7 @@ class XIngestor(BaseIngestor):
             return []
 
         handle = self.source["handle"].lstrip("@")
-        since_dt = datetime.now(tz=timezone.utc) - timedelta(hours=since_hours)
+        since_dt = datetime.now(tz=UTC) - timedelta(hours=since_hours)
         start_time = since_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         headers = {"Authorization": f"Bearer {settings.x_bearer_token}"}

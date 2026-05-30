@@ -6,21 +6,19 @@ The DB call (find_nearby_events) is patched so no real database is needed.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
-import pytest
 import structlog
 
 from sentinel.config import settings
 from sentinel.pipeline.dedup import RADIUS_KM, WINDOW_HOURS, find_duplicate
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-_OCC = datetime(2024, 11, 1, 12, 0, tzinfo=timezone.utc)
+_OCC = datetime(2024, 11, 1, 12, 0, tzinfo=UTC)
 _LNG, _LAT = 37.71, 48.07  # Pokrovsk-ish
 
 

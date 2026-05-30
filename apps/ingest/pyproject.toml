@@ -61,6 +61,11 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
+# E501 (line too long) is intentionally ignored: this codebase carries long
+# LLM system prompts (sentinel/pipeline/briefing.py, extractor.py) and SQL
+# strings whose wrapping costs more than it saves. Audit AUDIT_2026-05-30.md
+# logs this as a future per-fix cleanup decision, not a CI gate.
+ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
