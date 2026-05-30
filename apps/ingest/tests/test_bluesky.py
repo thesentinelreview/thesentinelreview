@@ -14,7 +14,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from sentinel.ingestors.bluesky import BlueskyIngestor, _extract_media_urls
+from sentinel.db import _classify_fetch
+from sentinel.ingestors.bluesky import BlueskyIngestor, _extract_media_urls, _fetch_meta
 
 
 # ---------------------------------------------------------------------------
@@ -232,3 +233,100 @@ class TestBlueskyIngestorFetch:
         with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
             result = ingestor.fetch(since_hours=24)
         assert len(result) == 1
+
+
+# ---------------------------------------------------------------------------
+# Fetch-health stamping: bluesky must populate last_fetch_meta so the
+# centralized record_source_fetch sets health_status/last_post_at correctly,
+# instead of falling through the meta=None path (always silent, last_post_at NULL).
+# ---------------------------------------------------------------------------
+
+
+class TestBlueskyHealthMeta:
+    def _make_ingestor(self, handle: str = "test.bsky.social") -> BlueskyIngestor:
+        return BlueskyIngestor(_make_source(handle))
+
+    def _patch_client(self, feed_pages: list) -> MagicMock:
+        mock_client = MagicMock()
+        mock_client.get_author_feed.side_effect = feed_pages
+        return mock_client
+
+    def test_matched_posts_set_meta_and_classify_healthy(self) -> None:
+        # Two captured posts with distinct created_at (12:00Z and 13:00Z).
+        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
+        t2 = datetime(2026, 5, 30, 13, 0, tzinfo=timezone.utc)
+        post1 = _make_post(uri="at://did/post/1", text="Earlier", created_at=t1)
+        post2 = _make_post(uri="at://did/post/2", text="Later", created_at=t2)
+        ingestor = self._make_ingestor()
+        mock_client = self._patch_client(
+            [_make_feed([_make_feed_item(post1), _make_feed_item(post2)])]
+        )
+        with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
+            results = ingestor.fetch(since_hours=24 * 365)
+        assert len(results) == 2
+        meta = ingestor.last_fetch_meta
+        assert meta is not None
+        assert meta["transport_error"] is None
+        # For bluesky a "result" is a captured post, so raw_entries == results.
+        assert meta["results"] == 2
+        assert meta["raw_entries"] == 2
+        # newest_posted_at keys on each post's posted_at: max(12:00, 13:00) — NOT now()/ingested_at.
+        assert meta["newest_posted_at"] == t2
+        # raw_entries == results (>0) must classify healthy and surface the newest
+        # timestamp for last_post_at. posts_inserted=0 simulates an all-deduped
+        # cycle — the exact case the prior meta=None path masked as silent.
+        health, _detail, newest, is_error = _classify_fetch(0, meta)
+        assert (health, is_error) == ("healthy", False)
+        assert newest == t2
+
+    def test_client_init_failure_sets_transport_error(self) -> None:
+        ingestor = self._make_ingestor()
+        with patch(
+            "sentinel.ingestors.bluesky._get_client",
+            side_effect=RuntimeError("no creds"),
+        ):
+            results = ingestor.fetch(since_hours=24)
+        assert results == []
+        meta = ingestor.last_fetch_meta
+        assert meta is not None
+        assert "no creds" in (meta["transport_error"] or "")
+        # A client init failure classifies as an error, not a false silent.
+        _health, _detail, _newest, is_error = _classify_fetch(0, meta)
+        assert is_error is True
+
+    def test_empty_feed_sets_meta_and_classify_silent(self) -> None:
+        ingestor = self._make_ingestor()
+        mock_client = self._patch_client([_make_feed([])])
+        with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
+            results = ingestor.fetch(since_hours=24)
+        assert results == []
+        meta = ingestor.last_fetch_meta
+        assert meta is not None
+        assert meta["transport_error"] is None
+        assert meta["results"] == 0
+        assert meta["raw_entries"] == 0
+        assert meta["newest_posted_at"] is None
+        health, _detail, newest, is_error = _classify_fetch(0, meta)
+        assert (health, newest, is_error) == ("silent", None, False)
+
+    def test_mid_page_error_with_first_page_success_stays_healthy(self) -> None:
+        # First-page success then per-page raise: 1 result kept, transport_error
+        # must stay None (only set when not results), so this classifies healthy.
+        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
+        good_post = _make_post(uri="at://did/post/1", text="First page", created_at=t1)
+        page1 = _make_feed([_make_feed_item(good_post)], cursor="cursor-p2")
+        ingestor = self._make_ingestor()
+        mock_client = MagicMock()
+        mock_client.get_author_feed.side_effect = [page1, RuntimeError("API error")]
+        with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
+            results = ingestor.fetch(since_hours=24 * 365)
+        assert len(results) == 1
+        meta = ingestor.last_fetch_meta
+        assert meta is not None
+        assert meta["transport_error"] is None
+        assert meta["results"] == 1
+        assert meta["raw_entries"] == 1
+        assert meta["newest_posted_at"] == t1
+        health, _detail, newest, is_error = _classify_fetch(0, meta)
+        assert (health, is_error) == ("healthy", False)
+        assert newest == t1
