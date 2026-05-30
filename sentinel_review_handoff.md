@@ -5,6 +5,11 @@
 **Last updated:** 7 May 2026
 **Purpose:** Brief for Claude Code to scaffold and build the v0.1 product.
 
+> ⚠️ Historical — v0.1 planning brief, pre-migration. Production is now
+> Supabase (project `ugpqgfvdqupttqhogavc`). The "Supabase or Neon"
+> recommendations below reflect the original 7 May 2026 scoping, not the
+> current architecture. See CLAUDE.md.
+
 ---
 
 ## TL;DR for Claude Code
