@@ -161,3 +161,54 @@ body:has(.feed-root) .demo-banner {
 .sr-popup .maplibregl-popup-tip {
   border-top-color: var(--border-strong) !important;
 }
+
+/* ── Boot sequence intro ─────────────────────────────────────────────────── */
+@keyframes sentinel-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes sentinel-bracket-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sentinel-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sentinel-overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.sentinel-boot-line {
+  animation: sentinel-draw 400ms ease-out forwards;
+}
+
+.sentinel-boot-bracket {
+  opacity: 0;
+  animation: sentinel-bracket-in 220ms ease-out forwards;
+  transform-origin: center;
+}
+
+.sentinel-boot-mark {
+  animation: sentinel-fade-up 300ms ease-out 380ms both;
+}
+
+.sentinel-boot-wordmark {
+  animation: sentinel-fade-up 320ms ease-out 540ms both;
+}
+
+.sentinel-boot-subtext {
+  animation: sentinel-fade-up 320ms ease-out 760ms both;
+}
+
+.sentinel-boot-hint {
+  animation: sentinel-fade-up 320ms ease-out 1000ms both;
+}
+
+.sentinel-boot-exit {
+  animation: sentinel-overlay-out 400ms ease-out forwards;
+  pointer-events: none;
+}

@@ -10,6 +10,7 @@ import SectorThreat from "@/components/watchfloor/SectorThreat";
 import TimeScrubber from "@/components/watchfloor/TimeScrubber";
 import MapLegend from "@/components/watchfloor/MapLegend";
 import TimelineProvider from "@/components/watchfloor/TimelineProvider";
+import BootSequence from "@/components/watchfloor/BootSequence";
 import type { EventType } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
 import {
@@ -151,6 +152,7 @@ export default async function WatchfloorPage({
 
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-[#05070A] text-zinc-100 font-ui">
+      <BootSequence />
       <HeaderBar
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
