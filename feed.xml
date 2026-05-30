@@ -6,8 +6,38 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2026 10:07:22 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 17:15:50 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🏛️ AUKUS partners sign agreement on underwater drones, speed up sub plan | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/aukus-partners-sign-agreement-on-underwater-drones-speed-up-sub-plan/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/aukus-partners-sign-agreement-on-underwater-drones-speed-up-sub-plan/</guid>
+      <pubDate>Sat, 30 May 2026 15:50:32 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/05/aukus-partners-sign-agreement-on-underwater-drones-speed-up-sub-plan/">Breaking Defense</source>
+      <description>Australia will now forgo the purchase of a new build Virginia-class submarine and acquire another ex-US Navy boat instead.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ US general holds rare meeting with Cuban military officials near Guantanamo Bay | Defense News</title>
+      <link>https://www.defensenews.com/news/your-military/2026/05/30/us-general-holds-rare-meeting-with-cuban-military-officials-near-guantanamo-bay/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/05/30/us-general-holds-rare-meeting-with-cuban-military-officials-near-guantanamo-bay/</guid>
+      <pubDate>Sat, 30 May 2026 12:42:36 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.defensenews.com/news/your-military/2026/05/30/us-general-holds-rare-meeting-with-cuban-military-officials-near-guantanamo-bay/">Defense News</source>
+      <description>The meeting is the first in recent memory by a head of U.S. Southern Command and comes amid growing concerns in Cuba of a possible U.S. military attack.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Timeline of Boat Strikes and Related Actions | Just Security</title>
+      <link>https://www.justsecurity.org/124002/timeline-vessel-strikes-related-actions/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=timeline-vessel-strikes-related-actions</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/124002/timeline-vessel-strikes-related-actions/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=timeline-vessel-strikes-related-actions</guid>
+      <pubDate>Sat, 30 May 2026 12:00:50 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/124002/timeline-vessel-strikes-related-actions/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=timeline-vessel-strikes-related-actions">Just Security</source>
+      <description>A timeline that chronicles major events in the Trump administration’s campaign of lethal strikes against suspected drug traffickers in the Caribbean and Eastern Pacific. The post Timeline of Boat Strikes and Related Actions appeared first on Just Security.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
     <item>
       <title>🕵️ NDS 2026 – The right strategy for the wrong era | ASPI Strategist</title>
       <link>https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/</link>
@@ -56,7 +86,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-193">The War Zone</source>
       <description>That was our last can of Pringles... The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>0</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>🌍 Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) | The War Zone</title>
@@ -86,7 +116,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/29/nearly-500000-russian-soldiers-killed-in-ukraine-top-uk-intel-chief-says/">Defense News</source>
       <description>The figure hardens a growing consensus among Western officials: Russia is on its heels for the first time since the Kremlin launched its invasion in 2022.</description>
-      <sentinel:score>10</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🌍 U.N. Blacklists Israel, Russia for Sexual Violence in Conflict | Foreign Policy</title>
@@ -96,7 +126,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/israel-russia-sexual-violence-un-report-guterres/">Foreign Policy</source>
       <description>Both countries have refuted the allegations and accused the agency of bias.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌍 What Iran Stands to Gain From a Truce Deal With the United States | Foreign Policy</title>
@@ -156,7 +186,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/29/us-dollar-history-money-currency-monetary-policy/">Foreign Policy</source>
       <description>As a new book shows, the dollar isn’t really the United States’ currency, but a 500-year-old relic.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🔐 Software patches from Army hackathon going straight to troops in CENTCOM | Defense One</title>
@@ -166,7 +196,7 @@
       <category>Cyber</category>
       <source url="https://www.defenseone.com/defense-systems/2026/05/army-hackathon-software-patches/413857/">Defense One</source>
       <description>Project Jailbreak is helping to get contractors open up their systems to each other.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🔐 Authoritarian Transformation in Istanbul’s Old City | Foreign Policy</title>
@@ -206,7 +236,7 @@
       <category>Middle East</category>
       <source url="https://www.defenseone.com/threats/2026/05/data-brokers-troops-pentagon-lawmakers/413853/">Defense One</source>
       <description>Commercial location data has been used to &quot;target or surveil U.S. personnel in theater,” CENTCOM says.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ Containerized Variant Of Navy’s Drone-Swatting HELIOS Laser Being Pushed By Congress | The War Zone</title>
@@ -226,7 +256,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/05/spacex-wins-4-16b-space-force-contract-to-detect-airborne-moving-targets/">Breaking Defense</source>
       <description>“While this OTA agreement establishes initial SB-AMTI capability, the Space Force anticipates issuing multiple awards in the coming year ,” the service said today.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 What in the World? | Foreign Policy</title>
@@ -266,7 +296,7 @@
       <category>Cyber</category>
       <source url="https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/">Breaking Defense</source>
       <description>The hackathon now allows the Army to take new systems and work them into command and control structures to sync up with radars and sensors, all of which have previously never communicated with each other, according to Army Secretary Dan Driscoll.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Inspector O and the Washington Swamp Gas Machine | 38 North</title>
@@ -277,36 +307,6 @@
       <source url="https://www.38north.org/2026/05/inspector-o-and-the-washington-swamp-gas-machine/">38 North</source>
       <description>The bench at the Fontana dell’Acqua Paola overlooking Rome on a pleasant day might have ... The post Inspector O and the Washington Swamp Gas Machine appeared first on 38 North.</description>
       <sentinel:score>0</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 US arms sales pause would push Taiwan toward asymmetric-defense tech: Analysts | Defense News</title>
-      <link>https://www.defensenews.com/global/asia-pacific/2026/05/29/us-arms-sales-pause-would-push-taiwan-toward-asymmetric-defense-tech-analysts/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/asia-pacific/2026/05/29/us-arms-sales-pause-would-push-taiwan-toward-asymmetric-defense-tech-analysts/</guid>
-      <pubDate>Fri, 29 May 2026 15:19:56 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://www.defensenews.com/global/asia-pacific/2026/05/29/us-arms-sales-pause-would-push-taiwan-toward-asymmetric-defense-tech-analysts/">Defense News</source>
-      <description>The idea of Trump using arms sales as a negotiating chip with China has sparked concerns that Washington might decline procurement deals with Taiwan.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 How far is there to go until the US and Iran end the war? | Defense News</title>
-      <link>https://www.defensenews.com/news/pentagon-congress/2026/05/29/how-far-is-there-to-go-until-the-us-and-iran-end-the-war/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/05/29/how-far-is-there-to-go-until-the-us-and-iran-end-the-war/</guid>
-      <pubDate>Fri, 29 May 2026 15:16:12 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.defensenews.com/news/pentagon-congress/2026/05/29/how-far-is-there-to-go-until-the-us-and-iran-end-the-war/">Defense News</source>
-      <description>A tentative deal has been reached to end the war and restart transit in the Strait of Hormuz, and then negotiations on more difficult issues would begin.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Can the EU’s mutual-defense clause replace NATO’s Article 5? | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/can-the-eus-mutual-defense-clause-replace-natos-article-5/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/can-the-eus-mutual-defense-clause-replace-natos-article-5/</guid>
-      <pubDate>Fri, 29 May 2026 15:14:26 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/can-the-eus-mutual-defense-clause-replace-natos-article-5/">Atlantic Council</source>
-      <description>The European Union&apos;s mutual-defense clause, less well-known than NATO&apos;s commitment under Article 5 that an attack on one is an attack on all, is receiving new attention in light of questions over the US security commitment to Europe. The post Can the EU’s mutual-defense clause…</description>
-      <sentinel:score>6</sentinel:score>
     </item>
   </channel>
 </rss>
