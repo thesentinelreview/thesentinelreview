@@ -111,6 +111,27 @@ def _parse_gdelt_date(date_str: str) -> datetime | None:
         return None
 
 
+def _fetch_meta(
+    results: list[RawPostData] | None = None,
+    *,
+    transport_error: str | None = None,
+) -> dict:
+    """Build the last_fetch_meta the ingest_source job reads to stamp source
+    health (see db.record_source_fetch). Mirrors rss.py's _meta. For GDELT a
+    "result" is a matched conflict event, so raw_entries == results: >0 yields
+    healthy with a real last_post_at, 0 yields silent (empty theater this file),
+    and transport_error yields erroring/url_broken instead of a false silent."""
+    n = len(results) if results else 0
+    return {
+        "transport_error": transport_error,
+        "raw_entries": n,
+        "results": n,
+        "newest_posted_at": (
+            max((r["posted_at"] for r in results), default=None) if results else None
+        ),
+    }
+
+
 class GdeltEventsIngestor(BaseIngestor):
     """Ingest GDELT 2.0 conflict events for a single theater."""
 
@@ -119,6 +140,7 @@ class GdeltEventsIngestor(BaseIngestor):
         country_code = _THEATER_COUNTRY.get(theater)
         if not country_code:
             log.warning("gdelt_unknown_theater", theater=theater)
+            self.last_fetch_meta = _fetch_meta([])
             return []
 
         try:
@@ -126,6 +148,7 @@ class GdeltEventsIngestor(BaseIngestor):
             raw_csv = _download_and_unzip(events_url)
         except Exception as exc:
             log.error("gdelt_events_download_error", theater=theater, error=str(exc))
+            self.last_fetch_meta = _fetch_meta(transport_error=f"{type(exc).__name__}: {exc}")
             return []
 
         results: list[RawPostData] = []
@@ -184,6 +207,7 @@ class GdeltEventsIngestor(BaseIngestor):
                 log.warning("gdelt_events_row_error", error=str(exc))
                 continue
 
+        self.last_fetch_meta = _fetch_meta(results)
         log.debug("gdelt_events_fetched", theater=theater, count=len(results))
         return results
 
@@ -196,16 +220,19 @@ class GdeltGkgIngestor(BaseIngestor):
         country_code = _THEATER_COUNTRY.get(theater)
         if not country_code:
             log.warning("gdelt_gkg_unknown_theater", theater=theater)
+            self.last_fetch_meta = _fetch_meta([])
             return []
 
         try:
             _, gkg_url = _get_lastupdate_urls()
             if not gkg_url:
                 log.warning("gdelt_gkg_no_url")
+                self.last_fetch_meta = _fetch_meta([])
                 return []
             raw_csv = _download_and_unzip(gkg_url)
         except Exception as exc:
             log.error("gdelt_gkg_download_error", theater=theater, error=str(exc))
+            self.last_fetch_meta = _fetch_meta(transport_error=f"{type(exc).__name__}: {exc}")
             return []
 
         results: list[RawPostData] = []
@@ -268,5 +295,6 @@ class GdeltGkgIngestor(BaseIngestor):
                 log.warning("gdelt_gkg_row_error", error=str(exc))
                 continue
 
+        self.last_fetch_meta = _fetch_meta(results)
         log.debug("gdelt_gkg_fetched", theater=theater, count=len(results))
         return results
