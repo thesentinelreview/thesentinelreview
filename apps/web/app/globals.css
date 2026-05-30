@@ -183,32 +183,32 @@ body:has(.feed-root) .demo-banner {
 }
 
 .sentinel-boot-line {
-  animation: sentinel-draw 400ms ease-out forwards;
+  animation: sentinel-draw 600ms ease-out forwards;
 }
 
 .sentinel-boot-bracket {
   opacity: 0;
-  animation: sentinel-bracket-in 220ms ease-out forwards;
+  animation: sentinel-bracket-in 300ms ease-out forwards;
   transform-origin: center;
 }
 
 .sentinel-boot-mark {
-  animation: sentinel-fade-up 300ms ease-out 380ms both;
+  animation: sentinel-fade-up 400ms ease-out 550ms both;
 }
 
 .sentinel-boot-wordmark {
-  animation: sentinel-fade-up 320ms ease-out 540ms both;
+  animation: sentinel-fade-up 420ms ease-out 800ms both;
 }
 
 .sentinel-boot-subtext {
-  animation: sentinel-fade-up 320ms ease-out 760ms both;
+  animation: sentinel-fade-up 420ms ease-out 1150ms both;
 }
 
 .sentinel-boot-hint {
-  animation: sentinel-fade-up 320ms ease-out 1000ms both;
+  animation: sentinel-fade-up 420ms ease-out 1550ms both;
 }
 
 .sentinel-boot-exit {
-  animation: sentinel-overlay-out 400ms ease-out forwards;
+  animation: sentinel-overlay-out 600ms ease-out forwards;
   pointer-events: none;
 }

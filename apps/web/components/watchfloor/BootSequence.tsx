@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import SentinelMark from "./SentinelMark";
 
 const SESSION_KEY = "sentinel:intro-seen";
-const EXIT_DELAY_MS = 1600;
+const EXIT_DELAY_MS = 2600;
 
 type Phase = "enter" | "exit";
 
@@ -78,7 +78,7 @@ export default function BootSequence() {
             style={{
               strokeDasharray: 100,
               strokeDashoffset: 100,
-              animationDelay: `${i * 40}ms`,
+              animationDelay: `${i * 60}ms`,
             }}
           />
         ))}
@@ -96,17 +96,17 @@ export default function BootSequence() {
             style={{
               strokeDasharray: 100,
               strokeDashoffset: 100,
-              animationDelay: `${120 + i * 40}ms`,
+              animationDelay: `${180 + i * 60}ms`,
             }}
           />
         ))}
       </svg>
 
       {/* Corner brackets — CSS divs with borders, scale-in for the draw */}
-      <div className="absolute top-3 left-3 w-6 h-6 border-t border-l border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "260ms" }} />
-      <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "320ms" }} />
-      <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "380ms" }} />
-      <div className="absolute bottom-3 right-3 w-6 h-6 border-b border-r border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "440ms" }} />
+      <div className="absolute top-3 left-3 w-6 h-6 border-t border-l border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "360ms" }} />
+      <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "440ms" }} />
+      <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "520ms" }} />
+      <div className="absolute bottom-3 right-3 w-6 h-6 border-b border-r border-amber-400 sentinel-boot-bracket" style={{ animationDelay: "600ms" }} />
 
       {/* Wordmark + subtext stack */}
       <div className="relative flex flex-col items-center gap-4 px-6 text-center">
