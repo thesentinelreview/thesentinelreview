@@ -1,5 +1,9 @@
 # Deployment Runbook
 
+> ⚠️ SUPERSEDED (2026-05). Production is Supabase — project `ugpqgfvdqupttqhogavc`.
+> The Neon project `tiny-night-97017367` is a rogue/disposable copy and must never be
+> used. Treat all Neon references below as historical. See CLAUDE.md.
+
 Stack: **Neon** (Postgres) · **Vercel** (Next.js frontend) · **Railway** (Python workers)
 
 Estimated time: ~30 minutes. Do these steps in order — each depends on the one before.
