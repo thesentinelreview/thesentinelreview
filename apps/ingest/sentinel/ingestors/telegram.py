@@ -28,6 +28,28 @@ log = structlog.get_logger()
 _MAX_MESSAGES = 200
 
 
+def _fetch_meta(
+    results: list[RawPostData] | None = None,
+    *,
+    transport_error: str | None = None,
+) -> dict:
+    """Build the last_fetch_meta the ingest_source job reads to stamp source
+    health (see db.record_source_fetch). Mirrors rss.py's _meta. For telegram a
+    "result" is a captured message, so raw_entries == results: >0 yields
+    healthy with a real last_post_at, 0 yields silent (empty channel this cycle),
+    and transport_error yields erroring/url_broken instead of a false silent."""
+    n = len(results) if results else 0
+    return {
+        "transport_error": transport_error,
+        "raw_entries": n,
+        "results": n,
+        "newest_posted_at": (
+            max((r["posted_at"] for r in results), default=None)
+            if results else None
+        ),
+    }
+
+
 class TelegramIngestor(BaseIngestor):
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
         if not settings.telegram_enabled:
@@ -36,15 +58,19 @@ class TelegramIngestor(BaseIngestor):
                 source=self.source["handle"],
                 hint="Set TELEGRAM_API_ID and TELEGRAM_API_HASH in .env",
             )
+            self.last_fetch_meta = _fetch_meta([])
             return []
 
         channel = self.source["handle"]   # e.g. "DeepStateUA" or "https://t.me/deepstateUA"
         channel = channel.replace("https://t.me/", "").lstrip("@")
 
         try:
-            return asyncio.run(_fetch_channel(channel, since_hours=since_hours))
+            results = asyncio.run(_fetch_channel(channel, since_hours=since_hours))
+            self.last_fetch_meta = _fetch_meta(results)
+            return results
         except Exception as exc:
             log.error("telegram_fetch_error", channel=channel, error=str(exc))
+            self.last_fetch_meta = _fetch_meta(transport_error=f"{type(exc).__name__}: {exc}")
             return []
 
 

@@ -42,6 +42,27 @@ def _get_client() -> object:
     return _client
 
 
+def _fetch_meta(
+    results: list[RawPostData] | None = None,
+    *,
+    transport_error: str | None = None,
+) -> dict:
+    """Build the last_fetch_meta the ingest_source job reads to stamp source
+    health (see db.record_source_fetch). Mirrors rss.py's _meta. For bluesky a
+    "result" is a captured post, so raw_entries == results: >0 yields healthy
+    with a real last_post_at, 0 yields silent (quiet handle), and
+    transport_error yields erroring/url_broken instead of a false silent."""
+    n = len(results) if results else 0
+    return {
+        "transport_error": transport_error,
+        "raw_entries": n,
+        "results": n,
+        "newest_posted_at": (
+            max((r["posted_at"] for r in results), default=None) if results else None
+        ),
+    }
+
+
 def _extract_media_urls(post: object) -> list[str]:
     """Extract image/video URLs from a post's embed object."""
     urls: list[str] = []
@@ -81,10 +102,14 @@ class BlueskyIngestor(BaseIngestor):
             client = _get_client()
         except Exception as exc:
             log.error("bluesky_client_error", handle=handle, error=str(exc))
+            self.last_fetch_meta = _fetch_meta(
+                transport_error=f"{type(exc).__name__}: {exc}"
+            )
             return []
 
         results: list[RawPostData] = []
         cursor: str | None = None
+        transport_error: str | None = None
 
         for page in range(_MAX_PAGES):
             try:
@@ -94,6 +119,10 @@ class BlueskyIngestor(BaseIngestor):
                 feed = client.get_author_feed(**kwargs)
             except Exception as exc:
                 log.error("bluesky_fetch_error", handle=handle, page=page, error=str(exc))
+                # Only flag transport_error when no earlier page succeeded —
+                # a later-page failure with partial results stays healthy.
+                if not results:
+                    transport_error = f"{type(exc).__name__}: {exc}"
                 break
 
             if not feed.feed:
@@ -142,5 +171,6 @@ class BlueskyIngestor(BaseIngestor):
                 break
             cursor = feed.cursor
 
+        self.last_fetch_meta = _fetch_meta(results, transport_error=transport_error)
         log.debug("bluesky_fetched", handle=handle, count=len(results))
         return results
