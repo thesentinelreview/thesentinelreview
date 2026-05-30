@@ -6,8 +6,18 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2026 03:45:53 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2026 10:07:22 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🕵️ NDS 2026 – The right strategy for the wrong era | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/</guid>
+      <pubDate>Sat, 30 May 2026 07:00:09 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/">ASPI Strategist</source>
+      <description>Australian official thought regarding the defence of Australia has been more independently minded than is portrayed by certain academics and commentators who, often not possessing a deep understanding of the history of Australian strategy, have ...</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
     <item>
       <title>🌏 Hegseth praises Indo-Pacific nations for improving defense capabilities, pragmatism | Breaking Defense</title>
       <link>https://breakingdefense.com/2026/05/hegseth-praises-indo-pacific-nations-for-improving-defense-capabilities-pragmatism/</link>
@@ -16,7 +26,7 @@
       <category>Indo-Pacific</category>
       <source url="https://breakingdefense.com/2026/05/hegseth-praises-indo-pacific-nations-for-improving-defense-capabilities-pragmatism/">Breaking Defense</source>
       <description>Indo-Pacific countries investments in their defense an example of how burden sharing works, says Hegseth</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Q&amp;A with Gen. Frank Donovan | Defense One</title>
@@ -36,7 +46,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/29/how-russia-is-turning-ukraines-drones-against-nato/">Defense News</source>
       <description>A Russian drone wounded two civilians in Romania on Friday, days after Lithuania detailed how Moscow is also steering Ukraine&apos;s drones onto allied soil.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week | The War Zone</title>
@@ -46,7 +56,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-193">The War Zone</source>
       <description>That was our last can of Pringles... The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>0</sentinel:score>
     </item>
     <item>
       <title>🌍 Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) | The War Zone</title>
@@ -56,7 +66,7 @@
       <category>Middle East</category>
       <source url="https://www.twz.com/news-features/trump-declares-he-is-lifting-the-naval-blockade-on-iran">The War Zone</source>
       <description>Why the blockade would be lifted without a deal being signed isn&apos;t clear and Iranian media is pushing back against his claims. The post Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) appeared first on The War Zone.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏛️ Pentagon’s Plans To Track Aircraft From Orbit Accelerated With New $4B SpaceX Deal | The War Zone</title>
@@ -76,7 +86,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/29/nearly-500000-russian-soldiers-killed-in-ukraine-top-uk-intel-chief-says/">Defense News</source>
       <description>The figure hardens a growing consensus among Western officials: Russia is on its heels for the first time since the Kremlin launched its invasion in 2022.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>10</sentinel:score>
     </item>
     <item>
       <title>🌍 U.N. Blacklists Israel, Russia for Sexual Violence in Conflict | Foreign Policy</title>
@@ -106,7 +116,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/dispatches/signing-is-the-easy-part-two-former-us-negotiators-on-the-perils-of-implementing-a-deal-with-iran/">Atlantic Council</source>
       <description>Abram Paley and Nate Swanson helped negotiate the last US-Iran deal, a 2023 prisoner exchange. Here&apos;s what they learned and how it applies to today&apos;s talks. The post Signing is the easy part: Two former US negotiators on the perils of implementing a deal with Iran appeared first…</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🔐 Cyber Force? Senator pushes to create service branch under the Army | Defense One</title>
@@ -116,7 +126,7 @@
       <category>Cyber</category>
       <source url="https://www.defenseone.com/policy/2026/05/cyber-force-service-branch-proposal/413863/">Defense One</source>
       <description>Ideas for a cyber service have been floated before. Some experts argue now is the right time.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🕵️ As Trade Talks Begin, U.S.-Mexico Ties Falter | Foreign Policy</title>
@@ -136,7 +146,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/29/maga-trump-vance-europe-populists-far-right-alliance-orban-magyar-hungary/">Foreign Policy</source>
       <description>Mellower European populists have killed some Republicans’ dreams of a far-right alliance.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>📍 The Dollar Was—and Remains—an Accident | Foreign Policy</title>
@@ -156,7 +166,7 @@
       <category>Cyber</category>
       <source url="https://www.defenseone.com/defense-systems/2026/05/army-hackathon-software-patches/413857/">Defense One</source>
       <description>Project Jailbreak is helping to get contractors open up their systems to each other.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🔐 Authoritarian Transformation in Istanbul’s Old City | Foreign Policy</title>
@@ -216,7 +226,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/05/spacex-wins-4-16b-space-force-contract-to-detect-airborne-moving-targets/">Breaking Defense</source>
       <description>“While this OTA agreement establishes initial SB-AMTI capability, the Space Force anticipates issuing multiple awards in the coming year ,” the service said today.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 What in the World? | Foreign Policy</title>
@@ -296,16 +306,6 @@
       <category>Europe / NATO</category>
       <source url="https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/can-the-eus-mutual-defense-clause-replace-natos-article-5/">Atlantic Council</source>
       <description>The European Union&apos;s mutual-defense clause, less well-known than NATO&apos;s commitment under Article 5 that an attack on one is an attack on all, is receiving new attention in light of questions over the US security commitment to Europe. The post Can the EU’s mutual-defense clause…</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 Syria Wants to Replace the Strait of Hormuz | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/05/29/syria-iran-hormuz-shipping-reconstruction/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/05/29/syria-iran-hormuz-shipping-reconstruction/</guid>
-      <pubDate>Fri, 29 May 2026 15:12:25 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://foreignpolicy.com/2026/05/29/syria-iran-hormuz-shipping-reconstruction/">Foreign Policy</source>
-      <description>The country hopes to fund its reconstruction by serving as the Middle East’s new transit and logistics hub.</description>
       <sentinel:score>6</sentinel:score>
     </item>
   </channel>
