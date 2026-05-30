@@ -1,10 +1,14 @@
 """
-Unit tests for the future-occurred_at clamp in sentinel.jobs.extract_events.
+Unit tests for the occurred_at write-time guards in sentinel.jobs.extract_events.
 
-The clamp is a pure helper guarding against the LLM lifting a garbled future
-date verbatim from hostile source text (e.g. a Telegram post that says
-"Thursday, June 7" when the actual day is Thursday, May 28). It runs at write
-time, immediately before dedup and insert.
+Both helpers are pure and run immediately before dedup and insert:
+
+- _clamp_future_occurred_at guards against the LLM lifting a garbled future
+  date verbatim from hostile source text (e.g. a Telegram post that says
+  "Thursday, June 7" when the actual day is Thursday, May 28).
+- _is_occurred_at_too_old guards the past side: the LLM occasionally lifts a
+  commemorative reference ("one year ago today…") and emits an event whose
+  occurred_at is far older than the reporting post.
 """
 from __future__ import annotations
 
@@ -13,7 +17,10 @@ from datetime import UTC, datetime, timedelta
 
 import structlog
 
-from sentinel.jobs.extract_events import _clamp_future_occurred_at
+from sentinel.jobs.extract_events import (
+    _clamp_future_occurred_at,
+    _is_occurred_at_too_old,
+)
 
 
 def _utc(year: int, month: int, day: int, hour: int = 12, minute: int = 0) -> datetime:
@@ -72,3 +79,70 @@ class TestClampFutureOccurredAt:
         assert _clamp_future_occurred_at(
             occurred_at, posted_at=None, post_id=uuid.uuid4()
         ) == occurred_at
+
+
+class TestIsOccurredAtTooOld:
+    def test_far_past_occurred_at_is_flagged(self) -> None:
+        # The commemorative-reference case: post on 28 May reports an event
+        # supposedly from a year ago. With a 14-day floor, that's a skip.
+        posted_at = _utc(2026, 5, 28, 22, 0)
+        occurred_at = _utc(2025, 5, 28, 12, 0)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=posted_at, floor_days=14
+        ) is True
+
+    def test_occurred_at_within_floor_is_not_flagged(self) -> None:
+        # 10 days back — within a 14-day floor, so a delayed-reporting piece is
+        # preserved.
+        posted_at = _utc(2026, 5, 28, 22, 0)
+        occurred_at = posted_at - timedelta(days=10)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=posted_at, floor_days=14
+        ) is False
+
+    def test_boundary_at_floor_is_inclusive(self) -> None:
+        # Exactly floor_days before posted_at → NOT flagged. Boundary inclusive
+        # matches the helper's docstring and avoids skipping an event that lands
+        # right at the configured edge.
+        posted_at = _utc(2026, 5, 28, 22, 0)
+        occurred_at = posted_at - timedelta(days=14)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=posted_at, floor_days=14
+        ) is False
+
+    def test_one_microsecond_past_floor_is_flagged(self) -> None:
+        # One microsecond past the boundary → flagged. Locks in the strict-less-than
+        # comparison so a future refactor doesn't silently flip the inequality.
+        posted_at = _utc(2026, 5, 28, 22, 0)
+        occurred_at = posted_at - timedelta(days=14) - timedelta(microseconds=1)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=posted_at, floor_days=14
+        ) is True
+
+    def test_future_occurred_at_is_not_flagged(self) -> None:
+        # The past-floor check only fires on the past side. Future timestamps
+        # are out of scope here — they're handled by _clamp_future_occurred_at.
+        posted_at = _utc(2026, 5, 28, 22, 0)
+        occurred_at = posted_at + timedelta(days=30)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=posted_at, floor_days=14
+        ) is False
+
+    def test_none_occurred_at_returns_false(self) -> None:
+        posted_at = _utc(2026, 5, 28, 22, 0)
+
+        assert _is_occurred_at_too_old(
+            None, posted_at=posted_at, floor_days=14
+        ) is False
+
+    def test_none_posted_at_returns_false(self) -> None:
+        occurred_at = _utc(2025, 5, 28, 12, 0)
+
+        assert _is_occurred_at_too_old(
+            occurred_at, posted_at=None, floor_days=14
+        ) is False

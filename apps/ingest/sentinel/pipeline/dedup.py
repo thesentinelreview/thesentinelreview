@@ -17,6 +17,7 @@ from datetime import datetime
 import psycopg
 import structlog
 
+from sentinel.config import settings
 from sentinel.db import find_nearby_events
 
 log = structlog.get_logger()
@@ -49,10 +50,21 @@ def find_duplicate(
     if not candidates:
         return None
 
-    # Take the closest candidate in space; the temporal filter already limits the window.
-    # For v0.1 this is sufficient — a same-type event within 5 km / 6 h is almost certainly
-    # the same incident being reported by multiple sources.
+    # Take the closest candidate in space; the SQL window already filters by wall-clock
+    # recency, but that doesn't bound the gap *between* the incoming and candidate
+    # occurred_at — a delayed-report post can match a recent same-place/type event
+    # and falsely corroborate. Reject candidates outside DEDUP_MAX_TIME_GAP_HOURS.
     best = candidates[0]
+
+    gap_hours = abs((best["occurred_at"] - occurred_at).total_seconds()) / 3600
+    if gap_hours > settings.dedup_max_time_gap_hours:
+        log.debug(
+            "dedup_candidate_rejected_time_gap",
+            existing_id=str(best["id"]),
+            gap_hours=round(gap_hours, 1),
+            max_gap_hours=settings.dedup_max_time_gap_hours,
+        )
+        return None
 
     log.debug(
         "dedup_candidate_found",
