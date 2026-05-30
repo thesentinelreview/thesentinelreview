@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     worker_poll_interval: int = 5
     worker_batch_size: int = 10
 
+    # Extraction integrity
+    occurred_at_past_floor_days: int = 14
+    dedup_max_time_gap_hours: float = 48.0
+
     # Logging
     log_level: str = "INFO"
 
