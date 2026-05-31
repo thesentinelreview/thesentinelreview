@@ -18,6 +18,8 @@ import {
   getTopSources,
   getLatestBriefing,
   getKpiDeltas,
+  getFusionRate,
+  getMedianTTV,
   resolveTimeRange,
   type TimeRange,
 } from "@/lib/queries";
@@ -84,14 +86,17 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, intensity, sources, briefing, kpiDeltas] = await Promise.all([
-    getStats(theater.id, timeRange),
-    getMapEvents(theater.id, timeRange),
-    getIntensity(theater.id),
-    getTopSources(theater.id),
-    getLatestBriefing(theater.id),
-    getKpiDeltas(theater.id, timeRange),
-  ]);
+  const [stats, mapEvents, intensity, sources, briefing, kpiDeltas, fusionPct, medianTtv] =
+    await Promise.all([
+      getStats(theater.id, timeRange),
+      getMapEvents(theater.id, timeRange),
+      getIntensity(theater.id),
+      getTopSources(theater.id),
+      getLatestBriefing(theater.id),
+      getKpiDeltas(theater.id, timeRange),
+      getFusionRate(theater.id, timeRange),
+      getMedianTTV(theater.id, timeRange),
+    ]);
 
   // Control models (server-driven via URL params).
   const theaterOptions = Object.values(THEATERS).map((t) => ({
@@ -116,7 +121,7 @@ export default async function WatchfloorPage({
   });
 
   return (
-    <div className="watchfloor-root min-h-screen bg-slate-950 text-slate-100">
+    <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
       <HeaderBar
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
@@ -126,7 +131,7 @@ export default async function WatchfloorPage({
         isAuthed={!!userId}
       />
 
-      <main className="p-6 max-w-[1800px] mx-auto">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6">
         <div className="grid grid-cols-12 gap-6">
           {/* Map — full-width top, fixed 550px height */}
           <div className="col-span-12 h-[550px] relative rounded-lg overflow-hidden border border-slate-700">
@@ -142,7 +147,12 @@ export default async function WatchfloorPage({
 
           {/* Left column: At a Glance + Intensity */}
           <div className="col-span-12 lg:col-span-4 space-y-6">
-            <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} deltas={kpiDeltas} />
+            <KpiRail
+              windowLabel={WINDOW_LABELS[timeRange]}
+              deltas={kpiDeltas}
+              fusionPct={fusionPct}
+              medianTtvMinutes={medianTtv}
+            />
             <IntensityBars data={intensity} />
           </div>
 

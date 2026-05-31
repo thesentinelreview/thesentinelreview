@@ -71,10 +71,17 @@ body::before {
 }
 
 /* ── Watchfloor (Sentinel Map Final reskin) ───────────────────────────────── */
-/* Edge-to-edge scrolling shell. Drops body padding + grain and the demo
-   banner's negative margin so the new dashboard fills the viewport flush. */
+/* Edge-to-edge no-scroll shell. Drops body padding + grain + the demo banner's
+   negative margin, then pins the body to viewport height so the watchfloor's
+   internal flex panes (header + scrolling <main>) bound correctly instead of
+   stretching the document. */
 body:has(.watchfloor-root) {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 body:has(.watchfloor-root)::before {
   content: none;
