@@ -26,19 +26,19 @@ function HeaderDropdown({
   return (
     <details ref={ref} className="relative [&_summary::-webkit-details-marker]:hidden">
       <summary
-        className="list-none cursor-pointer bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300 select-none hover:border-zinc-700"
+        className="list-none cursor-pointer bg-navy-mid border border-gold/25 rounded-sm px-2 py-1 text-cream font-data select-none hover:border-gold/45"
         aria-label={srLabel}
       >
         {current} ▾
       </summary>
-      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-zinc-900 border border-zinc-800 rounded-sm py-1 shadow-xl">
+      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-navy-mid border border-gold/25 rounded-sm py-1 shadow-xl">
         {options.map((o) => (
           <Link
             key={o.label}
             href={o.href}
             onClick={close}
             className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
-              o.active ? "text-teal-300 bg-teal-400/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
+              o.active ? "text-gold-pale bg-gold/[0.08]" : "text-gray-light hover:bg-navy-light/60"
             }`}
           >
             {o.label}
@@ -65,69 +65,71 @@ export default function HeaderBar({
   isAuthed?: boolean;
 }) {
   return (
-    <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
+    <header className="bg-navy-deep/85 border-b border-gold/20 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
       {/* Left cluster */}
       <div className="flex items-center gap-3 min-w-0">
         <SentinelMark
-          className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
+          className="flex-none text-gold drop-shadow-[0_0_4px_rgba(184,136,42,0.32)] transition-[color,filter] hover:text-gold-bright hover:drop-shadow-[0_0_6px_rgba(212,164,58,0.38)]"
           size={24}
         />
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white">
-              Sentinel Intelligence Map
+            <span className="text-[16px] font-display font-bold tracking-[0.12em] uppercase text-cream">
+              Sentinel Intelligence
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-gold/10 text-gold-pale border border-gold/30 uppercase tracking-[0.2em] font-data">
               Beta
             </span>
           </div>
-          <span className="hidden sm:block text-[12px] tracking-[0.18em] uppercase text-amber-400/80">Watch Tier</span>
+          <span className="hidden sm:inline-block self-start mt-0.5 border border-gold px-1.5 py-0.5 text-[10px] tracking-[0.22em] uppercase text-gold-pale font-data">
+            Watch Tier
+          </span>
         </div>
       </div>
 
       {/* Right cluster */}
       <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-data min-w-0">
         {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
-        <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden mr-1">
+        <div className="flex items-center rounded-sm border border-gold/25 bg-navy-mid/60 overflow-hidden mr-1">
           <span
             aria-current="page"
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-r border-zinc-800"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-gold/[0.12] text-gold-pale border-r border-gold/25"
           >
             <span className="hidden sm:inline">Sentinel </span>View
           </span>
           <Link
             href={feedHref}
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
+            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-gray-light hover:text-cream hover:bg-navy-light/60 transition-colors"
           >
             <span className="hidden sm:inline">Source </span>Feed
           </Link>
         </div>
-        <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
+        <span className="text-gold-pale/70 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
         <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
-        <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
+        <span className="text-gold-pale/70 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
         <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
         <span className="flex items-center gap-1.5 ml-1">
           <span className="relative flex w-2 h-2">
-            <span className="animate-ping absolute inline-flex w-full h-full rounded-full bg-red-500 opacity-75" />
-            <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
+            <span className="animate-ping absolute inline-flex w-full h-full rounded-full bg-red-alert opacity-75" />
+            <span className="relative inline-flex w-2 h-2 rounded-full bg-red-alert" />
           </span>
-          <span className="text-red-400">LIVE</span>
+          <span className="text-red-alert tracking-[0.18em]">LIVE</span>
         </span>
         <div className="hidden sm:flex items-center gap-2">
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
+          <span className="w-px h-5 bg-gold/25 mx-1" />
           {isAuthed ? (
             <UserButton />
           ) : (
             <>
               <Link
                 href="/sign-in"
-                className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
+                className="border border-gold/30 bg-gold/[0.06] text-gold-pale px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-gold/15"
               >
                 Login
               </Link>
               <Link
                 href="/sign-up"
-                className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
+                className="border border-gold/50 bg-gold/[0.15] text-gold-bright px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-gold/25"
               >
                 Sign up
               </Link>

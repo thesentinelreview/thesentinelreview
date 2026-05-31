@@ -41,7 +41,7 @@ export default function SectorThreat({
       {/* SECTORS | AXES toggle — server-driven Links (replace, so the back button
           isn't polluted), styled like the header's segmented controls. */}
       <div className="px-3 pt-2.5 pb-0.5 flex-none">
-        <div className="inline-flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
+        <div className="inline-flex items-center rounded-sm border border-gold/25 bg-navy-mid/60 overflow-hidden">
           {tabs.map((t, i) => (
             <Link
               key={t.label}
@@ -49,11 +49,11 @@ export default function SectorThreat({
               replace
               aria-current={t.active ? "page" : undefined}
               className={`px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase transition-colors ${
-                i > 0 ? "border-l border-zinc-800" : ""
+                i > 0 ? "border-l border-gold/25" : ""
               } ${
                 t.active
-                  ? "bg-teal-400/[0.1] text-teal-300"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                  ? "bg-gold/[0.12] text-gold-pale"
+                  : "text-gray-light hover:text-cream hover:bg-navy-light/60"
               }`}
             >
               {t.label}
@@ -69,13 +69,13 @@ export default function SectorThreat({
           {sectors.length > 0 ? (
             sectors.map((s) => <SectorRow key={s.name} {...s} />)
           ) : (
-            <div className="px-3 py-4 text-[10px] font-data uppercase tracking-[0.08em] text-zinc-600">
+            <div className="px-3 py-4 text-[10px] font-data uppercase tracking-[0.08em] text-gray-mid/60">
               No sector data available
             </div>
           )}
-          <div className="px-3 py-2.5 border-t border-zinc-900">
+          <div className="px-3 py-2.5 border-t border-gold/15">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-500 font-data">Intensity 7d</span>
+              <span className="text-[10px] uppercase tracking-[0.22em] text-gold-pale/70 font-data">Intensity 7d</span>
             </div>
             <IntensityBars data={intensity} />
           </div>

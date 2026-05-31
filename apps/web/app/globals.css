@@ -1,47 +1,67 @@
 @import "tailwindcss";
 
+/* Sentinel Review publication brand — single source of truth.
+   Mirrors /index.html lines 18-34 (the publication site). */
 @theme {
-  --color-bg: #0c0d10;
-  --color-surface: #141519;
-  --color-surface2: #1a1c22;
-  --color-edge: #26282f;
-  --color-edge-strong: #3a3d46;
-  --color-ink: #e6e4dc;
-  --color-ink-muted: #989790;
-  --color-ink-faint: #5d5c58;
-  --color-strike: #e63946;
-  --color-clash: #f4a261;
-  --color-move: #5b9eff;
-  --color-ok: #52b788;
+  --color-navy-deep: #070F1E;
+  --color-navy-mid: #0D1F3C;
+  --color-navy-light: #162B52;
+  --color-navy-subtle: #1E3A68;
+  --color-gold: #B8882A;
+  --color-gold-bright: #D4A43A;
+  --color-gold-pale: #E8C97A;
+  --color-cream: #F5F0E8;
+  --color-gray-light: #D8D4CC;
+  --color-gray-mid: #9A9690;
+  --color-red-alert: #C0392B;
+  --color-contact: #E65100;
+  --color-signal-cyan: #4FB3BF;
+  --color-low: #2E7D32;
 
-  --font-sans: var(--font-plex-sans), 'IBM Plex Sans', sans-serif;
-  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
-  --font-condensed: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
-
-  --font-ui: var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-data: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: var(--font-source-sans), 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: var(--font-courier-prime), 'Courier Prime', ui-monospace, monospace;
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --font-ui: var(--font-source-sans), 'Source Sans 3', system-ui, sans-serif;
+  --font-data: var(--font-courier-prime), 'Courier Prime', ui-monospace, monospace;
 }
 
-/* CSS variables in original mockup naming — used by page.module.css */
+/* Direct brand names + legacy aliases for page.module.css consumers.
+   The aliases let module CSS keep referring to --bg / --surface / --border / --text
+   etc. with no rename churn. */
 :root {
-  --bg: #0c0d10;
-  --surface: #141519;
-  --surface-2: #1a1c22;
-  --border: #26282f;
-  --border-strong: #3a3d46;
-  --text: #e6e4dc;
-  --text-secondary: #989790;
-  --text-tertiary: #5d5c58;
-  --red: #e63946;
-  --red-dim: rgba(230, 57, 70, 0.2);
-  --amber: #f4a261;
-  --amber-dim: rgba(244, 162, 97, 0.2);
-  --blue: #5b9eff;
-  --blue-dim: rgba(91, 158, 255, 0.2);
-  --green: #52b788;
-  --font-sans-stack: var(--font-plex-sans), 'IBM Plex Sans', sans-serif;
-  --font-mono-stack: var(--font-plex-mono), 'IBM Plex Mono', monospace;
-  --font-cond-stack: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
+  --navy-deep: #070F1E;
+  --navy-mid: #0D1F3C;
+  --navy-light: #162B52;
+  --navy-subtle: #1E3A68;
+  --gold: #B8882A;
+  --gold-bright: #D4A43A;
+  --gold-pale: #E8C97A;
+  --cream: #F5F0E8;
+  --gray-light: #D8D4CC;
+  --gray-mid: #9A9690;
+  --red-alert: #C0392B;
+  --contact: #E65100;
+  --signal-cyan: #4FB3BF;
+
+  --bg: var(--navy-deep);
+  --surface: var(--navy-mid);
+  --surface-2: var(--navy-light);
+  --border: rgba(184,136,42,0.20);
+  --border-strong: rgba(184,136,42,0.45);
+  --text: var(--cream);
+  --text-secondary: var(--gray-light);
+  --text-tertiary: var(--gray-mid);
+  --red: var(--red-alert);
+  --red-dim: rgba(192,57,43,0.20);
+  --amber: var(--contact);
+  --amber-dim: rgba(230,81,0,0.18);
+  --blue: var(--signal-cyan);
+  --blue-dim: rgba(79,179,191,0.18);
+  --green: #2E7D32;
+
+  --font-sans-stack: var(--font-source-sans), 'Source Sans 3', sans-serif;
+  --font-mono-stack: var(--font-courier-prime), 'Courier Prime', monospace;
+  --font-cond-stack: var(--font-playfair), 'Playfair Display', Georgia, serif;
 }
 
 * {
@@ -64,7 +84,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(184,136,42,0.018) 1px, transparent 1px);
   background-size: 3px 3px;
   pointer-events: none;
   z-index: 0;
@@ -90,6 +110,21 @@ body:has(.watchfloor-root)::before {
 }
 body:has(.watchfloor-root) .demo-banner {
   margin: 0 !important;
+}
+
+/* Publication motif: gold radial header glow (mirrors /index.html:66 .masthead::before). */
+.watchfloor-root::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 180px;
+  background: radial-gradient(ellipse at 50% -20%, rgba(184,136,42,0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.watchfloor-root > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Source Feed (full-bleed, scrolls) ──────────────────────────────────── */
@@ -136,7 +171,7 @@ body:has(.feed-root) .demo-banner {
 }
 
 .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
-  filter: invert(1) brightness(0.75);
+  filter: invert(1) brightness(0.85);
 }
 
 .maplibregl-ctrl-attrib {

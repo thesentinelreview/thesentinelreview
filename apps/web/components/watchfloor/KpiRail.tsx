@@ -40,7 +40,7 @@ export default function KpiRail({
   const sectorsDelta = deltas.activeSectors - deltas.activeSectorsPrev;
 
   return (
-    <div className="overflow-x-auto border-b border-zinc-900 bg-zinc-900">
+    <div className="overflow-x-auto border-b border-gold/20 bg-navy-mid">
       <div className="flex items-stretch gap-px min-w-max">
         {/* More activity reads as escalation → red delta. */}
         <Kpi

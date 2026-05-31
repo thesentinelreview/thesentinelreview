@@ -21,10 +21,10 @@ export default function TheaterDropdown({
 
   return (
     <details ref={ref} className="relative [&_summary::-webkit-details-marker]:hidden">
-      <summary className="list-none cursor-pointer bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300 select-none hover:border-zinc-700 text-[10px] font-data tracking-[0.18em] uppercase">
+      <summary className="list-none cursor-pointer bg-navy-mid border border-gold/25 rounded-sm px-2 py-1 text-cream select-none hover:border-gold/45 text-[10px] font-data tracking-[0.18em] uppercase">
         {current} ▾
       </summary>
-      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-zinc-900 border border-zinc-800 rounded-sm py-1 shadow-xl">
+      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-navy-mid border border-gold/25 rounded-sm py-1 shadow-xl">
         {options.map((o) => (
           <Link
             key={o.label}
@@ -32,8 +32,8 @@ export default function TheaterDropdown({
             onClick={close}
             className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
               o.active
-                ? "text-teal-300 bg-teal-400/[0.06]"
-                : "text-zinc-300 hover:bg-zinc-800"
+                ? "text-gold-pale bg-gold/[0.08]"
+                : "text-gray-light hover:bg-navy-light/60"
             }`}
           >
             {o.label}

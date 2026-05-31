@@ -32,14 +32,14 @@ export default function TimeScrubber() {
   const btn = "w-7 h-7 rounded-sm border grid place-items-center transition-colors";
 
   return (
-    <div className="bg-zinc-950 border-t border-zinc-800 px-5 py-3 flex items-center gap-4 font-data text-[10px] flex-none">
-      <span className="text-zinc-500 tracking-[0.2em] uppercase">Playback</span>
+    <div className="bg-navy-deep border-t border-gold/20 px-5 py-3 flex items-center gap-4 font-data text-[10px] flex-none">
+      <span className="text-gold-pale/70 tracking-[0.22em] uppercase">Playback</span>
       <div className="flex items-center gap-1">
         <button
           type="button"
           aria-label="Jump to start"
           onClick={toStart}
-          className={`${btn} border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700`}
+          className={`${btn} border-gold/25 bg-navy-mid text-gray-light hover:text-cream hover:border-gold/40`}
         >
           ◀◀
         </button>
@@ -48,7 +48,7 @@ export default function TimeScrubber() {
           aria-label={playing ? "Pause" : "Play"}
           aria-pressed={playing}
           onClick={toggle}
-          className={`${btn} border-teal-400/30 bg-teal-400/[0.06] text-teal-300 hover:bg-teal-400/[0.12]`}
+          className={`${btn} border-gold/40 bg-gold/[0.10] text-gold-pale hover:bg-gold/[0.18]`}
         >
           {playing ? "❚❚" : "▶"}
         </button>
@@ -56,20 +56,20 @@ export default function TimeScrubber() {
           type="button"
           aria-label="Jump to now"
           onClick={toEnd}
-          className={`${btn} border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700`}
+          className={`${btn} border-gold/25 bg-navy-mid text-gray-light hover:text-cream hover:border-gold/40`}
         >
           ▶▶
         </button>
       </div>
       <div className="flex-1 min-w-0">
         <div className="relative h-4 flex items-center">
-          <div className="relative h-1 w-full rounded-full bg-zinc-800">
+          <div className="relative h-1 w-full rounded-full bg-navy-light">
             <div
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal-500/30 via-amber-500/30 to-red-500/60"
+              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-navy-subtle via-gold/40 to-red-alert/70"
               style={{ width: `${pct}%` }}
             />
             <div
-              className="absolute -top-1.5 w-1 h-4 bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]"
+              className="absolute -top-1.5 w-1 h-4 bg-red-alert shadow-[0_0_6px_rgba(192,57,43,0.7)]"
               style={{ left: `${pct}%` }}
             />
           </div>
@@ -84,13 +84,13 @@ export default function TimeScrubber() {
             className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
           />
         </div>
-        <div className="flex justify-between mt-1 text-zinc-600 tracking-[0.2em]">
+        <div className="flex justify-between mt-1 text-gray-mid/60 tracking-[0.2em]">
           {labels.map((m, i) => (
             <span key={i}>{m}</span>
           ))}
         </div>
       </div>
-      <span className="text-zinc-300 tabular-nums w-[72px] text-right" suppressHydrationWarning>
+      <span className="text-gold-pale tabular-nums w-[72px] text-right" suppressHydrationWarning>
         {fmtUTC(cursorMs)}
       </span>
     </div>
