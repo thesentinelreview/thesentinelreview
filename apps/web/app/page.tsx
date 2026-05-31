@@ -1,34 +1,25 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
+import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
-import SectorThreat from "@/components/watchfloor/SectorThreat";
-import TimeScrubber from "@/components/watchfloor/TimeScrubber";
+import IntensityBars from "@/components/watchfloor/IntensityBars";
+import TopSources from "@/components/watchfloor/TopSources";
 import MapLegend from "@/components/watchfloor/MapLegend";
-import TimelineProvider from "@/components/watchfloor/TimelineProvider";
 import type { EventType } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
 import {
   getStats,
   getMapEvents,
-  getAlerts,
   getIntensity,
-  getSectors,
-  getThreatAxes,
   getTopSources,
   getLatestBriefing,
-  getFusionRate,
-  getMedianTTV,
-  getSensorStripData,
   getKpiDeltas,
   resolveTimeRange,
-  resolveThreatView,
   type TimeRange,
-  type ThreatView,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -40,21 +31,19 @@ export const metadata: Metadata = {
 const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
 const WATCH_WINDOWS: TimeRange[] = ["24h", "7d"];
 const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30d": "30D" };
-const WINDOW_MS: Record<TimeRange, number> = { "24h": 86_400_000, "7d": 604_800_000, "30d": 2_592_000_000 };
 
 const TYPE_META: { type: EventType; label: string; dot: string }[] = [
   { type: "strike", label: "Strike", dot: "bg-red-500" },
-  { type: "clash", label: "Contact", dot: "bg-amber-500" },
-  { type: "movement", label: "Movement", dot: "bg-cyan-400" },
+  { type: "clash", label: "Clash", dot: "bg-amber-500" },
+  { type: "movement", label: "Movement", dot: "bg-blue-500" },
 ];
 
-// Build a URL preserving theater + window + visible types + threat view, overriding any.
-function buildHref(o: { theater: string; window: TimeRange; types: EventType[]; threat: ThreatView }): string {
+// Build a URL preserving theater + window + visible types, overriding any.
+function buildHref(o: { theater: string; window: TimeRange; types: EventType[] }): string {
   const p = new URLSearchParams();
   p.set("theater", o.theater);
   if (o.window !== "24h") p.set("window", o.window);
   if (o.types.length > 0 && o.types.length < ALL_TYPES.length) p.set("types", o.types.join(","));
-  if (o.threat !== "sectors") p.set("threat", o.threat);
   return `/?${p}`;
 }
 
@@ -65,7 +54,6 @@ export default async function WatchfloorPage({
     theater?: string;
     window?: string;
     types?: string;
-    threat?: string;
     lat?: string;
     lng?: string;
     zoom?: string;
@@ -74,7 +62,6 @@ export default async function WatchfloorPage({
   const [params, { userId }] = await Promise.all([searchParams, auth()]);
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
-  const threatView = resolveThreatView(params.threat);
 
   // Visible event types (default = all three).
   const rawTypes = params.types
@@ -97,18 +84,12 @@ export default async function WatchfloorPage({
   const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
   const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
 
-  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, threatAxes, fusionPct, medianTtv, sensorData, kpiDeltas] = await Promise.all([
+  const [stats, mapEvents, intensity, sources, briefing, kpiDeltas] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
-    getAlerts(theater.id, null, timeRange),
     getIntensity(theater.id),
     getTopSources(theater.id),
     getLatestBriefing(theater.id),
-    getSectors(theater.id, timeRange),
-    getThreatAxes(theater.id, timeRange),
-    getFusionRate(theater.id, timeRange),
-    getMedianTTV(theater.id, timeRange),
-    getSensorStripData(theater.id),
     getKpiDeltas(theater.id, timeRange),
   ]);
 
@@ -116,12 +97,12 @@ export default async function WatchfloorPage({
   const theaterOptions = Object.values(THEATERS).map((t) => ({
     label: t.label,
     active: t.id === theater.id,
-    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes, threat: threatView }),
+    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes }),
   }));
   const windowOptions = WATCH_WINDOWS.map((w) => ({
     label: WINDOW_LABELS[w],
     active: w === timeRange,
-    href: buildHref({ theater: theater.id, window: w, types: visibleTypes, threat: threatView }),
+    href: buildHref({ theater: theater.id, window: w, types: visibleTypes }),
   }));
   const legendItems = TYPE_META.map((m) => {
     const active = visibleTypes.includes(m.type);
@@ -130,27 +111,12 @@ export default async function WatchfloorPage({
       label: m.label,
       dot: m.dot,
       active,
-      href: buildHref({ theater: theater.id, window: timeRange, types: next, threat: threatView }),
+      href: buildHref({ theater: theater.id, window: timeRange, types: next }),
     };
   });
 
-  // SECTORS | AXES toggle for the Sector Threat panel. Server-driven Links that
-  // preserve theater/window/types; default lands on SECTORS (no `threat` param).
-  const threatTabs = [
-    {
-      label: "Sectors",
-      active: threatView === "sectors",
-      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "sectors" }),
-    },
-    {
-      label: "Axes",
-      active: threatView === "axes",
-      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "axes" }),
-    },
-  ];
-
   return (
-    <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-[#05070A] text-zinc-100 font-ui">
+    <div className="watchfloor-root min-h-screen bg-slate-950 text-slate-100">
       <HeaderBar
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
@@ -159,13 +125,11 @@ export default async function WatchfloorPage({
         feedHref={`/app/feed?theater=${theater.id}`}
         isAuthed={!!userId}
       />
-      <SensorStrip data={sensorData} />
-      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} deltas={kpiDeltas} />
 
-      <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
-        <div className="flex-1 min-w-0 min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
-          {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
-          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+      <main className="p-6 max-w-[1800px] mx-auto">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Map — full-width top, fixed 550px height */}
+          <div className="col-span-12 h-[550px] relative rounded-lg overflow-hidden border border-slate-700">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
@@ -174,15 +138,60 @@ export default async function WatchfloorPage({
               palette="watch"
             />
             <MapLegend items={legendItems} />
-          </section>
+          </div>
 
-          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} eventCount={stats.events} className="flex-none min-w-0 md:col-span-5" />
-          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none min-w-0 max-h-[280px] md:max-h-none md:col-span-3" />
-          <SectorThreat sectors={sectors} intensity={intensity} windowLabel={WINDOW_LABELS[timeRange]} tabs={threatTabs} activeTab={threatView} threatAxes={threatAxes} className="flex-none min-w-0 md:col-span-2" />
+          {/* Left column: At a Glance + Intensity */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} deltas={kpiDeltas} />
+            <IntensityBars data={intensity} />
+          </div>
+
+          {/* Middle column: Active Alerts */}
+          <div className="col-span-12 lg:col-span-4">
+            <LiveStream events={mapEvents} theaterId={theater.id} />
+          </div>
+
+          {/* Right column: Top Sources */}
+          <div className="col-span-12 lg:col-span-4">
+            <TopSources sources={sources} />
+          </div>
+
+          {/* Briefing — full-width below */}
+          <div className="col-span-12">
+            <BriefPane
+              briefing={briefing}
+              events={mapEvents}
+              theaterId={theater.id}
+              theaterLabel={theater.label}
+              windowLabel={WINDOW_LABELS[timeRange]}
+              eventCount={stats.events}
+            />
+          </div>
         </div>
 
-        <TimeScrubber />
-      </TimelineProvider>
+        <footer className="mt-12 pt-8 border-t border-slate-800/50">
+          <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-6 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20 flex-shrink-0">
+                <AlertCircle className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-amber-400 mb-1 uppercase tracking-wider">Disclaimer</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  This platform is a <strong className="text-slate-300">situational awareness tool only</strong>.
+                  It does not support military targeting or operational planning. Events are algorithmically extracted and
+                  scored; high-impact events require human editorial review before publication. All data is derived from
+                  open-source intelligence and may contain inaccuracies.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="text-center text-xs text-slate-600">
+            <p>The Sentinel Review — Washington, D.C.</p>
+            <p className="mt-1">contact@thesentinelreview.com • thesentinelreview.com</p>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

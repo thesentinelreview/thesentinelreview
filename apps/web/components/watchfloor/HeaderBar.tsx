@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { UserButton } from "@clerk/nextjs";
+import { ExternalLink, Radio, FileText, MapPin } from "lucide-react";
 import SentinelMark from "./SentinelMark";
 
 export interface ControlOption {
@@ -26,19 +27,19 @@ function HeaderDropdown({
   return (
     <details ref={ref} className="relative [&_summary::-webkit-details-marker]:hidden">
       <summary
-        className="list-none cursor-pointer bg-zinc-900 border border-zinc-800 rounded-sm px-2 py-1 text-zinc-300 select-none hover:border-zinc-700"
+        className="list-none cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 hover:border-slate-500 text-xs font-semibold transition-all select-none"
         aria-label={srLabel}
       >
-        {current} ▾
+        {current} <span className="text-slate-400">▾</span>
       </summary>
-      <div className="absolute right-0 mt-1 z-50 min-w-[150px] bg-zinc-900 border border-zinc-800 rounded-sm py-1 shadow-xl">
+      <div className="absolute right-0 mt-1 z-50 min-w-[180px] bg-slate-900 border border-slate-700 rounded-lg py-1 shadow-2xl">
         {options.map((o) => (
           <Link
             key={o.label}
             href={o.href}
             onClick={close}
-            className={`block px-3 py-1.5 text-[11px] tracking-[0.08em] ${
-              o.active ? "text-teal-300 bg-teal-400/[0.06]" : "text-zinc-300 hover:bg-zinc-800"
+            className={`block px-3 py-1.5 text-xs ${
+              o.active ? "text-red-400 bg-red-500/10" : "text-slate-300 hover:bg-slate-800"
             }`}
           >
             {o.label}
@@ -65,75 +66,105 @@ export default function HeaderBar({
   isAuthed?: boolean;
 }) {
   return (
-    <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
-      {/* Left cluster */}
-      <div className="flex items-center gap-3 min-w-0">
-        <SentinelMark
-          className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
-          size={24}
-        />
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white">
-              Sentinel Intelligence Map
-            </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
-              Beta
-            </span>
+    <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
+      <div className="px-6 py-4">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          {/* Brand cluster */}
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="p-2.5 bg-gradient-to-br from-red-500/20 to-red-600/10 rounded-xl border border-red-500/30 shadow-lg shadow-red-500/20 flex-none">
+              <SentinelMark className="w-7 h-7 text-red-400" size={28} />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-bold text-white tracking-tight">SENTINEL REVIEW</h1>
+                <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-[10px] font-semibold text-red-400 uppercase tracking-wider">
+                  Beta
+                </span>
+              </div>
+              <p className="text-sm text-slate-400 mt-0.5">
+                Open-Source Intelligence • {theaterLabel} • Live Feed
+              </p>
+            </div>
           </div>
-          <span className="hidden sm:block text-[12px] tracking-[0.18em] uppercase text-amber-400/80">Watch Tier</span>
-        </div>
-      </div>
 
-      {/* Right cluster */}
-      <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-data min-w-0">
-        {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
-        <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden mr-1">
-          <span
-            aria-current="page"
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-r border-zinc-800"
-          >
-            <span className="hidden sm:inline">Sentinel </span>View
+          {/* Right cluster — live pill, controls, auth */}
+          <div className="flex items-center gap-3 flex-wrap justify-end">
+            <div className="hidden lg:flex items-center gap-4 px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs text-slate-400">Live</span>
+              </div>
+              <div className="w-px h-4 bg-slate-700" />
+              <span className="text-xs text-slate-300">{windowLabel} window</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Theater</span>
+              <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
+              <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Window</span>
+              <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
+            </div>
+
+            <a
+              href="https://thesentinelreview.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 transition-all text-sm border border-slate-600 hover:border-slate-500"
+            >
+              <span>Main Site</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-700">
+              {isAuthed ? (
+                <UserButton />
+              ) : (
+                <>
+                  <Link
+                    href="/sign-in"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-300 border border-amber-500/30 bg-amber-500/[0.06] hover:bg-amber-500/15"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-200 border border-amber-400/50 bg-amber-500/15 hover:bg-amber-500/25"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex items-center gap-2 mt-4 border-t border-slate-800 pt-3 flex-wrap">
+          <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
+            <MapPin className="w-4 h-4" />
+            Dashboard
           </span>
           <Link
             href={feedHref}
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
           >
-            <span className="hidden sm:inline">Source </span>Feed
+            <Radio className="w-4 h-4" />
+            Source Feed
           </Link>
-        </div>
-        <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
-        <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
-        <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
-        <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
-        <span className="flex items-center gap-1.5 ml-1">
-          <span className="relative flex w-2 h-2">
-            <span className="animate-ping absolute inline-flex w-full h-full rounded-full bg-red-500 opacity-75" />
-            <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
-          </span>
-          <span className="text-red-400">LIVE</span>
-        </span>
-        <div className="hidden sm:flex items-center gap-2">
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
-          {isAuthed ? (
-            <UserButton />
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className="border border-amber-500/30 bg-amber-500/[0.06] text-amber-300 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/15"
-              >
-                Login
-              </Link>
-              <Link
-                href="/sign-up"
-                className="border border-amber-400/50 bg-amber-500/15 text-amber-200 px-2.5 py-1 rounded-sm tracking-[0.2em] uppercase font-data text-[10px] hover:bg-amber-500/25"
-              >
-                Sign up
-              </Link>
-            </>
-          )}
-        </div>
+          <Link
+            href="/sources"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+          >
+            <Radio className="w-4 h-4" />
+            Sources
+          </Link>
+          <Link
+            href="/methodology"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+          >
+            <FileText className="w-4 h-4" />
+            Methodology
+          </Link>
+        </nav>
       </div>
     </header>
   );

@@ -18,9 +18,9 @@ const PALETTE: Record<"app" | "watch", { core: Pal; mid: Pal; dim: Pal }> = {
     dim: { strike: "rgba(230,57,70,0.18)", clash: "rgba(244,162,97,0.18)", movement: "rgba(91,158,255,0.18)" },
   },
   watch: {
-    core: { strike: "#ef4444", clash: "#f59e0b", movement: "#22d3ee" },
-    mid: { strike: "rgba(239,68,68,0.38)", clash: "rgba(245,158,11,0.38)", movement: "rgba(34,211,238,0.38)" },
-    dim: { strike: "rgba(239,68,68,0.18)", clash: "rgba(245,158,11,0.18)", movement: "rgba(34,211,238,0.18)" },
+    core: { strike: "#ef4444", clash: "#f59e0b", movement: "#3b82f6" },
+    mid: { strike: "rgba(239,68,68,0.38)", clash: "rgba(245,158,11,0.38)", movement: "rgba(59,130,246,0.38)" },
+    dim: { strike: "rgba(239,68,68,0.18)", clash: "rgba(245,158,11,0.18)", movement: "rgba(59,130,246,0.18)" },
   },
 };
 
@@ -294,7 +294,7 @@ export default function MapView({
         source: "events",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": palette === "watch" ? "#71717a" : "#e6e4dc",
+          "circle-color": palette === "watch" ? "#475569" : "#e6e4dc",
           "circle-radius": ["step", ["get", "point_count"], 14, 5, 18, 10, 22],
           "circle-opacity": 0.85,
         },
