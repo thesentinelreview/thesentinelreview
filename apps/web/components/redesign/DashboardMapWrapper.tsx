@@ -1,20 +1,21 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import type { MapEvent } from "@/lib/types";
+import MapWrapper from "@/components/MapWrapper";
+import type { EventType, MapEvent } from "@/lib/types";
 import MapLegend from "./MapLegend";
 
-const DashboardMap = dynamic(() => import("./DashboardMap"), { ssr: false });
+const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
 
-export default function DashboardMapWrapper(props: {
+export default function DashboardMapWrapper({
+  events,
+  center,
+  zoom,
+}: {
   events: MapEvent[];
   center: [number, number];
   zoom: number;
-  theaterId: string;
 }) {
   return (
     <div className="w-full h-full rounded-xl overflow-hidden border border-slate-700 relative">
-      <DashboardMap {...props} />
+      <MapWrapper events={events} center={center} zoom={zoom} visibleTypes={ALL_TYPES} palette="watch" />
       <MapLegend />
     </div>
   );

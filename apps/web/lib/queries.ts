@@ -921,6 +921,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
       platform: Platform;
       events_count: string | number;
       verified_rate: string | number | null;
+      trust_tier: number;
     };
 
     const rows = await query<Row>(
@@ -929,6 +930,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
         s.handle                                    AS handle,
         s.display_name                              AS display_name,
         s.platform                                  AS platform,
+        s.trust_tier                                AS trust_tier,
         COALESCE(today.cnt, 0)::int                 AS events_count,
         COALESCE(sr.verified_rate_30d, 0)::int      AS verified_rate
       FROM sources s
@@ -966,6 +968,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
       platform: r.platform,
       events_count: Number(r.events_count) || 0,
       verified_rate: Number(r.verified_rate) || 0,
+      trust_tier: (r.trust_tier as 1 | 2 | 3) ?? 2,
     }));
   } catch {
     return [];

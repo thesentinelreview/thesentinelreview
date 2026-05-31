@@ -5,8 +5,8 @@ export interface IntensityDayCount {
   count: number;
 }
 
-// Manual recharts replacement: SVG bar chart with a dashed reference line at avg.
-// Heights normalize to the peak in the window so a quiet week is still readable.
+const PLOT_HEIGHT_PX = 180;
+
 export default function IntensityChart({ data }: { data: IntensityDayCount[] }) {
   const hasActivity = data.some((d) => d.count > 0);
   if (data.length === 0 || !hasActivity) {
@@ -18,7 +18,7 @@ export default function IntensityChart({ data }: { data: IntensityDayCount[] }) 
           </div>
           Activity Intensity
         </h2>
-        <div className="h-[220px] flex items-center justify-center text-xs text-slate-500">
+        <div className="h-[180px] flex items-center justify-center text-xs text-slate-500">
           No activity in the last 7 days
         </div>
       </div>
@@ -47,34 +47,26 @@ export default function IntensityChart({ data }: { data: IntensityDayCount[] }) 
         </div>
       </div>
 
-      <div className="relative h-[220px] pl-8 pr-2">
-        {/* Y-axis ticks: 0, peak/2, peak */}
-        <div className="absolute inset-y-0 left-0 w-8 flex flex-col justify-between text-[11px] font-medium text-slate-500 py-0.5">
+      {/* Plot row: y-ticks | plot | avg-label gutter */}
+      <div className="flex" style={{ height: `${PLOT_HEIGHT_PX}px` }}>
+        <div className="w-8 flex-none flex flex-col justify-between text-[11px] font-medium text-slate-500 py-0.5">
           <span>{peak}</span>
           <span>{Math.round(peak / 2)}</span>
           <span>0</span>
         </div>
 
-        {/* Plot area */}
-        <div className="relative h-full border-l border-b border-slate-800">
-          {/* Horizontal grid lines */}
+        <div className="flex-1 relative border-l border-b border-slate-800">
           <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
             <div className="border-t border-dashed border-slate-800" />
             <div className="border-t border-dashed border-slate-800" />
             <div className="border-t border-transparent" />
           </div>
 
-          {/* Average reference line */}
           <div
-            className="absolute left-0 right-0 border-t-2 border-dashed border-amber-500/80"
+            className="absolute left-0 right-0 border-t-2 border-dashed border-amber-500/80 pointer-events-none"
             style={{ top: `${avgPctFromTop}%` }}
-          >
-            <span className="absolute -top-2.5 right-1 text-[11px] font-semibold text-amber-400 bg-slate-900 px-1">
-              Avg: {Math.round(average)}
-            </span>
-          </div>
+          />
 
-          {/* Bars */}
           <div className="absolute inset-0 flex items-end gap-2 px-2">
             {data.map((d) => {
               const h = (d.count / peak) * 100;
@@ -101,16 +93,31 @@ export default function IntensityChart({ data }: { data: IntensityDayCount[] }) 
           </div>
         </div>
 
-        {/* X-axis labels */}
-        <div className="flex gap-2 px-2 mt-1">
+        {/* Avg label pinned to the avg line, outside the plot */}
+        <div className="relative w-14 flex-none">
+          <span
+            className="absolute left-2 -translate-y-1/2 whitespace-nowrap text-[11px] font-semibold text-amber-400"
+            style={{ top: `${avgPctFromTop}%` }}
+          >
+            Avg {Math.round(average)}
+          </span>
+        </div>
+      </div>
+
+      {/* X-axis date labels — own row, aligned to plot columns */}
+      <div className="flex mt-2">
+        <div className="w-8 flex-none" />
+        <div className="flex-1 flex gap-2 px-2">
           {data.map((d) => (
             <span key={d.date} className="flex-1 text-center text-[11px] font-medium text-slate-500">
               {formatDate(d.date)}
             </span>
           ))}
         </div>
+        <div className="w-14 flex-none" />
       </div>
 
+      {/* Legend — own row */}
       <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-2">

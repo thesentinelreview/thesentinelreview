@@ -83,6 +83,7 @@ export interface Source {
   platform: Platform;
   events_count: number;
   verified_rate: number; // 0–100
+  trust_tier: 1 | 2 | 3;
 }
 
 export interface Stats {

@@ -17,14 +17,6 @@ function platformLabel(p: string): string {
   return "Wire";
 }
 
-// No `tier` column in the sources panel query — derive it from verified_rate so
-// the top tile still gets the T1 ribbon the design wants.
-function tierFromRate(rate: number): 1 | 2 | 3 {
-  if (rate >= 85) return 1;
-  if (rate >= 70) return 2;
-  return 3;
-}
-
 export default function TopSources({ sources }: { sources: Source[] }) {
   return (
     <div className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl">
@@ -46,7 +38,7 @@ export default function TopSources({ sources }: { sources: Source[] }) {
       ) : (
         <div className="space-y-2.5">
           {sources.map((source, index) => {
-            const tier = tierFromRate(source.verified_rate);
+            const tier = source.trust_tier;
             const badge = platformBadges[source.platform] ?? platformBadges.wire;
             return (
               <div

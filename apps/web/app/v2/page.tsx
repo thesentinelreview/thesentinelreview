@@ -83,7 +83,6 @@ export default async function V2Dashboard({
               events={mapEvents}
               center={theater.mapCenter}
               zoom={theater.mapZoom}
-              theaterId={theater.id}
             />
           </div>
 
