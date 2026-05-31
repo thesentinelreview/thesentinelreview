@@ -1,20 +1,34 @@
 import type { Metadata } from "next";
-import Header from "@/components/redesign/Header";
-import DashboardMapWrapper from "@/components/redesign/DashboardMapWrapper";
-import AtAGlance from "@/components/redesign/AtAGlance";
-import IntensityChart, { type IntensityDayCount } from "@/components/redesign/IntensityChart";
-import ActiveAlerts from "@/components/redesign/ActiveAlerts";
-import TopSources from "@/components/redesign/TopSources";
-import DailyBriefing, { type ConfidenceCounts } from "@/components/redesign/DailyBriefing";
-import FooterDisclaimer from "@/components/redesign/FooterDisclaimer";
-import { resolveTheater } from "@/data/theaters";
+import { auth } from "@clerk/nextjs/server";
+import MapWrapper from "@/components/MapWrapper";
+import HeaderBar from "@/components/watchfloor/HeaderBar";
+import SensorStrip from "@/components/watchfloor/SensorStrip";
+import KpiRail from "@/components/watchfloor/KpiRail";
+import BriefPane from "@/components/watchfloor/BriefPane";
+import LiveStream from "@/components/watchfloor/LiveStream";
+import SectorThreat from "@/components/watchfloor/SectorThreat";
+import TimeScrubber from "@/components/watchfloor/TimeScrubber";
+import MapLegend from "@/components/watchfloor/MapLegend";
+import TimelineProvider from "@/components/watchfloor/TimelineProvider";
+import type { EventType } from "@/lib/types";
+import { resolveTheater, THEATERS } from "@/data/theaters";
 import {
   getStats,
   getMapEvents,
+  getAlerts,
+  getIntensity,
+  getSectors,
+  getThreatAxes,
   getTopSources,
   getLatestBriefing,
-  getKpiSparklines,
+  getFusionRate,
+  getMedianTTV,
+  getSensorStripData,
+  getKpiDeltas,
   resolveTimeRange,
+  resolveThreatView,
+  type TimeRange,
+  type ThreatView,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -23,100 +37,146 @@ export const metadata: Metadata = {
   title: "Sentinel Review — Intelligence Dashboard (v2)",
 };
 
-const WINDOW_LABELS: Record<string, string> = { "24h": "Past 24h", "7d": "Past 7 Days", "30d": "Past 30 Days" };
+const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
+const V2_WINDOWS: TimeRange[] = ["24h", "7d"];
+const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30d": "30D" };
+const WINDOW_MS: Record<TimeRange, number> = { "24h": 86_400_000, "7d": 604_800_000, "30d": 2_592_000_000 };
 
-// 7 daily ISO date strings, oldest → newest, in UTC. Aligns with how
-// getKpiSparklines emits its `events` buckets so the labels match the bars.
-function lastSevenDates(): string[] {
-  const out: string[] = [];
-  const now = new Date();
-  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  for (let i = 6; i >= 0; i--) {
-    out.push(new Date(todayUtc - i * 86_400_000).toISOString().slice(0, 10));
-  }
-  return out;
+const TYPE_META: { type: EventType; label: string; dot: string }[] = [
+  { type: "strike", label: "Strike", dot: "bg-red-500" },
+  { type: "clash", label: "Contact", dot: "bg-amber-500" },
+  { type: "movement", label: "Movement", dot: "bg-cyan-400" },
+];
+
+function buildHref(o: { theater: string; window: TimeRange; types: EventType[]; threat: ThreatView }): string {
+  const p = new URLSearchParams();
+  p.set("theater", o.theater);
+  if (o.window !== "24h") p.set("window", o.window);
+  if (o.types.length > 0 && o.types.length < ALL_TYPES.length) p.set("types", o.types.join(","));
+  if (o.threat !== "sectors") p.set("threat", o.threat);
+  return `/v2?${p}`;
 }
 
 export default async function V2Dashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ theater?: string; window?: string }>;
+  searchParams: Promise<{
+    theater?: string;
+    window?: string;
+    types?: string;
+    threat?: string;
+    lat?: string;
+    lng?: string;
+    zoom?: string;
+  }>;
 }) {
-  const params = await searchParams;
+  const [params, { userId }] = await Promise.all([searchParams, auth()]);
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
+  const threatView = resolveThreatView(params.threat);
 
-  const [stats, mapEvents, sources, briefing, sparks] = await Promise.all([
+  const rawTypes = params.types
+    ? params.types.split(",").filter((t): t is EventType => ALL_TYPES.includes(t as EventType))
+    : ALL_TYPES;
+  const visibleTypes: EventType[] = rawTypes.length > 0 ? rawTypes : ALL_TYPES;
+
+  // Honor URL-persisted map position (lat/lng/zoom written by MapView on pan/zoom),
+  // but only when all three are present, valid, and not zoomed-out past the theater's
+  // default — so a reload or shared link never strands the user on a world view.
+  const urlLat = params.lat ? parseFloat(params.lat) : NaN;
+  const urlLng = params.lng ? parseFloat(params.lng) : NaN;
+  const urlZoom = params.zoom ? parseFloat(params.zoom) : NaN;
+  const urlViewValid =
+    !isNaN(urlLat) && !isNaN(urlLng) && !isNaN(urlZoom) &&
+    urlLat >= -90 && urlLat <= 90 &&
+    urlLng >= -180 && urlLng <= 180 &&
+    urlZoom >= 0 && urlZoom <= 28 &&
+    urlZoom >= theater.mapZoom;
+  const mapCenter: [number, number] = urlViewValid ? [urlLng, urlLat] : theater.mapCenter;
+  const mapZoom = urlViewValid ? urlZoom : theater.mapZoom;
+
+  const [stats, mapEvents, alerts, intensity, sources, briefing, sectors, threatAxes, fusionPct, medianTtv, sensorData, kpiDeltas] = await Promise.all([
     getStats(theater.id, timeRange),
     getMapEvents(theater.id, timeRange),
-    getTopSources(theater.id, 6),
+    getAlerts(theater.id, null, timeRange),
+    getIntensity(theater.id),
+    getTopSources(theater.id),
     getLatestBriefing(theater.id),
-    getKpiSparklines(theater.id, "7d"),
+    getSectors(theater.id, timeRange),
+    getThreatAxes(theater.id, timeRange),
+    getFusionRate(theater.id, timeRange),
+    getMedianTTV(theater.id, timeRange),
+    getSensorStripData(theater.id),
+    getKpiDeltas(theater.id, timeRange),
   ]);
 
-  // Confidence rollup for the briefing footer — counted off the events visible
-  // in the current window, since briefings don't carry their own breakdown.
-  const confidence: ConfidenceCounts = {
-    verified: mapEvents.filter((e) => e.confidence === "verified").length,
-    partial: mapEvents.filter((e) => e.confidence === "partial").length,
-    unconfirmed: mapEvents.filter((e) => e.confidence === "unconfirmed").length,
-  };
-
-  const dates = lastSevenDates();
-  // getKpiSparklines emits exactly 7 buckets for the 7d window. Defensive zip in
-  // case the count ever drifts.
-  const intensity: IntensityDayCount[] = dates.map((date, i) => ({
-    date,
-    count: sparks.events[i] ?? 0,
+  const theaterOptions = Object.values(THEATERS).map((t) => ({
+    label: t.label,
+    active: t.id === theater.id,
+    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes, threat: threatView }),
   }));
+  const windowOptions = V2_WINDOWS.map((w) => ({
+    label: WINDOW_LABELS[w],
+    active: w === timeRange,
+    href: buildHref({ theater: theater.id, window: w, types: visibleTypes, threat: threatView }),
+  }));
+  const legendItems = TYPE_META.map((m) => {
+    const active = visibleTypes.includes(m.type);
+    const next = active ? visibleTypes.filter((t) => t !== m.type) : [...visibleTypes, m.type];
+    return {
+      label: m.label,
+      dot: m.dot,
+      active,
+      href: buildHref({ theater: theater.id, window: timeRange, types: next, threat: threatView }),
+    };
+  });
 
-  const lastUpdatedAt = mapEvents[0]?.occurred_at ?? null;
+  const threatTabs = [
+    {
+      label: "Sectors",
+      active: threatView === "sectors",
+      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "sectors" }),
+    },
+    {
+      label: "Axes",
+      active: threatView === "axes",
+      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "axes" }),
+    },
+  ];
 
   return (
-    <div className="dashboard-v2-root min-h-screen bg-slate-950 text-slate-100 font-ui">
-      <Header theaterSubtitle={theater.mapSubtitle} lastUpdatedAt={lastUpdatedAt} />
+    <div className="dashboard-v2-root watchfloor-root flex-1 min-h-0 flex flex-col bg-[#05070A] text-zinc-100 font-ui">
+      <HeaderBar
+        theaterLabel={theater.label}
+        windowLabel={WINDOW_LABELS[timeRange]}
+        theaterOptions={theaterOptions}
+        windowOptions={windowOptions}
+        feedHref={`/app/feed?theater=${theater.id}`}
+        isAuthed={!!userId}
+      />
+      <SensorStrip data={sensorData} />
+      <KpiRail stats={stats} windowLabel={WINDOW_LABELS[timeRange]} fusionPct={fusionPct} medianTtvMinutes={medianTtv} deltas={kpiDeltas} />
 
-      <main className="p-6 max-w-[1800px] mx-auto">
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 h-[550px]">
-            <DashboardMapWrapper
+      <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
+        <div className="flex-1 min-w-0 min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
+          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+            <MapWrapper
               events={mapEvents}
-              center={theater.mapCenter}
-              zoom={theater.mapZoom}
+              center={mapCenter}
+              zoom={mapZoom}
+              visibleTypes={visibleTypes}
+              palette="watch"
             />
-          </div>
+            <MapLegend items={legendItems} />
+          </section>
 
-          <div className="col-span-12 lg:col-span-4 space-y-6">
-            <AtAGlance
-              totalEvents={stats.events}
-              strikeCount={stats.strikes}
-              verifiedPercentage={stats.verified_pct}
-              weeklyTrend={stats.vs_7d_avg_pct}
-              windowLabel={WINDOW_LABELS[timeRange]}
-            />
-            <IntensityChart data={intensity} />
-          </div>
-
-          <div className="col-span-12 lg:col-span-4">
-            <ActiveAlerts events={mapEvents} theaterId={theater.id} />
-          </div>
-
-          <div className="col-span-12 lg:col-span-4">
-            <TopSources sources={sources} />
-          </div>
-
-          <div className="col-span-12">
-            <DailyBriefing
-              briefing={briefing}
-              confidence={confidence}
-              theaterId={theater.id}
-              theaterLabel={theater.label}
-            />
-          </div>
+          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} eventCount={stats.events} className="flex-none min-w-0 md:col-span-5" />
+          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none min-w-0 max-h-[280px] md:max-h-none md:col-span-3" />
+          <SectorThreat sectors={sectors} intensity={intensity} windowLabel={WINDOW_LABELS[timeRange]} tabs={threatTabs} activeTab={threatView} threatAxes={threatAxes} className="flex-none min-w-0 md:col-span-2" />
         </div>
 
-        <FooterDisclaimer />
-      </main>
+        <TimeScrubber />
+      </TimelineProvider>
     </div>
   );
 }

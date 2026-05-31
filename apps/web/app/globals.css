@@ -92,20 +92,6 @@ body:has(.watchfloor-root) .demo-banner {
   margin: 0 !important;
 }
 
-/* ── Dashboard v2 (full-bleed, scrolls) ─────────────────────────────────── */
-/* Drop the global body padding + grain so the new dashboard layout sits
-   edge-to-edge on its own slate background, but keep natural document scroll
-   so the briefing + footer below the fold are reachable. */
-body:has(.dashboard-v2-root) {
-  padding: 0;
-}
-body:has(.dashboard-v2-root)::before {
-  content: none;
-}
-body:has(.dashboard-v2-root) .demo-banner {
-  margin: 0 !important;
-}
-
 /* ── Source Feed (full-bleed, scrolls) ──────────────────────────────────── */
 /* Drop the global body padding + grain so the feed sits edge-to-edge on the
    watchfloor's deep bg, and retint PostCard's themeable vars to match the
