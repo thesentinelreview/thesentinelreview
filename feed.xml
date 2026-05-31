@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 May 2026 04:12:26 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2026 10:22:20 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌍 Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? | Atlantic Council</title>
@@ -56,7 +56,7 @@
       <category>Intelligence</category>
       <source url="https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/">ASPI Strategist</source>
       <description>Australian official thought regarding the defence of Australia has been more independently minded than is portrayed by certain academics and commentators who, often not possessing a deep understanding of the history of Australian strategy, have ...</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌏 Hegseth praises Indo-Pacific nations for improving defense capabilities, pragmatism | Breaking Defense</title>
@@ -76,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/">Defense One</source>
       <description>&quot;I don&apos;t really care about platforms. I care about autonomous warfare,&quot; says the former leader of the Defense Autonomous Warfare Group.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 How Russia is turning Ukraine’s drones against NATO | Defense News</title>
@@ -96,7 +96,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-193">The War Zone</source>
       <description>That was our last can of Pringles... The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>0</sentinel:score>
     </item>
     <item>
       <title>🌍 Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) | The War Zone</title>
@@ -106,7 +106,7 @@
       <category>Middle East</category>
       <source url="https://www.twz.com/news-features/trump-declares-he-is-lifting-the-naval-blockade-on-iran">The War Zone</source>
       <description>Why the blockade would be lifted without a deal being signed isn&apos;t clear and Iranian media is pushing back against his claims. The post Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) appeared first on The War Zone.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏛️ Pentagon’s Plans To Track Aircraft From Orbit Accelerated With New $4B SpaceX Deal | The War Zone</title>
@@ -136,7 +136,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/israel-russia-sexual-violence-un-report-guterres/">Foreign Policy</source>
       <description>Both countries have refuted the allegations and accused the agency of bias.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 What Iran Stands to Gain From a Truce Deal With the United States | Foreign Policy</title>
@@ -166,7 +166,7 @@
       <category>Cyber</category>
       <source url="https://www.defenseone.com/policy/2026/05/cyber-force-service-branch-proposal/413863/">Defense One</source>
       <description>Ideas for a cyber service have been floated before. Some experts argue now is the right time.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🕵️ As Trade Talks Begin, U.S.-Mexico Ties Falter | Foreign Policy</title>
@@ -186,7 +186,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/29/maga-trump-vance-europe-populists-far-right-alliance-orban-magyar-hungary/">Foreign Policy</source>
       <description>Mellower European populists have killed some Republicans’ dreams of a far-right alliance.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>📍 The Dollar Was—and Remains—an Accident | Foreign Policy</title>
@@ -196,7 +196,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/29/us-dollar-history-money-currency-monetary-policy/">Foreign Policy</source>
       <description>As a new book shows, the dollar isn’t really the United States’ currency, but a 500-year-old relic.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🔐 Software patches from Army hackathon going straight to troops in CENTCOM | Defense One</title>
@@ -296,7 +296,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/">Atlantic Council</source>
       <description>The price of fertilizers, many of which are derived from natural gas, have increased due to the conflict in Iran, putting food security at risk. The US has tools to help ease the crisis. The post How the US can use its natural gas abundance to ease rising fertilizer prices…</description>
-      <sentinel:score>4</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🔐 Army sent jailbroken tech to Middle East as part of ongoing hackathon | Breaking Defense</title>
@@ -306,7 +306,7 @@
       <category>Cyber</category>
       <source url="https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/">Breaking Defense</source>
       <description>The hackathon now allows the Army to take new systems and work them into command and control structures to sync up with radars and sensors, all of which have previously never communicated with each other, according to Army Secretary Dan Driscoll.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
   </channel>
 </rss>
