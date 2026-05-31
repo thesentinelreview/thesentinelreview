@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 May 2026 10:22:20 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2026 17:13:24 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌍 Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? | Atlantic Council</title>
@@ -16,7 +16,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/">Atlantic Council</source>
       <description>The post Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ AUKUS partners sign agreement on underwater drones, speed up sub plan | Breaking Defense</title>
@@ -36,7 +36,7 @@
       <category>Intelligence</category>
       <source url="https://www.defensenews.com/news/your-military/2026/05/30/us-general-holds-rare-meeting-with-cuban-military-officials-near-guantanamo-bay/">Defense News</source>
       <description>The meeting is the first in recent memory by a head of U.S. Southern Command and comes amid growing concerns in Cuba of a possible U.S. military attack.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Timeline of Boat Strikes and Related Actions | Just Security</title>
@@ -56,7 +56,7 @@
       <category>Intelligence</category>
       <source url="https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/">ASPI Strategist</source>
       <description>Australian official thought regarding the defence of Australia has been more independently minded than is portrayed by certain academics and commentators who, often not possessing a deep understanding of the history of Australian strategy, have ...</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌏 Hegseth praises Indo-Pacific nations for improving defense capabilities, pragmatism | Breaking Defense</title>
@@ -66,7 +66,7 @@
       <category>Indo-Pacific</category>
       <source url="https://breakingdefense.com/2026/05/hegseth-praises-indo-pacific-nations-for-improving-defense-capabilities-pragmatism/">Breaking Defense</source>
       <description>Indo-Pacific countries investments in their defense an example of how burden sharing works, says Hegseth</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 Q&amp;A with SOUTHCOM commander Gen. Frank Donovan | Defense One</title>
@@ -76,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/">Defense One</source>
       <description>&quot;I don&apos;t really care about platforms. I care about autonomous warfare,&quot; says the former leader of the Defense Autonomous Warfare Group.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 How Russia is turning Ukraine’s drones against NATO | Defense News</title>
@@ -86,7 +86,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/29/how-russia-is-turning-ukraines-drones-against-nato/">Defense News</source>
       <description>A Russian drone wounded two civilians in Romania on Friday, days after Lithuania detailed how Moscow is also steering Ukraine&apos;s drones onto allied soil.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week | The War Zone</title>
@@ -96,7 +96,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-193">The War Zone</source>
       <description>That was our last can of Pringles... The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>0</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>🌍 Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) | The War Zone</title>
@@ -136,7 +136,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/israel-russia-sexual-violence-un-report-guterres/">Foreign Policy</source>
       <description>Both countries have refuted the allegations and accused the agency of bias.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌍 What Iran Stands to Gain From a Truce Deal With the United States | Foreign Policy</title>
@@ -146,7 +146,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/iran-economy-war-oil-assets-trump-united-states-israel/">Foreign Policy</source>
       <description>U.S. concessions could include the unfreezing of assets and unsanctioning of oil.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🌍 Signing is the easy part: Two former US negotiators on the perils of implementing a deal with Iran | Atlantic Council</title>
@@ -226,7 +226,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/your-military/2026/05/29/us-navy-to-explore-powering-shore-installations-with-aircraft-carriers/">Defense News</source>
       <description>Acting Navy Secretary Hung Cao revealed that Naval Station Norfolk will be “powered from an aircraft carrier&quot; sometime this summer.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 Russian Drone Impacts Apartment Building In NATO State Romania, Injuring Civilians | The War Zone</title>
@@ -246,7 +246,7 @@
       <category>Middle East</category>
       <source url="https://www.defenseone.com/threats/2026/05/data-brokers-troops-pentagon-lawmakers/413853/">Defense One</source>
       <description>Commercial location data has been used to &quot;target or surveil U.S. personnel in theater,” CENTCOM says.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏛️ Containerized Variant Of Navy’s Drone-Swatting HELIOS Laser Being Pushed By Congress | The War Zone</title>
@@ -296,7 +296,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/">Atlantic Council</source>
       <description>The price of fertilizers, many of which are derived from natural gas, have increased due to the conflict in Iran, putting food security at risk. The US has tools to help ease the crisis. The post How the US can use its natural gas abundance to ease rising fertilizer prices…</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🔐 Army sent jailbroken tech to Middle East as part of ongoing hackathon | Breaking Defense</title>
