@@ -31,7 +31,7 @@ export default function ExportButton({
     <button
       type="button"
       onClick={handleExport}
-      className="px-2 py-1 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data hover:bg-zinc-800 hover:text-zinc-100 cursor-pointer"
+      className="px-2 py-1 text-[10px] rounded-sm border border-gold/30 bg-navy-mid text-gold-pale tracking-wider uppercase font-data hover:bg-gold/10 hover:text-gold-bright cursor-pointer"
     >
       Export
     </button>

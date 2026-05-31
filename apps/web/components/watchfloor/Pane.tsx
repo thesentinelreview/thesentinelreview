@@ -13,33 +13,33 @@ export default function Pane({
   tag?: string;
   title: string;
   sub?: ReactNode;
-  accent?: "teal";
+  accent?: "gold";
   className?: string;
   children: ReactNode;
 }) {
   return (
     <section
-      className={`flex flex-col bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden min-h-0 ${className}`}
+      className={`flex flex-col bg-navy-mid/40 border border-gold/20 rounded-sm overflow-hidden min-h-0 ${className}`}
     >
-      <header className="px-3 py-2 border-b border-zinc-900 flex items-center justify-between flex-none">
+      <header className="px-3 py-2 border-b border-gold/15 flex items-center justify-between flex-none">
         <div className="flex items-center gap-2">
           {tag && (
             <span
               className={`text-[9px] font-data tracking-[0.22em] uppercase px-1.5 py-0.5 rounded-sm border ${
-                accent === "teal"
-                  ? "bg-teal-400/[0.06] border-teal-400/30 text-teal-300"
-                  : "bg-zinc-900 border-zinc-800 text-zinc-400"
+                accent === "gold"
+                  ? "bg-gold/[0.08] border-gold/40 text-gold-pale"
+                  : "bg-navy-mid border-gold/25 text-gold-pale"
               }`}
             >
               {tag}
             </span>
           )}
-          <h3 className="text-[12px] font-semibold tracking-[0.16em] uppercase text-zinc-200">
+          <h3 className="text-[12px] font-data font-semibold tracking-[0.22em] uppercase text-cream">
             {title}
           </h3>
         </div>
         {sub && (
-          <span className="text-[9px] font-data uppercase tracking-[0.18em] text-zinc-500">
+          <span className="text-[9px] font-data uppercase tracking-[0.18em] text-gold-pale/70">
             {sub}
           </span>
         )}

@@ -9,8 +9,8 @@ const STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
 
 type Pal = { strike: string; clash: string; movement: string };
 
-// "app" = the existing site palette (used by embeds); "watch" = the watchfloor
-// template palette (red / amber / cyan).
+// "app" = the existing site palette (used by partner embeds); "watch" = the
+// publication's intelligence-watch palette (red-alert / contact orange / signal cyan).
 const PALETTE: Record<"app" | "watch", { core: Pal; mid: Pal; dim: Pal }> = {
   app: {
     core: { strike: "#e63946", clash: "#f4a261", movement: "#5b9eff" },
@@ -18,9 +18,9 @@ const PALETTE: Record<"app" | "watch", { core: Pal; mid: Pal; dim: Pal }> = {
     dim: { strike: "rgba(230,57,70,0.18)", clash: "rgba(244,162,97,0.18)", movement: "rgba(91,158,255,0.18)" },
   },
   watch: {
-    core: { strike: "#ef4444", clash: "#f59e0b", movement: "#22d3ee" },
-    mid: { strike: "rgba(239,68,68,0.38)", clash: "rgba(245,158,11,0.38)", movement: "rgba(34,211,238,0.38)" },
-    dim: { strike: "rgba(239,68,68,0.18)", clash: "rgba(245,158,11,0.18)", movement: "rgba(34,211,238,0.18)" },
+    core: { strike: "#C0392B", clash: "#E65100", movement: "#4FB3BF" },
+    mid: { strike: "rgba(192,57,43,0.38)", clash: "rgba(230,81,0,0.38)", movement: "rgba(79,179,191,0.32)" },
+    dim: { strike: "rgba(192,57,43,0.18)", clash: "rgba(230,81,0,0.18)", movement: "rgba(79,179,191,0.15)" },
   },
 };
 
@@ -62,7 +62,7 @@ function confidenceLabel(c: string): string {
 }
 
 function confidenceColor(c: string): string {
-  return c === "verified" ? "#52b788" : "#989790";
+  return c === "verified" ? "#2E7D32" : "#9A9690";
 }
 
 function buildGeoJSON(events: MapEvent[]): GeoJSON.FeatureCollection {
@@ -103,7 +103,7 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
   const type = String(props.event_type ?? "");
   const conf = String(props.confidence ?? "");
   const id = escapeHtml(String(props.id ?? ""));
-  const color = core[type as keyof Pal] ?? "#e6e4dc";
+  const color = core[type as keyof Pal] ?? "#F5F0E8";
   const escapedType = escapeHtml(type);
   const location = escapeHtml(String(props.location_name ?? "").toUpperCase());
   const description = escapeHtml(String(props.description ?? ""));
@@ -111,24 +111,24 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
   const minutesAgo = Number(props.minutes_ago);
   return `
     <div style="
-      font-family: 'IBM Plex Mono', monospace;
+      font-family: 'Courier Prime', ui-monospace, monospace;
       width: 220px;
       padding: 10px 12px;
       font-size: 10px;
       line-height: 1.5;
     ">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-        <span style="color:#5d5c58;letter-spacing:.08em;text-transform:uppercase;">
+        <span style="color:#9A9690;letter-spacing:.08em;text-transform:uppercase;">
           ${escapedType.toUpperCase()} — ${location}
         </span>
       </div>
       <div style="color:${confidenceColor(conf)};letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">
         ${confidenceLabel(conf)}
       </div>
-      <div style="font-size:12px;line-height:1.45;color:#e6e4dc;margin-bottom:8px;">
+      <div style="font-size:12px;line-height:1.45;color:#F5F0E8;margin-bottom:8px;">
         ${description}
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;color:#989790;">
+      <div style="display:flex;justify-content:space-between;align-items:center;color:#D8D4CC;">
         <span>
           <span style="
             display:inline-block;
@@ -139,11 +139,11 @@ function popupHTML(props: Record<string, unknown>, core: Pal): string {
           ${sourceCount} source${sourceCount !== 1 ? "s" : ""} · ${fmtMins(minutesAgo)}
         </span>
         <a href="/event/${id}" style="
-          color:#e6e4dc;
+          color:#E8C97A;
           text-decoration:none;
           font-size:9px;
           letter-spacing:.08em;
-          border-bottom:1px solid #3a3d46;
+          border-bottom:1px solid rgba(184,136,42,0.45);
           pointer-events:auto;
         ">Details →</a>
       </div>
@@ -211,6 +211,30 @@ export default function MapView({
     );
 
     map.on("load", () => {
+      // Watch palette only: recolor the dominant CARTO dark-matter layers so the
+      // map reads navy/brand instead of near-black. Each setPaintProperty call
+      // is wrapped in try/catch because not every matched layer carries the
+      // property we're rewriting. Labels deferred — recoloring them per zoom
+      // risks legibility regressions.
+      if (palette === "watch") {
+        const recolors: Array<[RegExp, Record<string, string | number>]> = [
+          [/^background$/, { "background-color": "#070F1E" }],
+          [/water|ocean|sea|lake|river/i, { "fill-color": "#0D1F3C" }],
+          [/land|landcover|landuse|park|wood|forest/i, { "fill-color": "#0B1830", "fill-opacity": 0.85 }],
+          [/admin|boundar/i, { "line-color": "rgba(184,136,42,0.35)", "line-width": 0.6 }],
+          [/road|highway|street|motorway|trunk|primary|secondary|tertiary/i,
+            { "line-color": "rgba(216,212,204,0.18)", "line-width": 0.5 }],
+        ];
+        for (const layer of map.getStyle().layers ?? []) {
+          for (const [pattern, props] of recolors) {
+            if (!pattern.test(layer.id)) continue;
+            for (const [prop, val] of Object.entries(props)) {
+              try { map.setPaintProperty(layer.id, prop, val); } catch { /* layer lacks this prop */ }
+            }
+          }
+        }
+      }
+
       const pal = PALETTE[palette];
       const filteredOnLoad = visibleEvents(eventsRef.current, visibleTypesRef.current, cursorRef.current);
 
@@ -236,7 +260,7 @@ export default function MapView({
           id: "feba-line",
           type: "line",
           source: "feba",
-          paint: { "line-color": "#a1a1aa", "line-width": 1.4, "line-opacity": 0.7, "line-dasharray": [6, 4] },
+          paint: { "line-color": "#9A9690", "line-width": 1.4, "line-opacity": 0.7, "line-dasharray": [6, 4] },
         });
       }
 
@@ -253,13 +277,13 @@ export default function MapView({
           id: "aoi-fill",
           type: "fill",
           source: "aoi",
-          paint: { "fill-color": "#ef4444", "fill-opacity": 0.06 },
+          paint: { "fill-color": "#C0392B", "fill-opacity": 0.06 },
         });
         map.addLayer({
           id: "aoi-outline",
           type: "line",
           source: "aoi",
-          paint: { "line-color": "#ef4444", "line-width": 1, "line-opacity": 0.55, "line-dasharray": [3, 3] },
+          paint: { "line-color": "#C0392B", "line-width": 1, "line-opacity": 0.55, "line-dasharray": [3, 3] },
         });
       }
 
@@ -280,7 +304,7 @@ export default function MapView({
           type: "line",
           source: "range-rings",
           paint: {
-            "line-color": "#ef4444",
+            "line-color": "#C0392B",
             "line-width": 0.7,
             "line-opacity": ["match", ["get", "ring"], 0, 0.5, 1, 0.35, 2, 0.2, 0.3],
           },
@@ -294,7 +318,7 @@ export default function MapView({
         source: "events",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": palette === "watch" ? "#71717a" : "#e6e4dc",
+          "circle-color": palette === "watch" ? "#162B52" : "#e6e4dc",
           "circle-radius": ["step", ["get", "point_count"], 14, 5, 18, 10, 22],
           "circle-opacity": 0.85,
         },
@@ -310,7 +334,7 @@ export default function MapView({
           "text-field": "{point_count_abbreviated}",
           "text-size": 11,
         },
-        paint: { "text-color": palette === "watch" ? "#fafafa" : "#0c0d10" },
+        paint: { "text-color": palette === "watch" ? "#F5F0E8" : "#0c0d10" },
       });
 
       // Glow ring (outer) — static for non-strike pins (contacts + movements)

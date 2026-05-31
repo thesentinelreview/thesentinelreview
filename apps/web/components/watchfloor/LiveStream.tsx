@@ -12,9 +12,9 @@ export default function LiveStream({
   className?: string;
 }) {
   return (
-    <Pane tag="03" title="Live Event Stream" sub={<span className="text-emerald-400">● Live</span>} className={className}>
+    <Pane tag="03" title="Live Event Stream" sub={<span className="text-red-alert tracking-[0.18em]">● LIVE</span>} className={className}>
       {alerts.length === 0 ? (
-        <div className="px-3 py-6 text-center text-[11px] font-data uppercase tracking-[0.08em] text-zinc-600">
+        <div className="px-3 py-6 text-center text-[11px] font-data uppercase tracking-[0.08em] text-gray-mid/60">
           No active alerts
         </div>
       ) : (

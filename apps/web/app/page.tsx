@@ -34,7 +34,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Sentinel Review — Intelligence Map",
+  title: "Sentinel Review — Intelligence",
 };
 
 const ALL_TYPES: EventType[] = ["strike", "clash", "movement"];
@@ -43,9 +43,9 @@ const WINDOW_LABELS: Record<TimeRange, string> = { "24h": "24H", "7d": "7D", "30
 const WINDOW_MS: Record<TimeRange, number> = { "24h": 86_400_000, "7d": 604_800_000, "30d": 2_592_000_000 };
 
 const TYPE_META: { type: EventType; label: string; dot: string }[] = [
-  { type: "strike", label: "Strike", dot: "bg-red-500" },
-  { type: "clash", label: "Contact", dot: "bg-amber-500" },
-  { type: "movement", label: "Movement", dot: "bg-cyan-400" },
+  { type: "strike", label: "Strike", dot: "bg-red-alert" },
+  { type: "clash", label: "Contact", dot: "bg-contact" },
+  { type: "movement", label: "Movement", dot: "bg-signal-cyan" },
 ];
 
 // Build a URL preserving theater + window + visible types + threat view, overriding any.
@@ -150,7 +150,7 @@ export default async function WatchfloorPage({
   ];
 
   return (
-    <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-[#05070A] text-zinc-100 font-ui">
+    <div className="watchfloor-root relative flex-1 min-h-0 flex flex-col bg-navy-deep text-cream font-ui">
       <HeaderBar
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
@@ -165,7 +165,7 @@ export default async function WatchfloorPage({
       <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
         <div className="flex-1 min-w-0 min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
           {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
-          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-7 md:row-span-2 relative bg-navy-mid/40 border border-gold/20 rounded-sm overflow-hidden">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
