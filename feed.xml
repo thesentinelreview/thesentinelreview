@@ -6,8 +6,18 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2026 17:15:50 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2026 04:12:26 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/</guid>
+      <pubDate>Sun, 31 May 2026 01:52:59 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/">Atlantic Council</source>
+      <description>The post Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? appeared first on Atlantic Council.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
     <item>
       <title>🏛️ AUKUS partners sign agreement on underwater drones, speed up sub plan | Breaking Defense</title>
       <link>https://breakingdefense.com/2026/05/aukus-partners-sign-agreement-on-underwater-drones-speed-up-sub-plan/</link>
@@ -59,14 +69,14 @@
       <sentinel:score>8</sentinel:score>
     </item>
     <item>
-      <title>📍 Q&amp;A with Gen. Frank Donovan | Defense One</title>
+      <title>📍 Q&amp;A with SOUTHCOM commander Gen. Frank Donovan | Defense One</title>
       <link>https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/</link>
       <guid isPermaLink="true">https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/</guid>
       <pubDate>Fri, 29 May 2026 21:07:55 +0000</pubDate>
       <category>National Security</category>
       <source url="https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/">Defense One</source>
-      <description>&quot;I don&apos;t really care about platforms. I care about autonomous warfare, and are we really willing to take a step forward and embrace autonomous warfare,&quot; says the commander of SOUTHCOM.</description>
-      <sentinel:score>7</sentinel:score>
+      <description>&quot;I don&apos;t really care about platforms. I care about autonomous warfare,&quot; says the former leader of the Defense Autonomous Warfare Group.</description>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 How Russia is turning Ukraine’s drones against NATO | Defense News</title>
@@ -76,7 +86,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.defensenews.com/global/europe/2026/05/29/how-russia-is-turning-ukraines-drones-against-nato/">Defense News</source>
       <description>A Russian drone wounded two civilians in Romania on Friday, days after Lithuania detailed how Moscow is also steering Ukraine&apos;s drones onto allied soil.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week | The War Zone</title>
@@ -96,7 +106,7 @@
       <category>Middle East</category>
       <source url="https://www.twz.com/news-features/trump-declares-he-is-lifting-the-naval-blockade-on-iran">The War Zone</source>
       <description>Why the blockade would be lifted without a deal being signed isn&apos;t clear and Iranian media is pushing back against his claims. The post Trump Declares He Is Lifting The Naval Blockade On Iran (Updated) appeared first on The War Zone.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ Pentagon’s Plans To Track Aircraft From Orbit Accelerated With New $4B SpaceX Deal | The War Zone</title>
@@ -176,7 +186,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/29/maga-trump-vance-europe-populists-far-right-alliance-orban-magyar-hungary/">Foreign Policy</source>
       <description>Mellower European populists have killed some Republicans’ dreams of a far-right alliance.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>📍 The Dollar Was—and Remains—an Accident | Foreign Policy</title>
@@ -186,7 +196,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/29/us-dollar-history-money-currency-monetary-policy/">Foreign Policy</source>
       <description>As a new book shows, the dollar isn’t really the United States’ currency, but a 500-year-old relic.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>🔐 Software patches from Army hackathon going straight to troops in CENTCOM | Defense One</title>
@@ -266,7 +276,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/29/news-quiz-us-iran-strikes-russia-ukraine-war-congo-ceasefire/">Foreign Policy</source>
       <description>Test yourself on the week of May 23: The U.S. strikes Iran, European countries summon Russian diplomats, and the WHO calls for a cease-fire in Congo.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
@@ -286,7 +296,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/">Atlantic Council</source>
       <description>The price of fertilizers, many of which are derived from natural gas, have increased due to the conflict in Iran, putting food security at risk. The US has tools to help ease the crisis. The post How the US can use its natural gas abundance to ease rising fertilizer prices…</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🔐 Army sent jailbroken tech to Middle East as part of ongoing hackathon | Breaking Defense</title>
@@ -297,16 +307,6 @@
       <source url="https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/">Breaking Defense</source>
       <description>The hackathon now allows the Army to take new systems and work them into command and control structures to sync up with radars and sensors, all of which have previously never communicated with each other, according to Army Secretary Dan Driscoll.</description>
       <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Inspector O and the Washington Swamp Gas Machine | 38 North</title>
-      <link>https://www.38north.org/2026/05/inspector-o-and-the-washington-swamp-gas-machine/</link>
-      <guid isPermaLink="true">https://www.38north.org/2026/05/inspector-o-and-the-washington-swamp-gas-machine/</guid>
-      <pubDate>Fri, 29 May 2026 15:43:58 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.38north.org/2026/05/inspector-o-and-the-washington-swamp-gas-machine/">38 North</source>
-      <description>The bench at the Fontana dell’Acqua Paola overlooking Rome on a pleasant day might have ... The post Inspector O and the Washington Swamp Gas Machine appeared first on 38 North.</description>
-      <sentinel:score>0</sentinel:score>
     </item>
   </channel>
 </rss>
