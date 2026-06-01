@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Pane from "./Pane";
+import { Fragment } from "react";
+import { Crosshair } from "lucide-react";
 import SectorRow from "./SectorRow";
-import IntensityBars from "./IntensityBars";
 import ThreatAxes from "./ThreatAxes";
-import type { IntensityDay, Sector, ThreatAxes as ThreatAxesData } from "@/lib/types";
+import type { Sector, ThreatAxes as ThreatAxesData } from "@/lib/types";
 import type { ThreatView } from "@/lib/queries";
 
 export interface ThreatTab {
@@ -14,7 +14,6 @@ export interface ThreatTab {
 
 export default function SectorThreat({
   sectors,
-  intensity,
   windowLabel,
   className = "",
   tabs,
@@ -22,7 +21,6 @@ export default function SectorThreat({
   threatAxes,
 }: {
   sectors: Sector[];
-  intensity: IntensityDay[];
   windowLabel: string;
   className?: string;
   tabs: ThreatTab[];
@@ -30,57 +28,71 @@ export default function SectorThreat({
   threatAxes: ThreatAxesData;
 }) {
   const isAxes = activeTab === "axes";
+  const titleText = isAxes ? "Threat Axes" : "Sector Threat";
 
   return (
-    <Pane
-      tag="04"
-      title={isAxes ? "Threat Axes" : "Sector Threat"}
-      sub={isAxes ? `${windowLabel} window` : `${windowLabel} trend`}
-      className={className}
+    <div
+      className={`bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl ${className}`}
     >
-      {/* SECTORS | AXES toggle — server-driven Links (replace, so the back button
-          isn't polluted), styled like the header's segmented controls. */}
-      <div className="px-3 pt-2.5 pb-0.5 flex-none">
-        <div className="inline-flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-          {tabs.map((t, i) => (
-            <Link
-              key={t.label}
-              href={t.href}
-              replace
-              aria-current={t.active ? "page" : undefined}
-              className={`px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase transition-colors ${
-                i > 0 ? "border-l border-zinc-800" : ""
-              } ${
-                t.active
-                  ? "bg-teal-400/[0.1] text-teal-300"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
-            >
-              {t.label}
-            </Link>
-          ))}
+      <div className="flex items-start justify-between gap-3 mb-6">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20">
+              <Crosshair className="w-4 h-4 text-red-400" />
+            </div>
+            <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{titleText}</h2>
+          </div>
+          {/* The Make design renders "SECTORS • AXES" as static decorative text,
+              but the live panel has a working toggle — preserve that here as
+              styled Links so a bookmarked URL with ?threat=axes still works. */}
+          <nav aria-label="Threat view" className="flex items-center gap-2 text-xs ml-8">
+            {tabs.map((tab, i) => {
+              const isSectorsTab = i === 0;
+              const activeColor = isSectorsTab ? "text-emerald-400" : "text-cyan-400";
+              return (
+                <Fragment key={tab.label}>
+                  {i > 0 && <span className="text-slate-600">•</span>}
+                  <Link
+                    href={tab.href}
+                    replace
+                    aria-current={tab.active ? "page" : undefined}
+                    className={`font-semibold uppercase tracking-wider transition-colors ${
+                      tab.active ? activeColor : "text-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    {tab.label}
+                  </Link>
+                </Fragment>
+              );
+            })}
+          </nav>
+        </div>
+        <div className="px-3 py-1.5 bg-slate-800/50 border border-slate-700 rounded-lg flex-none">
+          <span className="text-xs text-slate-400 font-mono font-semibold">{windowLabel} WINDOW</span>
         </div>
       </div>
 
       {isAxes ? (
         <ThreatAxes data={threatAxes} />
-      ) : (
-        <div>
-          {sectors.length > 0 ? (
-            sectors.map((s) => <SectorRow key={s.name} {...s} />)
-          ) : (
-            <div className="px-3 py-4 text-[10px] font-data uppercase tracking-[0.08em] text-zinc-600">
-              No sector data available
-            </div>
-          )}
-          <div className="px-3 py-2.5 border-t border-zinc-900">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-500 font-data">Intensity 7d</span>
-            </div>
-            <IntensityBars data={intensity} />
+      ) : sectors.length > 0 ? (
+        <>
+          <div className="space-y-4">
+            {sectors.map((s) => (
+              <SectorRow key={s.name} {...s} />
+            ))}
           </div>
+          <div className="mt-6 pt-5 border-t border-slate-800">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-500">Active sectors in window</span>
+              <span className="text-slate-400 font-bold">{sectors.length} sectors</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="text-xs text-slate-500 uppercase tracking-wider">
+          No sector data in window
         </div>
       )}
-    </Pane>
+    </div>
   );
 }

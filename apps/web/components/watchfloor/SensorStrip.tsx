@@ -1,3 +1,4 @@
+import { Circle } from "lucide-react";
 import type { SensorStripData } from "@/lib/types";
 import { PILL_WINDOW_MINUTES } from "@/lib/types";
 
@@ -5,11 +6,11 @@ const WINDOW_LABEL =
   PILL_WINDOW_MINUTES % 60 === 0 ? `${PILL_WINDOW_MINUTES / 60}h` : `${PILL_WINDOW_MINUTES}m`;
 
 const PLATFORMS: { key: keyof SensorStripData["platforms"]; label: string }[] = [
-  { key: "tg",    label: "TG" },
-  { key: "x",     label: "X" },
-  { key: "rss",   label: "RSS" },
+  { key: "tg", label: "TG" },
+  { key: "x", label: "X" },
+  { key: "rss", label: "RSS" },
   { key: "gdelt", label: "GDELT" },
-  { key: "bsky",  label: "BSKY" },
+  { key: "bsky", label: "BSKY" },
 ];
 
 function formatLat(seconds: number | null): string {
@@ -20,30 +21,58 @@ function formatLat(seconds: number | null): string {
 
 export default function SensorStrip({ data }: { data: SensorStripData }) {
   return (
-    <div className="overflow-x-auto border-y border-amber-500/20 bg-amber-500/[0.04]">
-      <div className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-data min-w-max">
-        {PLATFORMS.map(({ key, label }) => {
-          const count = data.platforms[key];
-          const active = count >= 1;
-          return (
-            <span
-              key={key}
-              title={`${label}: ${count} posts in last ${WINDOW_LABEL}`}
-              className={`px-1.5 py-0.5 rounded-sm border tracking-[0.16em] ${
-                active
-                  ? "border-teal-400/30 text-teal-300 bg-teal-400/[0.04]"
-                  : "border-zinc-800 text-zinc-600"
-              }`}
-            >
-              {active ? "●" : "○"} {label}
+    <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-amber-500/10 flex-none">
+      <div className="px-6 py-2">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-1 min-w-0">
+            <span className="text-xs font-bold text-amber-500/80 uppercase tracking-widest mr-3 flex-none">
+              Watch Tier
             </span>
-          );
-        })}
-        <span className="ml-2 text-zinc-500" title="LAT — age of the most recent post for this theater (freshest, not median)">
-          LAT <span className="text-teal-300">{formatLat(data.latency_seconds)}</span>
-        </span>
-        <span className="text-zinc-700">|</span>
-        <span className="text-zinc-500">{data.tracks} TRK</span>
+            <div className="flex items-center gap-3 flex-wrap">
+              {PLATFORMS.map(({ key, label }) => {
+                const count = data.platforms[key];
+                const active = count >= 1;
+                return (
+                  <div
+                    key={key}
+                    title={`${label}: ${count} posts in last ${WINDOW_LABEL}`}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/40 border border-slate-700/50 rounded hover:border-slate-600 transition-colors"
+                  >
+                    <Circle
+                      className={`w-2 h-2 ${
+                        active ? "text-emerald-400 fill-emerald-400" : "text-slate-600"
+                      }`}
+                    />
+                    <span
+                      className={`text-xs font-semibold uppercase tracking-wider ${
+                        active ? "text-slate-300" : "text-slate-500"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-xs">
+            <div
+              title="LAT — age of the most recent post for this theater (freshest, not median)"
+              className="flex items-center gap-2 px-3 py-1 bg-slate-800/40 border border-slate-700/50 rounded"
+            >
+              <span className="text-slate-500 font-semibold uppercase tracking-wider">LAT</span>
+              <span className="text-cyan-400 font-mono font-bold">{formatLat(data.latency_seconds)}</span>
+            </div>
+            <div
+              title="Distinct actor tracks observed in the last 24h"
+              className="flex items-center gap-2 px-3 py-1 bg-slate-800/40 border border-slate-700/50 rounded"
+            >
+              <span className="text-amber-400 font-mono font-bold">{data.tracks}</span>
+              <span className="text-slate-500 font-semibold uppercase tracking-wider">TRK</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
