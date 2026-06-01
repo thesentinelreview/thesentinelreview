@@ -178,8 +178,10 @@ export default async function WatchfloorPage({
 
       <main className="flex-1 min-h-0 overflow-y-auto p-6">
         <div className="grid grid-cols-12 gap-6">
-          {/* Map — full-width top, fixed 550px height */}
-          <div className="col-span-12 h-[550px] relative rounded-lg overflow-hidden border border-slate-700">
+          {/* Top row: Map (left half) + Active Alerts / Sector Threat stacked (right half).
+              Right column lg-height tracks the map; each panel scrolls internally so the
+              row stays balanced instead of running well past the map. */}
+          <div className="col-span-12 lg:col-span-6 h-[600px] relative rounded-lg overflow-hidden border border-slate-700">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
@@ -189,33 +191,35 @@ export default async function WatchfloorPage({
             />
             <MapLegend items={legendItems} />
           </div>
+          <div className="col-span-12 lg:col-span-6 flex flex-col gap-6 lg:h-[600px]">
+            <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+              <LiveStream events={mapEvents} theaterId={theater.id} />
+            </div>
+            <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+              <SectorThreat
+                sectors={sectors}
+                windowLabel={WINDOW_LABELS[timeRange]}
+                tabs={threatTabs}
+                activeTab={threatView}
+                threatAxes={threatAxes}
+              />
+            </div>
+          </div>
 
-          {/* Left column: At a Glance + Intensity */}
-          <div className="col-span-12 lg:col-span-4 space-y-6">
+          {/* Second row: At a Glance + Activity Intensity + Top Sources */}
+          <div className="col-span-12 lg:col-span-4">
             <KpiRail
               windowLabel={WINDOW_LABELS[timeRange]}
               deltas={kpiDeltas}
               fusionPct={fusionPct}
               medianTtvMinutes={medianTtv}
             />
+          </div>
+          <div className="col-span-12 lg:col-span-4">
             <IntensityBars data={intensity} />
           </div>
-
-          {/* Middle column: Active Alerts */}
           <div className="col-span-12 lg:col-span-4">
-            <LiveStream events={mapEvents} theaterId={theater.id} />
-          </div>
-
-          {/* Right column: Top Sources + Sector Threat */}
-          <div className="col-span-12 lg:col-span-4 space-y-6">
             <TopSources sources={sources} />
-            <SectorThreat
-              sectors={sectors}
-              windowLabel={WINDOW_LABELS[timeRange]}
-              tabs={threatTabs}
-              activeTab={threatView}
-              threatAxes={threatAxes}
-            />
           </div>
 
           {/* Briefing — full-width below */}
