@@ -84,16 +84,19 @@ export default function HeaderBar({
             </div>
           </div>
 
-          {/* Right cluster — live pill, controls, auth */}
+          {/* Right cluster — page links, controls, auth */}
           <div className="flex items-center gap-3 flex-wrap justify-end">
-            <div className="hidden lg:flex items-center gap-4 px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs text-slate-400">Live</span>
-              </div>
-              <div className="w-px h-4 bg-slate-700" />
-              <span className="text-xs text-slate-300">{windowLabel} window</span>
-            </div>
+            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
+              <MapPin className="w-4 h-4" />
+              Sentinel View
+            </span>
+            <Link
+              href={feedHref}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+            >
+              <Radio className="w-4 h-4" />
+              Source Feed
+            </Link>
 
             <div className="flex items-center gap-2">
               <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Theater</span>
@@ -136,17 +139,6 @@ export default function HeaderBar({
         </div>
 
         <nav className="flex items-center gap-2 mt-4 border-t border-slate-800 pt-3 flex-wrap">
-          <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
-            <MapPin className="w-4 h-4" />
-            Dashboard
-          </span>
-          <Link
-            href={feedHref}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
-          >
-            <Radio className="w-4 h-4" />
-            Source Feed
-          </Link>
           <Link
             href="/sources"
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
