@@ -81,9 +81,6 @@ export default function HeaderBar({
                   Beta
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mt-0.5">
-                Open-Source Intelligence • {theaterLabel} • Live Feed
-              </p>
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Activity, Target, ShieldCheck, Zap, Clock, Layers } from "lucide-react";
 import type { KpiDeltas } from "@/lib/queries";
 
@@ -17,6 +18,34 @@ function signedNum(n: number): string {
   return `${n >= 0 ? "+" : "−"}${Math.abs(n)}`;
 }
 
+function MetricCell({
+  label,
+  value,
+  valueColor = "text-slate-100",
+  deltaText,
+  deltaColor = "text-slate-500",
+}: {
+  label: string;
+  value: ReactNode;
+  valueColor?: string;
+  deltaText?: string;
+  deltaColor?: string;
+}) {
+  return (
+    <div className="px-3 py-1 bg-slate-800/40 border border-slate-700/50 rounded">
+      <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold leading-tight">
+        {label}
+      </div>
+      <div className="flex items-baseline gap-2 mt-0.5">
+        <div className={`text-base font-bold ${valueColor} leading-tight`}>{value}</div>
+        {deltaText && (
+          <div className={`text-[10px] font-mono ${deltaColor} leading-tight`}>{deltaText}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function KpiRail({
   windowLabel,
   fusionPct,
@@ -28,7 +57,6 @@ export default function KpiRail({
   medianTtvMinutes: number | null;
   deltas: KpiDeltas;
 }) {
-  // All deltas compare the current window to the equal-length window before it.
   const eventsDeltaPct =
     deltas.eventsPrev > 0
       ? Math.round(((deltas.events - deltas.eventsPrev) / deltas.eventsPrev) * 100)
@@ -46,127 +74,90 @@ export default function KpiRail({
   const sectorsDeltaColor = sectorsDelta >= 0 ? "text-red-400" : "text-emerald-400";
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-          <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
-            <Activity className="w-4 h-4 text-blue-400" />
-          </div>
-          At a Glance
-        </h2>
-        <span className="text-xs text-slate-500 font-mono">Past {windowLabel}</span>
-      </div>
+    <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex-none">
+      <div className="px-6 py-2">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap min-w-0">
+            <div className="flex items-center gap-2 mr-2 flex-none">
+              <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                <Activity className="w-4 h-4 text-blue-400" />
+              </div>
+              <span className="text-xs font-bold text-slate-100 uppercase tracking-widest">
+                At a Glance
+              </span>
+            </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
-        {/* Events */}
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 hover:border-slate-600 transition-colors">
-          <p className="text-xs text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-            {windowLabel} Events
-          </p>
-          <p className="text-3xl font-bold text-slate-100">{deltas.events}</p>
-          <div className="mt-2 flex items-center gap-1">
-            <Zap className="w-3 h-3 text-blue-400" />
-            <span className={`text-[10px] uppercase tracking-wider ${eventsDeltaColor}`}>
-              {eventsDeltaPct === null
-                ? deltas.events > 0
-                  ? "New"
-                  : "No Change"
-                : `${signedPct(eventsDeltaPct)} vs prev`}
-            </span>
-          </div>
-        </div>
-
-        {/* Strikes */}
-        <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30 rounded-lg p-4 hover:border-red-500/50 transition-colors">
-          <p className="text-xs text-red-400/80 uppercase tracking-wider mb-2 font-semibold">
-            Strikes
-          </p>
-          <p className="text-3xl font-bold text-red-400 flex items-center gap-2">
-            <Target className="w-6 h-6" />
-            {deltas.strikes}
-          </p>
-          <div className="mt-2 flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-red-400" />
-            <span className={`text-[10px] uppercase tracking-wider ${strikesDeltaColor}`}>
-              {signedNum(strikesDelta)} vs prev
-            </span>
-          </div>
-        </div>
-
-        {/* Verified */}
-        <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-lg p-4 hover:border-emerald-500/50 transition-colors">
-          <p className="text-xs text-emerald-400/80 uppercase tracking-wider mb-2 font-semibold">
-            Verified
-          </p>
-          <p className="text-3xl font-bold text-emerald-400 flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6" />
-            {deltas.verifiedPct}%
-          </p>
-          <div className="mt-2 flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span className={`text-[10px] uppercase tracking-wider ${verifiedDeltaColor}`}>
-              {`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
-            </span>
-          </div>
-        </div>
-
-        {/* Fusion */}
-        <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30 rounded-lg p-4 hover:border-blue-500/50 transition-colors">
-          <p className="text-xs text-blue-400/80 uppercase tracking-wider mb-2 font-semibold">
-            Fusion
-          </p>
-          <p className="text-3xl font-bold text-blue-400 flex items-center gap-2">
-            <Zap className="w-6 h-6" />
-            {fusionPct == null ? "—" : `${fusionPct}%`}
-          </p>
-          <div className="mt-2 flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-blue-400" />
-            <span className="text-[10px] text-blue-400/60 uppercase tracking-wider">
-              Multi-Source
-            </span>
-          </div>
-        </div>
-
-        {/* Median TTV */}
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 hover:border-slate-600 transition-colors">
-          <p className="text-xs text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-            Median TTV
-          </p>
-          <p className="text-3xl font-bold text-slate-100 flex items-center gap-2">
-            <Clock className="w-6 h-6 text-slate-400" />
-            {formatTtv(medianTtvMinutes)}
-          </p>
-          <div className="mt-2 flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-slate-400" />
-            <span className="text-[10px] text-slate-500 uppercase tracking-wider">
-              Time to Verify
-            </span>
-          </div>
-        </div>
-
-        {/* Active Sectors */}
-        <div
-          className={`bg-slate-800/50 border ${
-            sectorsDelta >= 0 ? "border-red-500/30" : "border-emerald-500/30"
-          } rounded-lg p-4 hover:border-opacity-50 transition-colors`}
-        >
-          <p className="text-xs text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-            Active Sectors
-          </p>
-          <p className="text-3xl font-bold text-slate-100 flex items-center gap-2">
-            <Layers className="w-6 h-6 text-slate-400" />
-            {deltas.activeSectors}
-          </p>
-          <div className="mt-2 flex items-center gap-1">
-            <div
-              className={`w-2 h-2 rounded-full ${
-                sectorsDelta >= 0 ? "bg-red-400" : "bg-emerald-400"
-              }`}
+            <MetricCell
+              label={`${windowLabel} Events`}
+              value={deltas.events}
+              deltaText={
+                eventsDeltaPct === null
+                  ? deltas.events > 0
+                    ? "NEW"
+                    : "—"
+                  : signedPct(eventsDeltaPct)
+              }
+              deltaColor={eventsDeltaColor}
             />
-            <span className={`text-[10px] uppercase tracking-wider ${sectorsDeltaColor}`}>
-              {signedNum(sectorsDelta)} vs prev
-            </span>
+            <MetricCell
+              label="Strikes"
+              value={
+                <>
+                  <Target className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                  {deltas.strikes}
+                </>
+              }
+              valueColor="text-red-400"
+              deltaText={signedNum(strikesDelta)}
+              deltaColor={strikesDeltaColor}
+            />
+            <MetricCell
+              label="Verified"
+              value={
+                <>
+                  <ShieldCheck className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                  {deltas.verifiedPct}%
+                </>
+              }
+              valueColor="text-emerald-400"
+              deltaText={`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
+              deltaColor={verifiedDeltaColor}
+            />
+            <MetricCell
+              label="Fusion"
+              value={
+                <>
+                  <Zap className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                  {fusionPct == null ? "—" : `${fusionPct}%`}
+                </>
+              }
+              valueColor="text-blue-400"
+            />
+            <MetricCell
+              label="Median TTV"
+              value={
+                <>
+                  <Clock className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                  {formatTtv(medianTtvMinutes)}
+                </>
+              }
+            />
+            <MetricCell
+              label="Active Sectors"
+              value={
+                <>
+                  <Layers className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                  {deltas.activeSectors}
+                </>
+              }
+              deltaText={signedNum(sectorsDelta)}
+              deltaColor={sectorsDeltaColor}
+            />
           </div>
+
+          <span className="text-xs text-slate-500 font-mono uppercase tracking-wider flex-none">
+            Past {windowLabel}
+          </span>
         </div>
       </div>
     </div>

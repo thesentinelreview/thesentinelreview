@@ -174,6 +174,12 @@ export default async function WatchfloorPage({
         feedHref={`/app/feed?theater=${theater.id}`}
         isAuthed={!!userId}
       />
+      <KpiRail
+        windowLabel={WINDOW_LABELS[timeRange]}
+        deltas={kpiDeltas}
+        fusionPct={fusionPct}
+        medianTtvMinutes={medianTtv}
+      />
       <SensorStrip data={sensorData} />
 
       <main className="flex-1 min-h-0 overflow-y-auto p-6">
@@ -206,19 +212,12 @@ export default async function WatchfloorPage({
             </div>
           </div>
 
-          {/* Second row: At a Glance + Activity Intensity + Top Sources */}
-          <div className="col-span-12 lg:col-span-4">
-            <KpiRail
-              windowLabel={WINDOW_LABELS[timeRange]}
-              deltas={kpiDeltas}
-              fusionPct={fusionPct}
-              medianTtvMinutes={medianTtv}
-            />
-          </div>
-          <div className="col-span-12 lg:col-span-4">
+          {/* Second row: Activity Intensity + Top Sources (At a Glance is now the
+              top-of-page strip above the SensorStrip) */}
+          <div className="col-span-12 lg:col-span-6">
             <IntensityBars data={intensity} />
           </div>
-          <div className="col-span-12 lg:col-span-4">
+          <div className="col-span-12 lg:col-span-6">
             <TopSources sources={sources} />
           </div>
 
