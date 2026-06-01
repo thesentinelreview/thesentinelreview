@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Activity, Target, ShieldCheck, Zap, Clock, Layers } from "lucide-react";
+import { Target, ShieldCheck, Zap, Clock, Layers } from "lucide-react";
 import type { KpiDeltas } from "@/lib/queries";
 
 function formatTtv(minutes: number | null): string {
@@ -78,15 +78,6 @@ export default function KpiRail({
       <div className="px-6 py-2">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap min-w-0">
-            <div className="flex items-center gap-2 mr-2 flex-none">
-              <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                <Activity className="w-4 h-4 text-blue-400" />
-              </div>
-              <span className="text-xs font-bold text-slate-100 uppercase tracking-widest">
-                At a Glance
-              </span>
-            </div>
-
             <MetricCell
               label={`${windowLabel} Events`}
               value={deltas.events}

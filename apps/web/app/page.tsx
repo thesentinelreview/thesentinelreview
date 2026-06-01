@@ -180,7 +180,6 @@ export default async function WatchfloorPage({
         fusionPct={fusionPct}
         medianTtvMinutes={medianTtv}
       />
-      <SensorStrip data={sensorData} />
 
       <main className="flex-1 min-h-0 overflow-y-auto p-6">
         <div className="grid grid-cols-12 gap-6">
@@ -212,8 +211,12 @@ export default async function WatchfloorPage({
             </div>
           </div>
 
-          {/* Second row: Activity Intensity + Top Sources (At a Glance is now the
-              top-of-page strip above the SensorStrip) */}
+          {/* WATCH TIER sits beneath the map row as a full-width sensor band. */}
+          <div className="col-span-12 -mx-6">
+            <SensorStrip data={sensorData} />
+          </div>
+
+          {/* Second row: Activity Intensity + Top Sources */}
           <div className="col-span-12 lg:col-span-6">
             <IntensityBars data={intensity} />
           </div>

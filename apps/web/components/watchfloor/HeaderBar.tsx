@@ -76,7 +76,7 @@ export default function HeaderBar({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold text-white tracking-tight">SENTINEL REVIEW</h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">SENTINEL INTELLIGENCE</h1>
                 <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-[10px] font-semibold text-red-400 uppercase tracking-wider">
                   Beta
                 </span>
