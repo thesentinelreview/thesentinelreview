@@ -6,8 +6,28 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 May 2026 17:13:24 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jun 2026 04:26:34 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌏 China’s expanding frontiers: views in The Strategist | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/chinas-expanding-frontiers-views-in-the-strategist/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/chinas-expanding-frontiers-views-in-the-strategist/</guid>
+      <pubDate>Sun, 31 May 2026 20:00:07 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.aspistrategist.org.au/chinas-expanding-frontiers-views-in-the-strategist/">ASPI Strategist</source>
+      <description>China appears to be playing the long game in pursuit of its interests in the Indo-Pacific. In this series of Strategist articles, Joe Keary, Raji Rajagopalan and Linus Cohen discuss how China is pursuing its regional ...</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Japan’s defense minister rebuffs ‘militarism’ allegation, defends defense policies | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/05/japans-defense-minister-rebuffs-new-militarism-allegation-defends-defense-policies/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/05/japans-defense-minister-rebuffs-new-militarism-allegation-defends-defense-policies/</guid>
+      <pubDate>Sun, 31 May 2026 18:31:13 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://breakingdefense.com/2026/05/japans-defense-minister-rebuffs-new-militarism-allegation-defends-defense-policies/">Breaking Defense</source>
+      <description>Shinjiro Koizumi says arms sales, more visible regional military presence aims to help partners defend themselves</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
     <item>
       <title>🌍 Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? | Atlantic Council</title>
       <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/</link>
@@ -16,7 +36,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-the-jerusalem-strategic-tribune-what-do-the-gulf-states-really-want/">Atlantic Council</source>
       <description>The post Charai for The Jerusalem Strategic Tribune: What Do the Gulf States Really Want? appeared first on Atlantic Council.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ AUKUS partners sign agreement on underwater drones, speed up sub plan | Breaking Defense</title>
@@ -36,7 +56,7 @@
       <category>Intelligence</category>
       <source url="https://www.defensenews.com/news/your-military/2026/05/30/us-general-holds-rare-meeting-with-cuban-military-officials-near-guantanamo-bay/">Defense News</source>
       <description>The meeting is the first in recent memory by a head of U.S. Southern Command and comes amid growing concerns in Cuba of a possible U.S. military attack.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 Timeline of Boat Strikes and Related Actions | Just Security</title>
@@ -56,7 +76,7 @@
       <category>Intelligence</category>
       <source url="https://www.aspistrategist.org.au/nds-2026-the-right-strategy-for-the-wrong-era/">ASPI Strategist</source>
       <description>Australian official thought regarding the defence of Australia has been more independently minded than is portrayed by certain academics and commentators who, often not possessing a deep understanding of the history of Australian strategy, have ...</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌏 Hegseth praises Indo-Pacific nations for improving defense capabilities, pragmatism | Breaking Defense</title>
@@ -76,7 +96,7 @@
       <category>National Security</category>
       <source url="https://www.defenseone.com/technology/2026/05/q-gen-frank-donovan/413870/">Defense One</source>
       <description>&quot;I don&apos;t really care about platforms. I care about autonomous warfare,&quot; says the former leader of the Defense Autonomous Warfare Group.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 How Russia is turning Ukraine’s drones against NATO | Defense News</title>
@@ -136,7 +156,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/israel-russia-sexual-violence-un-report-guterres/">Foreign Policy</source>
       <description>Both countries have refuted the allegations and accused the agency of bias.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 What Iran Stands to Gain From a Truce Deal With the United States | Foreign Policy</title>
@@ -146,7 +166,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/05/29/iran-economy-war-oil-assets-trump-united-states-israel/">Foreign Policy</source>
       <description>U.S. concessions could include the unfreezing of assets and unsanctioning of oil.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 Signing is the easy part: Two former US negotiators on the perils of implementing a deal with Iran | Atlantic Council</title>
@@ -196,7 +216,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/05/29/us-dollar-history-money-currency-monetary-policy/">Foreign Policy</source>
       <description>As a new book shows, the dollar isn’t really the United States’ currency, but a 500-year-old relic.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>🔐 Software patches from Army hackathon going straight to troops in CENTCOM | Defense One</title>
@@ -226,7 +246,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/your-military/2026/05/29/us-navy-to-explore-powering-shore-installations-with-aircraft-carriers/">Defense News</source>
       <description>Acting Navy Secretary Hung Cao revealed that Naval Station Norfolk will be “powered from an aircraft carrier&quot; sometime this summer.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 Russian Drone Impacts Apartment Building In NATO State Romania, Injuring Civilians | The War Zone</title>
@@ -246,7 +266,7 @@
       <category>Middle East</category>
       <source url="https://www.defenseone.com/threats/2026/05/data-brokers-troops-pentagon-lawmakers/413853/">Defense One</source>
       <description>Commercial location data has been used to &quot;target or surveil U.S. personnel in theater,” CENTCOM says.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ Containerized Variant Of Navy’s Drone-Swatting HELIOS Laser Being Pushed By Congress | The War Zone</title>
@@ -276,7 +296,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/05/29/news-quiz-us-iran-strikes-russia-ukraine-war-congo-ceasefire/">Foreign Policy</source>
       <description>Test yourself on the week of May 23: The U.S. strikes Iran, European countries summon Russian diplomats, and the WHO calls for a cease-fire in Congo.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
@@ -287,26 +307,6 @@
       <source url="https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration">Just Security</source>
       <description>A public resource tracking all the legal challenges to the Trump administration&apos;s executive orders and actions. The post Litigation Tracker: Legal Challenges to Trump Administration Actions appeared first on Just Security.</description>
       <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 How the US can use its natural gas abundance to ease rising fertilizer prices | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/</guid>
-      <pubDate>Fri, 29 May 2026 15:54:14 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.atlanticcouncil.org/blogs/energysource/how-the-us-can-use-its-natural-gas-abundance-to-ease-rising-fertilizer-prices/">Atlantic Council</source>
-      <description>The price of fertilizers, many of which are derived from natural gas, have increased due to the conflict in Iran, putting food security at risk. The US has tools to help ease the crisis. The post How the US can use its natural gas abundance to ease rising fertilizer prices…</description>
-      <sentinel:score>4</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 Army sent jailbroken tech to Middle East as part of ongoing hackathon | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/</guid>
-      <pubDate>Fri, 29 May 2026 15:47:00 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://breakingdefense.com/2026/05/army-sent-jailbroken-tech-to-middle-east-as-part-of-ongoing-hackathon/">Breaking Defense</source>
-      <description>The hackathon now allows the Army to take new systems and work them into command and control structures to sync up with radars and sensors, all of which have previously never communicated with each other, according to Army Secretary Dan Driscoll.</description>
-      <sentinel:score>7</sentinel:score>
     </item>
   </channel>
 </rss>
