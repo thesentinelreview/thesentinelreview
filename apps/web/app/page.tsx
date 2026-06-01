@@ -183,8 +183,11 @@ export default async function WatchfloorPage({
 
       <main className="flex-1 min-h-0 overflow-y-auto p-6">
         <div className="grid grid-cols-12 gap-6">
-          {/* Map — full-width top */}
-          <div className="col-span-12 h-[600px] relative rounded-lg overflow-hidden border border-slate-700">
+          {/* Top row: Map (left half) + right cluster (Brief on top, Active Alerts +
+              Sector Threat side by side underneath). Right column is height-capped
+              to track the map; each panel scrolls internally so long content stays
+              contained. */}
+          <div className="col-span-12 lg:col-span-6 h-[720px] relative rounded-lg overflow-hidden border border-slate-700">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
@@ -194,36 +197,36 @@ export default async function WatchfloorPage({
             />
             <MapLegend items={legendItems} />
           </div>
+          <div className="col-span-12 lg:col-span-6 flex flex-col gap-6 lg:h-[720px]">
+            <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+              <BriefPane
+                briefing={briefing}
+                events={mapEvents}
+                theaterId={theater.id}
+                theaterLabel={theater.label}
+                windowLabel={WINDOW_LABELS[timeRange]}
+                eventCount={stats.events}
+              />
+            </div>
+            <div className="lg:flex-1 lg:min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="lg:min-h-0 lg:overflow-y-auto">
+                <LiveStream events={mapEvents} theaterId={theater.id} />
+              </div>
+              <div className="lg:min-h-0 lg:overflow-y-auto">
+                <SectorThreat
+                  sectors={sectors}
+                  windowLabel={WINDOW_LABELS[timeRange]}
+                  tabs={threatTabs}
+                  activeTab={threatView}
+                  threatAxes={threatAxes}
+                />
+              </div>
+            </div>
+          </div>
 
-          {/* WATCH TIER sits beneath the map as a full-width sensor band. */}
+          {/* WATCH TIER sits beneath the top row as a full-width sensor band. */}
           <div className="col-span-12 -mx-6">
             <SensorStrip data={sensorData} />
-          </div>
-
-          {/* Daily Intel Brief — featured full-width above the alerts row. */}
-          <div className="col-span-12">
-            <BriefPane
-              briefing={briefing}
-              events={mapEvents}
-              theaterId={theater.id}
-              theaterLabel={theater.label}
-              windowLabel={WINDOW_LABELS[timeRange]}
-              eventCount={stats.events}
-            />
-          </div>
-
-          {/* Active Alerts + Sector Threat side by side */}
-          <div className="col-span-12 lg:col-span-6">
-            <LiveStream events={mapEvents} theaterId={theater.id} />
-          </div>
-          <div className="col-span-12 lg:col-span-6">
-            <SectorThreat
-              sectors={sectors}
-              windowLabel={WINDOW_LABELS[timeRange]}
-              tabs={threatTabs}
-              activeTab={threatView}
-              threatAxes={threatAxes}
-            />
           </div>
 
           {/* Activity Intensity + Top Sources */}
