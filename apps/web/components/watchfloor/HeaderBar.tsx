@@ -55,15 +55,20 @@ export default function HeaderBar({
   theaterOptions,
   windowOptions,
   feedHref,
+  viewHref,
+  mode = "view",
   isAuthed = false,
 }: {
   theaterLabel: string;
-  windowLabel: string;
+  windowLabel?: string;
   theaterOptions: ControlOption[];
-  windowOptions: ControlOption[];
-  feedHref: string;
+  windowOptions?: ControlOption[];
+  feedHref?: string;
+  viewHref?: string;
+  mode?: "view" | "feed";
   isAuthed?: boolean;
 }) {
+  const isFeed = mode === "feed";
   return (
     <header className="bg-zinc-950/80 border-b border-zinc-900 px-4 sm:px-5 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 flex-none">
       {/* Left cluster */}
@@ -81,31 +86,55 @@ export default function HeaderBar({
               Beta
             </span>
           </div>
-          <span className="hidden sm:block text-[12px] tracking-[0.18em] uppercase text-amber-400/80">Watch Tier</span>
+          <span className="hidden sm:block text-[12px] tracking-[0.18em] uppercase text-amber-400/80">
+            {isFeed ? "Source Feed" : "Watch Tier"}
+          </span>
         </div>
       </div>
 
       {/* Right cluster */}
       <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-data min-w-0">
-        {/* Mode toggle — Sentinel View (this page) ↔ Source Feed */}
+        {/* Mode toggle — Sentinel View ↔ Source Feed */}
         <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden mr-1">
-          <span
-            aria-current="page"
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-r border-zinc-800"
-          >
-            <span className="hidden sm:inline">Sentinel </span>View
-          </span>
-          <Link
-            href={feedHref}
-            className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
-          >
-            <span className="hidden sm:inline">Source </span>Feed
-          </Link>
+          {isFeed ? (
+            <Link
+              href={viewHref ?? "/"}
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors border-r border-zinc-800"
+            >
+              <span className="hidden sm:inline">Sentinel </span>View
+            </Link>
+          ) : (
+            <span
+              aria-current="page"
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-r border-zinc-800"
+            >
+              <span className="hidden sm:inline">Sentinel </span>View
+            </span>
+          )}
+          {isFeed ? (
+            <span
+              aria-current="page"
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300"
+            >
+              <span className="hidden sm:inline">Source </span>Feed
+            </span>
+          ) : (
+            <Link
+              href={feedHref ?? "/app/feed"}
+              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
+            >
+              <span className="hidden sm:inline">Source </span>Feed
+            </Link>
+          )}
         </div>
         <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Theater</span>
         <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
-        <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
-        <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
+        {windowOptions && windowLabel && (
+          <>
+            <span className="text-zinc-500 tracking-[0.22em] uppercase text-[10px] hidden lg:inline">Window</span>
+            <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
+          </>
+        )}
         <span className="flex items-center gap-1.5 ml-1">
           <span className="relative flex w-2 h-2">
             <span className="animate-ping absolute inline-flex w-full h-full rounded-full bg-red-500 opacity-75" />
