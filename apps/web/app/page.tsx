@@ -164,8 +164,8 @@ export default async function WatchfloorPage({
 
       <TimelineProvider windowMs={WINDOW_MS[timeRange]}>
         <div className="flex-1 min-w-0 min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden flex flex-col md:grid md:grid-cols-12 md:grid-rows-2 gap-1.5 p-1.5">
-          {/* MAP — fills cols 1-7, both rows on desktop; fixed height on mobile */}
-          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-7 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+          {/* MAP — fills cols 1-4, both rows on desktop; fixed height on mobile */}
+          <section className="h-[42vh] flex-none min-w-0 md:h-auto md:col-span-4 md:row-span-2 relative bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
@@ -176,9 +176,9 @@ export default async function WatchfloorPage({
             <MapLegend items={legendItems} />
           </section>
 
-          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} eventCount={stats.events} className="flex-none min-w-0 md:col-span-5" />
-          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none min-w-0 max-h-[280px] md:max-h-none md:col-span-3" />
-          <SectorThreat sectors={sectors} intensity={intensity} windowLabel={WINDOW_LABELS[timeRange]} tabs={threatTabs} activeTab={threatView} threatAxes={threatAxes} className="flex-none min-w-0 md:col-span-2" />
+          <BriefPane briefing={briefing} sources={sources} theaterId={theater.id} theaterLabel={theater.label} windowLabel={WINDOW_LABELS[timeRange]} eventCount={stats.events} className="flex-none min-w-0 md:col-span-8" />
+          <LiveStream alerts={alerts} theaterId={theater.id} className="flex-none min-w-0 max-h-[280px] md:max-h-none md:col-span-5" />
+          <SectorThreat sectors={sectors} intensity={intensity} windowLabel={WINDOW_LABELS[timeRange]} tabs={threatTabs} activeTab={threatView} threatAxes={threatAxes} className="flex-none min-w-0 md:col-span-3" />
         </div>
 
         <TimeScrubber />
