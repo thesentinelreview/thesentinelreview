@@ -1,5 +1,9 @@
 # System Architecture — The Sentinel Review
 
+> ⚠️ SUPERSEDED (2026-05). Production is Supabase — project `ugpqgfvdqupttqhogavc`.
+> The Neon project `tiny-night-97017367` is a rogue/disposable copy and must never be
+> used. Treat all Neon references below as historical. See CLAUDE.md.
+
 How GitHub, Vercel, Neon, and Railway work together to collect OSINT,
 process it through an LLM pipeline, and serve the dashboard.
 

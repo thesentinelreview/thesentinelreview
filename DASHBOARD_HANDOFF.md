@@ -7,7 +7,7 @@
 
 The Sentinel Review is a conflict-intelligence dashboard at **dashboard.thesentinelreview.com**. It ingests OSINT posts from 53 sources every 30 minutes, runs LLM extraction to turn raw posts into structured conflict events, and presents them on a live map and feed. The audience is paying subscribers who need real-time situational awareness on active conflict theaters.
 
-**Stack:** Next.js (App Router) on Cloudflare Pages + Vercel, PostgreSQL (Supabase/Neon), Python ingest pipeline on GitHub Actions, Anthropic API for LLM extraction, Clerk for auth, Stripe for billing, MapLibre for the map.
+**Stack:** Next.js (App Router) on Cloudflare Pages + Vercel, PostgreSQL (Supabase), Python ingest pipeline on GitHub Actions, Anthropic API for LLM extraction, Clerk for auth, Stripe for billing, MapLibre for the map.
 
 ---
 

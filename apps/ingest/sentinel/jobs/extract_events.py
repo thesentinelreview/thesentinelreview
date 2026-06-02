@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 import psycopg
 import structlog
 
+from sentinel.config import settings
 from sentinel.db import (
     get_posts_by_ids,
     get_source,
@@ -63,6 +64,28 @@ def _clamp_future_occurred_at(
         clamped_to=posted_at.isoformat(),
     )
     return posted_at
+
+
+def _is_occurred_at_too_old(
+    occurred_at: datetime | None,
+    *,
+    posted_at: datetime | None,
+    floor_days: int,
+) -> bool:
+    """Past-side mirror of _clamp_future_occurred_at: True ⇒ skip the event.
+
+    The LLM occasionally lifts a commemorative/historical reference verbatim
+    ("one year ago today…") and emits an event whose occurred_at is far older
+    than the post reporting it. Skip such events outright — they're almost
+    always hallucinations, and the rare legitimate delayed-analysis case is
+    a better fit for a future held-for-review path than for silent insert.
+
+    Boundary (occurred_at exactly at posted_at - floor_days) is inclusive — kept.
+    Returns False when either timestamp is None.
+    """
+    if occurred_at is None or posted_at is None:
+        return False
+    return occurred_at < posted_at - timedelta(days=floor_days)
 
 
 def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
@@ -183,6 +206,21 @@ def _process_post(
         posted_at=post.get("posted_at"),
         post_id=post_id,
     )
+
+    if _is_occurred_at_too_old(
+        occurred_at,
+        posted_at=post.get("posted_at"),
+        floor_days=settings.occurred_at_past_floor_days,
+    ):
+        mark_post_processed(conn, post_id, skip_reason="occurred_at_past_floor")
+        log.warning(
+            "past_occurred_at_skipped",
+            post_id=str(post_id),
+            occurred_at=occurred_at.isoformat(),  # type: ignore[union-attr]
+            posted_at=post["posted_at"].isoformat(),
+            floor_days=settings.occurred_at_past_floor_days,
+        )
+        return
 
     # ── Deduplication ────────────────────────────────────────────────────────
     duplicate_id = find_duplicate(
