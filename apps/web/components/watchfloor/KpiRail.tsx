@@ -32,8 +32,8 @@ function MetricCell({
   deltaColor?: string;
 }) {
   return (
-    <div className="px-3 py-1 bg-slate-800/40 border border-slate-700/50 rounded">
-      <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold leading-tight">
+    <div className="px-3 py-1.5 bg-slate-800/40 border border-slate-700/50 rounded min-w-0">
+      <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold leading-tight truncate">
         {label}
       </div>
       <div className="flex items-baseline gap-2 mt-0.5">
@@ -76,79 +76,73 @@ export default function KpiRail({
   return (
     <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex-none">
       <div className="px-6 py-2">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3 flex-wrap min-w-0">
-            <MetricCell
-              label={`${windowLabel} Events`}
-              value={deltas.events}
-              deltaText={
-                eventsDeltaPct === null
-                  ? deltas.events > 0
-                    ? "NEW"
-                    : "—"
-                  : signedPct(eventsDeltaPct)
-              }
-              deltaColor={eventsDeltaColor}
-            />
-            <MetricCell
-              label="Strikes"
-              value={
-                <>
-                  <Target className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
-                  {deltas.strikes}
-                </>
-              }
-              valueColor="text-red-400"
-              deltaText={signedNum(strikesDelta)}
-              deltaColor={strikesDeltaColor}
-            />
-            <MetricCell
-              label="Verified"
-              value={
-                <>
-                  <ShieldCheck className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
-                  {deltas.verifiedPct}%
-                </>
-              }
-              valueColor="text-emerald-400"
-              deltaText={`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
-              deltaColor={verifiedDeltaColor}
-            />
-            <MetricCell
-              label="Fusion"
-              value={
-                <>
-                  <Zap className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
-                  {fusionPct == null ? "—" : `${fusionPct}%`}
-                </>
-              }
-              valueColor="text-blue-400"
-            />
-            <MetricCell
-              label="Median TTV"
-              value={
-                <>
-                  <Clock className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
-                  {formatTtv(medianTtvMinutes)}
-                </>
-              }
-            />
-            <MetricCell
-              label="Active Sectors"
-              value={
-                <>
-                  <Layers className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
-                  {deltas.activeSectors}
-                </>
-              }
-              deltaText={signedNum(sectorsDelta)}
-              deltaColor={sectorsDeltaColor}
-            />
-          </div>
-
-          <span className="text-xs text-slate-500 font-mono uppercase tracking-wider flex-none">
-            Past {windowLabel}
-          </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
+          <MetricCell
+            label={`${windowLabel} Events`}
+            value={deltas.events}
+            deltaText={
+              eventsDeltaPct === null
+                ? deltas.events > 0
+                  ? "NEW"
+                  : "—"
+                : signedPct(eventsDeltaPct)
+            }
+            deltaColor={eventsDeltaColor}
+          />
+          <MetricCell
+            label="Strikes"
+            value={
+              <>
+                <Target className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                {deltas.strikes}
+              </>
+            }
+            valueColor="text-red-400"
+            deltaText={signedNum(strikesDelta)}
+            deltaColor={strikesDeltaColor}
+          />
+          <MetricCell
+            label="Verified"
+            value={
+              <>
+                <ShieldCheck className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                {deltas.verifiedPct}%
+              </>
+            }
+            valueColor="text-emerald-400"
+            deltaText={`${verifiedDelta >= 0 ? "+" : "−"}${Math.abs(verifiedDelta)}pts`}
+            deltaColor={verifiedDeltaColor}
+          />
+          <MetricCell
+            label="Fusion"
+            value={
+              <>
+                <Zap className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                {fusionPct == null ? "—" : `${fusionPct}%`}
+              </>
+            }
+            valueColor="text-blue-400"
+          />
+          <MetricCell
+            label="Median TTV"
+            value={
+              <>
+                <Clock className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                {formatTtv(medianTtvMinutes)}
+              </>
+            }
+          />
+          <MetricCell
+            label="Active Sectors"
+            value={
+              <>
+                <Layers className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                {deltas.activeSectors}
+              </>
+            }
+            deltaText={signedNum(sectorsDelta)}
+            deltaColor={sectorsDeltaColor}
+          />
         </div>
       </div>
     </div>

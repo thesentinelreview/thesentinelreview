@@ -85,6 +85,9 @@ export default function HeaderBar({
                   Beta
                 </span>
               </div>
+              <div className="mt-0.5 text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
+                Watch Tier
+              </div>
             </div>
           </div>
 
