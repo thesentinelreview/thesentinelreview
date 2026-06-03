@@ -6,306 +6,306 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Jun 2026 12:47:53 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2026 19:55:57 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
-      <title>🌍 Early Edition: June 3, 2026 | Just Security</title>
-      <link>https://www.justsecurity.org/140915/early-edition-june-3-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-3-2026</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/140915/early-edition-june-3-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-3-2026</guid>
-      <pubDate>Wed, 03 Jun 2026 11:57:53 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.justsecurity.org/140915/early-edition-june-3-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-3-2026">Just Security</source>
-      <description>Signup to receive the Early Edition in your inbox here. A curated weekday guide to major news and developments over the last 24 hours. Here’s today’s news: IRAN WAR – CEASEFIRE U.S Central Command said yesterday that Iran had launched missiles and drone strikes on Kuwait and…</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 At a NATO range in Latvia, hits and misses mark Europe’s counter-drone journey | Defense News</title>
-      <link>https://www.defensenews.com/global/europe/2026/06/03/at-a-nato-range-in-latvia-hits-and-misses-mark-europes-counter-drone-journey/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/06/03/at-a-nato-range-in-latvia-hits-and-misses-mark-europes-counter-drone-journey/</guid>
-      <pubDate>Wed, 03 Jun 2026 11:33:30 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.defensenews.com/global/europe/2026/06/03/at-a-nato-range-in-latvia-hits-and-misses-mark-europes-counter-drone-journey/">Defense News</source>
-      <description>Drone technology is “a couple of steps ahead” of countermeasures, one officer said, with interceptors having to work every time to prevent losses.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Middle East Cease-Fires Matter Even When They’re Broken | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/03/iran-lebanon-israel-cease-fires-peace/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/iran-lebanon-israel-cease-fires-peace/</guid>
-      <pubDate>Wed, 03 Jun 2026 10:00:06 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/06/03/iran-lebanon-israel-cease-fires-peace/">Foreign Policy</source>
-      <description>De-escalation, rather than lasting peace, is still important.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 A Cyber Force budget would require at least $10 billion, new commission report says | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/a-cyber-force-budget-would-require-at-least-10-billion-new-commission-report-says/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/a-cyber-force-budget-would-require-at-least-10-billion-new-commission-report-says/</guid>
-      <pubDate>Wed, 03 Jun 2026 10:00:00 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://breakingdefense.com/2026/06/a-cyber-force-budget-would-require-at-least-10-billion-new-commission-report-says/">Breaking Defense</source>
-      <description>The Commission on US Cyber Force Generation released its report outlining what a new military service could look like.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 Iran Launches New Attacks On Kuwait, Bahrain (Updated) | The War Zone</title>
-      <link>https://www.twz.com/news-features/iran-launches-new-attacks-on-kuwait-bahrain</link>
-      <guid isPermaLink="true">https://www.twz.com/news-features/iran-launches-new-attacks-on-kuwait-bahrain</guid>
-      <pubDate>Wed, 03 Jun 2026 04:41:30 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.twz.com/news-features/iran-launches-new-attacks-on-kuwait-bahrain">The War Zone</source>
-      <description>U.S. Central Command says it &quot;conducted self-defense strikes on an Iranian military ground control station on Qeshm Island.&quot; The post Iran Launches New Attacks On Kuwait, Bahrain (Updated) appeared first on The War Zone.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 The Rain in Spain Falls Harder on Ukraine: Rethinking the Spanish Civil War Analogy | War on the Rocks</title>
-      <link>https://warontherocks.com/the-rain-in-spain-falls-harder-on-ukraine-rethinking-the-spanish-civil-war-analogy/</link>
-      <guid isPermaLink="true">https://warontherocks.com/the-rain-in-spain-falls-harder-on-ukraine-rethinking-the-spanish-civil-war-analogy/</guid>
-      <pubDate>Wed, 03 Jun 2026 07:30:21 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://warontherocks.com/the-rain-in-spain-falls-harder-on-ukraine-rethinking-the-spanish-civil-war-analogy/">War on the Rocks</source>
-      <description>In 2023, the NATO Baltic Defense College in Tartu, Estonia devoted its entire annual conference to the Interwar Period (1919 to 1939), a theme repeated at subsequent conferences sponsored by national militaries and academic societies throughout the United States and Europe.…</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Not regulation. Not even oversight. Trump’s AI order won’t be enough | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/not-regulation-not-even-oversight-trumps-ai-order-wont-be-enough/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/not-regulation-not-even-oversight-trumps-ai-order-wont-be-enough/</guid>
-      <pubDate>Wed, 03 Jun 2026 05:36:56 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/not-regulation-not-even-oversight-trumps-ai-order-wont-be-enough/">ASPI Strategist</source>
-      <description>After a bruising tussle inside his administration, President Donald Trump has gone for a decidedly non-committal approach to AI safety and security that’s unlikely to survive sustained contact with reality. He issued an executive order ...</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ Why Asia’s Not Buying What Hegseth’s Selling | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/03/hegseth-shangri-la-asia-defense-spending/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/hegseth-shangri-la-asia-defense-spending/</guid>
-      <pubDate>Wed, 03 Jun 2026 05:00:33 +0000</pubDate>
+      <title>🏛️ Air Force awards GE, Rolls-Royce for ‘medium thrust’ drone engines | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/air-force-awards-ge-rolls-royce-for-medium-thrust-drone-engines/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/air-force-awards-ge-rolls-royce-for-medium-thrust-drone-engines/</guid>
+      <pubDate>Wed, 03 Jun 2026 19:31:00 +0000</pubDate>
       <category>Defense Policy</category>
-      <source url="https://foreignpolicy.com/2026/06/03/hegseth-shangri-la-asia-defense-spending/">Foreign Policy</source>
-      <description>A Shangri-La charm offensive collided with regional values.</description>
-      <sentinel:score>5</sentinel:score>
+      <source url="https://breakingdefense.com/2026/06/air-force-awards-ge-rolls-royce-for-medium-thrust-drone-engines/">Breaking Defense</source>
+      <description>The two engine makers will advance designs to power medium thrust class drones, an Air Force spokesperson told Breaking Defense.</description>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
-      <title>📍 Amid discord and disagreement, the Antarctic Treaty System is failing | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/amid-discord-and-disagreement-the-antarctic-treaty-system-is-failing/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/amid-discord-and-disagreement-the-antarctic-treaty-system-is-failing/</guid>
-      <pubDate>Wed, 03 Jun 2026 04:00:40 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/amid-discord-and-disagreement-the-antarctic-treaty-system-is-failing/">ASPI Strategist</source>
-      <description>The Antarctic Treaty is glorified as evidence of managing cooperation in a contested world. Forged in the Cold War, the treaty system has effectively held conflict at bay for almost seven decades. Geopolitics has been ...</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 Iran’s New Grand Strategy | Foreign Affairs</title>
-      <link>https://www.foreignaffairs.com/iran/irans-new-grand-strategy</link>
-      <guid isPermaLink="true">https://www.foreignaffairs.com/iran/irans-new-grand-strategy</guid>
-      <pubDate>Wed, 03 Jun 2026 00:00:00 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.foreignaffairs.com/iran/irans-new-grand-strategy">Foreign Affairs</source>
-      <description>How a remade Islamic Republic will reshape the Middle East.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 The Inertia of Russia’s War | Foreign Affairs</title>
-      <link>https://www.foreignaffairs.com/russia/inertia-russias-war</link>
-      <guid isPermaLink="true">https://www.foreignaffairs.com/russia/inertia-russias-war</guid>
-      <pubDate>Wed, 03 Jun 2026 00:00:00 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.foreignaffairs.com/russia/inertia-russias-war">Foreign Affairs</source>
-      <description>Why Putin can’t end the conflict.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 A General Assembly that backed international rules would put Philippines on Security Council | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/a-general-assembly-that-backed-international-rules-would-put-philippines-on-security-council/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/a-general-assembly-that-backed-international-rules-would-put-philippines-on-security-council/</guid>
-      <pubDate>Wed, 03 Jun 2026 01:00:17 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://www.aspistrategist.org.au/a-general-assembly-that-backed-international-rules-would-put-philippines-on-security-council/">ASPI Strategist</source>
-      <description>On 3 June in New York, the UN General Assembly faces a choice: will the institution charged with enforcing international rules include a voice that’s prepared to call out their breaches? The General Assembly will ...</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🕵️ Any Plans For Direct U-28 Draco Special Ops Surveillance Plane Replacement Abandoned | The War Zone</title>
-      <link>https://www.twz.com/air/any-plans-for-direct-u-28-draco-special-ops-surveillance-plane-replacement-abandoned</link>
-      <guid isPermaLink="true">https://www.twz.com/air/any-plans-for-direct-u-28-draco-special-ops-surveillance-plane-replacement-abandoned</guid>
-      <pubDate>Tue, 02 Jun 2026 19:56:52 +0000</pubDate>
+      <title>🕵️ Should we be worried about the bond market? | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/commentary/podcast/should-we-be-worried-about-the-bond-market/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/commentary/podcast/should-we-be-worried-about-the-bond-market/</guid>
+      <pubDate>Wed, 03 Jun 2026 18:47:38 +0000</pubDate>
       <category>Intelligence</category>
-      <source url="https://www.twz.com/air/any-plans-for-direct-u-28-draco-special-ops-surveillance-plane-replacement-abandoned">The War Zone</source>
-      <description>There are signs now that the U.S. special operations community is on track to stop flying dedicated crewed surveillance planes entirely. The post Any Plans For Direct U-28 Draco Special Ops Surveillance Plane Replacement Abandoned appeared first on The War Zone.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>📍 The US military wants to showcase battle-ready laser weapons by 2028 | Defense News</title>
-      <link>https://www.defensenews.com/industry/techwatch/2026/06/02/the-us-military-wants-to-showcase-battle-ready-laser-weapons-by-2028/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/industry/techwatch/2026/06/02/the-us-military-wants-to-showcase-battle-ready-laser-weapons-by-2028/</guid>
-      <pubDate>Tue, 02 Jun 2026 23:46:29 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/industry/techwatch/2026/06/02/the-us-military-wants-to-showcase-battle-ready-laser-weapons-by-2028/">Defense News</source>
-      <description>A directed energy demonstration is expected to occur during the summer of 2028, as part of a series of planned Golden Dome-related events.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ What Congress Should Do About the President’s Sweetheart Deal in Trump v. IRS | Just Security</title>
-      <link>https://www.justsecurity.org/140939/congress-block-deal-trump-irs/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=congress-block-deal-trump-irs</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/140939/congress-block-deal-trump-irs/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=congress-block-deal-trump-irs</guid>
-      <pubDate>Tue, 02 Jun 2026 23:04:02 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.justsecurity.org/140939/congress-block-deal-trump-irs/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=congress-block-deal-trump-irs">Just Security</source>
-      <description>Tax law experts offer three actions that Congress must take to fully unwind the Trump administration’s settlement and hold its architects accountable. The post What Congress Should Do About the President’s Sweetheart Deal in &lt;i&gt;Trump v. IRS&lt;/i&gt; appeared first on Just Security.</description>
+      <source url="https://www.atlanticcouncil.org/commentary/podcast/should-we-be-worried-about-the-bond-market/">Atlantic Council</source>
+      <description>Bond yields have spiked, especially in advanced economies. But why is that? And what does that actually mean? Alice Fulwood, US business editor at the Economist and co-host of the podcast Money Talks, joins Josh and Jessie to decode the signals in the global bond market—from…</description>
       <sentinel:score>1</sentinel:score>
     </item>
     <item>
-      <title>🌏 The Deadly Price of China’s Coal Boom | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/02/china-coal-mining-accident-explosion-collapse/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/02/china-coal-mining-accident-explosion-collapse/</guid>
-      <pubDate>Tue, 02 Jun 2026 21:55:49 +0000</pubDate>
+      <title>🏛️ Marine Corps’ Harrier completes final flight following SOUTHCOM deployment | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/marine-corps-harrier-completes-final-flight-following-southcom-deployment/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/marine-corps-harrier-completes-final-flight-following-southcom-deployment/</guid>
+      <pubDate>Wed, 03 Jun 2026 18:39:27 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/06/marine-corps-harrier-completes-final-flight-following-southcom-deployment/">Breaking Defense</source>
+      <description>The Marine Corps is moving through its Tactical Aircraft Transition Plan as it plans to fully adopt fifth-generation aircraft across the entire fleet.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ Reading between the lines of Trump’s new executive order on AI | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/dispatches/reading-between-the-lines-of-trumps-new-executive-order-on-ai/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/reading-between-the-lines-of-trumps-new-executive-order-on-ai/</guid>
+      <pubDate>Wed, 03 Jun 2026 18:28:21 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.atlanticcouncil.org/dispatches/reading-between-the-lines-of-trumps-new-executive-order-on-ai/">Atlantic Council</source>
+      <description>Atlantic Council experts dig into the details of US President Donald Trump’s recently signed executive order on artificial intelligence. The post Reading between the lines of Trump’s new executive order on AI appeared first on Atlantic Council.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 The New Weapon Behind Ukraine’s Battlefield Success | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/03/ukraine-mid-range-drones-russia-war-success/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/ukraine-mid-range-drones-russia-war-success/</guid>
+      <pubDate>Wed, 03 Jun 2026 17:42:08 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://foreignpolicy.com/2026/06/03/ukraine-mid-range-drones-russia-war-success/">Foreign Policy</source>
+      <description>Mid-range drones that can hit targets almost 100 miles behind Russian lines have changed the game.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Will China and the United States Pursue Strategic Stability? | War on the Rocks</title>
+      <link>https://warontherocks.com/will-china-and-the-united-states-pursue-strategic-stability/</link>
+      <guid isPermaLink="true">https://warontherocks.com/will-china-and-the-united-states-pursue-strategic-stability/</guid>
+      <pubDate>Wed, 03 Jun 2026 17:30:42 +0000</pubDate>
       <category>Indo-Pacific</category>
-      <source url="https://foreignpolicy.com/2026/06/02/china-coal-mining-accident-explosion-collapse/">Foreign Policy</source>
-      <description>Two fatal disasters highlight enduring problems in the mining industry.</description>
+      <source url="https://warontherocks.com/will-china-and-the-united-states-pursue-strategic-stability/">War on the Rocks</source>
+      <description>In 2024, Michael Swaine wrote, “How to Stop the United States and China from Sliding into War,” where he identified areas that could increase the possibility of an armed conflict between the United States and China. Two years later, after recent talks between President Trump and…</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The biggest industry, training hurdles for making drone wingman a reality | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/the-biggest-industry-training-hurdles-for-making-drone-wingman-a-reality/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/the-biggest-industry-training-hurdles-for-making-drone-wingman-a-reality/</guid>
+      <pubDate>Wed, 03 Jun 2026 17:27:07 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://breakingdefense.com/2026/06/the-biggest-industry-training-hurdles-for-making-drone-wingman-a-reality/">Breaking Defense</source>
+      <description>In our final video looking at manned-unmanned teaming, we consider likely changes ahead for defense manufacturers as the US increasingly partners with drones in combat.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ The Hidden History of America’s Harrier Jump Jets | The War Zone</title>
+      <link>https://www.twz.com/air/the-hidden-history-of-americas-harrier-jump-jets</link>
+      <guid isPermaLink="true">https://www.twz.com/air/the-hidden-history-of-americas-harrier-jump-jets</guid>
+      <pubDate>Wed, 03 Jun 2026 13:00:12 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.twz.com/air/the-hidden-history-of-americas-harrier-jump-jets">The War Zone</source>
+      <description>The Harrier story is a transatlantic saga of improvisation, ambition, and unlikely partnership, which helped shape the F-35B. The post The Hidden History of America’s Harrier Jump Jets appeared first on The War Zone.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🛡️ Uzbekistan’s New Migration Destination? America. | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/uzbekistans-new-migration-destination-america/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/uzbekistans-new-migration-destination-america/</guid>
+      <pubDate>Thu, 04 Jun 2026 01:58:00 +0000</pubDate>
+      <category>Homeland</category>
+      <source url="https://thediplomat.com/2026/06/uzbekistans-new-migration-destination-america/">The Diplomat</source>
+      <description>From irregular border crossings to bilateral training agreements, Uzbekistan is working to carve out a formal pathway to U.S. employment.</description>
       <sentinel:score>2</sentinel:score>
     </item>
     <item>
-      <title>🕵️ How AI is shaping the future of geospatial intelligence | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/how-ai-is-shaping-the-future-of-geospatial-intelligence/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/how-ai-is-shaping-the-future-of-geospatial-intelligence/</guid>
-      <pubDate>Tue, 02 Jun 2026 21:33:19 +0000</pubDate>
+      <title>🕵️ Trump&apos;s choice of acting intel chief threatens fragile surveillance-powers deal | Defense One</title>
+      <link>https://www.defenseone.com/policy/2026/06/trump-intel-chief-surveillance-deal/413946/</link>
+      <guid isPermaLink="true">https://www.defenseone.com/policy/2026/06/trump-intel-chief-surveillance-deal/413946/</guid>
+      <pubDate>Wed, 03 Jun 2026 12:55:00 +0000</pubDate>
       <category>Intelligence</category>
-      <source url="https://breakingdefense.com/2026/06/how-ai-is-shaping-the-future-of-geospatial-intelligence/">Breaking Defense</source>
-      <description>From AI adoption and explainability to new commercial satellite contracts, Breaking Defense’s latest eBook brings together reporting from GEOINT 2026 on how intelligence leaders are shaping the future of space-based geospatial intelligence.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🕵️ Trump executive order on AI gives central role to NSA | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/trump-executive-order-on-ai-gives-central-role-to-nsa/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/trump-executive-order-on-ai-gives-central-role-to-nsa/</guid>
-      <pubDate>Tue, 02 Jun 2026 21:25:35 +0000</pubDate>
-      <category>Intelligence</category>
-      <source url="https://breakingdefense.com/2026/06/trump-executive-order-on-ai-gives-central-role-to-nsa/">Breaking Defense</source>
-      <description>The EO creates a “voluntary framework” for AI developers to give the government early access to their latest tech.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Russia Pounds Ukraine With Missile, Drone Strikes | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/02/russia-drones-missiles-ukraine-kyiv-air-defense-systems/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/02/russia-drones-missiles-ukraine-kyiv-air-defense-systems/</guid>
-      <pubDate>Tue, 02 Jun 2026 21:02:34 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://foreignpolicy.com/2026/06/02/russia-drones-missiles-ukraine-kyiv-air-defense-systems/">Foreign Policy</source>
-      <description>Moscow warned of a massive attack on Kyiv. And it delivered.</description>
-      <sentinel:score>10</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 As Russia’s Ukraine invasion unravels, Putin escalates attacks on civilians | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/ukrainealert/as-russias-ukraine-invasion-unravels-putin-escalates-attacks-on-civilians/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/ukrainealert/as-russias-ukraine-invasion-unravels-putin-escalates-attacks-on-civilians/</guid>
-      <pubDate>Tue, 02 Jun 2026 20:59:05 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.atlanticcouncil.org/blogs/ukrainealert/as-russias-ukraine-invasion-unravels-putin-escalates-attacks-on-civilians/">Atlantic Council</source>
-      <description>Russia launched a major bombardment of Ukrainian cities on June 2 as Vladimir Putin continues to escalate attacks on Ukraine&apos;s civilian population amid growing signs that his invasion is unraveling, writes Peter Dickinson. The post As Russia’s Ukraine invasion unravels, Putin…</description>
+      <source url="https://www.defenseone.com/policy/2026/06/trump-intel-chief-surveillance-deal/413946/">Defense One</source>
+      <description>If William Pulte&apos;s appointment is not rescinded, Senate Democrats say, it could sink an extension of FISA Section 702.</description>
       <sentinel:score>9</sentinel:score>
     </item>
     <item>
-      <title>🏴 Ukraine is now Europe’s shield but still needs more help to stop Russia | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/ukrainealert/ukraine-is-now-europes-shield-but-still-needs-more-help-to-stop-russia/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/ukrainealert/ukraine-is-now-europes-shield-but-still-needs-more-help-to-stop-russia/</guid>
-      <pubDate>Tue, 02 Jun 2026 20:38:05 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.atlanticcouncil.org/blogs/ukrainealert/ukraine-is-now-europes-shield-but-still-needs-more-help-to-stop-russia/">Atlantic Council</source>
-      <description>Europeans increasingly recognize Ukraine as the continent&apos;s shield against Russian aggression, but this must not fuel complacency over the country&apos;s ability to bear the current burden indefinitely, writes Olena Tregub. The post Ukraine is now Europe’s shield but still needs more…</description>
-      <sentinel:score>8</sentinel:score>
+      <title>🌍 Anduril teams with Elbit America for Army’s self-propelled howitzer competition | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/anduril-teams-with-elbit-america-for-armys-self-propelled-howitzer-competition/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/anduril-teams-with-elbit-america-for-armys-self-propelled-howitzer-competition/</guid>
+      <pubDate>Wed, 03 Jun 2026 16:41:02 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://breakingdefense.com/2026/06/anduril-teams-with-elbit-america-for-armys-self-propelled-howitzer-competition/">Breaking Defense</source>
+      <description>Anduril joins the US subsidiary of Israeli company Elbit along with OshKosh Defense for the team’s offering for the highly anticipated competition.</description>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
-      <title>🏴 Two Senators Just Blew Up Trump’s Boat-Strike Justifications | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/02/kaine-paul-rubio-trump-drug-boat-strike-justification-latin-america/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/02/kaine-paul-rubio-trump-drug-boat-strike-justification-latin-america/</guid>
-      <pubDate>Tue, 02 Jun 2026 20:05:19 +0000</pubDate>
+      <title>🏴 Russia’s Baltic Fleet Successfully Attacked By Ukrainian Drones | The War Zone</title>
+      <link>https://www.twz.com/sea/russias-baltic-fleet-successfully-attacked-by-ukrainian-drones</link>
+      <guid isPermaLink="true">https://www.twz.com/sea/russias-baltic-fleet-successfully-attacked-by-ukrainian-drones</guid>
+      <pubDate>Wed, 03 Jun 2026 12:39:19 +0000</pubDate>
       <category>Europe / NATO</category>
-      <source url="https://foreignpolicy.com/2026/06/02/kaine-paul-rubio-trump-drug-boat-strike-justification-latin-america/">Foreign Policy</source>
-      <description>Sens. Kaine and Paul say that the military’s targeting criteria don’t include the presence of drugs or arms.</description>
+      <source url="https://www.twz.com/sea/russias-baltic-fleet-successfully-attacked-by-ukrainian-drones">The War Zone</source>
+      <description>Once considered a sanctuary for Russian naval power, the Baltic Fleet is now in the crosshairs of Ukraine’s expanding long-range strike campaign. The post Russia’s Baltic Fleet Successfully Attacked By Ukrainian Drones appeared first on The War Zone.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Congress Prepares for a Consequential Iran Vote | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/03/congress-iran-war-powers-house-vote-concurrent-resolution-trump/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/congress-iran-war-powers-house-vote-concurrent-resolution-trump/</guid>
+      <pubDate>Wed, 03 Jun 2026 16:28:29 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://foreignpolicy.com/2026/06/03/congress-iran-war-powers-house-vote-concurrent-resolution-trump/">Foreign Policy</source>
+      <description>Tehran may feel empowered to wait out U.S. demands for concessions in face of war-weary American public.</description>
       <sentinel:score>7</sentinel:score>
     </item>
     <item>
-      <title>🌍 Predictability as power: Australia’s advantage in the AI infrastructure race | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/predictability-as-power-australias-advantage-in-the-ai-infrastructure-race/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/predictability-as-power-australias-advantage-in-the-ai-infrastructure-race/</guid>
-      <pubDate>Tue, 02 Jun 2026 20:00:47 +0000</pubDate>
+      <title>🌏 North Korea Sees a New Solar Power Push | 38 North</title>
+      <link>https://www.38north.org/2026/06/north-korea-sees-a-new-solar-power-push/</link>
+      <guid isPermaLink="true">https://www.38north.org/2026/06/north-korea-sees-a-new-solar-power-push/</guid>
+      <pubDate>Wed, 03 Jun 2026 16:08:31 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.38north.org/2026/06/north-korea-sees-a-new-solar-power-push/">38 North</source>
+      <description>The recent opening of a new solar farm in Haeju, South Hwanghae province, marks a turning point ... The post North Korea Sees a New Solar Power Push appeared first on 38 North.</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 US tells Europe, Canada to boost NATO air and naval forces | Defense News</title>
+      <link>https://www.defensenews.com/global/europe/2026/06/03/us-tells-europe-canada-to-boost-nato-air-and-naval-forces/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/06/03/us-tells-europe-canada-to-boost-nato-air-and-naval-forces/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:55:26 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.defensenews.com/global/europe/2026/06/03/us-tells-europe-canada-to-boost-nato-air-and-naval-forces/">Defense News</source>
+      <description>“Nations just need to assign the capabilities they have to NATO,” a spokesman for the alliance&apos;s military headquarters said.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Can Section 301 effectively replace IEEPA? That is the $166 billion question | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/blogs/econographics/can-section-301-effectively-replace-ieepa-that-is-the-166-billion-question/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/econographics/can-section-301-effectively-replace-ieepa-that-is-the-166-billion-question/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:52:54 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.atlanticcouncil.org/blogs/econographics/can-section-301-effectively-replace-ieepa-that-is-the-166-billion-question/">Atlantic Council</source>
+      <description>Citing forced labor concerns, the Trump administration has proposed new tariffs on imports from sixty economies—a first step toward rebuilding its tariff wall. Still, the outcome is far from certain. The post Can Section 301 effectively replace IEEPA? That is the $166 billion…</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 The U.S. and Taiwanese Militaries Can’t Really Fight Together | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/03/taiwan-china-us-invasion-war-military-arms-weapons/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/taiwan-china-us-invasion-war-military-arms-weapons/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:36:39 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://foreignpolicy.com/2026/06/03/taiwan-china-us-invasion-war-military-arms-weapons/">Foreign Policy</source>
+      <description>A joint campaign to defend the island would struggle to operate effectively.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Trump’s New AI Order Raises the Stakes in China-US Tech Competition | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/trumps-new-ai-order-raises-the-stakes-in-china-us-tech-competition/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/trumps-new-ai-order-raises-the-stakes-in-china-us-tech-competition/</guid>
+      <pubDate>Thu, 04 Jun 2026 00:36:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://thediplomat.com/2026/06/trumps-new-ai-order-raises-the-stakes-in-china-us-tech-competition/">The Diplomat</source>
+      <description>Advanced AI models are no longer treated simply as commercial products; they are increasingly regarded as strategic assets linked to national power.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Lockheed’s GRIZZLY C-UAS system downs attack drone in live-fire demo | Defense News</title>
+      <link>https://www.defensenews.com/news/your-military/2026/06/03/lockheeds-grizzly-c-uas-system-downs-attack-drone-in-live-fire-demo/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/06/03/lockheeds-grizzly-c-uas-system-downs-attack-drone-in-live-fire-demo/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:34:13 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.defensenews.com/news/your-military/2026/06/03/lockheeds-grizzly-c-uas-system-downs-attack-drone-in-live-fire-demo/">Defense News</source>
+      <description>The live-fire demonstration paired the radars, Sanctum software and launcher to destroy the target at Yuma Proving Ground, Arizona.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Gulf tensions escalate as Iran hits Kuwait, US strikes near Hormuz | Defense News</title>
+      <link>https://www.defensenews.com/news/your-military/2026/06/03/gulf-tensions-escalate-as-iran-hits-kuwait-us-strikes-near-hormuz/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/06/03/gulf-tensions-escalate-as-iran-hits-kuwait-us-strikes-near-hormuz/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:09:44 +0000</pubDate>
       <category>Middle East</category>
-      <source url="https://www.aspistrategist.org.au/predictability-as-power-australias-advantage-in-the-ai-infrastructure-race/">ASPI Strategist</source>
-      <description>Remoteness from conflict is emerging as a key advantage for Australia in the competition to host AI data centres. The country already enjoys great advantages including prospectively abundant and cheap energy from renewable sources. Israeli ...</description>
+      <source url="https://www.defensenews.com/news/your-military/2026/06/03/gulf-tensions-escalate-as-iran-hits-kuwait-us-strikes-near-hormuz/">Defense News</source>
+      <description>CENTCOM said it had carried out a new round of defensive strikes in southern Iran, while an Iranian drone attack on the Kuwait airport killed one person.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ Army, J-7 to test new sensor with high-altitude balloon in coming days | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/army-j-7-to-test-new-sensor-with-high-altitude-balloon-in-coming-days/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/army-j-7-to-test-new-sensor-with-high-altitude-balloon-in-coming-days/</guid>
+      <pubDate>Wed, 03 Jun 2026 15:08:00 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://breakingdefense.com/2026/06/army-j-7-to-test-new-sensor-with-high-altitude-balloon-in-coming-days/">Breaking Defense</source>
+      <description>The Wallabee prototype is set to provide the Army and the J-7 with more intelligence-gathering capabilities in the stratosphere.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>📍 America Enabled the Gulf’s African Adventurism | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/03/america-africa-adventurism-emirates-qatar/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/03/america-africa-adventurism-emirates-qatar/</guid>
+      <pubDate>Wed, 03 Jun 2026 14:57:11 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/06/03/america-africa-adventurism-emirates-qatar/">Foreign Policy</source>
+      <description>Why Washington let its Middle Eastern partners wreak havoc in Africa.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The US is delaying weapon sales to allies. Will there be long-term impact? | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/the-us-is-delaying-weapon-sales-to-allies-will-there-be-long-term-impact/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/the-us-is-delaying-weapon-sales-to-allies-will-there-be-long-term-impact/</guid>
+      <pubDate>Wed, 03 Jun 2026 14:02:35 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://breakingdefense.com/2026/06/the-us-is-delaying-weapon-sales-to-allies-will-there-be-long-term-impact/">Breaking Defense</source>
+      <description>A number of factors may “lead even long-standing allies and partners to question whether or not it’s wise to continue to depend on the United States for essential defense articles and services,” one analyst said.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Neutralizing Chokepoints: Lessons From the Hormuz Strait, Malacca, and Baltic Sea | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/neutralizing-chokepoints-lessons-from-the-hormuz-strait-malacca-and-baltic-sea/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/neutralizing-chokepoints-lessons-from-the-hormuz-strait-malacca-and-baltic-sea/</guid>
+      <pubDate>Wed, 03 Jun 2026 22:56:00 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://thediplomat.com/2026/06/neutralizing-chokepoints-lessons-from-the-hormuz-strait-malacca-and-baltic-sea/">The Diplomat</source>
+      <description>Insights from Pekka Virkki.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 EBRD Dials Down Kyrgyz GDP Forecast Over Sanctions Worries | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/ebrd-dials-down-kyrgyz-gdp-forecast-over-sanctions-worries/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/ebrd-dials-down-kyrgyz-gdp-forecast-over-sanctions-worries/</guid>
+      <pubDate>Wed, 03 Jun 2026 22:50:00 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://thediplomat.com/2026/06/ebrd-dials-down-kyrgyz-gdp-forecast-over-sanctions-worries/">The Diplomat</source>
+      <description>While still growing, Kyrgyzstan’s GDP may slow due to increasing weight of sanctions.</description>
       <sentinel:score>5</sentinel:score>
     </item>
     <item>
-      <title>🌏 The Gulf Crisis Is Forcing Japan Into an Energy Rethink | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/02/gulf-energy-iran-oil-crisis-japan-strategy-nuclear/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/02/gulf-energy-iran-oil-crisis-japan-strategy-nuclear/</guid>
-      <pubDate>Tue, 02 Jun 2026 19:21:06 +0000</pubDate>
+      <title>🌏 Can a Takaichi Government Stabilize China-Japan Relations? | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/can-a-takaichi-government-stabilize-china-japan-relations/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/can-a-takaichi-government-stabilize-china-japan-relations/</guid>
+      <pubDate>Wed, 03 Jun 2026 22:44:00 +0000</pubDate>
       <category>Indo-Pacific</category>
-      <source url="https://foreignpolicy.com/2026/06/02/gulf-energy-iran-oil-crisis-japan-strategy-nuclear/">Foreign Policy</source>
-      <description>Tokyo spent decades preparing for disruption—then found its options narrowing.</description>
-      <sentinel:score>6</sentinel:score>
+      <source url="https://thediplomat.com/2026/06/can-a-takaichi-government-stabilize-china-japan-relations/">The Diplomat</source>
+      <description>What Abe&apos;s post-2014 rapprochement with Beijing can teach Tokyo today.</description>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
-      <title>🔐 AI makes it easy to expose holes in Army’s unified network, official says | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/ai-makes-it-easy-to-expose-holes-in-armys-unified-network-official-says/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/ai-makes-it-easy-to-expose-holes-in-armys-unified-network-official-says/</guid>
-      <pubDate>Tue, 02 Jun 2026 18:45:00 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://breakingdefense.com/2026/06/ai-makes-it-easy-to-expose-holes-in-armys-unified-network-official-says/">Breaking Defense</source>
-      <description>New AI capabilities are “lowering the barrier of entry” to exploit vulnerabilities, according to the Army’s chief data officer.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 How will the Iran war change the US role in the world? | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/dispatches/how-will-the-iran-war-change-the-us-role-in-the-world/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/how-will-the-iran-war-change-the-us-role-in-the-world/</guid>
-      <pubDate>Tue, 02 Jun 2026 18:43:54 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://www.atlanticcouncil.org/dispatches/how-will-the-iran-war-change-the-us-role-in-the-world/">Atlantic Council</source>
-      <description>Atlantic Council experts weigh in on whether the United States should “pivot” its attention away from the Middle East and toward the Indo-Pacific. The post How will the Iran war change the US role in the world? appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 How defensive cyber responds to hockey-stick growth of AI-driven threats | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/how-defensive-cyber-responds-to-hockey-stick-growth-of-ai-driven-threats/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/how-defensive-cyber-responds-to-hockey-stick-growth-of-ai-driven-threats/</guid>
-      <pubDate>Tue, 02 Jun 2026 18:20:54 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://breakingdefense.com/2026/06/how-defensive-cyber-responds-to-hockey-stick-growth-of-ai-driven-threats/">Breaking Defense</source>
-      <description>[Sponsored] Artificial intelligence is reshaping adversarial cyber operations at machine speed, requiring defenders to increase operational tempo while imposing pain and cost.</description>
+      <title>🏛️ The USMC’s AV-8B Harrier Has Flown Off Into The Sunset | The War Zone</title>
+      <link>https://www.twz.com/air/marines-av-8-harrier-jump-jet-takes-its-final-bow</link>
+      <guid isPermaLink="true">https://www.twz.com/air/marines-av-8-harrier-jump-jet-takes-its-final-bow</guid>
+      <pubDate>Wed, 03 Jun 2026 09:42:03 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.twz.com/air/marines-av-8-harrier-jump-jet-takes-its-final-bow">The War Zone</source>
+      <description>The Harrier Sundown ceremony marks the end of more than 50 years of Marine Corps jump jet operations. The post The USMC’s AV-8B Harrier Has Flown Off Into The Sunset appeared first on The War Zone.</description>
       <sentinel:score>7</sentinel:score>
     </item>
     <item>
-      <title>📍 New bill aims to regulate military uses of AI | Defense One</title>
-      <link>https://www.defenseone.com/policy/2026/06/bill-regulate-military-ai/413917/</link>
-      <guid isPermaLink="true">https://www.defenseone.com/policy/2026/06/bill-regulate-military-ai/413917/</guid>
-      <pubDate>Tue, 02 Jun 2026 14:15:42 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defenseone.com/policy/2026/06/bill-regulate-military-ai/413917/">Defense One</source>
-      <description>Sen. Kirsten Gillibrand also wants to establish a clear chain of human accountability for AI on the battlefield.</description>
-      <sentinel:score>8</sentinel:score>
+      <title>🏴 Ukraine and the Special Tribunal for the Crime of Aggression: Redefining International Justice | Just Security</title>
+      <link>https://www.justsecurity.org/140365/ukraine-russia-tribunal-crime-of-aggression/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraine-russia-tribunal-crime-of-aggression</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/140365/ukraine-russia-tribunal-crime-of-aggression/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraine-russia-tribunal-crime-of-aggression</guid>
+      <pubDate>Wed, 03 Jun 2026 13:30:12 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.justsecurity.org/140365/ukraine-russia-tribunal-crime-of-aggression/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ukraine-russia-tribunal-crime-of-aggression">Just Security</source>
+      <description>The tribunal to prosecute Russia&apos;s crime of aggression seeks to close one of the most enduring gaps in international criminal law and strengthen the U.N. Charter. The post Ukraine and the Special Tribunal for the Crime of Aggression: Redefining International Justice appeared…</description>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
-      <title>📍 Five charts that show Latin America’s search for economic growth starts in health systems | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/dispatches/five-charts-that-show-latin-americas-search-for-economic-growth-starts-in-health-systems/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/five-charts-that-show-latin-americas-search-for-economic-growth-starts-in-health-systems/</guid>
-      <pubDate>Tue, 02 Jun 2026 18:06:40 +0000</pubDate>
+      <title>📍 Exit Polls Suggest Ruling Democratic Party’s Victory in Local Elections | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/exit-polls-suggest-ruling-democratic-partys-victory-in-local-elections/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/exit-polls-suggest-ruling-democratic-partys-victory-in-local-elections/</guid>
+      <pubDate>Wed, 03 Jun 2026 22:14:00 +0000</pubDate>
       <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/dispatches/five-charts-that-show-latin-americas-search-for-economic-growth-starts-in-health-systems/">Atlantic Council</source>
-      <description>Health investments could boost economic productivity significantly—if the countries direct their expenditures toward efforts that tangibly improve public health. The post Five charts that show Latin America’s search for economic growth starts in health systems appeared first on…</description>
+      <source url="https://thediplomat.com/2026/06/exit-polls-suggest-ruling-democratic-partys-victory-in-local-elections/">The Diplomat</source>
+      <description>Exit polls suggest the DP will win 11 of 16 regional posts, with Seoul and Busan producing the night’s most closely watched results.</description>
       <sentinel:score>1</sentinel:score>
     </item>
     <item>
-      <title>🌏 Does the Quad Still Matter? | War on the Rocks</title>
-      <link>https://warontherocks.com/does-the-quad-still-matter/</link>
-      <guid isPermaLink="true">https://warontherocks.com/does-the-quad-still-matter/</guid>
-      <pubDate>Tue, 02 Jun 2026 18:00:12 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://warontherocks.com/does-the-quad-still-matter/">War on the Rocks</source>
-      <description>On May 26, India hosted a formal meeting of the foreign ministers of the Quad — comprising the United States, Australia, India, and Japan. Since its initial creation in 2007 and revival in 2017, foreign policy analysts have debated the usefulness of the organization, which was…</description>
+      <title>🌍 Syria’s Accountability Gap: The Najib Trial and the Case for the ICC | Just Security</title>
+      <link>https://www.justsecurity.org/140393/syria-accountability-gap-najib-icc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=syria-accountability-gap-najib-icc</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/140393/syria-accountability-gap-najib-icc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=syria-accountability-gap-najib-icc</guid>
+      <pubDate>Wed, 03 Jun 2026 13:05:47 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.justsecurity.org/140393/syria-accountability-gap-najib-icc/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=syria-accountability-gap-najib-icc">Just Security</source>
+      <description>The first criminal trial against a senior Assad regime official comes at a time when Syria’s legal framework remains fragile. The post Syria’s Accountability Gap: The Najib Trial and the Case for the ICC appeared first on Just Security.</description>
       <sentinel:score>6</sentinel:score>
     </item>
   </channel>
