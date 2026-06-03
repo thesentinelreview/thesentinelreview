@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { ExternalLink, Radio, FileText, MapPin } from "lucide-react";
 import SentinelMark from "./SentinelMark";
+import SensorStrip from "./SensorStrip";
+import type { SensorStripData } from "@/lib/types";
 
 export interface ControlOption {
   label: string;
@@ -56,6 +58,7 @@ export default function HeaderBar({
   theaterOptions,
   windowOptions,
   feedHref,
+  sensorData,
   isAuthed = false,
 }: {
   theaterLabel: string;
@@ -63,6 +66,7 @@ export default function HeaderBar({
   theaterOptions: ControlOption[];
   windowOptions: ControlOption[];
   feedHref: string;
+  sensorData: SensorStripData;
   isAuthed?: boolean;
 }) {
   return (
@@ -96,6 +100,20 @@ export default function HeaderBar({
             >
               <Radio className="w-4 h-4" />
               Source Feed
+            </Link>
+            <Link
+              href="/sources"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+            >
+              <Radio className="w-4 h-4" />
+              Sources
+            </Link>
+            <Link
+              href="/methodology"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+              Methodology
             </Link>
 
             <div className="flex items-center gap-2">
@@ -137,24 +155,10 @@ export default function HeaderBar({
             </div>
           </div>
         </div>
-
-        <nav className="flex items-center gap-2 mt-4 border-t border-slate-800 pt-3 flex-wrap">
-          <Link
-            href="/sources"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
-          >
-            <Radio className="w-4 h-4" />
-            Sources
-          </Link>
-          <Link
-            href="/methodology"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
-          >
-            <FileText className="w-4 h-4" />
-            Methodology
-          </Link>
-        </nav>
       </div>
+
+      {/* WATCH TIER sensor strip sits where the Sources/Methodology nav used to live. */}
+      <SensorStrip data={sensorData} />
     </header>
   );
 }
