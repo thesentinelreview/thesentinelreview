@@ -58,17 +58,22 @@ export default function HeaderBar({
   theaterOptions,
   windowOptions,
   feedHref,
+  watchHref = "/",
+  currentView = "watchfloor",
   sensorData,
   isAuthed = false,
 }: {
   theaterLabel: string;
-  windowLabel: string;
+  windowLabel?: string;
   theaterOptions: ControlOption[];
-  windowOptions: ControlOption[];
+  windowOptions?: ControlOption[];
   feedHref: string;
+  watchHref?: string;
+  currentView?: "watchfloor" | "feed";
   sensorData: SensorStripData;
   isAuthed?: boolean;
 }) {
+  const isFeed = currentView === "feed";
   return (
     <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
       <div className="px-6 py-4">
@@ -93,17 +98,35 @@ export default function HeaderBar({
 
           {/* Right cluster — page links, controls, auth */}
           <div className="flex items-center gap-3 flex-wrap justify-end">
-            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
-              <MapPin className="w-4 h-4" />
-              Sentinel View
-            </span>
-            <Link
-              href={feedHref}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
-            >
-              <Radio className="w-4 h-4" />
-              Source Feed
-            </Link>
+            {isFeed ? (
+              <>
+                <Link
+                  href={watchHref}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Sentinel View
+                </Link>
+                <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
+                  <Radio className="w-4 h-4" />
+                  Source Feed
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium">
+                  <MapPin className="w-4 h-4" />
+                  Sentinel View
+                </span>
+                <Link
+                  href={feedHref}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+                >
+                  <Radio className="w-4 h-4" />
+                  Source Feed
+                </Link>
+              </>
+            )}
             <Link
               href="/sources"
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
@@ -122,8 +145,12 @@ export default function HeaderBar({
             <div className="flex items-center gap-2">
               <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Theater</span>
               <HeaderDropdown srLabel="Select theater" current={theaterLabel} options={theaterOptions} />
-              <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Window</span>
-              <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
+              {windowOptions && windowOptions.length > 0 && windowLabel && (
+                <>
+                  <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Window</span>
+                  <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
+                </>
+              )}
             </div>
 
             <a
