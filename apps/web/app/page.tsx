@@ -6,8 +6,6 @@ import HeaderBar from "@/components/watchfloor/HeaderBar";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
-import IntensityBars from "@/components/watchfloor/IntensityBars";
-import TopSources from "@/components/watchfloor/TopSources";
 import SectorThreat from "@/components/watchfloor/SectorThreat";
 import MapLegend from "@/components/watchfloor/MapLegend";
 import type { EventType } from "@/lib/types";
@@ -26,8 +24,10 @@ import {
   getThreatAxes,
   resolveTimeRange,
   resolveThreatView,
+  resolveFeedView,
   type TimeRange,
   type ThreatView,
+  type FeedView,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -46,18 +46,20 @@ const TYPE_META: { type: EventType; label: string; dot: string }[] = [
   { type: "movement", label: "Movement", dot: "bg-blue-500" },
 ];
 
-// Build a URL preserving theater + window + visible types + threat view, overriding any.
+// Build a URL preserving theater + window + visible types + threat/feed views, overriding any.
 function buildHref(o: {
   theater: string;
   window: TimeRange;
   types: EventType[];
   threat: ThreatView;
+  feed: FeedView;
 }): string {
   const p = new URLSearchParams();
   p.set("theater", o.theater);
   if (o.window !== "24h") p.set("window", o.window);
   if (o.types.length > 0 && o.types.length < ALL_TYPES.length) p.set("types", o.types.join(","));
   if (o.threat !== "sectors") p.set("threat", o.threat);
+  if (o.feed !== "alerts") p.set("feed", o.feed);
   return `/?${p}`;
 }
 
@@ -69,6 +71,7 @@ export default async function WatchfloorPage({
     window?: string;
     types?: string;
     threat?: string;
+    feed?: string;
     lat?: string;
     lng?: string;
     zoom?: string;
@@ -78,6 +81,7 @@ export default async function WatchfloorPage({
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
   const threatView = resolveThreatView(params.threat);
+  const feedView = resolveFeedView(params.feed);
 
   // Visible event types (default = all three).
   const rawTypes = params.types
@@ -130,12 +134,12 @@ export default async function WatchfloorPage({
   const theaterOptions = Object.values(THEATERS).map((t) => ({
     label: t.label,
     active: t.id === theater.id,
-    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes, threat: threatView }),
+    href: buildHref({ theater: t.id, window: timeRange, types: visibleTypes, threat: threatView, feed: feedView }),
   }));
   const windowOptions = WATCH_WINDOWS.map((w) => ({
     label: WINDOW_LABELS[w],
     active: w === timeRange,
-    href: buildHref({ theater: theater.id, window: w, types: visibleTypes, threat: threatView }),
+    href: buildHref({ theater: theater.id, window: w, types: visibleTypes, threat: threatView, feed: feedView }),
   }));
   const legendItems = TYPE_META.map((m) => {
     const active = visibleTypes.includes(m.type);
@@ -144,24 +148,23 @@ export default async function WatchfloorPage({
       label: m.label,
       dot: m.dot,
       active,
-      href: buildHref({ theater: theater.id, window: timeRange, types: next, threat: threatView }),
+      href: buildHref({ theater: theater.id, window: timeRange, types: next, threat: threatView, feed: feedView }),
     };
   });
 
-  // SECTORS | AXES toggle for the Sector Threat panel. Server-driven Links that
-  // preserve theater/window/types; default lands on SECTORS (no `threat` param).
-  const threatTabs = [
-    {
-      label: "Sectors",
-      active: threatView === "sectors",
-      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "sectors" }),
-    },
-    {
-      label: "Axes",
-      active: threatView === "axes",
-      href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: "axes" }),
-    },
-  ];
+  // SECTORS | AXES | INTENSITY toggle for the Sector Threat panel.
+  const threatTabs = (["sectors", "axes", "intensity"] as ThreatView[]).map((v) => ({
+    label: v.charAt(0).toUpperCase() + v.slice(1),
+    active: threatView === v,
+    href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: v, feed: feedView }),
+  }));
+
+  // ALERTS | SOURCES toggle for the LiveStream / Top Sources panel.
+  const feedTabs = (["alerts", "sources"] as FeedView[]).map((v) => ({
+    label: v === "alerts" ? "Active Alerts" : "Top Sources",
+    active: feedView === v,
+    href: buildHref({ theater: theater.id, window: timeRange, types: visibleTypes, threat: threatView, feed: v }),
+  }));
 
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
@@ -210,11 +213,18 @@ export default async function WatchfloorPage({
             </div>
             <div className="lg:flex-1 lg:min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="lg:min-h-0 lg:overflow-y-auto">
-                <LiveStream events={mapEvents} theaterId={theater.id} />
+                <LiveStream
+                  events={mapEvents}
+                  sources={sources}
+                  theaterId={theater.id}
+                  tabs={feedTabs}
+                  activeTab={feedView}
+                />
               </div>
               <div className="lg:min-h-0 lg:overflow-y-auto">
                 <SectorThreat
                   sectors={sectors}
+                  intensity={intensity}
                   windowLabel={WINDOW_LABELS[timeRange]}
                   tabs={threatTabs}
                   activeTab={threatView}
@@ -222,14 +232,6 @@ export default async function WatchfloorPage({
                 />
               </div>
             </div>
-          </div>
-
-          {/* Activity Intensity + Top Sources */}
-          <div className="col-span-12 lg:col-span-6">
-            <IntensityBars data={intensity} />
-          </div>
-          <div className="col-span-12 lg:col-span-6">
-            <TopSources sources={sources} />
           </div>
         </div>
 

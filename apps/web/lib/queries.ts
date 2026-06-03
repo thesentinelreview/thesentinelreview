@@ -42,11 +42,22 @@ export function resolveTimeRange(raw: string | undefined): TimeRange {
 }
 
 // Which view the Sector Threat panel shows. "sectors" (oblast breakdown) is the
-// default so a bookmarked URL with no `threat` param is unchanged.
-export type ThreatView = "sectors" | "axes";
+// default so a bookmarked URL with no `threat` param is unchanged. "intensity"
+// surfaces the activity-intensity chart as a third tab in the same panel.
+export type ThreatView = "sectors" | "axes" | "intensity";
 
 export function resolveThreatView(raw: string | undefined): ThreatView {
-  return raw === "axes" ? "axes" : "sectors";
+  if (raw === "axes") return "axes";
+  if (raw === "intensity") return "intensity";
+  return "sectors";
+}
+
+// Which view the Active Alerts / Top Sources panel shows. "alerts" is the
+// default so a bookmarked URL with no `feed` param is unchanged.
+export type FeedView = "alerts" | "sources";
+
+export function resolveFeedView(raw: string | undefined): FeedView {
+  return raw === "sources" ? "sources" : "alerts";
 }
 
 // The /admin/tieout page exposes 24h/7d plus an all-time option. "all" skips the
