@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import { getFullBriefing, getEventDetail, getSensorStripData } from "@/lib/queries";
 import { resolveTheater, THEATERS } from "@/data/theaters";
 import s from "./page.module.css";
@@ -57,9 +56,9 @@ export default async function BriefingPage({
           theaterOptions={theaterOptions}
           windowOptions={windowOptions}
           feedHref={`/app/feed?theater=${theater.id}`}
+          sensorData={sensorData}
           isAuthed={!!userId}
         />
-        <SensorStrip data={sensorData} />
       </div>
 
       <div className={s.breadcrumb}>

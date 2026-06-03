@@ -3,7 +3,6 @@ import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
@@ -172,6 +171,7 @@ export default async function WatchfloorPage({
         theaterOptions={theaterOptions}
         windowOptions={windowOptions}
         feedHref={`/app/feed?theater=${theater.id}`}
+        sensorData={sensorData}
         isAuthed={!!userId}
       />
       <KpiRail
@@ -222,11 +222,6 @@ export default async function WatchfloorPage({
                 />
               </div>
             </div>
-          </div>
-
-          {/* WATCH TIER sits beneath the top row as a full-width sensor band. */}
-          <div className="col-span-12 -mx-6">
-            <SensorStrip data={sensorData} />
           </div>
 
           {/* Activity Intensity + Top Sources */}
