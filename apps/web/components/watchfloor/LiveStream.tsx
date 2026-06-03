@@ -1,10 +1,26 @@
 import Link from "next/link";
-import { AlertCircle, Target, Swords, TrendingUp, ShieldCheck, ShieldAlert, AlertTriangle, Clock } from "lucide-react";
-import type { MapEvent } from "@/lib/types";
+import { Fragment } from "react";
+import {
+  AlertCircle,
+  Target,
+  Swords,
+  TrendingUp,
+  ShieldCheck,
+  ShieldAlert,
+  AlertTriangle,
+  Clock,
+  Radio,
+} from "lucide-react";
+import TopSources from "./TopSources";
+import type { MapEvent, Source } from "@/lib/types";
+import type { FeedView } from "@/lib/queries";
 
-// "Active Alerts" pane — shows the 3 most recent events as detail cards.
-// Fed by getMapEvents (which carries description, location_name, oblast) so the
-// cards show useful text. Each card links to the event detail page.
+export interface FeedTab {
+  label: string;
+  href: string;
+  active: boolean;
+}
+
 const eventTypeIcons = {
   strike: Target,
   clash: Swords,
@@ -30,29 +46,73 @@ function formatTime(timestamp: string): string {
 
 export default function LiveStream({
   events,
+  sources,
   theaterId,
+  tabs,
+  activeTab,
 }: {
   events: MapEvent[];
+  sources: Source[];
   theaterId: string;
+  tabs: FeedTab[];
+  activeTab: FeedView;
 }) {
+  const isSources = activeTab === "sources";
   const top = events.slice(0, 3);
+  const titleText = isSources ? "Top Sources" : "Active Alerts";
+  const Icon = isSources ? Radio : AlertCircle;
+  const iconBg = isSources
+    ? "bg-cyan-500/10 border-cyan-500/20"
+    : "bg-red-500/10 border-red-500/20";
+  const iconColor = isSources ? "text-cyan-400" : "text-red-400";
 
   return (
     <div className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-          <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20">
-            <AlertCircle className="w-4 h-4 text-red-400" />
+      <div className="flex items-start justify-between gap-3 mb-5">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <div className={`p-1.5 rounded-lg border ${iconBg}`}>
+              <Icon className={`w-4 h-4 ${iconColor}`} />
+            </div>
+            <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{titleText}</h2>
           </div>
-          Active Alerts
-        </h2>
-        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-          <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-          <span className="text-xs text-red-400 font-semibold">Live</span>
+          <nav aria-label="Feed view" className="flex items-center gap-2 text-xs ml-8 flex-wrap">
+            {tabs.map((tab, i) => {
+              const activeColor = i === 0 ? "text-red-400" : "text-cyan-400";
+              return (
+                <Fragment key={tab.label}>
+                  {i > 0 && <span className="text-slate-600">•</span>}
+                  <Link
+                    href={tab.href}
+                    replace
+                    aria-current={tab.active ? "page" : undefined}
+                    className={`font-semibold uppercase tracking-wider transition-colors ${
+                      tab.active ? activeColor : "text-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    {tab.label}
+                  </Link>
+                </Fragment>
+              );
+            })}
+          </nav>
         </div>
+        {isSources ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/50 border border-slate-700 rounded-full flex-none">
+            <TrendingUp className="w-3 h-3 text-emerald-400" />
+            <span className="text-xs text-slate-400">30 Days</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full flex-none">
+            <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+            <span className="text-xs text-red-400 font-semibold">Live</span>
+          </div>
+        )}
       </div>
 
-      {top.length === 0 ? (
+      {isSources ? (
+        <TopSources sources={sources} />
+      ) : top.length === 0 ? (
         <div className="text-xs text-slate-500 uppercase tracking-wider py-6 text-center">
           No active alerts
         </div>

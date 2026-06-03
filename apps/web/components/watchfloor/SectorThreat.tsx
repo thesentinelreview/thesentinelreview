@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Fragment } from "react";
-import { Crosshair } from "lucide-react";
+import { Crosshair, BarChart3 } from "lucide-react";
 import SectorRow from "./SectorRow";
 import ThreatAxes from "./ThreatAxes";
-import type { Sector, ThreatAxes as ThreatAxesData } from "@/lib/types";
+import IntensityBars from "./IntensityBars";
+import type { IntensityDay, Sector, ThreatAxes as ThreatAxesData } from "@/lib/types";
 import type { ThreatView } from "@/lib/queries";
 
 export interface ThreatTab {
@@ -14,6 +15,7 @@ export interface ThreatTab {
 
 export default function SectorThreat({
   sectors,
+  intensity,
   windowLabel,
   className = "",
   tabs,
@@ -21,6 +23,7 @@ export default function SectorThreat({
   threatAxes,
 }: {
   sectors: Sector[];
+  intensity: IntensityDay[];
   windowLabel: string;
   className?: string;
   tabs: ThreatTab[];
@@ -28,7 +31,15 @@ export default function SectorThreat({
   threatAxes: ThreatAxesData;
 }) {
   const isAxes = activeTab === "axes";
-  const titleText = isAxes ? "Threat Axes" : "Sector Threat";
+  const isIntensity = activeTab === "intensity";
+  const titleText = isIntensity ? "Activity Intensity" : isAxes ? "Threat Axes" : "Sector Threat";
+  const Icon = isIntensity ? BarChart3 : Crosshair;
+  const iconBg = isIntensity
+    ? "bg-purple-500/10 border-purple-500/20"
+    : "bg-red-500/10 border-red-500/20";
+  const iconColor = isIntensity ? "text-purple-400" : "text-red-400";
+  // Intensity is always 7-day; sectors/axes follow the dashboard window.
+  const badgeText = isIntensity ? "7 DAYS" : `${windowLabel} WINDOW`;
 
   return (
     <div
@@ -37,18 +48,15 @@ export default function SectorThreat({
       <div className="flex items-start justify-between gap-3 mb-6">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20">
-              <Crosshair className="w-4 h-4 text-red-400" />
+            <div className={`p-1.5 rounded-lg border ${iconBg}`}>
+              <Icon className={`w-4 h-4 ${iconColor}`} />
             </div>
             <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{titleText}</h2>
           </div>
-          {/* The Make design renders "SECTORS • AXES" as static decorative text,
-              but the live panel has a working toggle — preserve that here as
-              styled Links so a bookmarked URL with ?threat=axes still works. */}
-          <nav aria-label="Threat view" className="flex items-center gap-2 text-xs ml-8">
+          <nav aria-label="Threat view" className="flex items-center gap-2 text-xs ml-8 flex-wrap">
             {tabs.map((tab, i) => {
-              const isSectorsTab = i === 0;
-              const activeColor = isSectorsTab ? "text-emerald-400" : "text-cyan-400";
+              const activeColor =
+                i === 0 ? "text-emerald-400" : i === 1 ? "text-cyan-400" : "text-purple-400";
               return (
                 <Fragment key={tab.label}>
                   {i > 0 && <span className="text-slate-600">•</span>}
@@ -68,11 +76,13 @@ export default function SectorThreat({
           </nav>
         </div>
         <div className="px-3 py-1.5 bg-slate-800/50 border border-slate-700 rounded-lg flex-none">
-          <span className="text-xs text-slate-400 font-mono font-semibold">{windowLabel} WINDOW</span>
+          <span className="text-xs text-slate-400 font-mono font-semibold">{badgeText}</span>
         </div>
       </div>
 
-      {isAxes ? (
+      {isIntensity ? (
+        <IntensityBars data={intensity} />
+      ) : isAxes ? (
         <ThreatAxes data={threatAxes} />
       ) : sectors.length > 0 ? (
         <>
