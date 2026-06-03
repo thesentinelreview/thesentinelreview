@@ -14,30 +14,40 @@ export default function SectorRow({
   strikes: number;
 }) {
   const trendUp = trend.trim().startsWith("+") || trend.trim() === "NEW";
+  const trendColor = trendUp ? "text-red-400" : "text-emerald-400";
+  // Pick a gradient by relative-intensity bucket so a hot sector reads as
+  // amber→red while quiet sectors stay cool. Matches the gradient language
+  // used in the axes view for consistency.
   const bar =
     pct > 80
-      ? "bg-gradient-to-r from-amber-500 to-red-500"
+      ? "from-amber-500 to-red-500"
       : pct > 50
-        ? "bg-gradient-to-r from-cyan-400 to-amber-500"
-        : "bg-teal-300";
+        ? "from-cyan-400 to-amber-500"
+        : "from-emerald-500 to-teal-500";
 
   return (
-    <div className="px-3 py-2.5 border-b border-zinc-900">
-      <div className="flex items-center justify-between gap-2">
+    <div className="group">
+      <div className="flex items-center justify-between mb-2 gap-2">
         <div className="flex items-baseline gap-2 min-w-0">
-          <span className="text-[13px] font-semibold text-zinc-100 truncate">{name}</span>
-          <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-500 flex-none">{level}</span>
+          <span className="text-base font-bold text-slate-100 truncate">{name}</span>
+          <span className="text-[10px] uppercase tracking-wider text-slate-500 flex-none">
+            {level}
+          </span>
         </div>
-        <span className={`text-xs font-data font-semibold ${trendUp ? "text-red-400" : "text-emerald-400"}`}>
-          {trend}
+        <span className={`text-sm font-bold font-mono ${trendColor}`}>{trend}</span>
+      </div>
+      <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden mb-1">
+        <div
+          className={`absolute inset-y-0 left-0 bg-gradient-to-r ${bar} transition-all duration-500 ease-out`}
+          style={{ width: `${pct}%` }}
+        >
+          <div className="absolute inset-0 bg-white/10" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-slate-500 font-medium">
+          EV {events} · STR {strikes}
         </span>
-      </div>
-      <div className="h-1 mt-2 rounded-full bg-zinc-800 overflow-hidden">
-        <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-[10px] text-zinc-500 font-data mt-2">
-        <span>EV {events}</span>
-        <span>STR {strikes}</span>
       </div>
     </div>
   );

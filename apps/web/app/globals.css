@@ -22,7 +22,7 @@
   --font-data: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* CSS variables in original mockup naming — used by page.module.css */
+/* CSS variables in original mockup naming — used by page.module.css and DemoBanner */
 :root {
   --bg: #0c0d10;
   --surface: #141519;
@@ -70,17 +70,15 @@ body::before {
   z-index: 0;
 }
 
-/* ── Watchfloor (fullscreen dashboard) ──────────────────────────────────── */
-/* The watchfloor is edge-to-edge. Drop the global body padding + grain and turn
-   the body into a flex column so the screen fills the viewport below the demo
-   banner without scroll or clipping. */
+/* ── Watchfloor (Sentinel Map Final reskin) ───────────────────────────────── */
+/* Edge-to-edge no-scroll shell. Drops body padding + grain + the demo banner's
+   negative margin, then pins the body to viewport height so the watchfloor's
+   internal flex panes (header + scrolling <main>) bound correctly instead of
+   stretching the document. */
 body:has(.watchfloor-root) {
   padding: 0;
   display: flex;
   flex-direction: column;
-  /* A *definite* height (not just min-height) is what lets the flex-1 panes
-     below actually bound and scroll internally, instead of growing to fit
-     their content and stretching the whole layout. */
   height: 100vh;
   height: 100dvh;
   overflow: hidden;

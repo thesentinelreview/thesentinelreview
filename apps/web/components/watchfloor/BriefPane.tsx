@@ -1,9 +1,11 @@
 import Link from "next/link";
-import type { BriefingData, Source } from "@/lib/types";
+import { FileText, Calendar, CheckCircle, Sparkles } from "lucide-react";
+import type { BriefingData, MapEvent } from "@/lib/types";
 import ExportButton from "./ExportButton";
 
-// Use the briefing's first sentence as the editorial headline; the remainder
-// becomes body copy. Falls back gracefully if there's no clean sentence split.
+// Pull the first sentence off the leading paragraph as an editorial headline;
+// the remainder is the body. Mirrors the previous BriefPane behaviour so the
+// ExportButton receives a clean headline.
 function deriveHeadline(paragraphs: string[]): { headline: string; body: string[] } {
   if (paragraphs.length === 0) return { headline: "", body: [] };
   const first = paragraphs[0];
@@ -16,123 +18,133 @@ function deriveHeadline(paragraphs: string[]): { headline: string; body: string[
 
 export default function BriefPane({
   briefing,
-  sources,
+  events,
   theaterId,
   theaterLabel,
   windowLabel,
   eventCount,
-  className = "",
 }: {
   briefing: BriefingData | null;
-  sources: Source[];
+  events: MapEvent[];
   theaterId: string;
   theaterLabel: string;
   windowLabel: string;
   eventCount: number;
-  className?: string;
 }) {
-  const topSources = sources.slice(0, 3);
-  const { headline, body } = briefing ? deriveHeadline(briefing.paragraphs) : { headline: "", body: [] };
+  // Confidence counts come from the live event stream rather than the briefing
+  // (the briefing row doesn't carry them). Computed off mapEvents which the
+  // page already queries.
+  const verifiedCount = events.filter((e) => e.confidence === "verified").length;
+  const partialCount = events.filter((e) => e.confidence === "partial").length;
+  const unconfirmedCount = events.filter((e) => e.confidence === "unconfirmed").length;
+
+  if (!briefing) {
+    return (
+      <div className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-8 shadow-xl">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+            <FileText className="w-5 h-5 text-blue-400" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-100">Daily Intelligence Briefing</h2>
+        </div>
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-6 flex flex-col items-center justify-center text-center gap-3 min-h-[160px]">
+          <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded-sm bg-slate-900 border border-slate-700 text-slate-500">
+            No Brief
+          </span>
+          <p className="text-sm text-slate-400 max-w-[40ch] leading-relaxed">
+            No briefing published for {theaterLabel} yet. {eventCount} {eventCount === 1 ? "event" : "events"} logged in the last {windowLabel}.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const { headline, body } = deriveHeadline(briefing.paragraphs);
+  const formatDate = (dateStr: string) => {
+    try {
+      return new Date(dateStr).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
-    <section
-      className={`flex flex-col bg-zinc-950/60 border border-emerald-500/25 rounded-sm overflow-hidden min-h-0 ${className}`}
-    >
-      <header className="px-3 py-2 border-b border-zinc-900 flex items-center justify-between flex-none gap-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[9px] font-data tracking-[0.22em] uppercase px-1.5 py-0.5 rounded-sm border bg-teal-400/[0.06] border-teal-400/30 text-teal-300">
-            02
-          </span>
-          <h3 className="text-[12px] font-semibold tracking-[0.16em] uppercase text-zinc-200 truncate">
-            AI-Assisted Briefing
-          </h3>
+    <div className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-8 shadow-xl">
+      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+        <div>
+          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2 mb-2">
+            <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+              <FileText className="w-5 h-5 text-blue-400" />
+            </div>
+            Daily Intelligence Briefing
+          </h2>
+          <div className="flex items-center gap-3 text-sm flex-wrap">
+            <div className="flex items-center gap-2 text-slate-400">
+              <Calendar className="w-4 h-4" />
+              {formatDate(briefing.date)}
+            </div>
+            <span className="text-slate-600">•</span>
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 rounded text-purple-400">
+              <Sparkles className="w-3 h-3" />
+              <span className="text-xs font-semibold">AI-Assisted</span>
+            </div>
+          </div>
         </div>
-        {briefing && (
-          <div className="flex items-center gap-1.5 flex-none">
-            <Link
-              href={`/briefing/${briefing.id}?theater=${theaterId}`}
-              className="px-2 py-1 text-[10px] rounded-sm border border-teal-400/30 bg-teal-400/[0.06] text-teal-300 tracking-wider uppercase font-data hover:bg-teal-400/15"
-            >
-              Open Brief
-            </Link>
-            <ExportButton
-              date={briefing.date}
-              headline={headline}
-              paragraphs={body}
-            />
-          </div>
-        )}
-      </header>
 
-      <div className="flex-1 min-h-0 overflow-auto">
-        {briefing ? (
-          <article className="px-4 py-4 flex flex-col h-full">
-            <div className="flex items-center gap-2 mb-1.5 flex-none">
-              <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-teal-400/[0.08] border border-teal-400/30 text-teal-300">
-                AI · Assisted
-              </span>
-              <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-red-500/[0.08] border border-red-500/30 text-red-400">
-                Priority 1
-              </span>
-              <span className={`px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm border ${briefing.reviewed ? "bg-emerald-500/[0.08] border-emerald-500/30 text-emerald-400" : "bg-zinc-800/60 border-zinc-600 text-zinc-400"}`}>
-                {briefing.reviewed ? "Reviewed" : "AI Draft"}
-              </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link
+            href={`/briefing/${briefing.id}?theater=${theaterId}`}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 transition-all text-sm border border-slate-600"
+          >
+            Open Brief
+          </Link>
+          <ExportButton date={briefing.date} headline={headline} paragraphs={body} />
+          {briefing.reviewed && (
+            <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-sm font-semibold shadow-lg shadow-emerald-500/10">
+              <CheckCircle className="w-4 h-4" />
+              Reviewed
             </div>
-            <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-data flex-none">
-              {briefing.utc_time}
-            </div>
-
-            <h2 className="text-[19px] font-bold leading-[1.2] text-zinc-100 flex-none" style={{ textWrap: "pretty" }}>
-              {headline}
-            </h2>
-
-            <div
-              className="mt-3 text-[12.5px] text-zinc-300 leading-relaxed space-y-2.5 flex-1 min-h-0 max-h-[280px] overflow-y-auto pr-1"
-              style={{ textWrap: "pretty" }}
-            >
-              {body.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-
-            <div className="mt-3 pt-3 border-t border-zinc-900 flex-none">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-zinc-400">Source Confidence</span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-zinc-500 font-data">30d trust</span>
-              </div>
-              {topSources.length === 0 ? (
-                <div className="text-[10px] font-data uppercase tracking-[0.08em] text-zinc-600">No source activity yet</div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {topSources.map((s) => (
-                    <div key={s.rank} className="min-w-0 border border-emerald-400/40 bg-emerald-400/[0.04] rounded-sm px-2 py-1.5">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="min-w-0 flex-1 truncate text-[10px] text-emerald-200/70">{s.display_name}</span>
-                        <span className="flex-none font-data tabular-nums text-[18px] font-semibold leading-none text-emerald-200">{s.verified_rate}%</span>
-                      </div>
-                      <div className="h-[3px] mt-1 rounded-full bg-zinc-800 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400"
-                          style={{ width: `${s.verified_rate}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </article>
-        ) : (
-          <div className="px-4 py-6 h-full flex flex-col items-center justify-center text-center gap-3">
-            <span className="px-1.5 py-px text-[9px] font-data uppercase tracking-[0.22em] rounded-sm bg-zinc-900 border border-zinc-700 text-zinc-500">
-              No Brief
-            </span>
-            <p className="text-[13px] text-zinc-400 max-w-[32ch] leading-relaxed">
-              No briefing published for {theaterLabel} yet. {eventCount} {eventCount === 1 ? "event" : "events"} logged in the last {windowLabel}.
-            </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </section>
+
+      <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-6 mb-6">
+        {headline && (
+          <h3 className="text-base font-bold text-slate-100 mb-3 flex items-center gap-2">
+            <div className="w-1 h-5 bg-blue-500 rounded" />
+            {headline}
+          </h3>
+        )}
+        {body.map((p, i) => (
+          <p key={i} className="text-sm text-slate-300 leading-relaxed mb-4 pl-3 last:mb-0">
+            {p}
+          </p>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between pt-5 border-t border-slate-800 flex-wrap gap-3">
+        <div className="flex items-center gap-6 text-xs flex-wrap">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/30" />
+            <span className="text-slate-400 font-medium">{verifiedCount} Verified</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-amber-400 shadow-lg shadow-amber-400/30" />
+            <span className="text-slate-400 font-medium">{partialCount} Partial</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-slate-400" />
+            <span className="text-slate-400 font-medium">{unconfirmedCount} Unconfirmed</span>
+          </div>
+        </div>
+
+        <div className="text-xs text-slate-500">{briefing.utc_time} • {briefing.source_count} sources</div>
+      </div>
+    </div>
   );
 }
