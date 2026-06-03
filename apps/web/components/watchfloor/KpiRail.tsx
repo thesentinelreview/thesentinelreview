@@ -32,14 +32,14 @@ function MetricCell({
   deltaColor?: string;
 }) {
   return (
-    <div className="px-3 py-1.5 bg-slate-800/40 border border-slate-700/50 rounded min-w-0">
+    <div className="px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded min-w-0">
       <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold leading-tight truncate">
         {label}
       </div>
-      <div className="flex items-baseline gap-2 mt-0.5">
-        <div className={`text-base font-bold ${valueColor} leading-tight`}>{value}</div>
+      <div className="flex items-baseline gap-2 mt-1">
+        <div className={`text-2xl font-bold ${valueColor} leading-tight`}>{value}</div>
         {deltaText && (
-          <div className={`text-[10px] font-mono ${deltaColor} leading-tight`}>{deltaText}</div>
+          <div className={`text-[11px] font-mono ${deltaColor} leading-tight`}>{deltaText}</div>
         )}
       </div>
     </div>
@@ -93,7 +93,7 @@ export default function KpiRail({
             label="Strikes"
             value={
               <>
-                <Target className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                <Target className="inline w-5 h-5 -mt-1 mr-1.5" />
                 {deltas.strikes}
               </>
             }
@@ -105,7 +105,7 @@ export default function KpiRail({
             label="Verified"
             value={
               <>
-                <ShieldCheck className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                <ShieldCheck className="inline w-5 h-5 -mt-1 mr-1.5" />
                 {deltas.verifiedPct}%
               </>
             }
@@ -117,7 +117,7 @@ export default function KpiRail({
             label="Fusion"
             value={
               <>
-                <Zap className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                <Zap className="inline w-5 h-5 -mt-1 mr-1.5" />
                 {fusionPct == null ? "—" : `${fusionPct}%`}
               </>
             }
@@ -127,7 +127,7 @@ export default function KpiRail({
             label="Median TTV"
             value={
               <>
-                <Clock className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                <Clock className="inline w-5 h-5 -mt-1 mr-1.5" />
                 {formatTtv(medianTtvMinutes)}
               </>
             }
@@ -136,7 +136,7 @@ export default function KpiRail({
             label="Active Sectors"
             value={
               <>
-                <Layers className="inline w-3.5 h-3.5 -mt-0.5 mr-1" />
+                <Layers className="inline w-5 h-5 -mt-1 mr-1.5" />
                 {deltas.activeSectors}
               </>
             }
