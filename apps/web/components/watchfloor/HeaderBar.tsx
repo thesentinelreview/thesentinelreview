@@ -69,11 +69,12 @@ export default function HeaderBar({
   windowOptions?: ControlOption[];
   feedHref: string;
   watchHref?: string;
-  currentView?: "watchfloor" | "feed";
+  currentView?: "watchfloor" | "feed" | "static";
   sensorData: SensorStripData;
   isAuthed?: boolean;
 }) {
   const isFeed = currentView === "feed";
+  const isStatic = currentView === "static";
   return (
     <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
       <div className="px-6 py-4">
@@ -98,7 +99,24 @@ export default function HeaderBar({
 
           {/* Right cluster — page links, controls, auth */}
           <div className="flex items-center gap-3 flex-wrap justify-end">
-            {isFeed ? (
+            {isStatic ? (
+              <>
+                <Link
+                  href={watchHref}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Sentinel View
+                </Link>
+                <Link
+                  href={feedHref}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
+                >
+                  <Radio className="w-4 h-4" />
+                  Source Feed
+                </Link>
+              </>
+            ) : isFeed ? (
               <>
                 <Link
                   href={watchHref}
