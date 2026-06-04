@@ -184,13 +184,13 @@ export default async function WatchfloorPage({
         medianTtvMinutes={medianTtv}
       />
 
-      <main className="flex-1 min-h-0 overflow-y-auto p-6">
-        <div className="grid grid-cols-12 gap-6">
+      <main className="flex-1 min-h-0 flex flex-col p-6 gap-4">
+        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4">
           {/* Top row: Map (left half) + right cluster (Brief on top, Active Alerts +
-              Sector Threat side by side underneath). Right column is height-capped
-              to track the map; each panel scrolls internally so long content stays
+              Sector Threat side by side underneath). Right column flexes to fill
+              the viewport; each panel scrolls internally so long content stays
               contained. */}
-          <div className="col-span-12 lg:col-span-6 h-[720px] relative rounded-lg overflow-hidden border border-slate-700">
+          <div className="col-span-12 lg:col-span-6 h-[480px] lg:h-auto lg:min-h-0 relative rounded-lg overflow-hidden border border-slate-700">
             <MapWrapper
               events={mapEvents}
               center={mapCenter}
@@ -200,7 +200,7 @@ export default async function WatchfloorPage({
             />
             <MapLegend items={legendItems} />
           </div>
-          <div className="col-span-12 lg:col-span-6 flex flex-col gap-6 lg:h-[720px]">
+          <div className="col-span-12 lg:col-span-6 flex flex-col gap-4 min-h-0">
             <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
               <BriefPane
                 briefing={briefing}
@@ -211,7 +211,7 @@ export default async function WatchfloorPage({
                 eventCount={stats.events}
               />
             </div>
-            <div className="lg:flex-1 lg:min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="lg:flex-1 lg:min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="lg:min-h-0 lg:overflow-y-auto">
                 <LiveStream
                   events={mapEvents}
@@ -235,28 +235,22 @@ export default async function WatchfloorPage({
           </div>
         </div>
 
-        <footer className="mt-12 pt-8 border-t border-slate-800/50">
-          <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-6 mb-6">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20 flex-shrink-0">
-                <AlertCircle className="w-5 h-5 text-amber-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-amber-400 mb-1 uppercase tracking-wider">Disclaimer</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  This platform is a <strong className="text-slate-300">situational awareness tool only</strong>.
-                  It does not support military targeting or operational planning. Events are algorithmically extracted and
-                  scored; high-impact events require human editorial review before publication. All data is derived from
-                  open-source intelligence and may contain inaccuracies.
-                </p>
-              </div>
+        <div className="flex-none bg-amber-500/5 border border-amber-500/20 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20 flex-shrink-0">
+              <AlertCircle className="w-5 h-5 text-amber-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-amber-400 mb-1 uppercase tracking-wider">Disclaimer</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                This platform is a <strong className="text-slate-300">situational awareness tool only</strong>.
+                It does not support military targeting or operational planning. Events are algorithmically extracted and
+                scored; high-impact events require human editorial review before publication. All data is derived from
+                open-source intelligence and may contain inaccuracies.
+              </p>
             </div>
           </div>
-          <div className="text-center text-xs text-slate-600">
-            <p>The Sentinel Review — Washington, D.C.</p>
-            <p className="mt-1">contact@thesentinelreview.com • thesentinelreview.com</p>
-          </div>
-        </footer>
+        </div>
       </main>
     </div>
   );

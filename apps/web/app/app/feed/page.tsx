@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { Radio } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
-import SentinelMark from "@/components/watchfloor/SentinelMark";
-import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
-import PostCard from "@/components/PostCard";
+import HeaderBar from "@/components/watchfloor/HeaderBar";
+import FeedPostCard from "@/components/watchfloor/FeedPostCard";
 import type { Platform } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
-import { type FeedPost, getSourceFeedPosts, getWatchInfo } from "@/lib/queries";
+import {
+  type FeedPost,
+  getSourceFeedPosts,
+  getWatchInfo,
+  getSensorStripData,
+} from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -21,10 +25,43 @@ const PLATFORM_LABEL: Record<Platform, string> = {
   bluesky:  "Bluesky",
 };
 
-// Shared chip styling, matching the watchfloor header controls.
-const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
-const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
-const CHIP_ON = "border-teal-400/40 bg-teal-400/[0.08] text-teal-300";
+const PLATFORM_FILTER_STYLE: Record<Platform, { on: string; off: string }> = {
+  rss: {
+    on:  "bg-emerald-500/15 border-emerald-500/40 text-emerald-300",
+    off: "border-emerald-500/20 text-emerald-400/60 hover:text-emerald-300 hover:border-emerald-500/40",
+  },
+  x: {
+    on:  "bg-sky-500/15 border-sky-500/40 text-sky-300",
+    off: "border-sky-500/20 text-sky-400/60 hover:text-sky-300 hover:border-sky-500/40",
+  },
+  telegram: {
+    on:  "bg-blue-500/15 border-blue-500/40 text-blue-300",
+    off: "border-blue-500/20 text-blue-400/60 hover:text-blue-300 hover:border-blue-500/40",
+  },
+  bluesky: {
+    on:  "bg-cyan-500/15 border-cyan-500/40 text-cyan-300",
+    off: "border-cyan-500/20 text-cyan-400/60 hover:text-cyan-300 hover:border-cyan-500/40",
+  },
+  wire: {
+    on:  "bg-amber-500/15 border-amber-500/40 text-amber-300",
+    off: "border-amber-500/20 text-amber-400/60 hover:text-amber-300 hover:border-amber-500/40",
+  },
+};
+
+const TIER_FILTER_STYLE: Record<1 | 2 | 3, { on: string; off: string }> = {
+  1: {
+    on:  "bg-emerald-500/15 border-emerald-500/40 text-emerald-300",
+    off: "border-emerald-500/20 text-emerald-400/60 hover:text-emerald-300 hover:border-emerald-500/40",
+  },
+  2: {
+    on:  "bg-amber-500/15 border-amber-500/40 text-amber-300",
+    off: "border-amber-500/20 text-amber-400/60 hover:text-amber-300 hover:border-amber-500/40",
+  },
+  3: {
+    on:  "bg-slate-700/40 border-slate-500/40 text-slate-200",
+    off: "border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600",
+  },
+};
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -114,13 +151,19 @@ export default async function SourceFeedPage({
   const before    = params.before;
   const { userId } = await auth();
 
-  const page = await getSourceFeedPosts(theater.id, { platforms, tiers, before });
+  const [page, sensorData] = await Promise.all([
+    getSourceFeedPosts(theater.id, { platforms, tiers, before }),
+    getSensorStripData(theater.id),
+  ]);
   const groups = groupByDay(page.posts);
   const watchInfo = userId
     ? await getWatchInfo(userId, page.posts.map((p) => p.id))
     : {};
 
-  // Toggle helpers — clicking a chip flips its own state.
+  // Distinct sources represented in the loaded page — a real signal we can show
+  // without faking a global "active sources" count.
+  const sourcesInPage = new Set(page.posts.map((p) => p.source_handle)).size;
+
   function togglePlatform(p: Platform): Platform[] {
     const active = platforms.length === 0 ? [...ALL_PLATFORMS] : platforms;
     return active.includes(p) ? active.filter((x) => x !== p) : [...active, p];
@@ -135,160 +178,167 @@ export default async function SourceFeedPage({
   const tierIsActive = (t: 1 | 2 | 3) =>
     tiers.length === 0 ? true : tiers.includes(t);
 
+  const theaterOptions = Object.values(THEATERS).map((t) => ({
+    label: t.label,
+    active: t.id === theater.id,
+    href: buildHref({ theater: t.id, platforms, tiers }),
+  }));
+
   return (
-    <div className="feed-root min-h-screen flex flex-col bg-[#05070A] text-zinc-100 font-ui">
-      {/* TOP BAR */}
-      <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
-        <div className="flex items-center gap-3 min-w-0">
-          <SentinelMark
-            className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
-            size={24}
-          />
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
-              Sentinel Review
-            </span>
-            <span className="text-zinc-700">/</span>
-            <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80 whitespace-nowrap">
-              Source Feed
-            </span>
-          </div>
-        </div>
+    <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
+      <HeaderBar
+        theaterLabel={theater.label}
+        theaterOptions={theaterOptions}
+        feedHref="/app/feed"
+        watchHref={`/?theater=${theater.id}`}
+        currentView="feed"
+        sensorData={sensorData}
+        isAuthed={!!userId}
+      />
 
-        <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
-          {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
-          <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-            <Link
-              href={`/?theater=${theater.id}`}
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
-            >
-              Sentinel View
-            </Link>
-            <span
-              aria-current="page"
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-l border-zinc-800"
-            >
-              Source Feed
-            </span>
-          </div>
+      <main className="flex-1 min-h-0 overflow-y-auto">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-6">
+          {/* Page header card */}
+          <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="min-w-0">
+                <div className="flex items-center gap-3 mb-2 flex-wrap">
+                  <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                    <Radio className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg font-bold text-slate-100">Source Feed</h2>
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-300 text-[11px] font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Live
+                  </span>
+                </div>
+                <div className="text-xs text-slate-500 uppercase tracking-widest">
+                  {theater.mapSubtitle}
+                </div>
+              </div>
 
-          <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
-            Theater
-          </span>
-          <TheaterDropdown
-            current={theater.label}
-            options={Object.values(THEATERS).map((t) => ({
-              label: t.label,
-              href: buildHref({ theater: t.id, platforms, tiers }),
-              active: theater.id === t.id,
-            }))}
-          />
+              <div className="flex items-center gap-2 flex-wrap">
+                {sourcesInPage > 0 && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700 text-xs">
+                    <span className="text-slate-500 uppercase tracking-wider font-semibold">Sources</span>
+                    <span className="text-slate-200 font-mono font-bold">{sourcesInPage}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700 text-xs">
+                  <span className="text-slate-500 uppercase tracking-wider font-semibold">Posts</span>
+                  <span className="text-slate-200 font-mono font-bold">{page.posts.length}</span>
+                </div>
+              </div>
+            </div>
 
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
-          {userId ? (
-            <UserButton />
-          ) : (
-            <Link href="/sign-in" className={`${CHIP} ${CHIP_OFF}`}>
-              Sign in
-            </Link>
-          )}
-        </div>
-      </header>
+            <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 leading-relaxed">
+              Source posts linked to published events for this theater. Unverified and unprocessed;
+              English-translated where available. Newest first.
+              <span className="text-amber-400 font-semibold ml-1">Not for operational use.</span>
+            </div>
+          </section>
 
-      {/* FILTER ROW */}
-      <div className="border-b border-zinc-900 bg-zinc-950/40 px-5 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-2 flex-none">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Platform</span>
-          {ALL_PLATFORMS.map((p) => (
-            <Link
-              key={p}
-              href={buildHref({ theater: theater.id, platforms: togglePlatform(p), tiers })}
-              className={`${CHIP} ${platformIsActive(p) ? CHIP_ON : CHIP_OFF}`}
-            >
-              {PLATFORM_LABEL[p]}
-            </Link>
-          ))}
-        </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Trust tier</span>
-          {ALL_TIERS.map((t) => (
-            <Link
-              key={t}
-              href={buildHref({ theater: theater.id, platforms, tiers: toggleTier(t) })}
-              className={`${CHIP} ${tierIsActive(t) ? CHIP_ON : CHIP_OFF}`}
-            >
-              Tier {t}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* FEED CONTENT */}
-      <div className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">
-        <div className="flex flex-col gap-1 pb-3 border-b border-zinc-900">
-          <div className="text-[12px] font-data tracking-[0.18em] uppercase text-zinc-200">
-            {theater.mapSubtitle}
-          </div>
-          <div className="text-[13px] text-zinc-400 leading-relaxed">
-            Source posts linked to published events for this theater. Unverified and unprocessed;
-            English-translated where available. Newest first.
-          </div>
-        </div>
-
-        {page.posts.length === 0 ? (
-          <div className="text-center py-12 px-4 border border-dashed border-zinc-800 rounded-sm text-[11px] font-data tracking-[0.08em] uppercase text-zinc-500">
-            No posts match these filters.
-          </div>
-        ) : (
-          <>
+          {/* Filter card */}
+          <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-4 shadow-xl">
             <div className="flex flex-col gap-3">
-              {groups.map((group) => (
-                <section key={group.key} className="flex flex-col gap-3">
-                  <div className="flex justify-between items-baseline pb-2 mt-3 first:mt-0 border-b border-zinc-900">
-                    <span className="text-[12px] font-data tracking-[0.08em] uppercase text-zinc-200">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mr-1">
+                  Platform
+                </span>
+                {ALL_PLATFORMS.map((p) => {
+                  const active = platformIsActive(p);
+                  const style = PLATFORM_FILTER_STYLE[p];
+                  return (
+                    <Link
+                      key={p}
+                      href={buildHref({ theater: theater.id, platforms: togglePlatform(p), tiers })}
+                      aria-pressed={active}
+                      className={`px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded border transition-colors ${
+                        active ? style.on : style.off
+                      }`}
+                    >
+                      {PLATFORM_LABEL[p]}
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mr-1">
+                  Trust tier
+                </span>
+                {ALL_TIERS.map((t) => {
+                  const active = tierIsActive(t);
+                  const style = TIER_FILTER_STYLE[t];
+                  return (
+                    <Link
+                      key={t}
+                      href={buildHref({ theater: theater.id, platforms, tiers: toggleTier(t) })}
+                      aria-pressed={active}
+                      className={`px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded border transition-colors ${
+                        active ? style.on : style.off
+                      }`}
+                    >
+                      Tier {t}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* Feed card */}
+          {page.posts.length === 0 ? (
+            <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-10 shadow-xl text-center">
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                No posts match these filters.
+              </span>
+            </section>
+          ) : (
+            <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl shadow-xl">
+              {groups.map((group, gi) => (
+                <div key={group.key} className={gi > 0 ? "border-t border-slate-800/60" : ""}>
+                  <div className="flex items-baseline justify-between gap-3 px-6 py-3 border-b border-slate-800/60">
+                    <span className="text-sm font-bold text-slate-200 uppercase tracking-wider">
                       {group.label}
                     </span>
-                    <span className="text-[10px] font-data tracking-[0.08em] uppercase text-zinc-500">
+                    <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">
                       {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
                     </span>
                   </div>
-                  {group.posts.map((post) => {
-                    const info = watchInfo[post.id];
-                    return (
-                      <PostCard
-                        key={post.id}
-                        post={post}
-                        watchable
-                        isAuthed={!!userId}
-                        initialWatched={!!info}
-                        confirmed={info?.confirmed ?? false}
-                        eventId={info?.event_id ?? null}
-                      />
-                    );
-                  })}
-                </section>
+                  <div className="divide-y divide-slate-800/60 px-6">
+                    {group.posts.map((post, pi) => {
+                      const info = watchInfo[post.id];
+                      const isNewest = gi === 0 && pi === 0 && !before;
+                      return (
+                        <FeedPostCard
+                          key={post.id}
+                          post={post}
+                          isNewest={isNewest}
+                          isAuthed={!!userId}
+                          initialWatched={!!info}
+                          confirmed={info?.confirmed ?? false}
+                          eventId={info?.event_id ?? null}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
-            </div>
 
-            {page.next_before && (
-              <div className="flex justify-center pt-3">
-                <Link
-                  href={buildHref({ theater: theater.id, platforms, tiers, before: page.next_before })}
-                  className="px-3.5 py-2 text-[11px] font-data tracking-[0.08em] uppercase text-zinc-300 border border-zinc-800 rounded-sm hover:text-zinc-100 hover:border-zinc-700"
-                >
-                  Load older posts →
-                </Link>
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="text-[10px] font-data tracking-[0.04em] text-zinc-500 leading-relaxed pt-4 border-t border-zinc-900">
-          ⚠ Raw, unverified source posts — not yet corroborated or geolocated by Sentinel.
-          AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
-          Sourced from open-source reporting. Not for operational use.
+              {page.next_before && (
+                <div className="flex justify-center px-6 py-5 border-t border-slate-800/60">
+                  <Link
+                    href={buildHref({ theater: theater.id, platforms, tiers, before: page.next_before })}
+                    className="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-500 transition-colors"
+                  >
+                    Load older posts →
+                  </Link>
+                </div>
+              )}
+            </section>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
