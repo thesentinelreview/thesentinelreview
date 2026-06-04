@@ -134,6 +134,16 @@ function groupByDay(posts: FeedPost[]): DayGroup[] {
   return groups;
 }
 
+const EMPTY_SENSOR_DATA = {
+  platforms: { tg: 0, x: 0, rss: 0, gdelt: 0, bsky: 0 },
+  latency_seconds: null as number | null,
+  tracks: 0,
+};
+const EMPTY_PAGE: { posts: FeedPost[]; next_before: string | null } = {
+  posts: [],
+  next_before: null,
+};
+
 export default async function SourceFeedPage({
   searchParams,
 }: {
@@ -149,16 +159,46 @@ export default async function SourceFeedPage({
   const platforms = parsePlatforms(params.platforms);
   const tiers     = parseTiers(params.tiers);
   const before    = params.before;
-  const { userId } = await auth();
 
-  const [page, sensorData] = await Promise.all([
-    getSourceFeedPosts(theater.id, { platforms, tiers, before }),
-    getSensorStripData(theater.id),
-  ]);
+  // Belt-and-braces: every server call below is wrapped so a thrown query,
+  // auth failure, or missing env var degrades the feed to an honest empty
+  // state instead of 500'ing. The underlying queries already try/catch their
+  // pg errors, but we guard here too to cover auth() and any other surprise.
+  let userId: string | null = null;
+  let page = EMPTY_PAGE;
+  let sensorData = EMPTY_SENSOR_DATA;
+  let watchInfo: Record<string, { confirmed: boolean; event_id: string | null }> = {};
+  let dataUnavailable = false;
+
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (err) {
+    console.error("[/app/feed] auth() failed:", err);
+    dataUnavailable = true;
+  }
+
+  try {
+    const [feedPage, sensors] = await Promise.all([
+      getSourceFeedPosts(theater.id, { platforms, tiers, before }),
+      getSensorStripData(theater.id),
+    ]);
+    page = feedPage;
+    sensorData = sensors;
+  } catch (err) {
+    console.error("[/app/feed] feed/sensor fetch failed:", err);
+    dataUnavailable = true;
+  }
+
+  if (userId && page.posts.length > 0) {
+    try {
+      watchInfo = await getWatchInfo(userId, page.posts.map((p) => p.id));
+    } catch (err) {
+      console.error("[/app/feed] watch info fetch failed:", err);
+    }
+  }
+
   const groups = groupByDay(page.posts);
-  const watchInfo = userId
-    ? await getWatchInfo(userId, page.posts.map((p) => p.id))
-    : {};
 
   // Distinct sources represented in the loaded page — a real signal we can show
   // without faking a global "active sources" count.
@@ -287,7 +327,17 @@ export default async function SourceFeedPage({
           </section>
 
           {/* Feed card */}
-          {page.posts.length === 0 ? (
+          {dataUnavailable ? (
+            <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-amber-500/30 rounded-xl p-10 shadow-xl text-center">
+              <div className="text-sm font-bold text-amber-400 uppercase tracking-widest mb-2">
+                Feed temporarily unavailable
+              </div>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
+                Could not load source posts for this theater. The dashboard map and briefing remain
+                available; the feed will return once the upstream issue is resolved.
+              </p>
+            </section>
+          ) : page.posts.length === 0 ? (
             <section className="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-10 shadow-xl text-center">
               <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
                 No posts match these filters.
