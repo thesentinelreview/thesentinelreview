@@ -15,6 +15,10 @@ const PLATFORM_STYLE: Record<Platform, { label: string; cls: string }> = {
   wire:     { label: "Wire",     cls: "bg-amber-500/10 border-amber-500/30 text-amber-300" },
 };
 
+const PLATFORM_FALLBACK = {
+  cls: "bg-slate-700/30 border-slate-600/40 text-slate-300",
+};
+
 const TIER_STYLE: Record<1 | 2 | 3, string> = {
   1: "bg-emerald-500/10 border-emerald-500/30 text-emerald-300",
   2: "bg-amber-500/10 border-amber-500/30 text-amber-300",
@@ -57,13 +61,15 @@ export default function FeedPostCard({
   confirmed?: boolean;
   eventId?: string | null;
 }) {
-  const hasTranslation = post.translated_text !== null && post.translated_text.length > 0;
+  const hasTranslation =
+    typeof post.translated_text === "string" && post.translated_text.length > 0;
   const isEnglish = post.lang === "en";
   const translationUnavailable = !isEnglish && !hasTranslation;
 
   const [showOriginal, setShowOriginal] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const body = stripHtml(hasTranslation && !showOriginal ? post.translated_text! : post.text);
+  const rawBody = hasTranslation && !showOriginal ? post.translated_text! : (post.text ?? "");
+  const body = stripHtml(rawBody);
   const isLong = body.length > BODY_COLLAPSE_CHARS;
 
   const [watched, setWatched] = useState(initialWatched);
@@ -91,8 +97,19 @@ export default function FeedPostCard({
     }
   }
 
-  const platform = PLATFORM_STYLE[post.source_platform];
-  const tierCls  = TIER_STYLE[post.source_trust];
+  // Defensive lookups: a row whose DB-side platform / trust_tier doesn't match
+  // the typed enum (legacy data, schema drift) must not crash the server render.
+  const platformLabel: string =
+    PLATFORM_STYLE[post.source_platform]?.label ??
+    (typeof post.source_platform === "string" && post.source_platform.length > 0
+      ? post.source_platform.toUpperCase()
+      : "Source");
+  const platformCls: string =
+    PLATFORM_STYLE[post.source_platform]?.cls ?? PLATFORM_FALLBACK.cls;
+  const tier = (post.source_trust === 1 || post.source_trust === 2 || post.source_trust === 3)
+    ? post.source_trust
+    : 2;
+  const tierCls = TIER_STYLE[tier];
 
   return (
     <article className="relative py-4 first:pt-0 last:pb-0">
@@ -106,14 +123,14 @@ export default function FeedPostCard({
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-bold text-slate-100 text-sm truncate">{post.source_display}</span>
           <span
-            className={`px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded border ${platform.cls}`}
+            className={`px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded border ${platformCls}`}
           >
-            {platform.label}
+            {platformLabel}
           </span>
           <span
             className={`px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded border ${tierCls}`}
           >
-            Tier {post.source_trust}
+            Tier {tier}
           </span>
           {confirmed && eventId ? (
             <Link
