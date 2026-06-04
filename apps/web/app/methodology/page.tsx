@@ -126,8 +126,8 @@ export default function MethodologyPage() {
         isAuthed={false}
       />
 
-      <main className="flex-1 min-h-0 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center">
+        <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
           {/* Title card */}
           <section className={CARD}>
             <div className="flex items-start gap-4">
