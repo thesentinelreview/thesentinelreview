@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import SentinelMark from "@/components/watchfloor/SentinelMark";
 import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
 import PostCard from "@/components/PostCard";
 import type { Platform } from "@/lib/types";
@@ -137,63 +135,20 @@ export default async function SourceFeedPage({
 
   return (
     <div className="feed-root min-h-screen flex flex-col bg-[#05070A] text-zinc-100 font-ui">
-      {/* TOP BAR */}
-      <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
-        <div className="flex items-center gap-3 min-w-0">
-          <SentinelMark
-            className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
-            size={24}
-          />
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
-              Sentinel Review
-            </span>
-            <span className="text-zinc-700">/</span>
-            <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80 whitespace-nowrap">
-              Source Feed
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
-          {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
-          <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-            <Link
-              href={`/?theater=${theater.id}`}
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
-            >
-              Sentinel View
-            </Link>
-            <span
-              aria-current="page"
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-l border-zinc-800"
-            >
-              Source Feed
-            </span>
-          </div>
-
-          <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
-            Theater
-          </span>
-          <TheaterDropdown
-            current={theater.label}
-            options={Object.values(THEATERS).map((t) => ({
-              label: t.label,
-              href: buildHref({ theater: t.id, platforms, tiers }),
-              active: theater.id === t.id,
-            }))}
-          />
-
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
-          {userId ? (
-            <UserButton />
-          ) : (
-            <Link href="/sign-in" className={`${CHIP} ${CHIP_OFF}`}>
-              Sign in
-            </Link>
-          )}
-        </div>
-      </header>
+      {/* Theater control strip (the wordmark + nav live in the global SiteHeader) */}
+      <div className="border-b border-zinc-900 bg-zinc-950/40 px-5 py-2.5 flex flex-wrap items-center gap-3 flex-none">
+        <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500">
+          Theater
+        </span>
+        <TheaterDropdown
+          current={theater.label}
+          options={Object.values(THEATERS).map((t) => ({
+            label: t.label,
+            href: buildHref({ theater: t.id, platforms, tiers }),
+            active: theater.id === t.id,
+          }))}
+        />
+      </div>
 
       {/* FILTER ROW */}
       <div className="border-b border-zinc-900 bg-zinc-950/40 px-5 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-2 flex-none">

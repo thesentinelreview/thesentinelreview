@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import DemoBanner from "@/components/DemoBanner";
+import SiteHeader from "@/components/SiteHeader";
 import { getLiveDataStatus } from "@/lib/queries";
 import "./globals.css";
 
@@ -92,7 +94,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const dataStatus = await getLiveDataStatus();
+  const [dataStatus, { userId }] = await Promise.all([getLiveDataStatus(), auth()]);
   return (
     <ClerkProvider>
       <html
@@ -101,6 +103,7 @@ export default async function RootLayout({
       >
         <body className="min-h-full">
           <DemoBanner status={dataStatus} />
+          <SiteHeader isAuthed={!!userId} />
           {children}
         </body>
       </html>

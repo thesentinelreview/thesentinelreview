@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { Radio } from "lucide-react";
-import MarketingHeader from "@/components/marketing/Header";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import type { Platform, SourceDetail } from "@/lib/types";
-import { getAllSources, getSensorStripData } from "@/lib/queries";
+import { getAllSources } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -56,10 +54,7 @@ function rateBarTone(rate: number): string {
 }
 
 export default async function SourcesPage() {
-  const [allSources, sensorData] = await Promise.all([
-    getAllSources(),
-    getSensorStripData("ukraine"),
-  ]);
+  const allSources = await getAllSources();
   const totalSources = allSources.length;
   const avgRate =
     totalSources === 0
@@ -70,9 +65,6 @@ export default async function SourcesPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <MarketingHeader />
-      <SensorStrip data={sensorData} />
-
       <main className="p-6 max-w-[1800px] mx-auto space-y-6">
         {/* Header card */}
         <section className={`${CARD} p-6`}>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getSubscriptionDetails } from "@/lib/auth";
 import CheckoutButton from "./CheckoutButton";
@@ -149,49 +148,6 @@ export default async function PricingPage({
           and we&rsquo;ll sort it out.
         </div>
       )}
-
-      {/* ── Masthead ─────────────────────────────────────────────── */}
-      <header className={s.masthead}>
-        <div className={s.mastheadInner}>
-          <div className={s.mastheadAside}>
-            <div className={s.asideLabel}>Tier Status</div>
-            <div className={s.asideValue}>ENROLLMENT OPEN</div>
-          </div>
-          <div className={s.mastheadLogoBlock}>
-            <Link href="/" aria-label="The Sentinel Review — Home">
-              <Image
-                src="/logo-horizontal-transparent.png"
-                alt="The Sentinel Review"
-                width={540}
-                height={80}
-                className={s.mastheadLogo}
-                priority
-              />
-            </Link>
-          </div>
-          <div className={`${s.mastheadAside} ${s.mastheadAsideRight}`}>
-            <div className={s.asideLabel}>Membership</div>
-            <div className={s.asideValue}>FOUNDING WINDOW</div>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Main nav ─────────────────────────────────────────────── */}
-      <nav className={s.mainNav}>
-        <div className={s.navInner}>
-          <div className={s.navLinks}>
-            <Link href="/"            className={s.navLink}>Home</Link>
-            <Link href="/#news"       className={s.navLink}>Latest</Link>
-            <Link href="/#regions"    className={s.navLink}>Regional</Link>
-            <Link href="/#newsletter" className={s.navLink}>Briefing</Link>
-            <Link href="/pricing"     className={`${s.navLink} ${s.navLinkActive}`}>Membership</Link>
-          </div>
-          <div className={s.liveIndicator}>
-            <span className={s.liveDot} />
-            <span>LIVE FEED</span>
-          </div>
-        </div>
-      </nav>
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className={s.pageWrap}>

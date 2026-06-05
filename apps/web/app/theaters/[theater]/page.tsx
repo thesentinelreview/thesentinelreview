@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import MarketingHeader from "@/components/marketing/Header";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import TheaterPostCard from "@/components/marketing/TheaterPostCard";
 import type { TheaterKey } from "@/lib/types";
 import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
@@ -10,7 +8,6 @@ import {
   getStats,
   getTopSources,
   getSourceFeedPosts,
-  getSensorStripData,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -55,21 +52,17 @@ export default async function TheaterDetailPage({
   const cfg     = THEATERS[theater];
   const content = THEATER_CONTENT[theater];
 
-  const [stats24h, stats7d, stats30d, sources, feedPage, sensorData] =
+  const [stats24h, stats7d, stats30d, sources, feedPage] =
     await Promise.all([
       getStats(theater, "24h"),
       getStats(theater, "7d"),
       getStats(theater, "30d"),
       getTopSources(theater, 5),
       getSourceFeedPosts(theater, { before }),
-      getSensorStripData(theater),
     ]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <MarketingHeader />
-      <SensorStrip data={sensorData} />
-
       <main className="p-6 max-w-[1800px] mx-auto">
         {/* Hero header */}
         <section className={`${CARD} p-6 mb-6`}>

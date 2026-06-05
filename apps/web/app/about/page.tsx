@@ -1,7 +1,5 @@
 import { Info } from "lucide-react";
-import MarketingHeader from "@/components/marketing/Header";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
-import { getAllSources, getSensorStripData } from "@/lib/queries";
+import { getAllSources } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -30,17 +28,11 @@ const CONTACT_ROWS: { label: string; value: string; href: string | null }[] = [
 ];
 
 export default async function AboutPage() {
-  const [sources, sensorData] = await Promise.all([
-    getAllSources(),
-    getSensorStripData("ukraine"),
-  ]);
+  const sources = await getAllSources();
   const activeSourceCount = sources.length;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <MarketingHeader />
-      <SensorStrip data={sensorData} />
-
       <main className="p-6 max-w-4xl mx-auto space-y-6">
         {/* Page header */}
         <section className={`${CARD} p-6`}>

@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Globe } from "lucide-react";
-import MarketingHeader from "@/components/marketing/Header";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
 import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
-import { getStats, getSensorStripData } from "@/lib/queries";
+import { getStats } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -17,12 +15,7 @@ const CARD =
 
 export default async function TheatersIndexPage() {
   const entries = Object.values(THEATERS);
-  const [stats, sensorData] = await Promise.all([
-    Promise.all(entries.map((t) => getStats(t.id, "24h"))),
-    // Theaters index has no specific theater — default to ukraine so the strip
-    // still carries real data instead of being a hardcoded shell.
-    getSensorStripData("ukraine"),
-  ]);
+  const stats = await Promise.all(entries.map((t) => getStats(t.id, "24h")));
 
   const cards = entries.map((theater, i) => ({
     theater,
@@ -33,9 +26,6 @@ export default async function TheatersIndexPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <MarketingHeader />
-      <SensorStrip data={sensorData} />
-
       <main className="p-6 max-w-[1800px] mx-auto">
         <section className={`${CARD} mb-6`}>
           <div className="flex items-center gap-3 mb-2">
