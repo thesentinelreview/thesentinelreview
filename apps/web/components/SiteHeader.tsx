@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { ExternalLink } from "lucide-react";
+import { Diamond, ExternalLink } from "lucide-react";
 
 const NAV: { label: string; href: string }[] = [
   { label: "Map",         href: "/" },
@@ -16,8 +16,8 @@ const NAV: { label: string; href: string }[] = [
 ];
 
 // Single shared header for the whole app, rendered globally from the root
-// layout. The dashboard's old SENTINEL INTELLIGENCE / owl / Watch Tier
-// chrome and the per-page nav strips are replaced by this one header.
+// layout. Identical markup on every route — the active-state colour is the
+// only per-route difference, driven by usePathname.
 export default function SiteHeader({ isAuthed }: { isAuthed: boolean }) {
   const pathname = usePathname() ?? "/";
 
@@ -27,37 +27,42 @@ export default function SiteHeader({ isAuthed }: { isAuthed: boolean }) {
   }
 
   return (
-    <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5 flex-none">
+    <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
       <div className="px-6 py-4">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-6 min-w-0">
-            <Link href="/" className="group flex items-center min-w-0">
-              <h1 className="text-2xl font-bold text-white tracking-[0.25em] uppercase whitespace-nowrap">
-                Sentinel <span className="text-red-400 group-hover:text-red-300 transition-colors">Review</span>
-              </h1>
-            </Link>
+        <div className="flex items-center justify-between gap-6 flex-wrap">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 min-w-0">
+            <div className="p-2 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-lg border border-amber-500/30 flex items-center justify-center">
+              <Diamond className="w-5 h-5 text-amber-400" />
+            </div>
+            <span className="text-xl font-bold tracking-[0.2em] whitespace-nowrap">
+              <span className="text-white">SENTINEL</span>{" "}
+              <span className="text-red-500">REVIEW</span>
+            </span>
+          </Link>
 
-            <nav aria-label="Primary" className="hidden md:flex items-center gap-1 flex-wrap">
-              {NAV.map(({ label, href }) => {
-                const active = isActive(href);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    aria-current={active ? "page" : undefined}
-                    className={
-                      active
-                        ? "px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium"
-                        : "px-3 py-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-sm transition-colors"
-                    }
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+          {/* Nav */}
+          <nav aria-label="Primary" className="flex items-center gap-1 flex-wrap">
+            {NAV.map(({ label, href }) => {
+              const active = isActive(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={
+                    active
+                      ? "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium"
+                      : "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 text-sm transition-colors"
+                  }
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
 
+          {/* Actions */}
           <div className="flex items-center gap-3">
             <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 border border-slate-700 rounded-lg">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -74,49 +79,26 @@ export default function SiteHeader({ isAuthed }: { isAuthed: boolean }) {
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
 
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-700">
-              {isAuthed ? (
-                <UserButton />
-              ) : (
-                <>
-                  <Link
-                    href="/sign-in"
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-300 border border-amber-500/30 bg-amber-500/[0.06] hover:bg-amber-500/15"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-200 border border-amber-400/50 bg-amber-500/15 hover:bg-amber-500/25"
-                  >
-                    Sign up
-                  </Link>
-                </>
-              )}
-            </div>
+            {isAuthed ? (
+              <UserButton />
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-300 border border-amber-500/30 bg-amber-500/[0.06] hover:bg-amber-500/15"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-200 border border-amber-400/50 bg-amber-500/15 hover:bg-amber-500/25"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
         </div>
-
-        {/* Mobile nav — wraps to a second row below the brand */}
-        <nav aria-label="Primary (mobile)" className="flex md:hidden items-center gap-1 flex-wrap mt-3 pt-3 border-t border-slate-800">
-          {NAV.map(({ label, href }) => {
-            const active = isActive(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={
-                  active
-                    ? "px-2.5 py-1 rounded-md bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium"
-                    : "px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-300 text-xs transition-colors"
-                }
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
       </div>
     </header>
   );
