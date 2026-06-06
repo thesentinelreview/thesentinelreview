@@ -1,26 +1,18 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import SentinelMark from "@/components/watchfloor/SentinelMark";
-import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
+import HeaderBar from "@/components/watchfloor/HeaderBar";
 import PostCard from "@/components/ds/PostCard";
 import Panel from "@/components/ds/Panel";
 import FilterChip from "@/components/ds/FilterChip";
 import { platformStyle } from "@/components/ds/tokens";
 import type { Platform } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
-import { type FeedPost, getSourceFeedPosts, getWatchInfo } from "@/lib/queries";
+import { type FeedPost, getSourceFeedPosts, getWatchInfo, getSensorStripData } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
 const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky"];
 const ALL_TIERS: Array<1 | 2 | 3> = [1, 2, 3];
-
-// Chip styling for the page header's Sign-in link. The header is intentionally
-// left as-is on main (header unification is parked on another branch); the
-// platform/tier filters below use the <FilterChip> design-system primitive.
-const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
-const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -110,7 +102,10 @@ export default async function SourceFeedPage({
   const before    = params.before;
   const { userId } = await auth();
 
-  const page = await getSourceFeedPosts(theater.id, { platforms, tiers, before });
+  const [page, sensorData] = await Promise.all([
+    getSourceFeedPosts(theater.id, { platforms, tiers, before }),
+    getSensorStripData(theater.id),
+  ]);
   const groups = groupByDay(page.posts);
   const watchInfo = userId
     ? await getWatchInfo(userId, page.posts.map((p) => p.id))
@@ -131,65 +126,26 @@ export default async function SourceFeedPage({
   const tierIsActive = (t: 1 | 2 | 3) =>
     tiers.length === 0 ? true : tiers.includes(t);
 
+  const theaterOptions = Object.values(THEATERS).map((t) => ({
+    label: t.label,
+    active: t.id === theater.id,
+    href: buildHref({ theater: t.id, platforms, tiers }),
+  }));
+
   return (
     <div className="feed-root min-h-screen flex flex-col bg-slate-950 text-slate-100 font-ui">
-      {/* TOP BAR — left as-is on main; header unification is parked on another branch. */}
-      <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
-        <div className="flex items-center gap-3 min-w-0">
-          <SentinelMark
-            className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
-            size={24}
-          />
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
-              Sentinel Review
-            </span>
-            <span className="text-zinc-700">/</span>
-            <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80 whitespace-nowrap">
-              Source Feed
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
-          {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
-          <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-            <Link
-              href={`/?theater=${theater.id}`}
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
-            >
-              Sentinel View
-            </Link>
-            <span
-              aria-current="page"
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-l border-zinc-800"
-            >
-              Source Feed
-            </span>
-          </div>
-
-          <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
-            Theater
-          </span>
-          <TheaterDropdown
-            current={theater.label}
-            options={Object.values(THEATERS).map((t) => ({
-              label: t.label,
-              href: buildHref({ theater: t.id, platforms, tiers }),
-              active: theater.id === t.id,
-            }))}
-          />
-
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
-          {userId ? (
-            <UserButton />
-          ) : (
-            <Link href="/sign-in" className={`${CHIP} ${CHIP_OFF}`}>
-              Sign in
-            </Link>
-          )}
-        </div>
-      </header>
+      {/* Operational command bar — same HeaderBar as the dashboard, with the
+          Source Feed view active. The Sentinel View / Source Feed toggle lives
+          here, so the feed has no separate header or toggle. */}
+      <HeaderBar
+        theaterLabel={theater.label}
+        theaterOptions={theaterOptions}
+        feedHref={`/app/feed?theater=${theater.id}`}
+        watchHref={`/?theater=${theater.id}`}
+        currentView="feed"
+        sensorData={sensorData}
+        isAuthed={!!userId}
+      />
 
       {/* FEED CONTENT — centered, scrolling column built from design-system primitives. */}
       <main className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">

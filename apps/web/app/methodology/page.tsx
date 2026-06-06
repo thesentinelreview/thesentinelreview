@@ -1,20 +1,8 @@
 import type { Metadata } from "next";
 import { FileText, ShieldCheck, ShieldAlert, AlertCircle, Layers, GitMerge, Inbox, Crosshair, GitFork, Gauge, Eye } from "lucide-react";
-import HeaderBar from "@/components/watchfloor/HeaderBar";
-import { THEATERS } from "@/data/theaters";
-import type { SensorStripData } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Verification Methodology — Sentinel Review",
-};
-
-// Static info page — no DB calls, no auth, no env-var dependencies. The
-// HeaderBar gets an empty SensorStripData literal so the strip renders the
-// same shape as elsewhere without hitting any data source.
-const EMPTY_SENSOR_DATA: SensorStripData = {
-  platforms: { tg: 0, x: 0, rss: 0, gdelt: 0, bsky: 0 },
-  latency_seconds: null,
-  tracks: 0,
 };
 
 const CARD = "bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl";
@@ -108,24 +96,8 @@ const PIPELINE: { n: string; icon: typeof Inbox; label: string; desc: string }[]
 ];
 
 export default function MethodologyPage() {
-  const theaterOptions = Object.values(THEATERS).map((t) => ({
-    label: t.label,
-    href: `/?theater=${t.id}`,
-    active: false,
-  }));
-
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
-      <HeaderBar
-        theaterLabel="Ukraine"
-        theaterOptions={theaterOptions}
-        feedHref="/app/feed"
-        watchHref="/"
-        currentView="static"
-        sensorData={EMPTY_SENSOR_DATA}
-        isAuthed={false}
-      />
-
       <main className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center">
         <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
           {/* Title card */}

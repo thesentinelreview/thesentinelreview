@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import HeaderBar from "@/components/watchfloor/HeaderBar";
-import { getFullBriefing, getEventDetail, getSensorStripData } from "@/lib/queries";
-import { resolveTheater, THEATERS } from "@/data/theaters";
+import { getFullBriefing, getEventDetail } from "@/lib/queries";
+import { resolveTheater } from "@/data/theaters";
 import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -23,11 +21,7 @@ export default async function BriefingPage({
 }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const theater = resolveTheater(sp.theater);
-  const [brief, sensorData, { userId }] = await Promise.all([
-    getFullBriefing(id),
-    getSensorStripData(theater.id),
-    auth(),
-  ]);
+  const brief = await getFullBriefing(id);
   if (!brief) notFound();
 
   const referencedEvents = (
@@ -36,31 +30,8 @@ export default async function BriefingPage({
 
   const embedIframe = `<iframe src="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/embed/briefing/${id}" width="100%" height="220" frameborder="0" style="border:none;background:#0c0d10"></iframe>`;
 
-  // Watchfloor chrome — its controls link back to the live map for this theater.
-  const theaterOptions = Object.values(THEATERS).map((t) => ({
-    label: t.label,
-    active: t.id === theater.id,
-    href: `/?theater=${t.id}`,
-  }));
-  const windowOptions = [
-    { label: "24H", href: `/?theater=${theater.id}`, active: true },
-    { label: "7D", href: `/?theater=${theater.id}&window=7d`, active: false },
-  ];
-
   return (
     <div className={s.page}>
-      <div className="mb-4 font-ui text-zinc-100">
-        <HeaderBar
-          theaterLabel={theater.label}
-          windowLabel="24H"
-          theaterOptions={theaterOptions}
-          windowOptions={windowOptions}
-          feedHref={`/app/feed?theater=${theater.id}`}
-          sensorData={sensorData}
-          isAuthed={!!userId}
-        />
-      </div>
-
       <div className={s.breadcrumb}>
         <Link href="/">← Map</Link>
         <span>/</span>
