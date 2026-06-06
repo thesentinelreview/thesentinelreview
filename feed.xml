@@ -6,8 +6,18 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 06 Jun 2026 10:11:34 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2026 17:21:20 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌍 US strikes Iranian sites after Iran launches drones, in latest Gulf flare-up | Defense News</title>
+      <link>https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/</guid>
+      <pubDate>Sat, 06 Jun 2026 15:00:51 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/">Defense News</source>
+      <description>U.S. forces struck Iranian coastal radar sites on Saturday after shooting down drones launched by Iran toward the Strait of Hormuz, the U.S. military said.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
     <item>
       <title>🏴 France to test its own AI-powered battlefield command in June NATO exercise | Defense News</title>
       <link>https://www.defensenews.com/global/europe/2026/06/06/france-to-test-its-own-ai-powered-battlefield-command-in-june-nato-exercise/</link>
@@ -36,7 +46,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/armenia-trump-russia-election-pashinyan-europe/">Foreign Policy</source>
       <description>Trump and Putin are backing different players in a contested country.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ Confessions Of A Navy MH-53E Sea Dragon Minehunter Pilot | The War Zone</title>
@@ -66,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/air/area-51-mystery-aircraft-prompts-interest-in-christmas-tree-stealth-fighter-concept">The War Zone</source>
       <description>The exotic jet spotted near Area 51 that appears to be tied to the F-47 has prompted a look at an obscure fighter design from the 1980s. The post Area 51 Mystery Aircraft Prompts Interest In “Christmas Tree” Stealth Fighter Concept appeared first on The War Zone.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 USAF Scrambling To Buy What Few MQ-9 Reapers It Can Find After Epic Fury Losses | The War Zone</title>
@@ -96,7 +106,7 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/the-global-energy-crisis-and-its-impacts-on-asian-emerging-economies/">Atlantic Council</source>
       <description>The Strait of Hormuz energy crisis poses a stress test for import-dependent, emerging economies in Asia, forcing difficult trade-offs. The post The global energy crisis and its impacts on Asian emerging economies appeared first on Atlantic Council.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 Zelensky’s Pen Pal Diplomacy | Foreign Policy</title>
@@ -146,7 +156,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/ukraine-russia-war-putin-zelensky-winning-drones-front-battlefield-peace/">Foreign Policy</source>
       <description>Resilience, technology, and European support have put Russia on the back foot.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Contain, Consolidate, and Co-Opt | Foreign Policy</title>
@@ -206,7 +216,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/navy-lifts-price-ceiling-for-new-trainer-jet/">Breaking Defense</source>
       <description>The Navy updated the price ceiling to $2.7 billion in May, up from roughly $1.8 billion.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 India’s energy security at a crossroads: The Hormuz crisis and an opportunity for US-India cooperation | Atlantic Council</title>
@@ -246,7 +256,7 @@
       <category>Indo-Pacific</category>
       <source url="https://foreignpolicy.com/2026/06/05/news-quiz-malta-election-japan-militarism-iran-peace-negotiations/">Foreign Policy</source>
       <description>Test yourself on the week of May 30: Malta votes, Japan responds to militarism accusations, and Iran pauses talks with the U.S.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ Under ‘Drone Dominance’ push, Pentagon begins receiving small drones | Breaking Defense</title>
@@ -256,7 +266,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/under-drone-dominance-push-pentagon-begins-receiving-small-drones/">Breaking Defense</source>
       <description>So far, the department has ordered 20,000 small, FPV-style drones from 10 vendors.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
@@ -296,17 +306,7 @@
       <category>Europe / NATO</category>
       <source url="https://breakingdefense.com/2026/06/lockheed-martins-uk-led-consortium-unveils-gbad-concept-for-nato/">Breaking Defense</source>
       <description>While company representatives were tight-lipped about the exact technical details of their offering, they explained that a flexible, software-based system would allow individual member-nations to connect their sensors to another nation’s command nodes.</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 Sleeping in Mexico, Playing in America | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/05/mexico-america-trump-iran-fifa-olympics-world-cup/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/05/mexico-america-trump-iran-fifa-olympics-world-cup/</guid>
-      <pubDate>Fri, 05 Jun 2026 15:11:47 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://foreignpolicy.com/2026/06/05/mexico-america-trump-iran-fifa-olympics-world-cup/">Foreign Policy</source>
-      <description>The journey of Iran’s World Cup team sets a dangerous precedent for international soccer.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
   </channel>
 </rss>
