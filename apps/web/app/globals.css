@@ -126,6 +126,19 @@ body:has(.sources-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Theater detail (full-bleed, scrolls) ───────────────────────────────── */
+/* Same full-bleed treatment as the feed/sources: drop body padding + grain so
+   /theaters/[theater] sits edge-to-edge on the slate-950 page background. */
+body:has(.theater-root) {
+  padding: 0;
+}
+body:has(.theater-root)::before {
+  content: none;
+}
+body:has(.theater-root) .demo-banner {
+  margin: 0 !important;
+}
+
 /* ── Global SiteHeader (content / marketing routes) ─────────────────────── */
 /* The header mounts in the padded <body>; break it out to the viewport edges so
    it sits flush on the not-yet-reskinned content pages. Full-bleed shells
@@ -134,7 +147,8 @@ body:has(.sources-root) .demo-banner {
   margin: -20px -20px 0;
 }
 body:has(.watchfloor-root) .global-site-header,
-body:has(.sources-root) .global-site-header {
+body:has(.sources-root) .global-site-header,
+body:has(.theater-root) .global-site-header {
   margin: 0;
 }
 
