@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SiteNav from "@/components/SiteNav";
 import type { TheaterConfig } from "@/lib/types";
 import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
 import { getStats } from "@/lib/queries";
@@ -35,8 +34,6 @@ export default async function TheatersIndexPage() {
 
   return (
     <div className={s.page}>
-      <SiteNav />
-
       <div className={s.header}>
         <div className={s.title}>Theaters</div>
         <div className={s.subtitle}>

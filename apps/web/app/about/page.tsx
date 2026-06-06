@@ -1,4 +1,3 @@
-import SiteNav from "@/components/SiteNav";
 import s from "./page.module.css";
 
 export const metadata = {
@@ -8,8 +7,6 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className={s.page}>
-      <SiteNav />
-
       <div className={s.header}>
         <div className={s.title}>About Sentinel Review</div>
         <div className={s.subtitle}>
