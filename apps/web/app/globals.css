@@ -113,6 +113,19 @@ body:has(.feed-root) .demo-banner {
   --font-mono-stack: var(--font-data);
 }
 
+/* ── Source Reliability (full-bleed, scrolls) ───────────────────────────── */
+/* Same full-bleed treatment as the feed: drop the global body padding + grain
+   so /sources sits edge-to-edge on the slate-950 page background. */
+body:has(.sources-root) {
+  padding: 0;
+}
+body:has(.sources-root)::before {
+  content: none;
+}
+body:has(.sources-root) .demo-banner {
+  margin: 0 !important;
+}
+
 /* ── MapLibre control overrides ─────────────────────────────────────────── */
 .maplibregl-ctrl-group {
   background: var(--surface) !important;

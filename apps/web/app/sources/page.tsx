@@ -1,9 +1,15 @@
 import SiteNav from "@/components/SiteNav";
 import type { SourceDetail } from "@/lib/types";
 import { getAllSources } from "@/lib/queries";
-import s from "./page.module.css";
+import Panel from "@/components/ds/Panel";
+import Badge from "@/components/ds/Badge";
+import { RELIABILITY } from "@/components/ds/tokens";
 
 export const dynamic = "force-dynamic";
+
+// Shared 6-column grid template for the table header + rows (kept identical so
+// columns align). Horizontal scroll handles narrow viewports via the wrapper.
+const COLS = "grid-cols-[32px_1fr_64px_72px_120px_96px]";
 
 function fmtRelativeDate(iso: string | null): string {
   if (!iso) return "—";
@@ -17,44 +23,13 @@ function fmtRelativeDate(iso: string | null): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-function platformLabel(p: string): string {
-  if (p === "x") return "X";
-  if (p === "telegram") return "TG";
-  if (p === "rss") return "RSS";
-  if (p === "bluesky") return "BSky";
-  return "WIRE";
-}
-
-function platClass(p: string, s: Record<string, string>): string {
-  if (p === "x") return s.platX;
-  if (p === "telegram") return s.platTelegram;
-  if (p === "rss") return s.platRss;
-  if (p === "bluesky") return s.platBluesky ?? s.platWire;
-  return s.platWire;
-}
-
-function tierClass(t: number, s: Record<string, string>): string {
-  if (t === 1) return s.tier1;
-  if (t === 2) return s.tier2;
-  return s.tier3;
-}
-
-function tierLabel(t: number): string {
-  if (t === 1) return "High trust";
-  if (t === 2) return "Med trust";
-  return "Low trust";
-}
-
-function rateClass(r: number, s: Record<string, string>): string {
-  if (r >= 80) return s.rateHigh;
-  if (r >= 60) return s.rateMid;
-  return s.rateLow;
-}
-
-function rateFillClass(r: number, s: Record<string, string>): string {
-  if (r >= 80) return s.rateFillHigh;
-  if (r >= 60) return s.rateFillMid;
-  return s.rateFillLow;
+// Verified-rate label colour — mirrors the reliability banding (token
+// thresholds) in the matching -400 text shades. The bar fill + track come
+// straight from RELIABILITY.
+function rateLabelColor(r: number): string {
+  if (r >= RELIABILITY.thresholds.high) return "text-emerald-400";
+  if (r >= RELIABILITY.thresholds.medium) return "text-amber-400";
+  return "text-red-400";
 }
 
 export default async function SourcesPage() {
@@ -65,81 +40,119 @@ export default async function SourcesPage() {
     : Math.round(allSources.reduce((a, b) => a + b.verified_rate, 0) / totalSources);
 
   return (
-    <div className={s.page}>
-      <SiteNav />
+    <div className="sources-root min-h-screen bg-slate-950 text-slate-100 font-ui">
+      <div className="w-full max-w-5xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4">
+        <SiteNav />
 
-      <div className={s.header}>
-        <div>
-          <div className={s.title}>Source reliability</div>
-          <div className={s.subtitle}>
-            {totalSources} active sources · {avgRate}% average verification rate
+        {/* Header */}
+        <div className="flex items-end justify-between gap-4 pb-3 border-b border-slate-800/60">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[13px] font-data tracking-[0.18em] uppercase text-slate-200">
+              Source Reliability
+            </h1>
+            <p className="text-[12px] font-data text-slate-400">
+              {totalSources} active sources · {avgRate}% average verification rate
+            </p>
+          </div>
+          <div className="shrink-0 text-right text-[10px] font-data uppercase tracking-[0.12em] text-slate-500 leading-relaxed">
+            Rolling 30-day stats<br />Updated hourly
           </div>
         </div>
-        <div className={s.headerMeta}>
-          Rolling 30-day stats<br />Updated hourly
-        </div>
-      </div>
 
-      <div className={s.panel}>
-        <div className={s.tableHeader}>
-          <span>#</span>
-          <span>Source</span>
-          <span>Today</span>
-          <span>30-day</span>
-          <span>Verified rate</span>
-          <span style={{ textAlign: "right" }}>Last seen</span>
-        </div>
-        {allSources.map((src: SourceDetail) => (
-          <div key={src.handle} className={s.sourceRow}>
-            <div className={s.rank}>{String(src.rank).padStart(2, "0")}</div>
-
-            <div className={s.identity}>
-              <div className={s.handleRow}>
-                <span className={s.handle}>{src.display_name}</span>
-                <span className={`${s.platformBadge} ${platClass(src.platform, s)}`}>
-                  {platformLabel(src.platform)}
-                </span>
-                <span className={`${s.tierBadge} ${tierClass(src.trust_tier, s)}`}>
-                  {tierLabel(src.trust_tier)}
-                </span>
+        {/* Table */}
+        <Panel className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <div className="min-w-[640px]">
+              <div className={`grid ${COLS} gap-3 px-4 py-2.5 border-b border-slate-800/60 text-[9px] font-data uppercase tracking-[0.12em] text-slate-500`}>
+                <span>#</span>
+                <span>Source</span>
+                <span>Today</span>
+                <span>30-day</span>
+                <span>Verified rate</span>
+                <span className="text-right">Last seen</span>
               </div>
-              <div className={s.notes}>{src.notes}</div>
-            </div>
 
-            <div>
-              <div className={s.eventsCount}>{src.events_count}</div>
-              <div className={s.events30d}>today</div>
-            </div>
+              {allSources.length === 0 ? (
+                <div className="px-4 py-10 text-center text-[11px] font-data uppercase tracking-[0.08em] text-slate-500">
+                  No active sources.
+                </div>
+              ) : (
+                allSources.map((src: SourceDetail) => (
+                  <div
+                    key={src.handle}
+                    className={`grid ${COLS} gap-3 px-4 py-3.5 items-center border-b border-slate-800/60 last:border-b-0 hover:bg-slate-800/20 transition-colors`}
+                  >
+                    <div className="font-data text-[10px] text-slate-500">
+                      {String(src.rank).padStart(2, "0")}
+                    </div>
 
-            <div>
-              <div className={s.eventsCount}>{src.events_30d}</div>
-              <div className={s.events30d}>30-day</div>
-            </div>
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-slate-100 text-sm">{src.display_name}</span>
+                        <Badge variant="platform" value={src.platform} className="shrink-0" />
+                        <Badge variant="tier" value={src.trust_tier} className="shrink-0" />
+                      </div>
+                      {src.notes && (
+                        <div className="text-[11px] text-slate-400 leading-relaxed">{src.notes}</div>
+                      )}
+                    </div>
 
-            <div className={s.rateWrap}>
-              <div className={s.rateBar}>
-                <div
-                  className={`${s.rateFill} ${rateFillClass(src.verified_rate, s)}`}
-                  style={{ width: `${src.verified_rate}%` }}
-                />
-              </div>
-              <span className={`${s.rateLabel} ${rateClass(src.verified_rate, s)}`}>
-                {src.verified_rate}%
-              </span>
-            </div>
+                    <div>
+                      <div className="font-data text-base font-semibold text-slate-100 leading-none">
+                        {src.events_count}
+                      </div>
+                      <div className="mt-1 font-data text-[10px] uppercase tracking-wider text-slate-500">
+                        today
+                      </div>
+                    </div>
 
-            <div className={s.lastSeen}>{fmtRelativeDate(src.last_event_at)}</div>
+                    <div>
+                      <div className="font-data text-base font-semibold text-slate-100 leading-none">
+                        {src.events_30d}
+                      </div>
+                      <div className="mt-1 font-data text-[10px] uppercase tracking-wider text-slate-500">
+                        30-day
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <div className={`h-[3px] rounded overflow-hidden ${RELIABILITY.track}`}>
+                        <div
+                          className={`h-full rounded ${RELIABILITY.barColor(src.verified_rate)}`}
+                          style={{ width: `${src.verified_rate}%` }}
+                        />
+                      </div>
+                      <span className={`font-data text-[11px] ${rateLabelColor(src.verified_rate)}`}>
+                        {src.verified_rate}%
+                      </span>
+                    </div>
+
+                    <div className="font-data text-[10px] text-slate-500 text-right">
+                      {fmtRelativeDate(src.last_event_at)}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        ))}
-      </div>
+        </Panel>
 
-      <div className={s.footerNote}>
-        <strong>Verification rate</strong> measures the percentage of events from a given source that reached{" "}
-        <em>verified</em> or <em>partial</em> confidence status over the rolling 30-day window. A low rate does
-        not mean a source is unreliable — high-volume milblog channels produce many unverified reports that are
-        later corroborated. <strong>Trust tier</strong> reflects editorial weighting, not verification rate alone.
-        See <a href="/methodology" style={{ color: "var(--text)", borderBottom: "1px solid var(--border-strong)", textDecoration: "none" }}>/methodology</a> for
-        the full rubric.
+        {/* Footer note */}
+        <Panel padding="sm" className="text-[12px] text-slate-400 leading-relaxed">
+          <strong className="font-medium text-slate-200">Verification rate</strong> measures the percentage of
+          events from a given source that reached <em>verified</em> or <em>partial</em> confidence status over the
+          rolling 30-day window. A low rate does not mean a source is unreliable — high-volume milblog channels
+          produce many unverified reports that are later corroborated.{" "}
+          <strong className="font-medium text-slate-200">Trust tier</strong> reflects editorial weighting, not
+          verification rate alone. See{" "}
+          <a
+            href="/methodology"
+            className="text-slate-300 underline underline-offset-2 hover:text-slate-100"
+          >
+            /methodology
+          </a>{" "}
+          for the full rubric.
+        </Panel>
       </div>
     </div>
   );
