@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
-import DashboardControls from "@/components/watchfloor/DashboardControls";
-import SensorStrip from "@/components/watchfloor/SensorStrip";
+import HeaderBar from "@/components/watchfloor/HeaderBar";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
@@ -77,7 +77,7 @@ export default async function WatchfloorPage({
     zoom?: string;
   }>;
 }) {
-  const params = await searchParams;
+  const [params, { userId }] = await Promise.all([searchParams, auth()]);
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
   const threatView = resolveThreatView(params.threat);
@@ -168,12 +168,14 @@ export default async function WatchfloorPage({
 
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
-      <SensorStrip data={sensorData} />
-      <DashboardControls
+      <HeaderBar
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
         theaterOptions={theaterOptions}
         windowOptions={windowOptions}
+        feedHref={`/app/feed?theater=${theater.id}`}
+        sensorData={sensorData}
+        isAuthed={!!userId}
       />
       <KpiRail
         windowLabel={WINDOW_LABELS[timeRange]}

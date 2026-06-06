@@ -113,6 +113,16 @@ body:has(.feed-root) .demo-banner {
   --font-mono-stack: var(--font-data);
 }
 
+/* ── Global SiteHeader (content / marketing routes) ─────────────────────── */
+/* The header mounts in the padded <body>; break it out to the viewport edges so
+   it sits flush on the not-yet-reskinned content pages. Flush shells reset it. */
+.global-site-header {
+  margin: -20px -20px 0;
+}
+body:has(.watchfloor-root) .global-site-header {
+  margin: 0;
+}
+
 /* ── MapLibre control overrides ─────────────────────────────────────────── */
 .maplibregl-ctrl-group {
   background: var(--surface) !important;
