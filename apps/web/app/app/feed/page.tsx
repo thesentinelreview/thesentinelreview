@@ -3,7 +3,10 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import SentinelMark from "@/components/watchfloor/SentinelMark";
 import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
-import PostCard from "@/components/PostCard";
+import PostCard from "@/components/ds/PostCard";
+import Panel from "@/components/ds/Panel";
+import FilterChip from "@/components/ds/FilterChip";
+import { platformStyle } from "@/components/ds/tokens";
 import type { Platform } from "@/lib/types";
 import { resolveTheater, THEATERS } from "@/data/theaters";
 import { type FeedPost, getSourceFeedPosts, getWatchInfo } from "@/lib/queries";
@@ -13,18 +16,11 @@ export const dynamic = "force-dynamic";
 const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky"];
 const ALL_TIERS: Array<1 | 2 | 3> = [1, 2, 3];
 
-const PLATFORM_LABEL: Record<Platform, string> = {
-  telegram: "Telegram",
-  rss:      "RSS",
-  x:        "X",
-  wire:     "Wire",
-  bluesky:  "Bluesky",
-};
-
-// Shared chip styling, matching the watchfloor header controls.
+// Chip styling for the page header's Sign-in link. The header is intentionally
+// left as-is on main (header unification is parked on another branch); the
+// platform/tier filters below use the <FilterChip> design-system primitive.
 const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
 const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
-const CHIP_ON = "border-teal-400/40 bg-teal-400/[0.08] text-teal-300";
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -136,8 +132,8 @@ export default async function SourceFeedPage({
     tiers.length === 0 ? true : tiers.includes(t);
 
   return (
-    <div className="feed-root min-h-screen flex flex-col bg-[#05070A] text-zinc-100 font-ui">
-      {/* TOP BAR */}
+    <div className="feed-root min-h-screen flex flex-col bg-slate-950 text-slate-100 font-ui">
+      {/* TOP BAR — left as-is on main; header unification is parked on another branch. */}
       <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
         <div className="flex items-center gap-3 min-w-0">
           <SentinelMark
@@ -195,60 +191,68 @@ export default async function SourceFeedPage({
         </div>
       </header>
 
-      {/* FILTER ROW */}
-      <div className="border-b border-zinc-900 bg-zinc-950/40 px-5 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-2 flex-none">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Platform</span>
-          {ALL_PLATFORMS.map((p) => (
-            <Link
-              key={p}
-              href={buildHref({ theater: theater.id, platforms: togglePlatform(p), tiers })}
-              className={`${CHIP} ${platformIsActive(p) ? CHIP_ON : CHIP_OFF}`}
-            >
-              {PLATFORM_LABEL[p]}
-            </Link>
-          ))}
-        </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-data tracking-[0.18em] uppercase text-zinc-500 mr-1">Trust tier</span>
-          {ALL_TIERS.map((t) => (
-            <Link
-              key={t}
-              href={buildHref({ theater: theater.id, platforms, tiers: toggleTier(t) })}
-              className={`${CHIP} ${tierIsActive(t) ? CHIP_ON : CHIP_OFF}`}
-            >
-              Tier {t}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* FEED CONTENT */}
-      <div className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">
-        <div className="flex flex-col gap-1 pb-3 border-b border-zinc-900">
-          <div className="text-[12px] font-data tracking-[0.18em] uppercase text-zinc-200">
+      {/* FEED CONTENT — centered, scrolling column built from design-system primitives. */}
+      <main className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">
+        {/* Intro */}
+        <div className="flex flex-col gap-1 pb-3 border-b border-slate-800/60">
+          <div className="text-[12px] font-data tracking-[0.18em] uppercase text-slate-200">
             {theater.mapSubtitle}
           </div>
-          <div className="text-[13px] text-zinc-400 leading-relaxed">
+          <p className="text-[13px] text-slate-400 leading-relaxed">
             Source posts linked to published events for this theater. Unverified and unprocessed;
             English-translated where available. Newest first.
-          </div>
+          </p>
         </div>
 
-        {page.posts.length === 0 ? (
-          <div className="text-center py-12 px-4 border border-dashed border-zinc-800 rounded-sm text-[11px] font-data tracking-[0.08em] uppercase text-zinc-500">
-            No posts match these filters.
+        {/* Filters */}
+        <Panel padding="sm" className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-[10px] font-data tracking-[0.18em] uppercase text-slate-500">
+              Platform
+            </span>
+            {ALL_PLATFORMS.map((p) => (
+              <FilterChip
+                key={p}
+                href={buildHref({ theater: theater.id, platforms: togglePlatform(p), tiers })}
+                active={platformIsActive(p)}
+              >
+                {platformStyle(p).label}
+              </FilterChip>
+            ))}
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-[10px] font-data tracking-[0.18em] uppercase text-slate-500">
+              Trust tier
+            </span>
+            {ALL_TIERS.map((t) => (
+              <FilterChip
+                key={t}
+                href={buildHref({ theater: theater.id, platforms, tiers: toggleTier(t) })}
+                active={tierIsActive(t)}
+              >
+                Tier {t}
+              </FilterChip>
+            ))}
+          </div>
+        </Panel>
+
+        {page.posts.length === 0 ? (
+          <Panel
+            padding="md"
+            className="text-center text-[11px] font-data tracking-[0.08em] uppercase text-slate-500"
+          >
+            No posts match these filters.
+          </Panel>
         ) : (
           <>
             <div className="flex flex-col gap-3">
               {groups.map((group) => (
                 <section key={group.key} className="flex flex-col gap-3">
-                  <div className="flex justify-between items-baseline pb-2 mt-3 first:mt-0 border-b border-zinc-900">
-                    <span className="text-[12px] font-data tracking-[0.08em] uppercase text-zinc-200">
+                  <div className="flex justify-between items-baseline pb-2 mt-3 first:mt-0 border-b border-slate-800/60">
+                    <span className="text-[12px] font-data tracking-[0.08em] uppercase text-slate-300">
                       {group.label}
                     </span>
-                    <span className="text-[10px] font-data tracking-[0.08em] uppercase text-zinc-500">
+                    <span className="text-[10px] font-data tracking-[0.08em] uppercase text-slate-500">
                       {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -274,7 +278,7 @@ export default async function SourceFeedPage({
               <div className="flex justify-center pt-3">
                 <Link
                   href={buildHref({ theater: theater.id, platforms, tiers, before: page.next_before })}
-                  className="px-3.5 py-2 text-[11px] font-data tracking-[0.08em] uppercase text-zinc-300 border border-zinc-800 rounded-sm hover:text-zinc-100 hover:border-zinc-700"
+                  className="px-4 py-2 rounded-lg text-[11px] font-semibold tracking-wider uppercase text-slate-300 border border-slate-700 bg-slate-900 hover:text-slate-100 hover:border-slate-600 transition-all"
                 >
                   Load older posts →
                 </Link>
@@ -283,12 +287,12 @@ export default async function SourceFeedPage({
           </>
         )}
 
-        <div className="text-[10px] font-data tracking-[0.04em] text-zinc-500 leading-relaxed pt-4 border-t border-zinc-900">
+        <div className="text-[10px] font-data tracking-[0.04em] text-slate-500 leading-relaxed pt-4 border-t border-slate-800/60">
           ⚠ Raw, unverified source posts — not yet corroborated or geolocated by Sentinel.
           AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
           Sourced from open-source reporting. Not for operational use.
         </div>
-      </div>
+      </main>
     </div>
   );
 }
