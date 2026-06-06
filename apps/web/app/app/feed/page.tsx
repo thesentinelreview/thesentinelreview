@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import SentinelMark from "@/components/watchfloor/SentinelMark";
 import TheaterDropdown from "@/components/watchfloor/TheaterDropdown";
 import PostCard from "@/components/ds/PostCard";
 import Panel from "@/components/ds/Panel";
@@ -15,12 +13,6 @@ export const dynamic = "force-dynamic";
 
 const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky"];
 const ALL_TIERS: Array<1 | 2 | 3> = [1, 2, 3];
-
-// Chip styling for the page header's Sign-in link. The header is intentionally
-// left as-is on main (header unification is parked on another branch); the
-// platform/tier filters below use the <FilterChip> design-system primitive.
-const CHIP = "px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase rounded-sm border transition-colors";
-const CHIP_OFF = "border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700";
 
 function parsePlatforms(raw: string | undefined): Platform[] {
   if (!raw) return [];
@@ -133,63 +125,37 @@ export default async function SourceFeedPage({
 
   return (
     <div className="feed-root min-h-screen flex flex-col bg-slate-950 text-slate-100 font-ui">
-      {/* TOP BAR — left as-is on main; header unification is parked on another branch. */}
-      <header className="bg-zinc-950/80 border-b border-zinc-900 px-5 py-3 flex items-center justify-between gap-4 flex-none">
-        <div className="flex items-center gap-3 min-w-0">
-          <SentinelMark
-            className="flex-none text-[#D99A00] drop-shadow-[0_0_4px_rgba(217,154,0,0.28)] transition-[color,filter] hover:text-[#F2B705] hover:drop-shadow-[0_0_6px_rgba(242,183,5,0.35)]"
-            size={24}
-          />
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[15px] font-bold tracking-[0.25em] uppercase text-white whitespace-nowrap">
-              Sentinel Review
-            </span>
-            <span className="text-zinc-700">/</span>
-            <span className="text-[12px] tracking-[0.18em] uppercase text-amber-400/80 whitespace-nowrap">
-              Source Feed
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-none flex-wrap justify-end">
-          {/* Mode toggle — Source Feed (this page) ↔ Sentinel View */}
-          <div className="flex items-center rounded-sm border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-            <Link
-              href={`/?theater=${theater.id}`}
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80 transition-colors"
-            >
-              Sentinel View
-            </Link>
-            <span
-              aria-current="page"
-              className="px-2.5 py-1 text-[10px] font-data tracking-[0.18em] uppercase bg-teal-400/[0.1] text-teal-300 border-l border-zinc-800"
-            >
-              Source Feed
-            </span>
-          </div>
-
-          <span className="hidden lg:inline text-zinc-500 tracking-[0.22em] uppercase text-[10px] font-data ml-1">
-            Theater
+      {/* Feed control sub-strip — sits beneath the global SiteHeader. Brand + auth
+          live in the global header now; this keeps the feed's contextual controls. */}
+      <div className="bg-slate-950/80 border-b border-slate-800/60 px-5 py-2.5 flex items-center justify-end gap-2 flex-wrap flex-none">
+        {/* Mode toggle — Sentinel View ⇄ Source Feed */}
+        <div className="flex items-center rounded-lg border border-slate-700 bg-slate-900 overflow-hidden">
+          <Link
+            href={`/?theater=${theater.id}`}
+            className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+          >
+            Sentinel View
+          </Link>
+          <span
+            aria-current="page"
+            className="px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-400 border-l border-slate-700"
+          >
+            Source Feed
           </span>
-          <TheaterDropdown
-            current={theater.label}
-            options={Object.values(THEATERS).map((t) => ({
-              label: t.label,
-              href: buildHref({ theater: t.id, platforms, tiers }),
-              active: theater.id === t.id,
-            }))}
-          />
-
-          <span className="w-px h-5 bg-zinc-800 mx-1" />
-          {userId ? (
-            <UserButton />
-          ) : (
-            <Link href="/sign-in" className={`${CHIP} ${CHIP_OFF}`}>
-              Sign in
-            </Link>
-          )}
         </div>
-      </header>
+
+        <span className="hidden lg:inline text-[10px] font-data tracking-[0.18em] uppercase text-slate-500 ml-1">
+          Theater
+        </span>
+        <TheaterDropdown
+          current={theater.label}
+          options={Object.values(THEATERS).map((t) => ({
+            label: t.label,
+            href: buildHref({ theater: t.id, platforms, tiers }),
+            active: theater.id === t.id,
+          }))}
+        />
+      </div>
 
       {/* FEED CONTENT — centered, scrolling column built from design-system primitives. */}
       <main className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">

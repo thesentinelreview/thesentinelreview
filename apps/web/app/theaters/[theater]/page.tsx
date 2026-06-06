@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import SiteNav from "@/components/SiteNav";
 import PostCard from "@/components/PostCard";
 import type { TheaterKey } from "@/lib/types";
 import { THEATERS, THEATER_CONTENT } from "@/data/theaters";
@@ -73,8 +72,6 @@ export default async function TheaterDetailPage({
 
   return (
     <div className={s.page}>
-      <SiteNav />
-
       {/* Header */}
       <div className={s.header}>
         <div className={s.eyebrow}>

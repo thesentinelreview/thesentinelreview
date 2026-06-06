@@ -1,4 +1,3 @@
-import SiteNav from "@/components/SiteNav";
 import type { SourceDetail } from "@/lib/types";
 import { getAllSources } from "@/lib/queries";
 import s from "./page.module.css";
@@ -66,8 +65,6 @@ export default async function SourcesPage() {
 
   return (
     <div className={s.page}>
-      <SiteNav />
-
       <div className={s.header}>
         <div>
           <div className={s.title}>Source reliability</div>
