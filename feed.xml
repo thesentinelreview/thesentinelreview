@@ -6,8 +6,18 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 06 Jun 2026 03:51:40 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2026 10:11:34 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🏴 France to test its own AI-powered battlefield command in June NATO exercise | Defense News</title>
+      <link>https://www.defensenews.com/global/europe/2026/06/06/france-to-test-its-own-ai-powered-battlefield-command-in-june-nato-exercise/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/06/06/france-to-test-its-own-ai-powered-battlefield-command-in-june-nato-exercise/</guid>
+      <pubDate>Sat, 06 Jun 2026 06:50:38 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.defensenews.com/global/europe/2026/06/06/france-to-test-its-own-ai-powered-battlefield-command-in-june-nato-exercise/">Defense News</source>
+      <description>The French Army has developed its own large-language model for staff officers, called Berthier, named after Napoleon’s chief of staff.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
     <item>
       <title>🌍 U.S. Shoots Down Iranian Drones Launched At Strait Of Hormuz: Official (Updated) | The War Zone</title>
       <link>https://www.twz.com/news-features/u-s-shoots-down-iranian-drones-launched-at-strait-of-hormuz-official</link>
@@ -56,7 +66,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/air/area-51-mystery-aircraft-prompts-interest-in-christmas-tree-stealth-fighter-concept">The War Zone</source>
       <description>The exotic jet spotted near Area 51 that appears to be tied to the F-47 has prompted a look at an obscure fighter design from the 1980s. The post Area 51 Mystery Aircraft Prompts Interest In “Christmas Tree” Stealth Fighter Concept appeared first on The War Zone.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌍 USAF Scrambling To Buy What Few MQ-9 Reapers It Can Find After Epic Fury Losses | The War Zone</title>
@@ -126,7 +136,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/06/safeguarding-federally-funded-innovation-navigating-the-new-era-of-research-security/">Breaking Defense</source>
       <description>As global competition intensifies, this new Breaking Defense webinar examines how research security policies and practices are evolving to protect federally funded innovation while maintaining open scientific collaboration.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 How Ukraine Has Turned the Tide | Foreign Policy</title>
@@ -136,7 +146,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/ukraine-russia-war-putin-zelensky-winning-drones-front-battlefield-peace/">Foreign Policy</source>
       <description>Resilience, technology, and European support have put Russia on the back foot.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Contain, Consolidate, and Co-Opt | Foreign Policy</title>
@@ -166,7 +176,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defenseone.com/policy/2026/06/lawmakers-aim-mandate-army-transformation-updates/414004/">Defense One</source>
       <description>“Parochial interests” may have motivated lawmakers to tighten the reins, one official said.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ Congress Throws A-10 Warthog Another Lifeline | The War Zone</title>
@@ -186,7 +196,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/a-message-from-normandy-82-years-later/">Breaking Defense</source>
       <description>In remembrance of eight U.S. service members who received the Congressional Medal of Honor for their actions during the D-Day assault and the Normandy campaign that followed.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏛️ Navy lifts price ceiling for new trainer jet | Breaking Defense</title>
@@ -246,7 +256,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/under-drone-dominance-push-pentagon-begins-receiving-small-drones/">Breaking Defense</source>
       <description>So far, the department has ordered 20,000 small, FPV-style drones from 10 vendors.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
@@ -276,7 +286,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/global/europe/2026/06/05/huge-fascist-era-underground-cisterns-draw-western-special-forces-to-italy-for-tunnel-training/">Defense News</source>
       <description>After resisting 150 bombing runs by the Allies in the Second World War, the cisterns continued to be used by the Italian Air Force to hold aviation fuel.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 Lockheed Martin UK-led consortium unveils GBAD concept for NATO | Breaking Defense</title>
@@ -297,16 +307,6 @@
       <source url="https://foreignpolicy.com/2026/06/05/mexico-america-trump-iran-fifa-olympics-world-cup/">Foreign Policy</source>
       <description>The journey of Iran’s World Cup team sets a dangerous precedent for international soccer.</description>
       <sentinel:score>2</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Innovation as resilience: Demand-side strategies for critical mineral supply chain security | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/in-depth-research-reports/report/innovation-as-resilience-demand-side-strategies-for-critical-mineral-supply-chain-security/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/in-depth-research-reports/report/innovation-as-resilience-demand-side-strategies-for-critical-mineral-supply-chain-security/</guid>
-      <pubDate>Fri, 05 Jun 2026 15:07:33 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/innovation-as-resilience-demand-side-strategies-for-critical-mineral-supply-chain-security/">Atlantic Council</source>
-      <description>Policies designed to secure critical mineral supplies have a blind spot: they focus primarily on sourcing but underuse demand-side strategies. The post Innovation as resilience: Demand-side strategies for critical mineral supply chain security appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
     </item>
   </channel>
 </rss>
