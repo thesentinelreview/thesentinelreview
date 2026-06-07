@@ -165,6 +165,19 @@ body:has(.about-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Briefing detail (full-bleed, scrolls) ──────────────────────────────── */
+/* Same full-bleed treatment as the other content pages: drop body padding +
+   grain so /briefing/[id] sits edge-to-edge on the slate-950 page background. */
+body:has(.briefing-root) {
+  padding: 0;
+}
+body:has(.briefing-root)::before {
+  content: none;
+}
+body:has(.briefing-root) .demo-banner {
+  margin: 0 !important;
+}
+
 /* ── Global SiteHeader (content / marketing routes) ─────────────────────── */
 /* The header mounts in the padded <body>; break it out to the viewport edges so
    it sits flush on the not-yet-reskinned content pages. Full-bleed shells
@@ -176,7 +189,8 @@ body:has(.watchfloor-root) .global-site-header,
 body:has(.sources-root) .global-site-header,
 body:has(.theater-root) .global-site-header,
 body:has(.theaters-root) .global-site-header,
-body:has(.about-root) .global-site-header {
+body:has(.about-root) .global-site-header,
+body:has(.briefing-root) .global-site-header {
   margin: 0;
 }
 
