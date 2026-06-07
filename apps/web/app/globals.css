@@ -44,10 +44,15 @@
   --font-cond-stack: var(--font-plex-condensed), 'IBM Plex Sans Condensed', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Base reset — layered so Tailwind v4's @layer utilities (margin/padding/space)
+   win where they conflict. Unlayered, this `*` rule beat every layered utility
+   regardless of specificity, zeroing p-*, m-*, mx-auto, space-* app-wide. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 body {
