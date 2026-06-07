@@ -6,8 +6,18 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 06 Jun 2026 17:21:20 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 04:18:02 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>🌏 North Korea’s Posturing Toward China Ahead of Xi’s Visit | 38 North</title>
+      <link>https://www.38north.org/2026/06/north-koreas-posturing-toward-china-ahead-of-xis-visit/</link>
+      <guid isPermaLink="true">https://www.38north.org/2026/06/north-koreas-posturing-toward-china-ahead-of-xis-visit/</guid>
+      <pubDate>Sat, 06 Jun 2026 18:41:10 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.38north.org/2026/06/north-koreas-posturing-toward-china-ahead-of-xis-visit/">38 North</source>
+      <description>Chinese President Xi Jinping’s upcoming state visit to North Korea—his first since June 2019 ... The post North Korea’s Posturing Toward China Ahead of Xi’s Visit appeared first on 38 North.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
     <item>
       <title>🌍 US strikes Iranian sites after Iran launches drones, in latest Gulf flare-up | Defense News</title>
       <link>https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/</link>
@@ -16,7 +26,7 @@
       <category>Middle East</category>
       <source url="https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/">Defense News</source>
       <description>U.S. forces struck Iranian coastal radar sites on Saturday after shooting down drones launched by Iran toward the Strait of Hormuz, the U.S. military said.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>10</sentinel:score>
     </item>
     <item>
       <title>🏴 France to test its own AI-powered battlefield command in June NATO exercise | Defense News</title>
@@ -46,7 +56,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/armenia-trump-russia-election-pashinyan-europe/">Foreign Policy</source>
       <description>Trump and Putin are backing different players in a contested country.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ Confessions Of A Navy MH-53E Sea Dragon Minehunter Pilot | The War Zone</title>
@@ -66,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-194">The War Zone</source>
       <description>When will it be time to go outside? The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>📍 Area 51 Mystery Aircraft Prompts Interest In “Christmas Tree” Stealth Fighter Concept | The War Zone</title>
@@ -126,7 +136,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/06/05/joint-chiefs-head-makes-first-official-visit-to-post-maduro-venezuela/">Defense News</source>
       <description>The visit comes five months after the high-risk U.S. military operation to remove Venezuelan President Nicolás Maduro.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Maggie O’Farrell’s Most Ambitious Novel Yet | Foreign Policy</title>
@@ -146,7 +156,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/06/safeguarding-federally-funded-innovation-navigating-the-new-era-of-research-security/">Breaking Defense</source>
       <description>As global competition intensifies, this new Breaking Defense webinar examines how research security policies and practices are evolving to protect federally funded innovation while maintaining open scientific collaboration.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 How Ukraine Has Turned the Tide | Foreign Policy</title>
@@ -156,7 +166,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/ukraine-russia-war-putin-zelensky-winning-drones-front-battlefield-peace/">Foreign Policy</source>
       <description>Resilience, technology, and European support have put Russia on the back foot.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏴 Contain, Consolidate, and Co-Opt | Foreign Policy</title>
@@ -176,7 +186,7 @@
       <category>Homeland</category>
       <source url="https://foreignpolicy.com/2026/06/05/herta-muller-memoir-romania-ceausescu-communist-history/">Foreign Policy</source>
       <description>In a new memoir, Nobel laureate Herta Müller condemns her homeland for failing to reconcile with history.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>🏛️ Lawmakers aim to force the Army to detail its transformation plans | Defense One</title>
@@ -256,7 +266,7 @@
       <category>Indo-Pacific</category>
       <source url="https://foreignpolicy.com/2026/06/05/news-quiz-malta-election-japan-militarism-iran-peace-negotiations/">Foreign Policy</source>
       <description>Test yourself on the week of May 30: Malta votes, Japan responds to militarism accusations, and Iran pauses talks with the U.S.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ Under ‘Drone Dominance’ push, Pentagon begins receiving small drones | Breaking Defense</title>
@@ -286,7 +296,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/06/05/myanmar-president-min-aung-hlaing-military-concessions/">Foreign Policy</source>
       <description>Prisoner releases mostly reflect the regime’s growing confidence five years after seizing power in a coup.</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏛️ Huge fascist-era underground cisterns draw Western special forces to Italy for tunnel training | Defense News</title>
@@ -297,16 +307,6 @@
       <source url="https://www.defensenews.com/global/europe/2026/06/05/huge-fascist-era-underground-cisterns-draw-western-special-forces-to-italy-for-tunnel-training/">Defense News</source>
       <description>After resisting 150 bombing runs by the Allies in the Second World War, the cisterns continued to be used by the Italian Air Force to hold aviation fuel.</description>
       <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 Lockheed Martin UK-led consortium unveils GBAD concept for NATO | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/lockheed-martins-uk-led-consortium-unveils-gbad-concept-for-nato/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/lockheed-martins-uk-led-consortium-unveils-gbad-concept-for-nato/</guid>
-      <pubDate>Fri, 05 Jun 2026 15:19:33 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://breakingdefense.com/2026/06/lockheed-martins-uk-led-consortium-unveils-gbad-concept-for-nato/">Breaking Defense</source>
-      <description>While company representatives were tight-lipped about the exact technical details of their offering, they explained that a flexible, software-based system would allow individual member-nations to connect their sensors to another nation’s command nodes.</description>
-      <sentinel:score>9</sentinel:score>
     </item>
   </channel>
 </rss>
