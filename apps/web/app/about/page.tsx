@@ -9,7 +9,7 @@ const SECTION_TITLE = "text-xs font-data tracking-[0.12em] uppercase text-slate-
 export default function AboutPage() {
   return (
     <div className="about-root min-h-screen bg-slate-950 text-slate-100 font-ui">
-      <div className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-6">
+      <div className="w-full max-w-5xl mx-auto px-5 py-6 pb-20 flex flex-col gap-6">
         {/* Header */}
         <div className="flex flex-col gap-1 pb-3 border-b border-slate-800/60">
           <h1 className="text-2xl font-bold tracking-tight text-slate-100">About Sentinel Review</h1>
