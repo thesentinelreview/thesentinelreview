@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
-import { Diamond, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import SentinelBrand from './watchfloor/SentinelBrand';
 
 const NAV = [
   { label: 'Map', href: '/' },
@@ -24,16 +25,8 @@ export function SiteHeader({ isAuthed = false }: { isAuthed?: boolean }) {
     <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
       <div className="max-w-[1800px] mx-auto px-6 py-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* Brand: diamond logo + wordmark */}
-          <Link href="/" className="group flex items-center gap-3 shrink-0">
-            <span className="p-2 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-lg border border-amber-500/30 shadow-lg shadow-amber-500/20 flex items-center justify-center">
-              <Diamond className="w-5 h-5 text-amber-400" />
-            </span>
-            <span className="text-2xl font-bold tracking-[0.25em] uppercase whitespace-nowrap">
-              <span className="text-white">Sentinel </span>
-              <span className="text-red-400 group-hover:text-red-300 transition-colors">Review</span>
-            </span>
-          </Link>
+          {/* Brand: shared SENTINEL INTELLIGENCE block — pixel-identical to the dashboard command bar */}
+          <SentinelBrand />
 
           {/* Desktop nav (lg and up) */}
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-1">
