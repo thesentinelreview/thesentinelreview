@@ -19,6 +19,7 @@ export const PANEL_HOVER = "hover:border-slate-600 transition-all";
 export interface BadgeStyle {
   label:     string;
   className: string; // text + bg + border utilities
+  dot?:      string; // solid fill for status dots (event-type / confidence)
 }
 
 // ── Platform badges ─────────────────────────────────────────────────────────
@@ -77,15 +78,15 @@ export const RELIABILITY = {
 // ── Event-type semantics (document-only; not yet consumed by the feed) ───────
 // strike = red · clash = amber · movement = cyan
 export const EVENT_TYPE_STYLES: Record<EventType, BadgeStyle> = {
-  strike:   { label: "Strike",   className: "text-red-400 bg-red-500/10 border-red-500/30" },
-  clash:    { label: "Clash",    className: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
-  movement: { label: "Movement", className: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30" },
+  strike:   { label: "Strike",   className: "text-red-400 bg-red-500/10 border-red-500/30",      dot: "bg-red-500" },
+  clash:    { label: "Clash",    className: "text-amber-400 bg-amber-500/10 border-amber-500/30", dot: "bg-amber-500" },
+  movement: { label: "Movement", className: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",    dot: "bg-cyan-500" },
 };
 
 // ── Confidence semantics (document-only) ─────────────────────────────────────
 // verified = emerald · partial = amber · unconfirmed = slate
 export const CONFIDENCE_STYLES: Record<Confidence, BadgeStyle> = {
-  verified:    { label: "Verified",    className: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" },
-  partial:     { label: "Partial",     className: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
-  unconfirmed: { label: "Unconfirmed", className: "text-slate-400 bg-slate-700/30 border-slate-600/40" },
+  verified:    { label: "Verified",    className: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30", dot: "bg-emerald-500" },
+  partial:     { label: "Partial",     className: "text-amber-400 bg-amber-500/10 border-amber-500/30",       dot: "bg-amber-500" },
+  unconfirmed: { label: "Unconfirmed", className: "text-slate-400 bg-slate-700/30 border-slate-600/40",       dot: "bg-slate-500" },
 };
