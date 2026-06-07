@@ -43,9 +43,10 @@ export default function SectorThreat({
 
   return (
     <div
-      className={`bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl p-6 shadow-xl ${className}`}
+      className={`flex flex-col h-full min-h-0 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl shadow-xl ${className}`}
     >
-      <div className="flex items-start justify-between gap-3 mb-6">
+      {/* Pinned header: title + tabs + window badge */}
+      <div className="flex-none flex items-start justify-between gap-3 p-4 border-b border-slate-800">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <div className={`p-1.5 rounded-lg border ${iconBg}`}>
@@ -80,29 +81,32 @@ export default function SectorThreat({
         </div>
       </div>
 
-      {isIntensity ? (
-        <IntensityBars data={intensity} />
-      ) : isAxes ? (
-        <ThreatAxes data={threatAxes} />
-      ) : sectors.length > 0 ? (
-        <>
-          <div className="space-y-4">
-            {sectors.map((s) => (
-              <SectorRow key={s.name} {...s} />
-            ))}
-          </div>
-          <div className="mt-6 pt-5 border-t border-slate-800">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Active sectors in window</span>
-              <span className="text-slate-400 font-bold">{sectors.length} sectors</span>
+      {/* Scrolling body */}
+      <div className="flex-1 min-h-0 overflow-y-auto ds-scroll p-4">
+        {isIntensity ? (
+          <IntensityBars data={intensity} />
+        ) : isAxes ? (
+          <ThreatAxes data={threatAxes} />
+        ) : sectors.length > 0 ? (
+          <>
+            <div className="space-y-4">
+              {sectors.map((s) => (
+                <SectorRow key={s.name} {...s} />
+              ))}
             </div>
+            <div className="mt-6 pt-5 border-t border-slate-800">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-500">Active sectors in window</span>
+                <span className="text-slate-400 font-bold">{sectors.length} sectors</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="text-xs text-slate-500 uppercase tracking-wider">
+            No sector data in window
           </div>
-        </>
-      ) : (
-        <div className="text-xs text-slate-500 uppercase tracking-wider">
-          No sector data in window
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
