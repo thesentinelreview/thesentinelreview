@@ -17,7 +17,7 @@ import os
 import signal
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
@@ -93,7 +93,7 @@ def _enqueue_briefing_job() -> None:
 
 
 def _should_run_briefing(last_briefing_date: str | None) -> bool:
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     today = now.strftime("%Y-%m-%d")
     return now.hour >= _BRIEFING_HOUR_UTC and last_briefing_date != today
 
@@ -135,7 +135,7 @@ def main() -> None:
         if _should_run_briefing(last_briefing_date):
             try:
                 _enqueue_briefing_job()
-                last_briefing_date = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")
+                last_briefing_date = datetime.now(tz=UTC).strftime("%Y-%m-%d")
                 log.info("briefing_job_enqueued", date=last_briefing_date)
             except Exception:
                 log.exception("failed_to_enqueue_briefing_job")

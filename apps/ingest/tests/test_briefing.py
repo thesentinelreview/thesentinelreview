@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
@@ -19,13 +19,12 @@ import pytest
 
 from sentinel.models import BriefingInput
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 def _utc(y: int, m: int, d: int, h: int = 0) -> datetime:
-    return datetime(y, m, d, h, tzinfo=timezone.utc)
+    return datetime(y, m, d, h, tzinfo=UTC)
 
 
 def _event(event_id: str | None = None, oblast: str = "Donetsk") -> dict:

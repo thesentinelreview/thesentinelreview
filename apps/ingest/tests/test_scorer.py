@@ -12,11 +12,8 @@ held_for_review is independent: it mirrors is_high_impact.
 """
 from __future__ import annotations
 
-import pytest
-
 from sentinel.models import GeolocationSignal
 from sentinel.pipeline.scorer import _build_reasoning, classify, score_confidence
-
 
 # ---------------------------------------------------------------------------
 # Helpers

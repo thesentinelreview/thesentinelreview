@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import NamedTuple
 
 import feedparser
@@ -273,7 +273,7 @@ def _parse_date(entry: feedparser.FeedParserDict) -> datetime | None:
             try:
                 import calendar
                 ts = calendar.timegm(t)
-                return datetime.fromtimestamp(ts, tz=timezone.utc)
+                return datetime.fromtimestamp(ts, tz=UTC)
             except Exception:
                 continue
     return None
@@ -281,4 +281,4 @@ def _parse_date(entry: feedparser.FeedParserDict) -> datetime | None:
 
 def _cutoff_dt(since_hours: int) -> datetime:
     from datetime import timedelta
-    return datetime.now(tz=timezone.utc) - timedelta(hours=since_hours)
+    return datetime.now(tz=UTC) - timedelta(hours=since_hours)

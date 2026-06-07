@@ -9,11 +9,9 @@ from __future__ import annotations
 
 import os
 import uuid
-from datetime import datetime, timezone
-from unittest.mock import MagicMock
+from datetime import UTC, datetime
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Patch env vars before any sentinel module is imported
@@ -28,7 +26,7 @@ os.environ.setdefault("ANTHROPIC_API_KEY", "sk-ant-test-key")
 # ---------------------------------------------------------------------------
 
 def utcnow() -> datetime:
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)
 
 
 def make_source(

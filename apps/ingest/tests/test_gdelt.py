@@ -9,7 +9,7 @@ by feeding a synthetic 61-column Events row through fetch().
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 from sentinel.db import _classify_fetch
@@ -59,7 +59,7 @@ class TestGdeltEventsColumnMapping:
         assert len(results) == 1
         post = results[0]
         assert post["external_id"] == "gdelt_1234567890"
-        assert post["posted_at"] == datetime(2026, 5, 29, 12, 0, 0, tzinfo=timezone.utc)
+        assert post["posted_at"] == datetime(2026, 5, 29, 12, 0, 0, tzinfo=UTC)
         assert post["archive_url"] == "https://example.com/article"
         # corrected geo + CAMEO label land in the text the extractor reads
         assert "Fighting" in post["text"]
@@ -144,13 +144,13 @@ class TestGdeltEventsHealthMeta:
         assert meta["results"] == 2
         assert meta["raw_entries"] == 2
         # newest_posted_at keys on each post's posted_at: max(12:00, 13:00).
-        assert meta["newest_posted_at"] == datetime(2026, 5, 29, 13, 0, 0, tzinfo=timezone.utc)
+        assert meta["newest_posted_at"] == datetime(2026, 5, 29, 13, 0, 0, tzinfo=UTC)
         # raw_entries == results (>0) must classify healthy (not the "0 ingestable"
         # branch) and surface the newest timestamp for last_post_at. posts_inserted=0
         # simulates an all-deduped cycle — the exact case that used to read silent.
         health, _detail, newest, is_error = _classify_fetch(0, meta)
         assert (health, is_error) == ("healthy", False)
-        assert newest == datetime(2026, 5, 29, 13, 0, 0, tzinfo=timezone.utc)
+        assert newest == datetime(2026, 5, 29, 13, 0, 0, tzinfo=UTC)
 
     def test_no_matches_set_meta_and_classify_silent(self) -> None:
         # Wrong-country row -> 0 matched events for the ukraine theater.
@@ -200,6 +200,6 @@ class TestGdeltGkgHealthMeta:
         meta = ingestor.last_fetch_meta
         assert meta is not None
         assert meta["results"] == 1
-        assert meta["newest_posted_at"] == datetime(2026, 5, 29, 13, 0, 0, tzinfo=timezone.utc)
+        assert meta["newest_posted_at"] == datetime(2026, 5, 29, 13, 0, 0, tzinfo=UTC)
         health, _detail, _newest, is_error = _classify_fetch(0, meta)
         assert (health, is_error) == ("healthy", False)

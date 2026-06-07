@@ -9,7 +9,7 @@ gdelt.py / PR #174: _fetch_meta() is set at every return path.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 from sentinel.db import _classify_fetch
@@ -66,8 +66,8 @@ def _fetch_with_messages(messages: list[RawPostData]):
 class TestTelegramHealthMeta:
     def test_matched_rows_set_meta_and_classify_healthy(self) -> None:
         # Two captured messages with distinct posted_at (12:00 and 13:00).
-        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
-        t2 = datetime(2026, 5, 30, 13, 0, tzinfo=timezone.utc)
+        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=UTC)
+        t2 = datetime(2026, 5, 30, 13, 0, tzinfo=UTC)
         ingestor, results = _fetch_with_messages(
             [_msg(external_id="1", posted_at=t1), _msg(external_id="2", posted_at=t2)]
         )

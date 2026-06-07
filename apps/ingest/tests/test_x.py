@@ -9,7 +9,7 @@ was marked silent. Mirrors the GDELT fix in PR #174.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import httpx
@@ -90,14 +90,14 @@ class TestXHealthMeta:
         assert meta["raw_entries"] == 2
         # newest_posted_at keys on each post's posted_at: max(12:00, 13:00).
         assert meta["newest_posted_at"] == datetime(
-            2026, 5, 30, 13, 0, 0, tzinfo=timezone.utc
+            2026, 5, 30, 13, 0, 0, tzinfo=UTC
         )
         # raw_entries == results (>0) must classify healthy (not the "0 ingestable"
         # branch) and surface the newest timestamp for last_post_at. posts_inserted=0
         # simulates an all-deduped cycle — the exact case that used to read silent.
         health, _detail, newest, is_error = _classify_fetch(0, meta)
         assert (health, is_error) == ("healthy", False)
-        assert newest == datetime(2026, 5, 30, 13, 0, 0, tzinfo=timezone.utc)
+        assert newest == datetime(2026, 5, 30, 13, 0, 0, tzinfo=UTC)
 
     def test_no_tweets_set_meta_and_classify_silent(self) -> None:
         # Empty data array -> 0 captured tweets.

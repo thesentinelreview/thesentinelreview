@@ -8,21 +8,18 @@ Covers:
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from sentinel.db import _classify_fetch
-from sentinel.ingestors.bluesky import BlueskyIngestor, _extract_media_urls, _fetch_meta
-
+from sentinel.ingestors.bluesky import BlueskyIngestor, _extract_media_urls
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-_NOW = datetime.now(tz=timezone.utc)
+_NOW = datetime.now(tz=UTC)
 _RECENT = _NOW - timedelta(hours=1)
 _OLD = _NOW - timedelta(hours=48)
 
@@ -210,7 +207,7 @@ class TestBlueskyIngestorFetch:
         page = _make_feed([_make_feed_item(post)], cursor=None)
         mock_client = self._patch_client([page])
         with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
-            result = ingestor.fetch(since_hours=24)
+            ingestor.fetch(since_hours=24)
         assert mock_client.get_author_feed.call_count == 1
 
     def test_skips_malformed_post_continues(self) -> None:
@@ -253,8 +250,8 @@ class TestBlueskyHealthMeta:
 
     def test_matched_posts_set_meta_and_classify_healthy(self) -> None:
         # Two captured posts with distinct created_at (12:00Z and 13:00Z).
-        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
-        t2 = datetime(2026, 5, 30, 13, 0, tzinfo=timezone.utc)
+        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=UTC)
+        t2 = datetime(2026, 5, 30, 13, 0, tzinfo=UTC)
         post1 = _make_post(uri="at://did/post/1", text="Earlier", created_at=t1)
         post2 = _make_post(uri="at://did/post/2", text="Later", created_at=t2)
         ingestor = self._make_ingestor()
@@ -312,7 +309,7 @@ class TestBlueskyHealthMeta:
     def test_mid_page_error_with_first_page_success_stays_healthy(self) -> None:
         # First-page success then per-page raise: 1 result kept, transport_error
         # must stay None (only set when not results), so this classifies healthy.
-        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
+        t1 = datetime(2026, 5, 30, 12, 0, tzinfo=UTC)
         good_post = _make_post(uri="at://did/post/1", text="First page", created_at=t1)
         page1 = _make_feed([_make_feed_item(good_post)], cursor="cursor-p2")
         ingestor = self._make_ingestor()

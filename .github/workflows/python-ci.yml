@@ -1,0 +1,61 @@
+name: Python CI
+
+# Audit A5-1: gate apps/ingest on pytest + ruff so a regression can't merge
+# the way it has been able to (HANDOFF.md: "No pytest/CI gate runs on PRs").
+# Scoped to PRs that touch apps/ingest/ and to manual dispatch — no schedule.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/ingest/**'
+      - '.github/workflows/python-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/ingest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        # Explicit deps + --no-deps editable install matches sentinel-ingest.yml
+        # exactly so a future drift in pyproject (or a sub-dep that won't build
+        # on the runner) trips here first, not in the live ingest workflow.
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "feedparser>=6.0" \
+            "anthropic>=0.40" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0" \
+            "atproto>=0.0.51" \
+            "telethon>=1.36" \
+            "pytest>=8.3" \
+            "pytest-asyncio>=0.24" \
+            "pytest-httpx>=0.32" \
+            "ruff>=0.7"
+          pip install --no-deps -e .
+
+      - name: Ruff
+        run: python -m ruff check .
+
+      - name: Pytest
+        # DATABASE_URL is required by sentinel.config import-time validation but
+        # the suite uses unit-test patches and never connects — any reachable
+        # DSN-shaped string works.
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost/ci
+        run: python -m pytest tests -q
