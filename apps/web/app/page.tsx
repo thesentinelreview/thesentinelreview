@@ -184,74 +184,68 @@ export default async function WatchfloorPage({
         medianTtvMinutes={medianTtv}
       />
 
-      <main className="flex-1 min-h-0 flex flex-col p-6 gap-4">
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4">
-          {/* Top row: Map (left half) + right cluster (Brief on top, Active Alerts +
-              Sector Threat side by side underneath). Right column flexes to fill
-              the viewport; each panel scrolls internally so long content stays
-              contained. */}
-          <div className="col-span-12 lg:col-span-6 h-[480px] lg:h-auto lg:min-h-0 relative rounded-lg overflow-hidden border border-slate-700">
-            <MapWrapper
-              events={mapEvents}
-              center={mapCenter}
-              zoom={mapZoom}
-              visibleTypes={visibleTypes}
-              palette="watch"
-            />
-            <MapLegend items={legendItems} />
-          </div>
-          <div className="col-span-12 lg:col-span-6 flex flex-col gap-4 min-h-0">
-            <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
-              <BriefPane
-                briefing={briefing}
-                events={mapEvents}
-                theaterId={theater.id}
-                theaterLabel={theater.label}
-                windowLabel={WINDOW_LABELS[timeRange]}
-                eventCount={stats.events}
-              />
-            </div>
-            <div className="lg:flex-1 lg:min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="lg:min-h-0 lg:overflow-y-auto">
-                <LiveStream
-                  events={mapEvents}
-                  sources={sources}
-                  theaterId={theater.id}
-                  tabs={feedTabs}
-                  activeTab={feedView}
-                />
-              </div>
-              <div className="lg:min-h-0 lg:overflow-y-auto">
-                <SectorThreat
-                  sectors={sectors}
-                  intensity={intensity}
-                  windowLabel={WINDOW_LABELS[timeRange]}
-                  tabs={threatTabs}
-                  activeTab={threatView}
-                  threatAxes={threatAxes}
-                />
-              </div>
-            </div>
-          </div>
+      {/* Main content row — fills the viewport between KpiRail and the footer.
+          Map (left) + right column (Brief on top; Active Alerts + Sector Threat
+          underneath). Each right-column panel pins its own header and scrolls its
+          body; the min-h-0 chain from here down is what lets those bodies scroll. */}
+      <main className="flex-1 min-h-0 grid grid-cols-12 gap-3 px-6 py-3">
+        <div className="col-span-12 lg:col-span-6 h-[480px] lg:h-auto lg:min-h-0 relative rounded-lg overflow-hidden border border-slate-700">
+          <MapWrapper
+            events={mapEvents}
+            center={mapCenter}
+            zoom={mapZoom}
+            visibleTypes={visibleTypes}
+            palette="watch"
+          />
+          <MapLegend items={legendItems} />
         </div>
 
-        <div className="flex-none bg-amber-500/5 border border-amber-500/20 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20 flex-shrink-0">
-              <AlertCircle className="w-5 h-5 text-amber-400" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-amber-400 mb-1 uppercase tracking-wider">Disclaimer</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                This platform is a <strong className="text-slate-300">situational awareness tool only</strong>.
-                It does not support military targeting or operational planning. Events are algorithmically extracted and
-                scored; high-impact events require human editorial review before publication. All data is derived from
-                open-source intelligence and may contain inaccuracies.
-              </p>
-            </div>
+        <div className="col-span-12 lg:col-span-6 flex flex-col gap-3 min-h-0">
+          {/* Daily Brief — compact at the top: header pinned, summary scrolls. */}
+          <div className="lg:flex-1 lg:min-h-0 min-h-0">
+            <BriefPane
+              briefing={briefing}
+              events={mapEvents}
+              theaterId={theater.id}
+              theaterLabel={theater.label}
+              windowLabel={WINDOW_LABELS[timeRange]}
+              eventCount={stats.events}
+            />
+          </div>
+          {/* Active Alerts | Sector Threat — fills the remaining height; each
+              panel pins its header and scrolls its body. */}
+          <div className="lg:flex-[1.6] lg:min-h-0 min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <LiveStream
+              events={mapEvents}
+              sources={sources}
+              theaterId={theater.id}
+              tabs={feedTabs}
+              activeTab={feedView}
+            />
+            <SectorThreat
+              sectors={sectors}
+              intensity={intensity}
+              windowLabel={WINDOW_LABELS[timeRange]}
+              tabs={threatTabs}
+              activeTab={threatView}
+              threatAxes={threatAxes}
+            />
           </div>
         </div>
       </main>
+
+      {/* Slim disclaimer strip — situational-awareness-only statement, compacted. */}
+      <footer className="flex-none flex items-center gap-2.5 px-6 py-1.5 border-t border-amber-500/20 bg-amber-500/[0.04]">
+        <AlertCircle className="w-3.5 h-3.5 text-amber-400 flex-none" />
+        <p className="text-[11px] text-slate-400 leading-snug">
+          <strong className="font-bold uppercase tracking-wider text-amber-400">Disclaimer</strong>
+          <span className="text-slate-600"> — </span>
+          This platform is a <strong className="text-slate-300">situational awareness tool only</strong>. It does not
+          support military targeting or operational planning. Events are algorithmically extracted and scored;
+          high-impact events require human editorial review before publication. All data is derived from open-source
+          intelligence and may contain inaccuracies.
+        </p>
+      </footer>
     </div>
   );
 }
