@@ -183,6 +183,19 @@ body:has(.briefing-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Event detail (full-bleed, scrolls) ─────────────────────────────────── */
+/* Same full-bleed treatment as the other content pages: drop body padding +
+   grain so /event/[id] sits edge-to-edge on the slate-950 page background. */
+body:has(.event-root) {
+  padding: 0;
+}
+body:has(.event-root)::before {
+  content: none;
+}
+body:has(.event-root) .demo-banner {
+  margin: 0 !important;
+}
+
 /* ── Content-page column centering ───────────────────────────────────────── */
 /* Center each full-bleed content root's single inner column the same way
    /methodology does (its scrolling <main> is `flex flex-col items-center`).
@@ -194,7 +207,8 @@ body:has(.briefing-root) .demo-banner {
 .theater-root,
 .theaters-root,
 .about-root,
-.briefing-root {
+.briefing-root,
+.event-root {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -212,7 +226,8 @@ body:has(.sources-root) .global-site-header,
 body:has(.theater-root) .global-site-header,
 body:has(.theaters-root) .global-site-header,
 body:has(.about-root) .global-site-header,
-body:has(.briefing-root) .global-site-header {
+body:has(.briefing-root) .global-site-header,
+body:has(.event-root) .global-site-header {
   margin: 0;
 }
 
