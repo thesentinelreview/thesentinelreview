@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { ExternalLink, Radio, FileText, MapPin } from "lucide-react";
-import SentinelMark from "./SentinelMark";
+import SentinelBrand from "./SentinelBrand";
 import SensorStrip from "./SensorStrip";
 import type { SensorStripData } from "@/lib/types";
 
@@ -79,23 +79,8 @@ export default function HeaderBar({
     <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* Brand cluster */}
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="p-2.5 bg-gradient-to-br from-red-500/20 to-red-600/10 rounded-xl border border-red-500/30 shadow-lg shadow-red-500/20 flex-none">
-              <SentinelMark className="w-7 h-7 text-red-400" size={28} />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold text-white tracking-tight">SENTINEL INTELLIGENCE</h1>
-                <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-[10px] font-semibold text-red-400 uppercase tracking-wider">
-                  Beta
-                </span>
-              </div>
-              <div className="mt-0.5 text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
-                Watch Tier
-              </div>
-            </div>
-          </div>
+          {/* Brand cluster — shared SENTINEL INTELLIGENCE block */}
+          <SentinelBrand />
 
           {/* Right cluster — page links, controls, auth */}
           <div className="flex items-center gap-3 flex-wrap justify-end">
