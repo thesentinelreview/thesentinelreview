@@ -178,6 +178,23 @@ body:has(.briefing-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Content-page column centering ───────────────────────────────────────── */
+/* Center each full-bleed content root's single inner column the same way
+   /methodology does (its scrolling <main> is `flex flex-col items-center`).
+   In plain block flow the inner `w-full max-w-* mx-auto` container was landing
+   off-center — relying on margin auto alone wasn't holding. A flex column with
+   centered cross-axis alignment pins the column to the middle with equal
+   gutters on every viewport, while the root itself stays full-bleed. */
+.sources-root,
+.theater-root,
+.theaters-root,
+.about-root,
+.briefing-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* ── Global SiteHeader (content / marketing routes) ─────────────────────── */
 /* The header mounts in the padded <body>; break it out to the viewport edges so
    it sits flush on the not-yet-reskinned content pages. Full-bleed shells
