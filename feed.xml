@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 07 Jun 2026 04:18:02 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 10:34:35 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌏 North Korea’s Posturing Toward China Ahead of Xi’s Visit | 38 North</title>
@@ -26,7 +26,7 @@
       <category>Middle East</category>
       <source url="https://www.defensenews.com/flashpoints/middle-east/2026/06/06/us-strikes-iranian-sites-after-iran-launches-drones-in-latest-gulf-flare-up/">Defense News</source>
       <description>U.S. forces struck Iranian coastal radar sites on Saturday after shooting down drones launched by Iran toward the Strait of Hormuz, the U.S. military said.</description>
-      <sentinel:score>10</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 France to test its own AI-powered battlefield command in June NATO exercise | Defense News</title>
@@ -76,7 +76,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/news-features/bunker-talk-lets-talk-about-all-the-things-we-did-and-didnt-cover-this-week-194">The War Zone</source>
       <description>When will it be time to go outside? The post Bunker Talk: Let’s Talk About All The Things We Did And Didn’t Cover This Week appeared first on The War Zone.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>📍 Area 51 Mystery Aircraft Prompts Interest In “Christmas Tree” Stealth Fighter Concept | The War Zone</title>
@@ -116,7 +116,7 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/the-global-energy-crisis-and-its-impacts-on-asian-emerging-economies/">Atlantic Council</source>
       <description>The Strait of Hormuz energy crisis poses a stress test for import-dependent, emerging economies in Asia, forcing difficult trade-offs. The post The global energy crisis and its impacts on Asian emerging economies appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏴 Zelensky’s Pen Pal Diplomacy | Foreign Policy</title>
@@ -136,7 +136,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/06/05/joint-chiefs-head-makes-first-official-visit-to-post-maduro-venezuela/">Defense News</source>
       <description>The visit comes five months after the high-risk U.S. military operation to remove Venezuelan President Nicolás Maduro.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 Maggie O’Farrell’s Most Ambitious Novel Yet | Foreign Policy</title>
@@ -166,7 +166,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/ukraine-russia-war-putin-zelensky-winning-drones-front-battlefield-peace/">Foreign Policy</source>
       <description>Resilience, technology, and European support have put Russia on the back foot.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>🏴 Contain, Consolidate, and Co-Opt | Foreign Policy</title>
@@ -186,7 +186,7 @@
       <category>Homeland</category>
       <source url="https://foreignpolicy.com/2026/06/05/herta-muller-memoir-romania-ceausescu-communist-history/">Foreign Policy</source>
       <description>In a new memoir, Nobel laureate Herta Müller condemns her homeland for failing to reconcile with history.</description>
-      <sentinel:score>1</sentinel:score>
+      <sentinel:score>2</sentinel:score>
     </item>
     <item>
       <title>🏛️ Lawmakers aim to force the Army to detail its transformation plans | Defense One</title>
@@ -226,7 +226,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/navy-lifts-price-ceiling-for-new-trainer-jet/">Breaking Defense</source>
       <description>The Navy updated the price ceiling to $2.7 billion in May, up from roughly $1.8 billion.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌍 India’s energy security at a crossroads: The Hormuz crisis and an opportunity for US-India cooperation | Atlantic Council</title>
@@ -246,7 +246,7 @@
       <category>Homeland</category>
       <source url="https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/countering-terrorist-propaganda-in-the-age-of-ai/">Atlantic Council</source>
       <description>More people are being exposed to violent propaganda online, and the time between seeing such content, recruitment by a terrorist organization, and action is getting shorter. Counter-terrorism today thus must mean limiting the spread of terrorist content. The post Countering…</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>📍 Oh Se-hoon Becomes Seoul’s Mayor for the 5th Time | The Diplomat</title>
@@ -296,7 +296,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/06/05/myanmar-president-min-aung-hlaing-military-concessions/">Foreign Policy</source>
       <description>Prisoner releases mostly reflect the regime’s growing confidence five years after seizing power in a coup.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ Huge fascist-era underground cisterns draw Western special forces to Italy for tunnel training | Defense News</title>
