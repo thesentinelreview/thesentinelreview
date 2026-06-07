@@ -205,7 +205,6 @@ export default async function WatchfloorPage({
           <div className="lg:flex-1 lg:min-h-0 min-h-0">
             <BriefPane
               briefing={briefing}
-              events={mapEvents}
               theaterId={theater.id}
               theaterLabel={theater.label}
               windowLabel={WINDOW_LABELS[timeRange]}

@@ -60,6 +60,11 @@ export default function LiveStream({
   const isSources = activeTab === "sources";
   // Show every alert in the active window (the list scrolls); no display cap.
   const alerts = events;
+  // Confidence tally for the active-alerts view — derived from the same events,
+  // so it always equals the list shown below.
+  const verifiedCount = events.filter((e) => e.confidence === "verified").length;
+  const partialCount = events.filter((e) => e.confidence === "partial").length;
+  const unconfirmedCount = events.filter((e) => e.confidence === "unconfirmed").length;
   const titleText = isSources ? "Top Sources" : "Active Alerts";
   const Icon = isSources ? Radio : AlertCircle;
   const iconBg = isSources
@@ -69,51 +74,71 @@ export default function LiveStream({
 
   return (
     <div className="flex flex-col h-full min-h-0 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl shadow-xl">
-      {/* Pinned header: title + tabs + Live/window badge */}
-      <div className="flex-none flex items-start justify-between gap-3 p-4 border-b border-slate-800">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <div className={`p-1.5 rounded-lg border ${iconBg}`}>
-              <Icon className={`w-4 h-4 ${iconColor}`} />
+      {/* Pinned header: title + tabs + Live/window badge, with the confidence
+          tally pinned underneath (alerts view) so it stays put as the list scrolls. */}
+      <div className="flex-none flex flex-col gap-2.5 p-4 border-b border-slate-800">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={`p-1.5 rounded-lg border ${iconBg}`}>
+                <Icon className={`w-4 h-4 ${iconColor}`} />
+              </div>
+              <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{titleText}</h2>
             </div>
-            <h2 className="text-lg font-bold text-slate-100 uppercase tracking-wider">{titleText}</h2>
+            <nav aria-label="Feed view" className="flex items-center gap-2 text-xs ml-8 flex-wrap">
+              {tabs.map((tab, i) => {
+                const activeColor = i === 0 ? "text-red-400" : "text-cyan-400";
+                return (
+                  <Fragment key={tab.label}>
+                    {i > 0 && <span className="text-slate-600">•</span>}
+                    <Link
+                      href={tab.href}
+                      replace
+                      aria-current={tab.active ? "page" : undefined}
+                      className={`font-semibold uppercase tracking-wider transition-colors ${
+                        tab.active ? activeColor : "text-slate-500 hover:text-slate-300"
+                      }`}
+                    >
+                      {tab.label}
+                    </Link>
+                  </Fragment>
+                );
+              })}
+            </nav>
           </div>
-          <nav aria-label="Feed view" className="flex items-center gap-2 text-xs ml-8 flex-wrap">
-            {tabs.map((tab, i) => {
-              const activeColor = i === 0 ? "text-red-400" : "text-cyan-400";
-              return (
-                <Fragment key={tab.label}>
-                  {i > 0 && <span className="text-slate-600">•</span>}
-                  <Link
-                    href={tab.href}
-                    replace
-                    aria-current={tab.active ? "page" : undefined}
-                    className={`font-semibold uppercase tracking-wider transition-colors ${
-                      tab.active ? activeColor : "text-slate-500 hover:text-slate-300"
-                    }`}
-                  >
-                    {tab.label}
-                  </Link>
-                </Fragment>
-              );
-            })}
-          </nav>
+          {isSources ? (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/50 border border-slate-700 rounded-full flex-none">
+              <TrendingUp className="w-3 h-3 text-emerald-400" />
+              <span className="text-xs text-slate-400">30 Days</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full flex-none">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              <span className="text-xs text-red-400 font-semibold">Live</span>
+            </div>
+          )}
         </div>
-        {isSources ? (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/50 border border-slate-700 rounded-full flex-none">
-            <TrendingUp className="w-3 h-3 text-emerald-400" />
-            <span className="text-xs text-slate-400">30 Days</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-full flex-none">
-            <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            <span className="text-xs text-red-400 font-semibold">Live</span>
+
+        {!isSources && (
+          <div className="flex items-center gap-4 text-xs flex-wrap pt-2.5 border-t border-slate-800/60">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+              <span className="text-slate-400 font-medium">{verifiedCount} Verified</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+              <span className="text-slate-400 font-medium">{partialCount} Partial</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+              <span className="text-slate-400 font-medium">{unconfirmedCount} Unconfirmed</span>
+            </div>
           </div>
         )}
       </div>
 
       {/* Scrolling body */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4">
+      <div className="flex-1 min-h-0 overflow-y-auto ds-scroll p-4">
         {isSources ? (
           <TopSources sources={sources} />
         ) : alerts.length === 0 ? (

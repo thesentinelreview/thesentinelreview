@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FileText, Calendar, CheckCircle, Sparkles } from "lucide-react";
-import type { BriefingData, MapEvent } from "@/lib/types";
+import type { BriefingData } from "@/lib/types";
 import ExportButton from "./ExportButton";
 
 // Pull the first sentence off the leading paragraph as an editorial headline;
@@ -21,26 +21,17 @@ const SHELL =
 
 export default function BriefPane({
   briefing,
-  events,
   theaterId,
   theaterLabel,
   windowLabel,
   eventCount,
 }: {
   briefing: BriefingData | null;
-  events: MapEvent[];
   theaterId: string;
   theaterLabel: string;
   windowLabel: string;
   eventCount: number;
 }) {
-  // Confidence counts come from the live event stream rather than the briefing
-  // (the briefing row doesn't carry them). Computed off mapEvents which the
-  // page already queries.
-  const verifiedCount = events.filter((e) => e.confidence === "verified").length;
-  const partialCount = events.filter((e) => e.confidence === "partial").length;
-  const unconfirmedCount = events.filter((e) => e.confidence === "unconfirmed").length;
-
   if (!briefing) {
     return (
       <div className={SHELL}>
@@ -50,7 +41,7 @@ export default function BriefPane({
           </div>
           <h2 className="text-lg font-bold text-slate-100">Daily Intelligence Briefing</h2>
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto p-4">
+        <div className="flex-1 min-h-0 overflow-y-auto ds-scroll p-4">
           <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-6 flex flex-col items-center justify-center text-center gap-3 h-full min-h-[140px]">
             <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded-sm bg-slate-900 border border-slate-700 text-slate-500">
               No Brief
@@ -80,7 +71,8 @@ export default function BriefPane({
 
   return (
     <div className={SHELL}>
-      {/* Pinned header: title + meta line (date · AI-Assisted · Reviewed) + actions */}
+      {/* Pinned header: title + meta line (date · AI-Assisted · Reviewed ·
+          generated time · sources) + actions. */}
       <div className="flex-none flex items-start justify-between gap-4 flex-wrap p-4 border-b border-slate-800">
         <div className="min-w-0">
           <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-1.5">
@@ -108,6 +100,8 @@ export default function BriefPane({
                 </div>
               </>
             )}
+            <span className="text-slate-600">•</span>
+            <span className="text-xs text-slate-500">{briefing.utc_time} · {briefing.source_count} sources</span>
           </div>
         </div>
 
@@ -122,8 +116,9 @@ export default function BriefPane({
         </div>
       </div>
 
-      {/* Scrolling body: the briefing summary */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4">
+      {/* Scrolling body: the briefing summary (gains the room the old
+          confidence-tally footer used to take). */}
+      <div className="flex-1 min-h-0 overflow-y-auto ds-scroll p-4">
         <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-5">
           {headline && (
             <h3 className="text-base font-bold text-slate-100 mb-3 flex items-center gap-2">
@@ -137,26 +132,6 @@ export default function BriefPane({
             </p>
           ))}
         </div>
-      </div>
-
-      {/* Pinned footer: confidence counts + meta */}
-      <div className="flex-none flex items-center justify-between p-4 border-t border-slate-800 flex-wrap gap-3">
-        <div className="flex items-center gap-6 text-xs flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/30" />
-            <span className="text-slate-400 font-medium">{verifiedCount} Verified</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-amber-400 shadow-lg shadow-amber-400/30" />
-            <span className="text-slate-400 font-medium">{partialCount} Partial</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-slate-400" />
-            <span className="text-slate-400 font-medium">{unconfirmedCount} Unconfirmed</span>
-          </div>
-        </div>
-
-        <div className="text-xs text-slate-500">{briefing.utc_time} • {briefing.source_count} sources</div>
       </div>
     </div>
   );

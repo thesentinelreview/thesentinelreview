@@ -82,7 +82,7 @@ export default function SectorThreat({
       </div>
 
       {/* Scrolling body */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4">
+      <div className="flex-1 min-h-0 overflow-y-auto ds-scroll p-4">
         {isIntensity ? (
           <IntensityBars data={intensity} />
         ) : isAxes ? (
