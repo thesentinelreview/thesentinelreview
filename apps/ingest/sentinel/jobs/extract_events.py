@@ -28,6 +28,7 @@ from sentinel.db import (
 from sentinel.models import ExtractEventsPayload
 from sentinel.pipeline.dedup import RADIUS_KM, find_duplicate
 from sentinel.pipeline.extractor import extract_event
+from sentinel.pipeline.geocode_precision import derive_precision
 from sentinel.pipeline.scorer import classify, has_strong_signal, score_confidence
 from sentinel.pipeline.theater_router import classify_theater
 from sentinel.pipeline.translator import translate_post
@@ -224,12 +225,18 @@ def _process_post(
         return
 
     # ── Deduplication ────────────────────────────────────────────────────────
+    # Deterministic precision tag (from coordinate structure, not the model). A
+    # coarse tag means a region/country centroid, which can't be spatially deduped.
+    incoming_precision = derive_precision(
+        result.lng, result.lat, result.location_name,  # type: ignore[arg-type]
+    )
     duplicate = find_duplicate(
         conn,
         lng=result.lng,         # type: ignore[arg-type]
         lat=result.lat,         # type: ignore[arg-type]
         occurred_at=occurred_at,  # type: ignore[arg-type]
         event_type=result.event_type,  # type: ignore[arg-type]
+        incoming_precision=incoming_precision,
     )
     incoming_signal = has_strong_signal(result.geolocation_signals)
 
@@ -254,6 +261,7 @@ def _process_post(
             decision="merge",
             event_id=duplicate_id,
             occurred_at=occurred_at,  # type: ignore[arg-type]
+            incoming_precision=incoming_precision,
             matched=duplicate,
         )
         mark_post_processed(conn, post_id)
@@ -280,6 +288,7 @@ def _process_post(
         description=result.description,
         confidence=assessment.confidence,
         has_strong_signal=assessment.has_strong_signal,
+        geocode_precision=incoming_precision,
         held_for_review=assessment.held_for_review,
         relevance_score=result.relevance_score,
         weapon_type=result.weapon_type,
@@ -298,6 +307,7 @@ def _process_post(
         decision="new",
         event_id=event_id,
         occurred_at=occurred_at,  # type: ignore[arg-type]
+        incoming_precision=incoming_precision,
         matched=None,
     )
 
@@ -383,6 +393,7 @@ def _record_dedup_decision_safe(
     decision: str,
     event_id: uuid.UUID,
     occurred_at: datetime,
+    incoming_precision: str,
     matched: dict | None,
 ) -> None:
     """Record the matcher's decision to the dedup_decisions audit trail; best-effort.
@@ -395,11 +406,13 @@ def _record_dedup_decision_safe(
     matched_occurred_at: datetime | None = None
     gap_hours: float | None = None
     distance_m: float | None = None
+    matched_precision: str | None = None
     if matched is not None:
         matched_event_id = matched["id"]
         matched_occurred_at = matched["occurred_at"]
         gap_hours = abs((matched_occurred_at - occurred_at).total_seconds()) / 3600
         distance_m = matched["dist_km"] * 1000
+        matched_precision = matched["geocode_precision"]
 
     try:
         with conn.transaction():
@@ -414,6 +427,8 @@ def _record_dedup_decision_safe(
                 window_hours=settings.dedup_max_time_gap_hours,
                 radius_km=RADIUS_KM,
                 decision=decision,
+                incoming_precision=incoming_precision,
+                matched_precision=matched_precision,
             )
     except Exception as exc:
         log.warning("dedup_decision_record_failed", event_id=str(event_id), error=str(exc))

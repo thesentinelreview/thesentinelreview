@@ -342,6 +342,7 @@ def insert_event(
     description: str,
     confidence: str,
     has_strong_signal: bool = False,
+    geocode_precision: str = "city",
     held_for_review: bool = False,
     relevance_score: int | None = None,
     weapon_type: str | None = None,
@@ -351,13 +352,15 @@ def insert_event(
         INSERT INTO events (
             event_type, occurred_at, location,
             location_name, oblast, actor, description,
-            confidence, has_strong_signal, held_for_review, published_at, relevance_score,
+            confidence, has_strong_signal, geocode_precision,
+            held_for_review, published_at, relevance_score,
             weapon_type
         )
         VALUES (
             %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326),
             %s, %s, %s, %s,
-            %s, %s, %s, CASE WHEN %s THEN NULL ELSE now() END, %s,
+            %s, %s, %s,
+            %s, CASE WHEN %s THEN NULL ELSE now() END, %s,
             %s
         )
         RETURNING id
@@ -365,7 +368,8 @@ def insert_event(
         (
             event_type, occurred_at, lng, lat,
             location_name, oblast, actor, description,
-            confidence, has_strong_signal, held_for_review, held_for_review, relevance_score,
+            confidence, has_strong_signal, geocode_precision,
+            held_for_review, held_for_review, relevance_score,
             weapon_type,
         ),
     ).fetchone()
@@ -541,7 +545,7 @@ def find_nearby_events(
         """
         SELECT
             e.id, e.event_type, e.occurred_at, e.description,
-            e.confidence, e.location_name,
+            e.confidence, e.location_name, e.geocode_precision,
             ST_Distance(e.location::geography, ST_MakePoint(%s,%s)::geography) / 1000 AS dist_km,
             COUNT(DISTINCT es.source_id) AS source_count
         FROM events e
@@ -552,6 +556,9 @@ def find_nearby_events(
               ST_MakePoint(%s, %s)::geography,
               %s * 1000
           )
+          -- Coarse candidates sit on region/country centroids, not real locations,
+          -- so a shared coordinate is not co-location — they must not be matched on.
+          AND e.geocode_precision NOT IN ('region', 'country', 'unknown')
           AND e.occurred_at BETWEEN %s::timestamptz - (%s * interval '1 hour')
                                 AND %s::timestamptz + (%s * interval '1 hour')
         GROUP BY e.id
@@ -576,27 +583,32 @@ def record_dedup_decision(
     window_hours: float,
     radius_km: float,
     decision: str,
+    incoming_precision: str,
+    matched_precision: str | None,
 ) -> None:
-    """Append one row to the dedup_decisions audit trail (migration 0024).
+    """Append one row to the dedup_decisions audit trail (migrations 0024 + 0026).
 
     Records every matcher outcome — 'merge' (corroborated an existing event) or
-    'new' (created a fresh event) — with both occurred_at timestamps, so an
-    over-merge (a wide time gap that fused distinct incidents) stays auditable.
-    The losing report's occurred_at is otherwise discarded on merge, making
-    over-merges invisible from the events table alone.
+    'new' (created a fresh event) — with both occurred_at timestamps and both
+    sides' geocode_precision, so an over-merge (a wide time gap fusing distinct
+    incidents) or a precision-driven skip stays auditable. The losing report's
+    occurred_at is otherwise discarded on merge, making over-merges invisible from
+    the events table alone.
     """
     conn.execute(
         """
         INSERT INTO dedup_decisions (
             event_id, matched_event_id,
             incoming_occurred_at, matched_occurred_at,
-            gap_hours, distance_m, window_hours, radius_km, decision
+            gap_hours, distance_m, window_hours, radius_km, decision,
+            incoming_precision, matched_precision
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             event_id, matched_event_id,
             incoming_occurred_at, matched_occurred_at,
             gap_hours, distance_m, window_hours, radius_km, decision,
+            incoming_precision, matched_precision,
         ),
     )

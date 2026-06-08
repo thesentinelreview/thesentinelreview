@@ -68,6 +68,7 @@ class Event(BaseModel):
     weapon_type:          str | None = None
     confidence:           Confidence
     has_strong_signal:    bool = False
+    geocode_precision:    str = "city"
     published_at:         datetime | None
     human_reviewed_at:    datetime | None
     held_for_review:      bool
