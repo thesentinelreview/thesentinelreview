@@ -40,6 +40,25 @@ def classify(
     return "unconfirmed"
 
 
+def has_strong_signal(geo: GeolocationSignal) -> bool:
+    """Whether the LLM detected any single indicator that materially corroborates
+    an event — geolocated footage, given coordinates, visible landmarks, official
+    acknowledgment, or matching press.
+
+    Shared by score_confidence (new events) and the corroboration re-score in
+    extract_events so both paths agree on what a strong signal is. The result is
+    persisted on events.has_strong_signal so the re-score can recover it
+    deterministically as later sources attach.
+    """
+    return (
+        geo.geolocated_footage
+        or geo.coordinates_given
+        or geo.landmarks_visible
+        or geo.official_acknowledgment
+        or geo.matching_press
+    )
+
+
 def score_confidence(
     *,
     source: dict,
@@ -57,7 +76,7 @@ def score_confidence(
     has_official_ack = geo_signals.official_acknowledgment
     has_matching_press = geo_signals.matching_press
 
-    strong_signal = has_geolocation or has_official_ack or has_matching_press
+    strong_signal = has_strong_signal(geo_signals)
 
     # ── Apply verification rules (shared with the corroboration re-score) ─────
     confidence = classify(
@@ -86,6 +105,7 @@ def score_confidence(
         platform_count=platform_count,
         has_geolocation=has_geolocation,
         has_official_ack=has_official_ack,
+        has_strong_signal=strong_signal,
         held_for_review=held,
         reasoning=reasoning,
     )

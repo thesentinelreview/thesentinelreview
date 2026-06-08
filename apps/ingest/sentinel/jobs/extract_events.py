@@ -22,12 +22,13 @@ from sentinel.db import (
     link_event_source,
     log_llm_call,
     mark_post_processed,
+    record_dedup_decision,
     update_post_translation,
 )
 from sentinel.models import ExtractEventsPayload
-from sentinel.pipeline.dedup import find_duplicate
+from sentinel.pipeline.dedup import RADIUS_KM, find_duplicate
 from sentinel.pipeline.extractor import extract_event
-from sentinel.pipeline.scorer import classify, score_confidence
+from sentinel.pipeline.scorer import classify, has_strong_signal, score_confidence
 from sentinel.pipeline.theater_router import classify_theater
 from sentinel.pipeline.translator import translate_post
 
@@ -223,16 +224,18 @@ def _process_post(
         return
 
     # ── Deduplication ────────────────────────────────────────────────────────
-    duplicate_id = find_duplicate(
+    duplicate = find_duplicate(
         conn,
         lng=result.lng,         # type: ignore[arg-type]
         lat=result.lat,         # type: ignore[arg-type]
         occurred_at=occurred_at,  # type: ignore[arg-type]
         event_type=result.event_type,  # type: ignore[arg-type]
     )
+    incoming_signal = has_strong_signal(result.geolocation_signals)
 
-    if duplicate_id:
+    if duplicate is not None:
         # Corroborate the existing event rather than creating a new one
+        duplicate_id = duplicate["id"]
         log.info("event_corroborated", existing_id=str(duplicate_id), post_id=str(post_id))
         link_event_source(
             conn,
@@ -241,7 +244,18 @@ def _process_post(
             raw_post_id=post_id,
             relationship="corroborating",
         )
-        _maybe_upgrade_confidence(conn, event_id=duplicate_id)
+        # Re-score now that another source has attached: OR in this post's strong
+        # signal, then recompute deterministically from the event's current sources.
+        _maybe_upgrade_confidence(
+            conn, event_id=duplicate_id, incoming_strong_signal=incoming_signal
+        )
+        _record_dedup_decision_safe(
+            conn,
+            decision="merge",
+            event_id=duplicate_id,
+            occurred_at=occurred_at,  # type: ignore[arg-type]
+            matched=duplicate,
+        )
         mark_post_processed(conn, post_id)
         return
 
@@ -265,6 +279,7 @@ def _process_post(
         actor=result.actor,
         description=result.description,
         confidence=assessment.confidence,
+        has_strong_signal=assessment.has_strong_signal,
         held_for_review=assessment.held_for_review,
         relevance_score=result.relevance_score,
         weapon_type=result.weapon_type,
@@ -276,6 +291,14 @@ def _process_post(
         source_id=source["id"],
         raw_post_id=post_id,
         relationship="primary",
+    )
+
+    _record_dedup_decision_safe(
+        conn,
+        decision="new",
+        event_id=event_id,
+        occurred_at=occurred_at,  # type: ignore[arg-type]
+        matched=None,
     )
 
     mark_post_processed(conn, post_id)
@@ -290,23 +313,35 @@ def _process_post(
     )
 
 
-def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> None:
-    """Re-score an event's confidence now that it has an additional corroborating source.
+def _maybe_upgrade_confidence(
+    conn: psycopg.Connection,
+    *,
+    event_id: uuid.UUID,
+    incoming_strong_signal: bool,
+) -> None:
+    """Re-score an event's confidence now that another source has corroborated it.
 
-    Uses the same `classify` rule as initial scoring so `verified` requires a
-    strong signal on both paths — previously this path promoted to `verified`
-    on source/platform counts alone, disagreeing with score_confidence.
+    Persists the corroborating post's strong signal onto the event (OR-in), then
+    recomputes confidence deterministically from the event's CURRENT sources and
+    its persisted `has_strong_signal` — the same `classify` rule score_confidence
+    uses, so `verified` means the same thing on both paths.
 
-    The strong signal isn't persisted on the event, so recover it from the
-    current confidence: per the scorer's rules the only way a single-source
-    event leaves `unconfirmed` is a strong geo signal, so a non-`unconfirmed`
-    event is known to carry one. This is conservative — it never grants
-    `verified` without prior evidence of a strong signal.
+    Because corroboration only adds sources and the strong-signal flag only flips
+    false→true, `classify` is monotonic over these inputs: this path can promote
+    (e.g. an event whose first source lacked a signal reaches `verified` once a
+    cross-platform source carrying one attaches) but never demote.
     """
+    if incoming_strong_signal:
+        conn.execute(
+            "UPDATE events SET has_strong_signal = true WHERE id = %s AND NOT has_strong_signal",
+            (event_id,),
+        )
+
     row = conn.execute(
         """
         SELECT
             e.confidence,
+            e.has_strong_signal,
             COUNT(DISTINCT es.source_id) AS source_count,
             COUNT(DISTINCT s.platform)   AS platform_count,
             MIN(s.trust_tier)            AS min_trust_tier
@@ -314,7 +349,7 @@ def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> 
         JOIN event_sources es ON es.event_id = e.id
         JOIN sources s        ON s.id = es.source_id
         WHERE e.id = %s
-        GROUP BY e.id, e.confidence
+        GROUP BY e.id, e.confidence, e.has_strong_signal
         """,
         (event_id,),
     ).fetchone()
@@ -326,7 +361,7 @@ def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> 
         source_count=row["source_count"],
         platform_count=row["platform_count"],
         min_trust_tier=row["min_trust_tier"],
-        strong_signal=row["confidence"] != "unconfirmed",
+        strong_signal=row["has_strong_signal"],
     )
 
     if new_confidence != row["confidence"]:
@@ -340,3 +375,45 @@ def _maybe_upgrade_confidence(conn: psycopg.Connection, event_id: uuid.UUID) -> 
             old=row["confidence"],
             new=new_confidence,
         )
+
+
+def _record_dedup_decision_safe(
+    conn: psycopg.Connection,
+    *,
+    decision: str,
+    event_id: uuid.UUID,
+    occurred_at: datetime,
+    matched: dict | None,
+) -> None:
+    """Record the matcher's decision to the dedup_decisions audit trail; best-effort.
+
+    Wrapped in a SAVEPOINT (nested transaction) so a failure here rolls back only
+    this insert and never aborts the surrounding extract transaction —
+    instrumentation must not break ingest.
+    """
+    matched_event_id: uuid.UUID | None = None
+    matched_occurred_at: datetime | None = None
+    gap_hours: float | None = None
+    distance_m: float | None = None
+    if matched is not None:
+        matched_event_id = matched["id"]
+        matched_occurred_at = matched["occurred_at"]
+        gap_hours = abs((matched_occurred_at - occurred_at).total_seconds()) / 3600
+        distance_m = matched["dist_km"] * 1000
+
+    try:
+        with conn.transaction():
+            record_dedup_decision(
+                conn,
+                event_id=event_id,
+                matched_event_id=matched_event_id,
+                incoming_occurred_at=occurred_at,
+                matched_occurred_at=matched_occurred_at,
+                gap_hours=gap_hours,
+                distance_m=distance_m,
+                window_hours=settings.dedup_max_time_gap_hours,
+                radius_km=RADIUS_KM,
+                decision=decision,
+            )
+    except Exception as exc:
+        log.warning("dedup_decision_record_failed", event_id=str(event_id), error=str(exc))

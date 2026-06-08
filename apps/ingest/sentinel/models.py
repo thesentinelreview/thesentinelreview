@@ -67,6 +67,7 @@ class Event(BaseModel):
     description:          str
     weapon_type:          str | None = None
     confidence:           Confidence
+    has_strong_signal:    bool = False
     published_at:         datetime | None
     human_reviewed_at:    datetime | None
     held_for_review:      bool
@@ -125,6 +126,7 @@ class ConfidenceAssessment(BaseModel):
     platform_count:       int
     has_geolocation:      bool
     has_official_ack:     bool
+    has_strong_signal:    bool   # any strong corroborating signal; persisted on the event
     held_for_review:      bool
     reasoning:            str
 

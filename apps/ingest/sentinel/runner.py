@@ -384,6 +384,30 @@ def run_backfill_weapon_type() -> None:
     sys.exit(0)
 
 
+def run_backfill_confidence() -> None:
+    """One-shot, in-place confidence backfill (no LLM): recompute events.confidence
+    and persist events.has_strong_signal, repairing the legacy inconsistency where
+    corroborated events were frozen at their creation-time confidence.
+
+    Always exits 0 — the tally is the deliverable. A bare run is a dry-run; the
+    operator reviews it (in particular skipped_demote should be 0) and commits by
+    re-running with SENTINEL_BACKFILL_DRYRUN=false.
+    """
+    _configure_logging()
+    from sentinel.pipeline.confidence_backfill import run_backfill
+
+    stats = run_backfill()
+    mode = "DRY-RUN — no writes" if stats.dry_run else "COMMIT"
+    transitions = " ".join(f"{k}={v}" for k, v in sorted(stats.transitions.items())) or "—"
+    print(
+        f"\nCONFIDENCE BACKFILL [{mode}]: considered={stats.considered} updated={stats.updated} "
+        f"signal_only={stats.signal_only} unchanged={stats.unchanged} "
+        f"skipped_demote={stats.skipped_demote} | transitions: {transitions}",
+        flush=True,
+    )
+    sys.exit(0)
+
+
 def run_checks() -> None:
     """Run all data integrity checks; exit 1 if any critical check fails."""
     _configure_logging()
