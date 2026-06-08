@@ -6,8 +6,78 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 07 Jun 2026 17:25:13 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jun 2026 04:22:44 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
+    <item>
+      <title>📍 Trump Is Doing What FDR Could Not | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/08/trump-republican-party-purge-fdr/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/08/trump-republican-party-purge-fdr/</guid>
+      <pubDate>Mon, 08 Jun 2026 04:01:51 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/06/08/trump-republican-party-purge-fdr/">Foreign Policy</source>
+      <description>But the president’s success at purging his party could cost the GOP in the long term.</description>
+      <sentinel:score>1</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Greeted as Liberators? | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/united-states/greeted-liberators</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/united-states/greeted-liberators</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.foreignaffairs.com/united-states/greeted-liberators">Foreign Affairs</source>
+      <description>How Americans think about U.S. military interventions.</description>
+      <sentinel:score>4</sentinel:score>
+    </item>
+    <item>
+      <title>📍 The Day After in Cuba | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/cuba/day-after-cuba</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/cuba/day-after-cuba</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.foreignaffairs.com/cuba/day-after-cuba">Foreign Affairs</source>
+      <description>What American military force can and cannot do.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Iran Launches Ballistic Missile Attacks On Israel (Updated) | The War Zone</title>
+      <link>https://www.twz.com/news-features/iran-launches-ballistic-missile-attacks-on-israel</link>
+      <guid isPermaLink="true">https://www.twz.com/news-features/iran-launches-ballistic-missile-attacks-on-israel</guid>
+      <pubDate>Sun, 07 Jun 2026 23:01:25 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.twz.com/news-features/iran-launches-ballistic-missile-attacks-on-israel">The War Zone</source>
+      <description>The possibility of open conflict once again between Iran and Israel rose after Tehran struck in response to the IDF bombing Beirut on Sunday, The post Iran Launches Ballistic Missile Attacks On Israel (Updated) appeared first on The War Zone.</description>
+      <sentinel:score>10</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ House lawmakers want the Navy to deploy drone boats faster | Defense One</title>
+      <link>https://www.defenseone.com/policy/2026/06/house-lawmakers-want-navy-deploy-drone-boats-faster/414018/</link>
+      <guid isPermaLink="true">https://www.defenseone.com/policy/2026/06/house-lawmakers-want-navy-deploy-drone-boats-faster/414018/</guid>
+      <pubDate>Sun, 07 Jun 2026 22:34:19 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defenseone.com/policy/2026/06/house-lawmakers-want-navy-deploy-drone-boats-faster/414018/">Defense One</source>
+      <description>HASC’s draft of the 2027 defense policy bill would push service leaders to develop a clear strategy.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>📍 F-47’s Exotic Shape Was Hiding In Plain Sight On A Unit Patch | The War Zone</title>
+      <link>https://www.twz.com/air/f-47s-exotic-shape-was-hiding-in-plain-sight-on-a-unit-patch</link>
+      <guid isPermaLink="true">https://www.twz.com/air/f-47s-exotic-shape-was-hiding-in-plain-sight-on-a-unit-patch</guid>
+      <pubDate>Sun, 07 Jun 2026 16:44:21 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.twz.com/air/f-47s-exotic-shape-was-hiding-in-plain-sight-on-a-unit-patch">The War Zone</source>
+      <description>Boeing&apos;s NGAD demonstrator&apos;s unique planform was hinted at on a patch, just like its progenitor, the Bird of Prey. The post F-47’s Exotic Shape Was Hiding In Plain Sight On A Unit Patch appeared first on The War Zone.</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Charai for Newsmax: No Trust, No Illusions, No Nuclear Iran | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-newsmax-no-trust-no-illusions-no-nuclear-iran/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-newsmax-no-trust-no-illusions-no-nuclear-iran/</guid>
+      <pubDate>Sun, 07 Jun 2026 17:53:19 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.atlanticcouncil.org/insight-impact/in-the-news/charai-for-newsmax-no-trust-no-illusions-no-nuclear-iran/">Atlantic Council</source>
+      <description>The post Charai for Newsmax: No Trust, No Illusions, No Nuclear Iran appeared first on Atlantic Council.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
     <item>
       <title>📍 A-10 Cockpit And Walk-Around Tour With A Warthog Weapons Instructor | The War Zone</title>
       <link>https://www.twz.com/air/a-10-cockpit-and-walk-around-tour-with-a-warthog-weapons-instructor</link>
@@ -66,7 +136,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/armenia-trump-russia-election-pashinyan-europe/">Foreign Policy</source>
       <description>Trump and Putin are backing different players in a contested country.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏛️ Confessions Of A Navy MH-53E Sea Dragon Minehunter Pilot | The War Zone</title>
@@ -96,7 +166,7 @@
       <category>National Security</category>
       <source url="https://www.twz.com/air/area-51-mystery-aircraft-prompts-interest-in-christmas-tree-stealth-fighter-concept">The War Zone</source>
       <description>The exotic jet spotted near Area 51 that appears to be tied to the F-47 has prompted a look at an obscure fighter design from the 1980s. The post Area 51 Mystery Aircraft Prompts Interest In “Christmas Tree” Stealth Fighter Concept appeared first on The War Zone.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🌍 USAF Scrambling To Buy What Few MQ-9 Reapers It Can Find After Epic Fury Losses | The War Zone</title>
@@ -116,7 +186,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/06/05/us-jobs-report-trump-economy-iran-energy-tariffs/">Foreign Policy</source>
       <description>Even in the face of tariffs and an energy crisis, the jobs report shows an economy that’s still humming.</description>
-      <sentinel:score>2</sentinel:score>
+      <sentinel:score>1</sentinel:score>
     </item>
     <item>
       <title>📍 The global energy crisis and its impacts on Asian emerging economies | Atlantic Council</title>
@@ -126,7 +196,7 @@
       <category>National Security</category>
       <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/the-global-energy-crisis-and-its-impacts-on-asian-emerging-economies/">Atlantic Council</source>
       <description>The Strait of Hormuz energy crisis poses a stress test for import-dependent, emerging economies in Asia, forcing difficult trade-offs. The post The global energy crisis and its impacts on Asian emerging economies appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>5</sentinel:score>
     </item>
     <item>
       <title>🏴 Zelensky’s Pen Pal Diplomacy | Foreign Policy</title>
@@ -136,7 +206,7 @@
       <category>Europe / NATO</category>
       <source url="https://foreignpolicy.com/2026/06/05/russia-ukraine-zelensky-open-letter-putin-peace-talks-st-petersburg/">Foreign Policy</source>
       <description>Zelensky offers in-person peace talks in a rare open letter to Putin. Moscow isn’t interested.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ Joint Chiefs head makes first official visit to post-Maduro Venezuela | Defense News</title>
@@ -146,7 +216,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/pentagon-congress/2026/06/05/joint-chiefs-head-makes-first-official-visit-to-post-maduro-venezuela/">Defense News</source>
       <description>The visit comes five months after the high-risk U.S. military operation to remove Venezuelan President Nicolás Maduro.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>9</sentinel:score>
     </item>
     <item>
       <title>📍 Maggie O’Farrell’s Most Ambitious Novel Yet | Foreign Policy</title>
@@ -166,7 +236,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/06/safeguarding-federally-funded-innovation-navigating-the-new-era-of-research-security/">Breaking Defense</source>
       <description>As global competition intensifies, this new Breaking Defense webinar examines how research security policies and practices are evolving to protect federally funded innovation while maintaining open scientific collaboration.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>🏴 How Ukraine Has Turned the Tide | Foreign Policy</title>
@@ -226,7 +296,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/a-message-from-normandy-82-years-later/">Breaking Defense</source>
       <description>In remembrance of eight U.S. service members who received the Congressional Medal of Honor for their actions during the D-Day assault and the Normandy campaign that followed.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏛️ Navy lifts price ceiling for new trainer jet | Breaking Defense</title>
@@ -237,76 +307,6 @@
       <source url="https://breakingdefense.com/2026/06/navy-lifts-price-ceiling-for-new-trainer-jet/">Breaking Defense</source>
       <description>The Navy updated the price ceiling to $2.7 billion in May, up from roughly $1.8 billion.</description>
       <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 India’s energy security at a crossroads: The Hormuz crisis and an opportunity for US-India cooperation | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/blogs/energysource/indias-energy-security-at-a-crossroads-the-hormuz-crisis-and-an-opportunity-for-us-india-cooperation/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/energysource/indias-energy-security-at-a-crossroads-the-hormuz-crisis-and-an-opportunity-for-us-india-cooperation/</guid>
-      <pubDate>Fri, 05 Jun 2026 16:41:28 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.atlanticcouncil.org/blogs/energysource/indias-energy-security-at-a-crossroads-the-hormuz-crisis-and-an-opportunity-for-us-india-cooperation/">Atlantic Council</source>
-      <description>The Iran crisis has exposed India&apos;s energy vulnerabilities but opens an opportunity for a stronger trade partnership between the US and India. The post India’s energy security at a crossroads: The Hormuz crisis and an opportunity for US-India cooperation appeared first on…</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🛡️ Countering terrorist propaganda in the age of AI | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/countering-terrorist-propaganda-in-the-age-of-ai/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/countering-terrorist-propaganda-in-the-age-of-ai/</guid>
-      <pubDate>Fri, 05 Jun 2026 16:35:13 +0000</pubDate>
-      <category>Homeland</category>
-      <source url="https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/countering-terrorist-propaganda-in-the-age-of-ai/">Atlantic Council</source>
-      <description>More people are being exposed to violent propaganda online, and the time between seeing such content, recruitment by a terrorist organization, and action is getting shorter. Counter-terrorism today thus must mean limiting the spread of terrorist content. The post Countering…</description>
-      <sentinel:score>8</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Oh Se-hoon Becomes Seoul’s Mayor for the 5th Time | The Diplomat</title>
-      <link>https://thediplomat.com/2026/06/oh-se-hoon-becomes-seouls-mayor-for-the-5th-time/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/06/oh-se-hoon-becomes-seouls-mayor-for-the-5th-time/</guid>
-      <pubDate>Sat, 06 Jun 2026 01:28:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/06/oh-se-hoon-becomes-seouls-mayor-for-the-5th-time/">The Diplomat</source>
-      <description>Why Seoul picked the PPP incumbent yet again, and what it means for the city.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 What in the World? | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/05/news-quiz-malta-election-japan-militarism-iran-peace-negotiations/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/05/news-quiz-malta-election-japan-militarism-iran-peace-negotiations/</guid>
-      <pubDate>Fri, 05 Jun 2026 16:26:22 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://foreignpolicy.com/2026/06/05/news-quiz-malta-election-japan-militarism-iran-peace-negotiations/">Foreign Policy</source>
-      <description>Test yourself on the week of May 30: Malta votes, Japan responds to militarism accusations, and Iran pauses talks with the U.S.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ Under ‘Drone Dominance’ push, Pentagon begins receiving small drones | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/under-drone-dominance-push-pentagon-begins-receiving-small-drones/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/under-drone-dominance-push-pentagon-begins-receiving-small-drones/</guid>
-      <pubDate>Fri, 05 Jun 2026 16:15:00 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://breakingdefense.com/2026/06/under-drone-dominance-push-pentagon-begins-receiving-small-drones/">Breaking Defense</source>
-      <description>So far, the department has ordered 20,000 small, FPV-style drones from 10 vendors.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
-      <link>https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration</guid>
-      <pubDate>Fri, 05 Jun 2026 16:00:19 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration">Just Security</source>
-      <description>A public resource tracking all the legal challenges to the Trump administration&apos;s executive orders and actions. The post Litigation Tracker: Legal Challenges to Trump Administration Actions appeared first on Just Security.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Myanmar’s Military Isn’t Conceding Much | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/05/myanmar-president-min-aung-hlaing-military-concessions/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/05/myanmar-president-min-aung-hlaing-military-concessions/</guid>
-      <pubDate>Fri, 05 Jun 2026 15:45:02 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/06/05/myanmar-president-min-aung-hlaing-military-concessions/">Foreign Policy</source>
-      <description>Prisoner releases mostly reflect the regime’s growing confidence five years after seizing power in a coup.</description>
-      <sentinel:score>6</sentinel:score>
     </item>
   </channel>
 </rss>
