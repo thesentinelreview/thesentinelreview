@@ -33,7 +33,15 @@ class Settings(BaseSettings):
 
     # Extraction integrity
     occurred_at_past_floor_days: int = 14
-    dedup_max_time_gap_hours: float = 48.0
+    # Dedup window half-width: an incoming event corroborates an existing one only
+    # when their occurred_at are within this many hours. Kept tight (12h) because
+    # geocoding snaps to region centroids, so distinct same-place/same-type events
+    # stack on one coordinate and the time window does the disambiguation — a wide
+    # window over-merges distinct daily incidents. Over-merge is destructive
+    # (collapses casualty counts); under-merge is recoverable. Lower to 6.0 if the
+    # 6–12h band proves over-merge-enriched; do not widen past 12 without
+    # per-incident geocoding.
+    dedup_max_time_gap_hours: float = 12.0
 
     # Logging
     log_level: str = "INFO"

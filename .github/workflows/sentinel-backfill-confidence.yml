@@ -1,0 +1,66 @@
+name: Sentinel — Backfill Confidence
+
+# One-shot, in-place confidence backfill. Recomputes events.confidence and persists
+# events.has_strong_signal (migration 0023), repairing the legacy inconsistency where
+# corroborated events were frozen at their creation-time confidence. PURE SQL — no
+# LLM calls, no event merging/deleting. Manual trigger only — never on a schedule.
+# Idempotent: a re-run recomputes to the same values and writes nothing.
+#
+# Safe by default: a bare run is a dry-run (no writes). Review the printed tally —
+# in particular skipped_demote MUST be 0 — then re-run with Dry-run unchecked to
+# commit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryrun:
+        description: 'Dry-run: recompute + print tally only, NO database writes (uncheck to commit)'
+        type: boolean
+        required: false
+        default: true
+      batch_size:
+        description: 'Events fetched per DB roundtrip'
+        required: false
+        default: '500'
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0"
+          pip install --no-deps -e apps/ingest
+
+      - name: Apply pending migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python packages/db/migrate.py
+
+      - name: Verify DB target
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: sentinel-preflight
+
+      - name: Run confidence backfill
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SENTINEL_BACKFILL_DRYRUN: ${{ github.event.inputs.dryrun }}
+          SENTINEL_BACKFILL_BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+          PYTHONUNBUFFERED: '1'
+        run: sentinel-run-backfill-confidence

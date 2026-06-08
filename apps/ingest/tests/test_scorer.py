@@ -12,11 +12,13 @@ held_for_review is independent: it mirrors is_high_impact.
 """
 from __future__ import annotations
 
-import pytest
-
 from sentinel.models import GeolocationSignal
-from sentinel.pipeline.scorer import _build_reasoning, classify, score_confidence
-
+from sentinel.pipeline.scorer import (
+    _build_reasoning,
+    classify,
+    has_strong_signal,
+    score_confidence,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -310,3 +312,42 @@ class TestClassify:
 
     def test_single_source_no_signal_is_unconfirmed(self) -> None:
         assert classify(source_count=1, platform_count=1, min_trust_tier=1, strong_signal=False) == "unconfirmed"
+
+
+# ---------------------------------------------------------------------------
+# has_strong_signal — the shared helper persisted on events.has_strong_signal
+# so the corroboration re-score can recover the signal deterministically.
+# ---------------------------------------------------------------------------
+
+class TestHasStrongSignal:
+    def test_each_subsignal_counts_as_strong(self) -> None:
+        for sub in (
+            "geolocated_footage",
+            "coordinates_given",
+            "landmarks_visible",
+            "official_acknowledgment",
+            "matching_press",
+        ):
+            assert has_strong_signal(_geo(**{sub: True})) is True, sub
+
+    def test_no_signals_is_not_strong(self) -> None:
+        assert has_strong_signal(_geo()) is False
+
+
+class TestAssessmentExposesStrongSignal:
+    def test_verified_assessment_carries_strong_signal(self) -> None:
+        result = score_confidence(
+            source=_src("telegram", 2),
+            geo_signals=_geo(geolocated_footage=True),
+            corroborating_sources=[_src("x", 2)],
+        )
+        assert result.confidence == "verified"
+        assert result.has_strong_signal is True
+
+    def test_no_signal_assessment_reports_false(self) -> None:
+        result = score_confidence(
+            source=_src("telegram", 2),
+            geo_signals=_geo(),
+            corroborating_sources=[],
+        )
+        assert result.has_strong_signal is False

@@ -341,6 +341,7 @@ def insert_event(
     actor: str | None,
     description: str,
     confidence: str,
+    has_strong_signal: bool = False,
     held_for_review: bool = False,
     relevance_score: int | None = None,
     weapon_type: str | None = None,
@@ -350,13 +351,13 @@ def insert_event(
         INSERT INTO events (
             event_type, occurred_at, location,
             location_name, oblast, actor, description,
-            confidence, held_for_review, published_at, relevance_score,
+            confidence, has_strong_signal, held_for_review, published_at, relevance_score,
             weapon_type
         )
         VALUES (
             %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326),
             %s, %s, %s, %s,
-            %s, %s, CASE WHEN %s THEN NULL ELSE now() END, %s,
+            %s, %s, %s, CASE WHEN %s THEN NULL ELSE now() END, %s,
             %s
         )
         RETURNING id
@@ -364,7 +365,7 @@ def insert_event(
         (
             event_type, occurred_at, lng, lat,
             location_name, oblast, actor, description,
-            confidence, held_for_review, held_for_review, relevance_score,
+            confidence, has_strong_signal, held_for_review, held_for_review, relevance_score,
             weapon_type,
         ),
     ).fetchone()
@@ -523,11 +524,19 @@ def find_nearby_events(
     *,
     lng: float,
     lat: float,
+    occurred_at: datetime,
+    max_gap_hours: float,
     radius_km: float = 5.0,
-    within_hours: float = 6.0,
     event_type: str,
 ) -> list[dict[str, Any]]:
-    """Return existing events within radius_km and within_hours of the candidate."""
+    """Return existing same-type events within radius_km and ±max_gap_hours of the
+    candidate's occurred_at.
+
+    The time window is anchored on the incoming event's `occurred_at`, NOT on
+    `now()`. Reports arrive with a long, variable lag (mean ~29h), so a window
+    anchored to wall-clock time misses two contemporaneous reports of the same
+    older incident and fragments them — this anchoring is the dedup fix.
+    """
     return conn.execute(
         """
         SELECT
@@ -543,9 +552,51 @@ def find_nearby_events(
               ST_MakePoint(%s, %s)::geography,
               %s * 1000
           )
-          AND e.occurred_at > now() - (%s * interval '1 hour')
+          AND e.occurred_at BETWEEN %s::timestamptz - (%s * interval '1 hour')
+                                AND %s::timestamptz + (%s * interval '1 hour')
         GROUP BY e.id
         ORDER BY dist_km ASC, e.occurred_at DESC
         """,
-        (lng, lat, event_type, lng, lat, radius_km, within_hours),
+        (
+            lng, lat, event_type, lng, lat, radius_km,
+            occurred_at, max_gap_hours, occurred_at, max_gap_hours,
+        ),
     ).fetchall()  # type: ignore[return-value]
+
+
+def record_dedup_decision(
+    conn: psycopg.Connection,
+    *,
+    event_id: uuid.UUID,
+    matched_event_id: uuid.UUID | None,
+    incoming_occurred_at: datetime,
+    matched_occurred_at: datetime | None,
+    gap_hours: float | None,
+    distance_m: float | None,
+    window_hours: float,
+    radius_km: float,
+    decision: str,
+) -> None:
+    """Append one row to the dedup_decisions audit trail (migration 0024).
+
+    Records every matcher outcome — 'merge' (corroborated an existing event) or
+    'new' (created a fresh event) — with both occurred_at timestamps, so an
+    over-merge (a wide time gap that fused distinct incidents) stays auditable.
+    The losing report's occurred_at is otherwise discarded on merge, making
+    over-merges invisible from the events table alone.
+    """
+    conn.execute(
+        """
+        INSERT INTO dedup_decisions (
+            event_id, matched_event_id,
+            incoming_occurred_at, matched_occurred_at,
+            gap_hours, distance_m, window_hours, radius_km, decision
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            event_id, matched_event_id,
+            incoming_occurred_at, matched_occurred_at,
+            gap_hours, distance_m, window_hours, radius_km, decision,
+        ),
+    )
