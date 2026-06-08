@@ -22,6 +22,7 @@ import structlog
 
 from sentinel.config import settings
 from sentinel.db import find_nearby_events
+from sentinel.pipeline.geocode_precision import COARSE
 
 log = structlog.get_logger()
 
@@ -35,15 +36,22 @@ def find_duplicate(
     lat: float,
     occurred_at: datetime,
     event_type: str,
+    incoming_precision: str,
 ) -> dict[str, Any] | None:
     """
     Return the existing event (as a row dict, closest in space) that likely
     represents the same incident, or None if this looks like a new event.
 
-    find_nearby_events already bounds candidates to the same type, RADIUS_KM, and
-    ±dedup_max_time_gap_hours of occurred_at, so the spatially-closest candidate is
-    always a valid match — no separate Python time-gap check is needed.
+    A coarse-precision incoming event sits on a region/country centroid, not a real
+    location, so a shared coordinate is not co-location — it can't be spatially
+    deduped and is always treated as new. (find_nearby_events excludes coarse
+    *candidates* symmetrically.) Otherwise find_nearby_events already bounds
+    candidates to the same type, RADIUS_KM, and ±dedup_max_time_gap_hours of
+    occurred_at, so the spatially-closest candidate is always a valid match.
     """
+    if incoming_precision in COARSE:
+        return None
+
     candidates = find_nearby_events(
         conn,
         lng=lng,
