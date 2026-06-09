@@ -1,4 +1,4 @@
--- 0028_theater_integrity.sql
+-- 0029_theater_integrity.sql
 -- Theater integrity (BUG-001, BUG-002, BUG-004 from docs/diagnostics/2026-06-09-bug-sweep.md)
 --
 -- 1. Makes `israel` a first-class, valid theater value (it was previously folded

@@ -49,7 +49,7 @@ from sentinel.db import _ISRAEL_BBOX, get_conn
 
 log = structlog.get_logger()
 
-# Canonical, storable theater set (mirrors migration 0028 / theater_router.THEATERS,
+# Canonical, storable theater set (mirrors migration 0029 / theater_router.THEATERS,
 # excluding the 'unknown' extraction-scope sentinel which is never stored).
 CANONICAL_THEATERS = ("ukraine", "iran", "sudan", "myanmar", "israel")
 
