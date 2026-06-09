@@ -1,0 +1,45 @@
+name: CI — Migrations
+
+# Migration-system hygiene gate (issue #217). Static + pure-logic only; no
+# database, no secrets. Runs on PRs and pushes that touch the migration system.
+on:
+  pull_request:
+    paths:
+      - 'packages/db/migrations/**'
+      - 'packages/db/migrate.py'
+      - 'packages/db/check_migrations.py'
+      - 'packages/db/tests/**'
+      - '.github/workflows/ci-migrations.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/db/**'
+
+jobs:
+  migration-hygiene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need origin/main to diff numbering against the base
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pytest
+        run: pip install "pytest>=8.3"
+
+      - name: Determine base ref
+        id: base
+        run: |
+          BASE="origin/${{ github.base_ref || 'main' }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref || 'main' }}" || true
+          echo "ref=${BASE}" >> "$GITHUB_OUTPUT"
+
+      - name: Migration hygiene guard (numbering, monotonicity, idempotency, immutability)
+        run: python packages/db/check_migrations.py "${{ steps.base.outputs.ref }}"
+
+      - name: Pure-logic tests (runner bootstrap + guard)
+        run: python -m pytest packages/db/tests -q

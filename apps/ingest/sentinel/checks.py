@@ -248,6 +248,35 @@ def check_held_events(conn: psycopg.Connection) -> CheckResult:
     )
 
 
+def check_stale_source_notes(conn: psycopg.Connection) -> CheckResult:
+    """Active sources whose notes still carry a 'DEACTIVATED' tag — the note has
+    drifted from is_active (e.g. gdelt_iran, reactivated by migration 0020 but
+    left tagged DEACTIVATED). DETECTION ONLY (issue #217): reports the mismatch;
+    note-correction writes are a separate, explicitly-approved action.
+    """
+    row = conn.execute(
+        """
+        SELECT COUNT(*) AS n,
+               STRING_AGG(handle, ', ') AS handles
+        FROM sources
+        WHERE is_active = true
+          AND notes ILIKE '%DEACTIVATED%'
+        """,
+    ).fetchone()
+    count = row["n"] if row else 0
+    handles = row["handles"] if row else None
+    return CheckResult(
+        name="stale_source_notes",
+        passed=count == 0,
+        severity="warning",
+        detail=(
+            f"{count} active source(s) tagged DEACTIVATED in notes (stale): {handles}"
+            if count else "no active sources carry a stale DEACTIVATED note"
+        ),
+        value=count,
+    )
+
+
 def check_silent_active_sources(conn: psycopg.Connection) -> CheckResult:
     """Active sources with zero new posts in the last 72h — ingestor may have failed for them."""
     row = conn.execute(
@@ -291,6 +320,7 @@ _ALL_CHECKS = [
     check_no_published_events_8h,
     check_held_events,
     check_silent_active_sources,
+    check_stale_source_notes,
 ]
 
 
