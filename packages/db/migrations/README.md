@@ -44,16 +44,26 @@ applies everything from `0001`; an **already-initialised** DB with an empty ledg
 marked all-but-the-last file as applied without running them — silent schema
 drift on any restore.)
 
-## Known historical exceptions (grandfathered; closing)
+## Known historical exceptions (grandfathered — permanent)
 
-These pre-date the hygiene gate, are already applied in prod, and are allow-listed
-in `migrate.py` so the runner/guard don't brick on them. New occurrences are still
-hard-errors.
+These two duplicate-number pairs pre-date the hygiene gate, are already applied in
+prod, and are allow-listed in `GRANDFATHERED_DUPLICATES` in `migrate.py` so the
+runner/guard don't brick on them. **New** duplicates are still hard-errors.
 
-| # | Files | Status |
+**Decision (issue #217, Phase C): grandfather, do not renumber.** A renumber was
+considered and rejected — there is no free integer slot adjacent to `0009`
+(`0009_watches` must stay `< 0010` because `0010_enable_rls` enables RLS on
+`watches` unguarded; every slot 0008–0018 is occupied), so strict uniqueness would
+require a 20-file cascade rename plus a lockstep `schema_migrations` rewrite — high
+risk for zero functional gain. The two files in each pair are **independent** (no
+inter-dependency), so apply order between them is irrelevant; and `migrate.py`
+orders them **deterministically by (number, filename)** — i.e. plain ASCII
+filename sort within the shared number — so the order is stable across machines.
+
+| # | Apply order (deterministic, alpha-sorted within the number) | Why it's safe |
 |---|---|---|
-| `0009` | `0009_watches.sql`, `0009_stripe_webhook_idempotency.sql` | Duplicate number. Renumber is the gated **Phase C** of issue #217 (renames + lockstep `schema_migrations` UPDATE against prod). |
-| `0018` | `0018_source_fetch_visibility.sql`, `0018_lockdown_rls_and_revoke_anon_grants.sql` | Duplicate number after the Phase B reconstruction of the second file (it was applied to prod but never committed). Both applied; left grandfathered. |
+| `0009` | `0009_stripe_webhook_idempotency.sql` → `0009_watches.sql` | Independent tables (`processed_stripe_events`, `watches`); either order is valid. Both `< 0010`, so `watches` exists before `0010_enable_rls` touches it. |
+| `0018` | `0018_lockdown_rls_and_revoke_anon_grants.sql` → `0018_source_fetch_visibility.sql` | Independent (one does RLS lockdown, the other adds `sources.last_fetch_at`). The first is the Phase B reconstruction (applied to prod, never committed); both applied. |
 
 `RECONSTRUCTED_MIGRATIONS` in `migrate.py` exempts `0018_lockdown_…` from the
 "number must exceed base max" rule, since recovering a historical migration
