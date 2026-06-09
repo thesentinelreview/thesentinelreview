@@ -37,6 +37,14 @@ export const THEATERS: Record<TheaterKey, TheaterConfig> = {
     mapSubtitle: "Myanmar — PDF/Tatmadaw Conflict",
     briefingTitle: "Daily Briefing — Myanmar Theater",
   },
+  israel: {
+    id: "israel",
+    label: "Israel",
+    mapCenter: [34.9, 31.5],
+    mapZoom: 7,
+    mapSubtitle: "Israel — Gaza, West Bank, and Strikes on Israeli Soil",
+    briefingTitle: "Daily Briefing — Israel Theater",
+  },
 };
 
 export function resolveTheater(raw: string | undefined): TheaterConfig {
@@ -82,21 +90,21 @@ export const THEATER_CONTENT: Record<TheaterKey, TheaterDescriptor> = {
   },
 
   iran: {
-    tagline: "Iran proper, Israel–Iran exchanges, and proxy activity across the region.",
+    tagline: "Iran proper, IRGC and nuclear activity, and Iran-aligned proxy fronts in Lebanon, Syria, Iraq, and Yemen.",
     since:   "Coverage active",
     paragraphs: [
-      "The Iran theater covers conflict activity in and relating to Iran: nuclear site activity at Natanz, Fordow, Arak, and Bushehr; IRGC operations in the Persian Gulf and Iraq; Israeli–Iranian strike and counter-strike exchanges; and proxy or allied force activity in Lebanon, Syria, Iraq, Yemen, and Gaza where attribution to Iran is direct or strongly implied.",
+      "The Iran theater covers conflict activity in and relating to Iran: nuclear site activity at Natanz, Fordow, Arak, and Bushehr; IRGC operations in the Persian Gulf and Iraq; Israeli–Iranian strikes that occur outside Israel (inside Iran, Syria, or Lebanon); and proxy or allied force activity in Lebanon, Syria, Iraq, and Yemen where attribution to Iran is direct or strongly implied. Events that land on Israeli, Gaza, or West Bank soil are tracked under the Israel theater instead.",
       "Because the actor set spans multiple states and non-state groups, our extraction pipeline preserves the source's exact phrasing where attribution is contested. A claim by one side is recorded as a claim — confidence is upgraded only when an independent source on another platform corroborates the event.",
     ],
     keyActors: [
       "Islamic Revolutionary Guard Corps (IRGC) and Quds Force",
-      "Israel Defense Forces (IDF)",
-      "Hezbollah (Lebanon), Hamas, Palestinian Islamic Jihad",
+      "Israel Defense Forces (IDF) — strikes outside Israel",
+      "Hezbollah (Lebanon and Syria)",
       "Houthi forces / Ansar Allah (Yemen)",
       "Iraqi Popular Mobilization Forces (PMF) factions",
     ],
     seoTitle:       "Iran Theater — Nuclear Sites, IRGC, and Proxy Activity | Sentinel Review",
-    seoDescription: "Live OSINT events across Iran proper and Iran-attributed proxy activity in Lebanon, Syria, Iraq, Yemen, and Gaza. Geolocated, cross-referenced, neutrally framed.",
+    seoDescription: "Live OSINT events across Iran proper and Iran-attributed proxy activity in Lebanon, Syria, Iraq, and Yemen. Geolocated, cross-referenced, neutrally framed.",
   },
 
   sudan: {
@@ -132,5 +140,22 @@ export const THEATER_CONTENT: Record<TheaterKey, TheaterDescriptor> = {
     ],
     seoTitle:       "Myanmar Conflict Map — Junta vs PDF and EAOs | Sentinel Review",
     seoDescription: "OSINT coverage of Myanmar's civil conflict: junta forces against the PDF and ethnic armed organizations across Sagaing, Shan, Kayin, Chin, and Rakhine.",
+  },
+
+  israel: {
+    tagline: "Israel, Gaza, and the West Bank — IDF operations, Hamas activity, and strikes landing on Israeli soil.",
+    since:   "Coverage active",
+    paragraphs: [
+      "The Israel theater covers conflict activity physically located in Israel, the Gaza Strip, and the West Bank: Israeli (IDF) operations in Gaza and the West Bank, Hamas and Palestinian Islamic Jihad activity, settler violence, and any rocket, missile, or drone attack that lands on Israeli, Gaza, or West Bank soil — including Iranian or Hezbollah projectiles striking Israel and Israeli air-defence interceptions over these areas.",
+      "Theater membership here is defined by event location, not by who fired. Strikes that occur outside Israel/Gaza/the West Bank — Israeli strikes on Lebanon, Syria, or Iran, for example — are tracked under the Iran theater. As elsewhere, events are presented as discrete, geolocated facts with confidence levels reflecting the corroboration we have, not as editorial attributions.",
+    ],
+    keyActors: [
+      "Israel Defense Forces (IDF)",
+      "Hamas (Izz ad-Din al-Qassam Brigades)",
+      "Palestinian Islamic Jihad (PIJ)",
+      "West Bank settler groups and Palestinian factions",
+    ],
+    seoTitle:       "Israel & Gaza Conflict Map — Real-time OSINT Events | Sentinel Review",
+    seoDescription: "Live, verified OSINT events in Israel, Gaza, and the West Bank: IDF operations, Hamas activity, and strikes landing on Israeli soil. Geolocated and multi-source confidence scored.",
   },
 };

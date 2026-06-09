@@ -34,6 +34,7 @@ _COUNTRY_THEATER: dict[str, str] = {
     "IR": "iran",
     "BM": "myanmar",
     "SU": "sudan",
+    "IS": "israel",
 }
 
 # Reverse: theater → country code for filtering
@@ -136,7 +137,7 @@ class GdeltEventsIngestor(BaseIngestor):
     """Ingest GDELT 2.0 conflict events for a single theater."""
 
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
-        theater = (self.source.get("theaters") or ["ukraine"])[0]
+        theater = (self.source.get("theaters") or ["unknown"])[0]
         country_code = _THEATER_COUNTRY.get(theater)
         if not country_code:
             log.warning("gdelt_unknown_theater", theater=theater)
@@ -216,7 +217,7 @@ class GdeltGkgIngestor(BaseIngestor):
     """Ingest GDELT Global Knowledge Graph records for a single theater."""
 
     def fetch(self, *, since_hours: int) -> list[RawPostData]:
-        theater = (self.source.get("theaters") or ["ukraine"])[0]
+        theater = (self.source.get("theaters") or ["unknown"])[0]
         country_code = _THEATER_COUNTRY.get(theater)
         if not country_code:
             log.warning("gdelt_gkg_unknown_theater", theater=theater)

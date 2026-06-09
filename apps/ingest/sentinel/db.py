@@ -9,9 +9,12 @@ from typing import Any
 
 import psycopg
 import psycopg.rows
+import structlog
 from psycopg_pool import ConnectionPool
 
 from sentinel.config import settings
+
+log = structlog.get_logger()
 
 # ---------------------------------------------------------------------------
 # Connection pool (created once at import time, reused across workers)
@@ -426,14 +429,34 @@ def update_event_weapon_type(
     )
 
 
+# israel is the homeland box (Israel + Gaza + West Bank). It sits INSIDE the wide
+# iran box, so iran membership must subtract it (see _iran_israel_carve_sql) to
+# keep the two theaters mutually exclusive — Israel/Gaza/West Bank events surface
+# under israel only, never also under iran. Kept in sync with the duplicate in
+# apps/web/lib/queries.ts (THEATER_BBOX + israelCarveOut).
+_ISRAEL_BBOX: tuple[float, float, float, float] = (34.2, 29.4, 35.9, 33.1)
+
 _THEATER_BBOX: dict[str, tuple[float, float, float, float]] = {
     "ukraine": (22, 44, 40, 52),
     # iran spans the proxy theater (Lebanon→Yemen), matching the web dashboard
-    # and the extraction prompt scope — not just Iran proper.
+    # and the extraction prompt scope — not just Iran proper. The israel homeland
+    # box is carved out of it at query time.
     "iran":    (32, 10, 64, 42),
     "sudan":   (21,  8, 42, 23),
     "myanmar": (92,  9, 102, 29),
+    "israel":  _ISRAEL_BBOX,
 }
+
+
+def _iran_israel_carve_sql(theater: str, col: str = "e.location") -> str:
+    """For the iran theater, a SQL fragment excluding the israel homeland box so
+    Israel/Gaza/West Bank events do not also count under iran. Empty for every
+    other theater. The coordinates are hardcoded trusted constants (never user
+    input), so inlining them is safe."""
+    if theater != "iran":
+        return ""
+    a, b, c, d = _ISRAEL_BBOX
+    return f" AND NOT ST_Within({col}, ST_MakeEnvelope({a}, {b}, {c}, {d}, 4326))"
 
 
 def get_recent_events(
@@ -448,10 +471,17 @@ def get_recent_events(
     `confidence` selects which confidence levels to include; the briefing
     generator widens it through a cascade when the strict set is empty.
     """
-    bbox = _THEATER_BBOX.get(theater, _THEATER_BBOX["ukraine"])
+    bbox = _THEATER_BBOX.get(theater)
+    if bbox is None:
+        # No silent ukraine fallback — an unknown theater is a config error, not
+        # Ukraine. Return nothing so the misconfiguration surfaces instead of
+        # quietly producing a Ukraine briefing.
+        log.warning("get_recent_events_unknown_theater", theater=theater)
+        return []
     min_lng, min_lat, max_lng, max_lat = bbox
+    carve = _iran_israel_carve_sql(theater, "e.location")
     return conn.execute(
-        """
+        f"""
         SELECT
             e.id, e.event_type, e.occurred_at,
             ST_X(e.location) AS lng, ST_Y(e.location) AS lat,
@@ -461,7 +491,7 @@ def get_recent_events(
         LEFT JOIN event_sources es ON es.event_id = e.id
         WHERE e.occurred_at > now() - (%s * interval '1 hour')
           AND e.confidence = ANY(%s)
-          AND ST_Within(e.location, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
+          AND ST_Within(e.location, ST_MakeEnvelope(%s, %s, %s, %s, 4326)){carve}
         GROUP BY e.id
         ORDER BY e.occurred_at DESC
         """,

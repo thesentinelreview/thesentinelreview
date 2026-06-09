@@ -36,7 +36,7 @@ interface CandidateRow {
   sample_context:       string | null;
 }
 
-const KNOWN_THEATERS = ["ukraine", "iran", "sudan", "myanmar"] as const;
+const KNOWN_THEATERS = ["ukraine", "iran", "sudan", "myanmar", "israel"] as const;
 const FILTER_TABS: { value: CandidateStatus; label: string }[] = [
   { value: "discovered", label: "New" },
   { value: "approved",   label: "Approved" },

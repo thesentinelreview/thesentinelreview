@@ -147,7 +147,9 @@ def _process_post(
     # Route by CONTENT (source.theaters is only a prior) so a multi-theater
     # source's off-primary content — e.g. an ISW post about Iran — is judged
     # under the right theater instead of the source's first theater.
-    theater, classify_meta = classify_theater(text_for_extraction, source=source)
+    theater, classify_meta = classify_theater(
+        text_for_extraction, source=source, post_id=post_id
+    )
     log_llm_call(
         conn,
         purpose="theater_classify",
@@ -160,9 +162,11 @@ def _process_post(
         raw_post_id=post_id,
     )
     if theater is None:
-        # Confidently off all four theaters — short-circuit before the expensive
+        # Confidently off all five theaters — short-circuit before the expensive
         # Sonnet extract. The router is biased to inclusion, so this fires only on
-        # clearly off-topic posts that would skip anyway.
+        # clearly off-topic posts that would skip anyway. A router glitch returns
+        # UNKNOWN_THEATER (not None), so the post is still extracted below under
+        # the generic scope rather than being dropped.
         mark_post_processed(conn, post_id, skip_reason="off_theater")
         log.debug("post_off_theater", post_id=str(post_id))
         return

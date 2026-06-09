@@ -110,16 +110,21 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
 
 def _compute_baseline(conn: psycopg.Connection, *, theater: str) -> dict:
     """Average events per day per oblast over the last 7 days."""
-    from sentinel.db import _THEATER_BBOX
-    bbox = _THEATER_BBOX.get(theater, _THEATER_BBOX["ukraine"])
+    from sentinel.db import _THEATER_BBOX, _iran_israel_carve_sql
+    bbox = _THEATER_BBOX.get(theater)
+    if bbox is None:
+        # No silent ukraine fallback — surface the misconfiguration instead.
+        log.warning("compute_baseline_unknown_theater", theater=theater)
+        return {}
     min_lng, min_lat, max_lng, max_lat = bbox
+    carve = _iran_israel_carve_sql(theater, "location")
     rows = conn.execute(
-        """
+        f"""
         SELECT oblast, COUNT(*)::float / 7 AS avg_per_day
         FROM events
         WHERE occurred_at > now() - interval '7 days'
           AND confidence IN ('verified', 'partial')
-          AND ST_Within(location, ST_MakeEnvelope(%s, %s, %s, %s, 4326))
+          AND ST_Within(location, ST_MakeEnvelope(%s, %s, %s, %s, 4326)){carve}
         GROUP BY oblast
         ORDER BY avg_per_day DESC
         """,
