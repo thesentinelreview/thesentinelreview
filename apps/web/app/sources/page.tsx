@@ -1,6 +1,7 @@
 import type { SourceDetail } from "@/lib/types";
 import { getAllSources } from "@/lib/queries";
 import Panel from "@/components/ds/Panel";
+import PageShell from "@/components/ds/PageShell";
 import Badge from "@/components/ds/Badge";
 import { RELIABILITY } from "@/components/ds/tokens";
 
@@ -40,7 +41,7 @@ export default async function SourcesPage() {
 
   return (
     <div className="sources-root min-h-screen bg-slate-950 text-slate-100 font-ui">
-      <div className="w-full max-w-6xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4">
+      <PageShell>
         {/* Header */}
         <div className="flex items-end justify-between gap-4 pb-3 border-b border-slate-800/60">
           <div className="flex flex-col gap-1">
@@ -150,7 +151,7 @@ export default async function SourcesPage() {
           </a>{" "}
           for the full rubric.
         </Panel>
-      </div>
+      </PageShell>
     </div>
   );
 }

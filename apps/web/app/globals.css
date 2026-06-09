@@ -20,6 +20,13 @@
 
   --font-ui: var(--font-inter), 'Inter', system-ui, sans-serif;
   --font-data: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Layout — full-bleed content shell (consumed by <PageShell>, see DESIGN.md).
+     --gutter is the canonical page gutter (was the inline px-5); referenced via
+     the v4 var shorthand `px-(--gutter)`. --container-measure caps long-form
+     running prose at a readable width and mints a `max-w-measure` utility. */
+  --gutter: 1.25rem;
+  --container-measure: 72ch;
 }
 
 /* CSS variables in original mockup naming — used by page.module.css and DemoBanner */
@@ -203,7 +210,6 @@ body:has(.event-root) .demo-banner {
    off-center — relying on margin auto alone wasn't holding. A flex column with
    centered cross-axis alignment pins the column to the middle with equal
    gutters on every viewport, while the root itself stays full-bleed. */
-.sources-root,
 .theater-root,
 .theaters-root,
 .about-root,

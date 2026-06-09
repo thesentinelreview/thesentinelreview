@@ -19,6 +19,8 @@ introduce new `zinc-*` in design-system code.
 | Token | Value |
 |---|---|
 | Page background | `bg-slate-950` |
+| Page gutter | `--gutter: 1.25rem` → `px-(--gutter)` (full-bleed shell horizontal gutter; see `<PageShell>`) |
+| Prose measure | `--container-measure: 72ch` → `max-w-measure` (readable cap for long-form body copy) |
 | Panel chrome | `bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-700 rounded-xl shadow-xl` |
 | Panel hover | `hover:border-slate-600 transition-all` |
 | Inner dividers / borders | `border-slate-800/60` |
@@ -150,6 +152,27 @@ relative timestamp (absolute on hover), `line-clamp-3` body with Expand/Collapse
 "View source" link, translate toggle (Eye/EyeOff — shown only when an
 original-language version exists), the auth-gated Watch button, and the
 "Confirmed by Sentinel" link to the event detail.
+
+### `<PageShell>`
+The canonical full-bleed page column: full width (no `max-w-*` / `mx-auto`) with the
+standard page gutter (`px-(--gutter)`) and vertical rhythm (`py-6 pb-20`, default
+`gap-4`). The single source of truth for the content-page shell so routes share
+identical left/right edges. Consumers: `/sources`, `/app/feed`, `/methodology`.
+
+```tsx
+<PageShell>…</PageShell>
+<PageShell as="main" className="flex-1">…</PageShell>
+```
+
+| Prop | Type | Notes |
+|---|---|---|
+| `as` | `ElementType` | element to render (default `div`); e.g. `"main"` |
+| `className` | `string` | merged via `cn()` (override `gap-*`, add `flex-1`, …) |
+
+**Prose-measure rule:** the shell is full-width, but long-form running body copy
+should be capped with `max-w-measure` (`--container-measure`, ~72ch) so text stays
+readable. Section headers and card grids may span the full width — only the body
+copy gets the cap (see `/methodology`).
 
 ---
 

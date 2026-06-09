@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
 import PostCard from "@/components/ds/PostCard";
 import Panel from "@/components/ds/Panel";
+import PageShell from "@/components/ds/PageShell";
 import FilterChip from "@/components/ds/FilterChip";
 import { platformStyle } from "@/components/ds/tokens";
 import type { Platform } from "@/lib/types";
@@ -147,8 +148,8 @@ export default async function SourceFeedPage({
         isAuthed={!!userId}
       />
 
-      {/* FEED CONTENT — centered, scrolling column built from design-system primitives. */}
-      <main className="w-full max-w-3xl mx-auto px-5 py-6 pb-20 flex flex-col gap-4 flex-1">
+      {/* FEED CONTENT — full-bleed, scrolling column built from design-system primitives. */}
+      <PageShell as="main" className="flex-1">
         {/* Intro */}
         <div className="flex flex-col gap-1 pb-3 border-b border-slate-800/60">
           <div className="text-[12px] font-data tracking-[0.18em] uppercase text-slate-200">
@@ -248,7 +249,7 @@ export default async function SourceFeedPage({
           AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
           Sourced from open-source reporting. Not for operational use.
         </div>
-      </main>
+      </PageShell>
     </div>
   );
 }
