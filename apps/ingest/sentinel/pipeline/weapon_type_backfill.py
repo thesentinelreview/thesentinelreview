@@ -53,7 +53,7 @@ log = structlog.get_logger()
 # Extractor prompts are theater-keyed; an event inherits the theater of its
 # primary source (same basis the live pipeline and the dry-run use). First match
 # in this order wins for multi-theater sources.
-THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar")
+THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar", "israel")
 
 
 @dataclass
@@ -172,11 +172,15 @@ def _iter_events(
 
 
 def _pick_theater(theaters: list[str] | None) -> str:
-    """Map a source's theater list to the extractor prompt key (first match wins)."""
+    """Map a source's theater list to the extractor prompt key (first match wins).
+
+    Falls back to the generic 'unknown' scope (NOT ukraine) when the source has no
+    recognised theater, so re-extraction is never silently judged under Ukraine.
+    """
     for t in THEATERS:
         if theaters and t in theaters:
             return t
-    return "ukraine"
+    return "unknown"
 
 
 def _process_one(

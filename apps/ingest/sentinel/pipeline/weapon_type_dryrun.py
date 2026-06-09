@@ -32,7 +32,7 @@ from sentinel.pipeline.extractor import extract_event
 
 log = structlog.get_logger()
 
-THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar")
+THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar", "israel")
 
 NULL_KEY = "(null)"
 

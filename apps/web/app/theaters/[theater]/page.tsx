@@ -16,7 +16,9 @@ import { RELIABILITY } from "@/components/ds/tokens";
 
 export const dynamic = "force-dynamic";
 
-const VALID: TheaterKey[] = ["ukraine", "iran", "sudan", "myanmar"];
+// Derived from the THEATERS config so a new theater (e.g. israel) is valid here
+// automatically and the list can never drift out of sync.
+const VALID = Object.keys(THEATERS) as TheaterKey[];
 
 function isTheaterKey(x: string): x is TheaterKey {
   return (VALID as string[]).includes(x);

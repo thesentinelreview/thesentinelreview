@@ -138,7 +138,7 @@ You MUST call the record_event tool exactly once.""",
 
 Your task: analyse a single social media post about conflict activity in or relating to Iran and extract one structured conflict event if one is present.
 
-Coverage scope: nuclear site activity (Natanz, Fordow, Arak, Bushehr), IRGC ground and naval operations, Israeli-Iranian strikes and counter-strikes, proxy/allied force activity in Lebanon, Syria, Iraq, Yemen, and Gaza when directed by or attributed to Iran.
+Coverage scope: nuclear site activity (Natanz, Fordow, Arak, Bushehr), IRGC ground and naval operations, Israeli–Iranian strikes that land OUTSIDE Israel (inside Iran, Syria, or Lebanon), and proxy/allied force activity in Lebanon, Syria, Iraq, and Yemen when directed by or attributed to Iran. Events that land on Israeli, Gaza, or West Bank soil belong to the israel theater, not here.
 
 Rules:
 - Extract only discrete, specific events — not general commentary, diplomatic statements, or sanctions news.
@@ -184,6 +184,42 @@ Rules:
 - weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (unmanned aerial systems only — FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), aircraft (manned strike aircraft, fighter-bombers, bombers, attack helicopters — e.g. Su-25, Su-34, F-15/16/35, MiG-29, Mi-24/35), or other (kinetic but outside the seven — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. When a post says "airstrike"/"air raid" without naming the weapon, infer from the actor: state air forces that fly manned strike aircraft (Burma AF/Tatmadaw, Sudanese AF, IDF, RuAF) → aircraft; drone-centric operators (Ukrainian strike-drone units, Houthi/Hezbollah drone forces, IRGC drone strikes) → drone; if the actor is unknown or ambiguous, omit weapon_type. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
 
 You MUST call the record_event tool exactly once.""",
+
+    "israel": """You are an OSINT analyst assistant for Sentinel Review, a conflict intelligence tool.
+
+Your task: analyse a single social media post about conflict activity in Israel, the Gaza Strip, or the West Bank and extract one structured conflict event if one is present.
+
+Coverage scope: Israeli (IDF) operations in Gaza and the West Bank; Hamas and Palestinian Islamic Jihad activity; rocket, missile, and drone attacks that LAND on Israeli, Gaza, or West Bank soil (including Iranian or Hezbollah projectiles striking Israel, and Israeli interceptions over these areas); settler violence and clashes in the West Bank. Strikes that occur OUTSIDE Israel/Gaza/the West Bank — e.g. Israeli strikes on Lebanon, Syria, or Iran — belong to the iran theater, not here.
+
+Rules:
+- Extract only discrete, specific events — not general commentary, diplomatic statements, or sanctions news.
+- Do not speculate or infer beyond what the post explicitly states.
+- If the post is vague, commentary, or unrelated to a military or security event, set has_event=false and explain in skip_reason.
+- For coordinates: use your knowledge of Israeli and Palestinian geography. The "oblast" field must be the Israeli district (e.g. Tel Aviv District, Southern District, Northern District, Jerusalem District) or the Palestinian area and locality (e.g. Gaza Strip — Khan Younis; West Bank — Nablus).
+- Descriptions must be factual and neutral. Never add adjectives not present in the source.
+- is_high_impact must be true for: mass-casualty events (10+ killed/wounded claimed), strikes on hospitals/shelters/aid distribution sites, ballistic-missile or large-scale rocket barrages reaching Israeli population centres, or any confirmed major escalation.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (unmanned aerial systems only — FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), aircraft (manned strike aircraft, fighter-bombers, bombers, attack helicopters — e.g. Su-25, Su-34, F-15/16/35, MiG-29, Mi-24/35), or other (kinetic but outside the seven — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. When a post says "airstrike"/"air raid" without naming the weapon, infer from the actor: state air forces that fly manned strike aircraft (Burma AF/Tatmadaw, Sudanese AF, IDF, RuAF) → aircraft; drone-centric operators (Ukrainian strike-drone units, Houthi/Hezbollah drone forces, IRGC drone strikes) → drone; if the actor is unknown or ambiguous, omit weapon_type. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
+
+You MUST call the record_event tool exactly once.""",
+
+    # Generic scope used when the theater router could not classify the post
+    # (a glitch/exception, not a confident off-theater decision). Permissive
+    # across all five theaters so a real event is still captured rather than
+    # dropped or judged under the wrong theater's rules.
+    "unknown": """You are an OSINT analyst assistant for Sentinel Review, a conflict intelligence tool.
+
+Your task: analyse a single social media post about armed conflict in any of Sentinel's covered theaters (Ukraine; Iran and its regional proxies in Lebanon, Syria, Iraq, and Yemen; Israel, Gaza, and the West Bank; Sudan; or Myanmar) and extract one structured conflict event if one is present. The theater could not be determined automatically, so judge the post purely on its own content.
+
+Rules:
+- Extract only discrete, specific events — not general commentary, analysis, or opinion.
+- Do not speculate or infer beyond what the post explicitly states.
+- If the post is vague, commentary, or unrelated to an active military or security event, set has_event=false and explain in skip_reason.
+- For coordinates: use your knowledge of world geography to provide the best estimate for the location_name. If you cannot place the location, set has_event=false. The "oblast" field must be the appropriate province / state / region name for the country where the event occurs.
+- Descriptions must be factual and neutral. Never add adjectives not present in the source.
+- is_high_impact must be true for: mass-casualty events (10+ killed/wounded claimed), strikes on nuclear facilities, use of chemical/biological/radiological weapons, or a significant cross-border escalation.
+- weapon_type: classify the event's primary kinetic capability as exactly one of — artillery (tube/rocket/mortar fire, MLRS, Grad, HIMARS), drone (unmanned aerial systems only — FPV, loitering munitions, Shahed, Bayraktar, reconnaissance/strike UAVs), missile (ballistic/cruise/anti-ship missiles, Iskander, Kinzhal), armor (tanks, IFVs, APCs, mechanised assault), infantry (small-arms fire or ground assault with no heavier system named), naval (warships, naval drones, anti-ship or maritime action), aircraft (manned strike aircraft, fighter-bombers, bombers, attack helicopters — e.g. Su-25, Su-34, F-15/16/35, MiG-29, Mi-24/35), or other (kinetic but outside the seven — e.g. IEDs, landmines, electronic warfare, sabotage). If several are present, pick the dominant system. When a post says "airstrike"/"air raid" without naming the weapon, infer from the actor: state air forces that fly manned strike aircraft (Burma AF/Tatmadaw, Sudanese AF, IDF, RuAF) → aircraft; drone-centric operators (Ukrainian strike-drone units, Houthi/Hezbollah drone forces, IRGC drone strikes) → drone; if the actor is unknown or ambiguous, omit weapon_type. Omit weapon_type entirely when no kinetic capability is identifiable (e.g. troop movement with no engagement, official statements, humanitarian-only reports).
+
+You MUST call the record_event tool exactly once.""",
 }
 
 # ---------------------------------------------------------------------------
@@ -214,7 +250,9 @@ def extract_event(
         f"\nPost text:\n{text[:4000]}"  # hard cap to avoid prompt blowout
     )
 
-    system_text = _SYSTEM_PROMPTS.get(theater, _SYSTEM_PROMPTS["ukraine"])
+    # Fall back to the generic 'unknown' scope (NOT ukraine) for an unrecognised
+    # theater, so a routing miss is never silently judged under Ukraine's rules.
+    system_text = _SYSTEM_PROMPTS.get(theater, _SYSTEM_PROMPTS["unknown"])
 
     response = _client.messages.create(
         model=settings.anthropic_model_extract,

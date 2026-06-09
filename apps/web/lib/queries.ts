@@ -21,13 +21,29 @@ import type {
 } from "@/lib/types";
 import { PILL_WINDOW_MINUTES } from "@/lib/types";
 
-// Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering
+// Bounding boxes [minLng, minLat, maxLng, maxLat] per theater for PostGIS filtering.
+// israel is the homeland box (Israel + Gaza + West Bank). It sits INSIDE the wide
+// iran box, so iran membership subtracts it (see israelCarveOut) to keep the two
+// theaters mutually exclusive: Israel/Gaza/West Bank events surface under israel
+// only, never also under iran. Kept in sync with apps/ingest/sentinel/db.py
+// (_THEATER_BBOX + _iran_israel_carve_sql).
 const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
   ukraine: [22, 44, 40, 52],
   iran:    [32, 10, 64, 42],
   sudan:   [21,  8, 42, 23],
   myanmar: [92,  9, 102, 29],
+  israel:  [34.2, 29.4, 35.9, 33.1],
 };
+
+// SQL fragment that, for the iran theater only, excludes the israel homeland box
+// so Israel/Gaza/West Bank events do not also count under iran. Empty for every
+// other theater. The bbox coords are hardcoded trusted constants (never user
+// input), so inlining them in SQL is safe.
+function israelCarveOut(col: string, theater: TheaterKey | "all"): string {
+  if (theater !== "iran") return "";
+  const [a, b, c, d] = THEATER_BBOX.israel;
+  return ` AND NOT ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326))`;
+}
 
 // ---------------------------------------------------------------------------
 // Time range
@@ -95,18 +111,22 @@ function occurredAtClause(window: TimeRange | "all"): string {
 export type TieoutTheater = TheaterKey | "all";
 
 // PostGIS bbox predicate + positional params for a tie-out query. For "all" it
-// emits an OR-union of the four theater bboxes (ST_Within against any counts).
-// References the `e` alias on events. Callers either select DISTINCT e.id or
-// GROUP BY e.id, so an event inside two overlapping bboxes is never double-counted.
+// emits an OR-union of the five theater bboxes (ST_Within against any counts).
+// The iran box has the israel homeland box carved out of it so the two stay
+// mutually exclusive. References the `e` alias on events. Callers either select
+// DISTINCT e.id or GROUP BY e.id, so an event inside two overlapping bboxes is
+// never double-counted.
 function theaterPredicate(theater: TieoutTheater): { sql: string; params: number[] } {
   const keys: TheaterKey[] =
-    theater === "all" ? ["ukraine", "iran", "sudan", "myanmar"] : [theater];
+    theater === "all" ? ["ukraine", "iran", "sudan", "myanmar", "israel"] : [theater];
   const parts: string[] = [];
   const params: number[] = [];
   let i = 1;
   for (const key of keys) {
     const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[key];
-    parts.push(`ST_Within(e.location, ST_MakeEnvelope($${i++}, $${i++}, $${i++}, $${i++}, 4326))`);
+    parts.push(
+      `(ST_Within(e.location, ST_MakeEnvelope($${i++}, $${i++}, $${i++}, $${i++}, 4326))${israelCarveOut("e.location", key)})`,
+    );
     params.push(minLng, minLat, maxLng, maxLat);
   }
   return { sql: parts.length > 1 ? `(${parts.join(" OR ")})` : parts[0], params };
@@ -166,14 +186,14 @@ export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeR
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at > now() - INTERVAL '${interval}'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
       ),
       prev_7d AS (
         SELECT count(*)::float / 7.0 AS daily_avg
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at BETWEEN now() - INTERVAL '8 days' AND now() - INTERVAL '1 day'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
       )
       SELECT
         (SELECT count(*) FROM window_events)::int AS events,
@@ -252,7 +272,7 @@ export async function getKpiSparklines(
       LEFT JOIN events e
         ON date_trunc('${unit}', e.occurred_at AT TIME ZONE 'UTC') = g.bucket
        AND e.published_at IS NOT NULL
-       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("e.location", theater)}
       GROUP BY g.bucket
       ORDER BY g.bucket ASC
       `,
@@ -319,7 +339,7 @@ export async function getKpiDeltas(
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at > now() - INTERVAL '${interval}'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
       ),
       prev AS (
         SELECT
@@ -335,7 +355,7 @@ export async function getKpiDeltas(
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at BETWEEN now() - INTERVAL '${interval}' * 2 AND now() - INTERVAL '${interval}'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
       )
       SELECT
         curr.events, prev.events AS events_prev,
@@ -525,7 +545,7 @@ export async function getMedianTTV(
         FROM events e
         WHERE e.published_at IS NOT NULL
           AND e.occurred_at > now() - INTERVAL '${interval}'
-          AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("e.location", theater)}
       ),
       prim AS (
         -- One row per event: time from the (earliest) primary source post to
@@ -600,7 +620,7 @@ export async function getSensorStripData(theater: TheaterKey = "ukraine"): Promi
            WHERE published_at IS NOT NULL
              AND occurred_at > now() - INTERVAL '24 hours'
              AND actor IS NOT NULL
-             AND ST_Within(location, ST_MakeEnvelope($3, $4, $5, $6, 4326))) AS tracks
+             AND ST_Within(location, ST_MakeEnvelope($3, $4, $5, $6, 4326))${israelCarveOut("location", theater)}) AS tracks
       FROM recent
       `,
       [theater, PILL_WINDOW_MINUTES, minLng, minLat, maxLng, maxLat],
@@ -665,7 +685,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
         AND e.occurred_at > now() - INTERVAL '${interval}'
-        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("e.location", theater)}
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
       `,
@@ -728,7 +748,7 @@ export async function getAlerts(theater: TheaterKey = "ukraine", limit: number |
       LEFT JOIN event_sources es ON es.event_id = e.id
       WHERE e.published_at IS NOT NULL
         AND e.occurred_at > now() - INTERVAL '${interval}'
-        AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
+        AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))${israelCarveOut("e.location", theater)}
       GROUP BY e.id
       ORDER BY e.occurred_at DESC
       LIMIT $1::bigint
@@ -776,7 +796,7 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
       LEFT JOIN events e
         ON date_trunc('day', e.occurred_at AT TIME ZONE 'UTC') = d.day
        AND e.published_at IS NOT NULL
-       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+       AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("e.location", theater)}
       GROUP BY d.day
       ORDER BY d.day ASC
       `,
@@ -828,7 +848,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", timeRange: Tim
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at > now() - INTERVAL '${interval}'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
           AND oblast IS NOT NULL
           AND btrim(oblast) <> ''
           AND lower(btrim(oblast)) NOT IN ('unknown', '<unknown>', 'n/a', 'multiple')
@@ -839,7 +859,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", timeRange: Tim
         FROM events
         WHERE published_at IS NOT NULL
           AND occurred_at BETWEEN now() - INTERVAL '${interval}' * 2 AND now() - INTERVAL '${interval}'
-          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+          AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
           AND oblast IS NOT NULL
         GROUP BY oblast
       )
@@ -900,7 +920,7 @@ export async function getThreatAxes(theater: TheaterKey = "ukraine", timeRange: 
       FROM events
       WHERE published_at IS NOT NULL
         AND occurred_at > now() - INTERVAL '${interval}'
-        AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND ST_Within(location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("location", theater)}
         AND weapon_type IS NOT NULL
       GROUP BY weapon_type
       ORDER BY n DESC
@@ -950,7 +970,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
         JOIN events e ON e.id = es.event_id
         WHERE e.occurred_at > now() - INTERVAL '24 hours'
           AND e.published_at IS NOT NULL
-          AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
+          AND ST_Within(e.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))${israelCarveOut("e.location", theater)}
         GROUP BY es.source_id
       ) today ON today.source_id = s.id
       WHERE s.is_active = true
@@ -960,7 +980,7 @@ export async function getTopSources(theater: TheaterKey = "ukraine", limit = 5):
           JOIN events e2 ON e2.id = es2.event_id
           WHERE e2.published_at IS NOT NULL
             AND e2.occurred_at > now() - INTERVAL '30 days'
-            AND ST_Within(e2.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))
+            AND ST_Within(e2.location, ST_MakeEnvelope($2, $3, $4, $5, 4326))${israelCarveOut("e2.location", theater)}
         )
       ORDER BY events_count DESC, verified_rate DESC
       LIMIT $1
@@ -1119,7 +1139,7 @@ export async function getSourceFeedPosts(
       JOIN event_sources es ON es.raw_post_id = rp.id
       JOIN events e         ON e.id = es.event_id
       WHERE e.published_at IS NOT NULL
-        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))
+        AND ST_Within(e.location, ST_MakeEnvelope($1, $2, $3, $4, 4326))${israelCarveOut("e.location", theater)}
         AND ($5::timestamptz IS NULL OR rp.posted_at < $5::timestamptz)
         AND ($6::text[]      IS NULL OR s.platform   = ANY($6::text[]))
         AND ($7::smallint[]  IS NULL OR s.trust_tier = ANY($7::smallint[]))

@@ -83,7 +83,7 @@ def _enqueue_ingest_jobs() -> int:
     return count
 
 
-_THEATERS = ["ukraine", "iran", "sudan", "myanmar"]
+_THEATERS = ["ukraine", "iran", "sudan", "myanmar", "israel"]
 
 
 def _enqueue_briefing_job() -> None:
