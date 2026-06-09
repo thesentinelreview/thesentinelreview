@@ -124,9 +124,14 @@ def get_source(conn: psycopg.Connection, source_id: uuid.UUID) -> dict | None:
     ).fetchone()  # type: ignore[return-value]
 
 
-# Maps a fetch outcome to a sources.health_status value. Allowed by the CHECK
-# constraint from migration 0015: unknown | healthy | silent | erroring |
-# handle_invalid | url_broken.
+# Maps a fetch outcome to an (error) health label + a human detail + the newest
+# fetched post time. `health` is authoritative ONLY when is_error: the fetch path
+# owns the specific *error* states it reads from `meta` — url_broken / erroring
+# (CHECK constraint, migration 0015) — while the live/quiet label
+# (healthy / silent / unknown) is owned by the recompute_source_health() SQL
+# function, derived from last_post_at recency (migration 0028). The health
+# returned for a non-error outcome is therefore ignored by record_source_fetch;
+# `newest` still feeds last_post_at, the recency signal that function reads.
 def _classify_fetch(
     posts_inserted: int, meta: dict | None
 ) -> tuple[str, str | None, datetime | None, bool]:
@@ -170,11 +175,20 @@ def record_source_fetch(
     posts_inserted: int,
     meta: dict | None,
 ) -> None:
-    """Stamp per-source fetch health onto the sources row after every ingest
-    attempt (success or failure). Without this a silent 0-yield feed looks
-    identical to a healthy one — the bug this fixes. Writes the health columns
-    added in migration 0015 plus last_fetch_at (0018). `meta` is the ingestor's
-    last_fetch_meta (rich for RSS, None for other platforms).
+    """Record the durable per-source signals after every ingest attempt, then
+    delegate the health_status label to recompute_source_health().
+
+    The forward path writes only the raw signals it observes — last_fetch_at,
+    consecutive_errors, last_error_* (on failure), and last_post_at advanced to
+    the newest fetched post (0015/0018 columns; every ingestor reports
+    newest_posted_at in `meta`). The single source of truth for the health_status
+    *label* is the recompute_source_health() SQL function (migration 0028): it
+    derives healthy/silent/unknown from last_post_at recency (14-day window) and
+    coarsens to 'erroring' at >= 10 consecutive errors, so the label can no longer
+    flap to 'silent' on a single quiet 30-min cycle of a low-cadence feed (the bug
+    this fixes). On failure we still set the specific error label
+    (url_broken / erroring) from `meta`; the function preserves it while the error
+    streak is 1-9. `meta` is the ingestor's last_fetch_meta.
 
     Caller is responsible for committing and for isolating this from the
     raw_posts insert transaction so a stamp failure never loses posts.
@@ -194,18 +208,22 @@ def record_source_fetch(
             (health, (detail or "")[:1000], source_id),
         )
     else:
+        # Note: no health_status here — recompute_source_health() owns the
+        # live/quiet label, derived from last_post_at recency rather than this
+        # single cycle's yield.
         conn.execute(
             """
             UPDATE sources
             SET last_fetch_at      = now(),
-                health_status      = %s,
                 last_error_message = %s,
                 consecutive_errors = 0,
                 last_post_at       = COALESCE(%s, last_post_at)
             WHERE id = %s
             """,
-            (health, detail, newest, source_id),
+            (detail, newest, source_id),
         )
+    # Single source of truth for the liveness label, from durable signals.
+    conn.execute("SELECT recompute_source_health(%s)", (source_id,))
 
 
 # ---------------------------------------------------------------------------
