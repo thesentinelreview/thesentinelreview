@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FileText, ShieldCheck, ShieldAlert, AlertCircle, Layers, GitMerge, Inbox, Crosshair, GitFork, Gauge, Eye } from "lucide-react";
+import PageShell from "@/components/ds/PageShell";
 
 export const metadata: Metadata = {
   title: "Verification Methodology — Sentinel Review",
@@ -99,7 +100,7 @@ export default function MethodologyPage() {
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
       <main className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center">
-        <div className="w-full max-w-5xl mx-auto p-6 space-y-6">
+        <PageShell className="gap-6">
           {/* Title card */}
           <section className={CARD}>
             <div className="flex items-start gap-4">
@@ -140,7 +141,7 @@ export default function MethodologyPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 leading-relaxed">
+            <div className="max-w-measure mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 leading-relaxed">
               <span className="font-semibold text-amber-400">High-impact hold:</span>{" "}
               Events flagged by the extraction pipeline as involving mass casualties, nuclear or
               chemical signals, or significant escalatory steps are held in the human review
@@ -157,7 +158,7 @@ export default function MethodologyPage() {
               </div>
               <h2 className="text-lg font-bold text-slate-100">Source Trust Tiers</h2>
             </div>
-            <p className="text-sm text-slate-400 leading-relaxed mb-4">
+            <p className="max-w-measure text-sm text-slate-400 leading-relaxed mb-4">
               Every source in the system is assigned a trust tier by a human editor. Tiers affect
               how much weight a source&apos;s posts carry in confidence scoring — a tier-1 source
               posting alone can reach <span className="text-amber-300">partial</span> confidence;
@@ -219,7 +220,7 @@ export default function MethodologyPage() {
               </div>
               <h2 className="text-lg font-bold text-slate-100">Content and Graphic Material</h2>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="max-w-measure text-sm text-slate-300 leading-relaxed">
               Sentinel Review does not embed media directly. Source links open in a new tab and
               may contain graphic content including footage of combat, casualties, and
               infrastructure destruction. Source posts are retained verbatim in the underlying
@@ -236,13 +237,13 @@ export default function MethodologyPage() {
               </div>
               <h2 className="text-lg font-bold text-slate-100">Errors and Corrections</h2>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="max-w-measure text-sm text-slate-300 leading-relaxed">
               If you believe an event is incorrectly located, mislabeled, or based on fabricated
               sources, email corrections directly to the editorial address below. Corrections
               feed into the human review queue; the reviewer&apos;s notes are published openly in
               the event&apos;s change history.
             </p>
-            <p className="mt-3 text-sm text-slate-300 leading-relaxed">
+            <p className="max-w-measure mt-3 text-sm text-slate-300 leading-relaxed">
               Confidence labels can only move down, not up, once a credible dispute has been
               filed against an event.
             </p>
@@ -278,7 +279,7 @@ export default function MethodologyPage() {
               </div>
             </div>
           </section>
-        </div>
+        </PageShell>
       </main>
     </div>
   );
