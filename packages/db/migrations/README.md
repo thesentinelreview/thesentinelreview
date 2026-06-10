@@ -68,3 +68,50 @@ filename sort within the shared number — so the order is stable across machine
 `RECONSTRUCTED_MIGRATIONS` in `migrate.py` exempts `0018_lockdown_…` from the
 "number must exceed base max" rule, since recovering a historical migration
 necessarily reuses an old number.
+
+## Data API grant posture (anon / authenticated)
+
+**Decision (2026-06-10, recorded here because applied migrations are immutable —
+this cannot live in `0030`'s header):** the `public` schema is **fully locked
+down to the Supabase Data API roles**. Migration `0030_capture_oob_and_revoke_anon`
+revokes ALL privileges on every `public` table/sequence/function from **both
+`anon` and `authenticated`** (extending `0018`'s anon-focused intent to
+`authenticated` as well).
+
+This is **intentional hardening, verified safe**, not a side effect:
+- The web app connects only as the `postgres` owner role over the pooler
+  (`apps/web/lib/db.ts` uses node-`pg` with `DATABASE_URL`). There is **no**
+  `@supabase/supabase-js`/`createClient`/PostgREST/`NEXT_PUBLIC_SUPABASE_*` usage
+  anywhere in the repo, **no Edge Functions**, and auth is Clerk (not Supabase
+  Auth) — so nothing ever authenticates as `anon`/`authenticated`.
+- Post-apply sweep (2026-06-10): Postgres + PostgREST logs show **zero `42501`
+  permission-denied** and no Data-API traffic since the apply.
+
+**Rollback** (only if a client-side Data-API path is ever introduced) — restore the
+pre-`0030` Supabase auto-grant state:
+```sql
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER
+  ON briefings, dedup_decisions, event_sources, events, jobs, llm_logs,
+     raw_posts, sources, user_subscriptions, watches TO anon;
+GRANT SELECT, REFERENCES, TRIGGER
+  ON admin_audit_log, candidate_mentions, candidate_sources,
+     processed_stripe_events, schema_migrations TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
+-- and the Supabase sequence/function defaults (exact pre-state not captured as rows):
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated;
+```
+Note this restores *Supabase defaults*, not a hand-designed grant set — the
+pre-`0030` grants were auto-created by Supabase, not by app design.
+
+## Process: migrations that touch grants / RLS / roles (REQUIRED)
+
+Any migration altering `GRANT`/`REVOKE`, RLS, policies, or roles MUST, before it is
+reported green:
+1. **Capture full before-state as rows** (not counts) and paste them into the PR —
+   `grantee, table_name, privilege_type` from `information_schema.role_table_grants`
+   (plus sequence/function grants), and `pg_policies` / `relrowsecurity` as
+   relevant. A row-level snapshot is the only thing that makes rollback exact.
+2. **Run a product smoke test in post-checks** — at minimum the watchfloor (`/`)
+   and `/app/feed` load, plus one authenticated read path — and report the result.
+   "Ledger reconciled" / "`--verify` clean" is **not** "the app still works."
