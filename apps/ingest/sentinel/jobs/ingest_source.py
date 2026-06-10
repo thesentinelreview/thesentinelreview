@@ -9,6 +9,8 @@ Payload schema: IngestSourcePayload
 from __future__ import annotations
 
 import uuid
+from collections import deque
+from collections.abc import Callable
 
 import psycopg
 import structlog
@@ -18,6 +20,58 @@ from sentinel.db import enqueue, get_source, insert_raw_post, record_source_fetc
 from sentinel.models import IngestSourcePayload
 
 log = structlog.get_logger()
+
+# Postgres SQLSTATEs worth one retry: serialization failure / deadlock. Both are
+# transient under concurrency and usually succeed on a fresh transaction.
+_RETRYABLE_SQLSTATES = {"40001", "40P01"}
+
+# Persistently-failed health stamps, surfaced in the one-shot run summary
+# (runner.run_ingest drains this). Bounded so the long-running worker — which
+# logs each failure as a warning and never drains — can't grow it without limit.
+_STAMP_FAILURES: deque[tuple[str, str]] = deque(maxlen=1000)
+
+
+def _is_serialization_error(exc: BaseException) -> bool:
+    """True for a Postgres serialization-failure / deadlock error (by SQLSTATE),
+    the only stamp failures worth retrying."""
+    return getattr(exc, "sqlstate", None) in _RETRYABLE_SQLSTATES
+
+
+def _run_with_serialization_retry(
+    attempt: Callable[[], None],
+    *,
+    is_retryable: Callable[[BaseException], bool] = _is_serialization_error,
+    retries: int = 1,
+) -> str | None:
+    """Run ``attempt``; on a retryable error, retry up to ``retries`` times.
+
+    Returns None on success, or a "Type: message" string on persistent or
+    non-retryable failure. ``attempt`` must be self-contained (roll back its own
+    transaction on failure) since it may be called more than once. Pure control
+    flow — no DB — so the retry decision is unit-testable without Postgres.
+    """
+    last_error = ""
+    for i in range(retries + 1):
+        try:
+            attempt()
+            return None
+        except Exception as exc:  # noqa: BLE001 — classified, then surfaced not swallowed
+            last_error = f"{type(exc).__name__}: {exc}"
+            if i < retries and is_retryable(exc):
+                continue
+            return last_error
+    return last_error
+
+
+def record_stamp_failure(handle: str, error: str) -> None:
+    _STAMP_FAILURES.append((handle, error))
+
+
+def drain_stamp_failures() -> list[tuple[str, str]]:
+    """Return and clear the recorded stamp failures (read by the run summary)."""
+    failures = list(_STAMP_FAILURES)
+    _STAMP_FAILURES.clear()
+    return failures
 
 
 def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
@@ -107,10 +161,21 @@ def _ingest(
 
 
 def _stamp(conn: psycopg.Connection, source: dict, *, posts_inserted: int, meta: dict | None) -> None:
-    """Best-effort per-source health stamp; never let it break ingest."""
-    try:
-        record_source_fetch(conn, source["id"], posts_inserted=posts_inserted, meta=meta)
-        conn.commit()
-    except Exception as exc:
-        conn.rollback()
-        log.warning("source_health_stamp_failed", source=source.get("handle"), error=str(exc))
+    """Per-source health stamp; isolated so it never breaks ingest (posts are
+    already committed by the caller). Retries once on a serialization/deadlock
+    error, and on persistent failure records the error so the run summary can
+    surface it instead of silently swallowing a stale-health source."""
+    handle = source.get("handle") or str(source.get("id"))
+
+    def _attempt() -> None:
+        try:
+            record_source_fetch(conn, source["id"], posts_inserted=posts_inserted, meta=meta)
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+
+    error = _run_with_serialization_retry(_attempt)
+    if error is not None:
+        log.warning("source_health_stamp_failed", source=handle, error=error)
+        record_stamp_failure(handle, error)

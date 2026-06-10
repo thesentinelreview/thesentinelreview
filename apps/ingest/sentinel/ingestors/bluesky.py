@@ -118,11 +118,19 @@ class BlueskyIngestor(BaseIngestor):
                     kwargs["cursor"] = cursor
                 feed = client.get_author_feed(**kwargs)
             except Exception as exc:
-                log.error("bluesky_fetch_error", handle=handle, page=page, error=str(exc))
-                # Only flag transport_error when no earlier page succeeded —
-                # a later-page failure with partial results stays healthy.
-                if not results:
-                    transport_error = f"{type(exc).__name__}: {exc}"
+                log.error(
+                    "bluesky_fetch_error",
+                    handle=handle,
+                    page=page,
+                    collected=len(results),
+                    error=str(exc),
+                )
+                # Record the transport error even when earlier pages already
+                # collected posts. Those posts still ingest, but a fetch that
+                # broke mid-pagination is NOT clean — stamping it as such would
+                # zero the error streak and fake a healthy source. Honesty over
+                # a falsely-green count.
+                transport_error = f"{type(exc).__name__}: {exc}"
                 break
 
             if not feed.feed:

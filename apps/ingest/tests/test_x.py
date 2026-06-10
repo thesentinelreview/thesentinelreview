@@ -143,6 +143,46 @@ class TestXHealthMeta:
         _health, _detail, _newest, is_error = _classify_fetch(0, meta)
         assert is_error is True
 
+    def test_rate_limit_mid_run_keeps_partial_and_records_transport_error(self) -> None:
+        # First page returns a tweet + next_token; the paginated second request
+        # is a 429. The collected tweet still ingests, but the rate limit MUST be
+        # recorded (status 429) so the fetch classifies 'erroring' instead of
+        # zeroing the error streak as if the run were clean.
+        resp1 = MagicMock()
+        resp1.status_code = 200
+        resp1.json.return_value = {
+            "data": [_tweet("1", "2026-05-30T12:00:00Z", "first")],
+            "meta": {"next_token": "page2"},
+        }
+        resp1.raise_for_status.return_value = None
+
+        resp429 = MagicMock()
+        resp429.status_code = 429
+
+        client = MagicMock()
+        client.get.side_effect = [resp1, resp429]
+        ctx = MagicMock()
+        ctx.__enter__.return_value = client
+        ctx.__exit__.return_value = False
+
+        ingestor = XIngestor(_make_source())
+        with patch("sentinel.ingestors.x.settings") as mock_settings, \
+             patch("sentinel.ingestors.x.httpx.Client", return_value=ctx):
+            mock_settings.x_enabled = True
+            mock_settings.x_bearer_token = "fake-token"
+            results = ingestor.fetch(since_hours=24)
+
+        # Partial result is kept and still ingests.
+        assert len(results) == 1
+        meta = ingestor.last_fetch_meta
+        assert meta is not None
+        assert meta["http_status"] == 429
+        assert "429" in (meta["transport_error"] or "")
+        # 429 = reachable host refusing → 'erroring', is_error=True (the streak
+        # increments rather than zeroing on a partial/rate-limited run).
+        health, _detail, _newest, is_error = _classify_fetch(1, meta)
+        assert (health, is_error) == ("erroring", True)
+
     def test_disabled_sets_meta_with_zero_results(self) -> None:
         # When x_enabled is False, fetch() must still set last_fetch_meta so
         # downstream health stamping sees a meta dict, not None.

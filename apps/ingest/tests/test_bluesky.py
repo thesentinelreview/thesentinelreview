@@ -309,9 +309,11 @@ class TestBlueskyHealthMeta:
         health, _detail, newest, is_error = _classify_fetch(0, meta)
         assert (health, newest, is_error) == ("silent", None, False)
 
-    def test_mid_page_error_with_first_page_success_stays_healthy(self) -> None:
-        # First-page success then per-page raise: 1 result kept, transport_error
-        # must stay None (only set when not results), so this classifies healthy.
+    def test_mid_page_error_with_first_page_records_transport_error(self) -> None:
+        # First-page success then per-page raise: the 1 collected result is still
+        # kept (it ingests), but the mid-pagination break MUST record
+        # transport_error so the fetch classifies as erroring — partial honesty.
+        # A clean stamp here would zero the error streak and fake a healthy feed.
         t1 = datetime(2026, 5, 30, 12, 0, tzinfo=timezone.utc)
         good_post = _make_post(uri="at://did/post/1", text="First page", created_at=t1)
         page1 = _make_feed([_make_feed_item(good_post)], cursor="cursor-p2")
@@ -320,13 +322,15 @@ class TestBlueskyHealthMeta:
         mock_client.get_author_feed.side_effect = [page1, RuntimeError("API error")]
         with patch("sentinel.ingestors.bluesky._get_client", return_value=mock_client):
             results = ingestor.fetch(since_hours=24 * 365)
+        # Collected posts are still returned/ingested.
         assert len(results) == 1
         meta = ingestor.last_fetch_meta
         assert meta is not None
-        assert meta["transport_error"] is None
+        # ...but the abnormal termination is recorded, even with results present.
+        assert "API error" in (meta["transport_error"] or "")
         assert meta["results"] == 1
         assert meta["raw_entries"] == 1
-        assert meta["newest_posted_at"] == t1
-        health, _detail, newest, is_error = _classify_fetch(0, meta)
-        assert (health, is_error) == ("healthy", False)
-        assert newest == t1
+        # No HTTP status on a bare client exception → classifies url_broken, and
+        # critically is_error=True so the streak increments instead of zeroing.
+        _health, _detail, _newest, is_error = _classify_fetch(1, meta)
+        assert is_error is True

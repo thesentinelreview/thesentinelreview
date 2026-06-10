@@ -1,0 +1,35 @@
+name: CI — Ingest Tests
+
+# Pure-logic ingest-worker tests (no database, no secrets, no network). Runs on
+# PRs and pushes that touch the ingest worker. Mirrors ci-migrations.yml's
+# trigger conventions. Authored on the node24-ready action releases from the
+# start (checkout@v5 / setup-python@v6) so it doesn't reintroduce a node20 file.
+on:
+  pull_request:
+    paths:
+      - 'apps/ingest/**'
+      - '.github/workflows/ci-ingest-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ingest/**'
+
+jobs:
+  ingest-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install ingest package + test deps
+        run: pip install -e 'apps/ingest[telegram,dev]'
+
+      - name: Pure-logic tests (no Postgres)
+        # conftest.py seeds dummy DATABASE_URL / ANTHROPIC_API_KEY so config
+        # loads; the suite mocks all I/O. Live API tests skip unless
+        # SENTINEL_LIVE_TRANSLATION_TESTS=1 (unset here).
+        run: python -m pytest apps/ingest/tests -q
