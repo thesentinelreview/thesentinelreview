@@ -20,6 +20,7 @@ import pytest
 from sentinel.ingestors.rss import (
     RSSIngestor,
     _cutoff_dt,
+    _FetchResult,
     _parse_date,
     _parse_entry,
 )
@@ -99,61 +100,65 @@ class TestParseDate:
 # ---------------------------------------------------------------------------
 
 class TestParseEntry:
+    # _parse_entry now returns (post, drop_reason); exactly one is non-None.
     def test_returns_none_for_old_entry(self) -> None:
         entry = _entry(published_parsed=_time_struct(_OLD))
         cutoff = _cutoff_dt(since_hours=24)
-        assert _parse_entry(entry, cutoff=cutoff) is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "too_old"
 
     def test_returns_post_for_recent_entry(self) -> None:
         entry = _entry(published_parsed=_time_struct(_RECENT))
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["text"] == "Test title\n\nTest summary"
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None and reason is None
+        assert post["text"] == "Test title\n\nTest summary"
 
     def test_text_title_only_when_no_summary(self) -> None:
         entry = _entry(summary="")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["text"] == "Test title"
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
+        assert post["text"] == "Test title"
 
     def test_returns_none_when_no_text(self) -> None:
         entry = _entry(title="", summary="")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "no_text"
 
     def test_external_id_from_entry_id(self) -> None:
         entry = _entry(id="https://example.com/1")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["external_id"] == "https://example.com/1"
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
+        assert post["external_id"] == "https://example.com/1"
 
     def test_external_id_falls_back_to_link(self) -> None:
         entry = _entry(id=None, link="https://example.com/link")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["external_id"] == "https://example.com/link"
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
+        assert post["external_id"] == "https://example.com/link"
 
     def test_external_id_falls_back_to_sha1(self) -> None:
         entry = _entry(id=None, link=None)
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
         expected = hashlib.sha1("Test title\n\nTest summary".encode()).hexdigest()
-        assert result["external_id"] == expected
+        assert post["external_id"] == expected
 
     def test_media_urls_from_enclosures(self) -> None:
         enc1 = SimpleNamespace(href="https://cdn.example.com/img1.jpg")
         enc2 = SimpleNamespace(href="https://cdn.example.com/img2.jpg")
         entry = _entry(enclosures=[enc1, enc2])
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["media_urls"] == [
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
+        assert post["media_urls"] == [
             "https://cdn.example.com/img1.jpg",
             "https://cdn.example.com/img2.jpg",
         ]
@@ -161,15 +166,16 @@ class TestParseEntry:
     def test_archive_url_set_to_link(self) -> None:
         entry = _entry(link="https://example.com/story")
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is not None
-        assert result["archive_url"] == "https://example.com/story"
+        post, _reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is not None
+        assert post["archive_url"] == "https://example.com/story"
 
     def test_returns_none_when_date_missing(self) -> None:
         entry = _entry(published_parsed=None, updated_parsed=None, created_parsed=None)
         cutoff = _cutoff_dt(since_hours=24)
-        result = _parse_entry(entry, cutoff=cutoff)
-        assert result is None
+        post, reason = _parse_entry(entry, cutoff=cutoff)
+        assert post is None
+        assert reason == "no_date"
 
 
 # ---------------------------------------------------------------------------
@@ -211,7 +217,16 @@ class TestRSSIngestorFetch:
 
     def test_returns_empty_on_http_error(self) -> None:
         ingestor = self._make_ingestor()
-        with patch("sentinel.ingestors.rss._fetch_feed", return_value=None):
+        # _fetch_feed returns a _FetchResult; content=None signals a transport
+        # failure / HTTP >= 400.
+        fr = _FetchResult(
+            content=None,
+            http_status=500,
+            content_type="",
+            transport_error="HTTP 500",
+            final_url="https://example.com/feed.xml",
+        )
+        with patch("sentinel.ingestors.rss._fetch_feed", return_value=fr):
             results = ingestor.fetch(since_hours=24)
         assert results == []
 
@@ -231,7 +246,14 @@ class TestRSSIngestorFetch:
         )
         fake_feed = SimpleNamespace(entries=[fake_entry])
 
-        with patch("sentinel.ingestors.rss._fetch_feed", return_value=b"<xml/>"), \
+        fr = _FetchResult(
+            content=b"<xml/>",
+            http_status=200,
+            content_type="application/xml",
+            transport_error=None,
+            final_url="https://example.com/feed.xml",
+        )
+        with patch("sentinel.ingestors.rss._fetch_feed", return_value=fr), \
              patch("sentinel.ingestors.rss.feedparser.parse", return_value=fake_feed):
             results = ingestor.fetch(since_hours=24)
 
@@ -267,7 +289,14 @@ class TestRSSIngestorFetch:
         )
         fake_feed = SimpleNamespace(entries=[bad_entry, good_entry])
 
-        with patch("sentinel.ingestors.rss._fetch_feed", return_value=b"<xml/>"), \
+        fr = _FetchResult(
+            content=b"<xml/>",
+            http_status=200,
+            content_type="application/xml",
+            transport_error=None,
+            final_url="https://example.com/feed.xml",
+        )
+        with patch("sentinel.ingestors.rss._fetch_feed", return_value=fr), \
              patch("sentinel.ingestors.rss.feedparser.parse", return_value=fake_feed):
             results = ingestor.fetch(since_hours=24)
 

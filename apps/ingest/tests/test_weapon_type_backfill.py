@@ -274,9 +274,9 @@ class TestPickTheater:
             (["sudan", "iran"], "iran"),     # first match in THEATERS order wins
             (["myanmar"], "myanmar"),
             (["sudan"], "sudan"),
-            ([], "ukraine"),                 # default
-            (None, "ukraine"),               # default
-            (["atlantis"], "ukraine"),       # unknown -> default
+            ([], "unknown"),                 # no theater -> generic 'unknown' (NOT ukraine)
+            (None, "unknown"),               # no theater -> generic 'unknown' (NOT ukraine)
+            (["atlantis"], "unknown"),       # unrecognised -> generic 'unknown'
         ],
     )
     def test_pick_theater(self, theaters: list[str] | None, expected: str) -> None:
