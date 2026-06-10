@@ -11,6 +11,7 @@ Severity:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 import psycopg
 
@@ -22,6 +23,43 @@ class CheckResult:
     severity: str   # "critical" | "warning"
     detail: str
     value: int      # raw numeric metric (count, age in minutes, etc.)
+
+
+# Silence model, aligned with recompute_source_health()'s 14-day recency window
+# (migration 0028). A source is "newly silent" only while it has just crossed
+# the 14-day boundary — a transition, not a permanent state — so chronically
+# silent feeds stop generating a per-run warning.
+_SILENCE_DAYS = 14
+_NEWLY_SILENT_BAND_DAYS = 1  # transition window after crossing the boundary
+
+
+def _silence_state(last_post_at: datetime | None, now: datetime) -> str:
+    """Bucket a source by last_post_at. Pure — unit-testable without Postgres.
+
+      - 'never_posted'       : last_post_at is NULL (never produced a post)
+      - 'healthy'            : posted within the last 14 days
+      - 'newly_silent'       : crossed the 14-day boundary within the last ~1 day
+      - 'chronically_silent' : silent well past 14 days (steady state)
+    """
+    if last_post_at is None:
+        return "never_posted"
+    age = now - last_post_at
+    if age < timedelta(days=_SILENCE_DAYS):
+        return "healthy"
+    if age < timedelta(days=_SILENCE_DAYS + _NEWLY_SILENT_BAND_DAYS):
+        return "newly_silent"
+    return "chronically_silent"
+
+
+def _classify_active_sources(conn: psycopg.Connection) -> list[tuple[str, str]]:
+    """(handle, silence_state) for every active source, classified in Python so
+    the decision logic stays pure. `now` comes from the DB clock to match
+    last_post_at without host/DB skew."""
+    now = conn.execute("SELECT now() AS now").fetchone()["now"]
+    rows = conn.execute(
+        "SELECT handle, last_post_at FROM sources WHERE is_active = true",
+    ).fetchall()
+    return [(r["handle"], _silence_state(r["last_post_at"], now)) for r in rows]
 
 
 # ---------------------------------------------------------------------------
@@ -277,28 +315,43 @@ def check_stale_source_notes(conn: psycopg.Connection) -> CheckResult:
     )
 
 
-def check_silent_active_sources(conn: psycopg.Connection) -> CheckResult:
-    """Active sources with zero new posts in the last 72h — ingestor may have failed for them."""
-    row = conn.execute(
-        """
-        SELECT COUNT(*) AS n
-        FROM sources s
-        WHERE s.is_active = true
-          AND NOT EXISTS (
-              SELECT 1 FROM raw_posts rp
-              WHERE rp.source_id = s.id
-                AND rp.ingested_at > now() - interval '72 hours'
-          )
-        """,
-    ).fetchone()
-    count = row["n"] if row else 0
-    threshold = 5
-    passed = count <= threshold
+def check_newly_silent_sources(conn: psycopg.Connection) -> CheckResult:
+    """Active sources that have JUST gone silent — last_post_at crossed the
+    14-day health boundary within the last ~1 day. A transition alert, not a
+    level alarm: it fires while a source is newly dark and then self-clears, so
+    a chronically-silent feed no longer warns on every run. (The long-running
+    silent/never-posted clusters are tracked separately — see
+    check_never_posted_sources — and via their own tickets.)"""
+    newly = sorted(h for h, state in _classify_active_sources(conn) if state == "newly_silent")
+    count = len(newly)
     return CheckResult(
-        name="silent_active_sources",
-        passed=passed,
+        name="newly_silent_sources",
+        passed=count == 0,
         severity="warning",
-        detail=f"{count} active source(s) produced no posts in last 72h" if count else "all active sources have recent posts",
+        detail=(
+            f"{count} active source(s) newly silent (crossed the 14-day threshold): {', '.join(newly)}"
+            if count else "no active sources newly crossed the 14-day silence threshold"
+        ),
+        value=count,
+    )
+
+
+def check_never_posted_sources(conn: psycopg.Connection) -> CheckResult:
+    """Active sources that have NEVER produced a post (last_post_at IS NULL).
+
+    Informational only (passed=True always): this is a chronic cluster with its
+    own ticket, so it gets its own line for visibility rather than firing a
+    warning every run."""
+    never = sorted(h for h, state in _classify_active_sources(conn) if state == "never_posted")
+    count = len(never)
+    return CheckResult(
+        name="never_posted_sources",
+        passed=True,
+        severity="warning",
+        detail=(
+            f"{count} active source(s) have never posted (informational): {', '.join(never)}"
+            if count else "all active sources have posted at least once"
+        ),
         value=count,
     )
 
@@ -319,7 +372,8 @@ _ALL_CHECKS = [
     check_high_skip_rate_24h,
     check_no_published_events_8h,
     check_held_events,
-    check_silent_active_sources,
+    check_newly_silent_sources,
+    check_never_posted_sources,
     check_stale_source_notes,
 ]
 

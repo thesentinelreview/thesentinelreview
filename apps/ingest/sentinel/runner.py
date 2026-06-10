@@ -158,6 +158,7 @@ def run_ingest() -> None:
     silently-broken pipeline shows up as a failed workflow instead of green.
     """
     _configure_logging()
+    from sentinel.jobs.ingest_source import drain_stamp_failures
     from sentinel.scheduler import _enqueue_ingest_jobs
 
     strict = _strict_mode_enabled()
@@ -175,12 +176,26 @@ def run_ingest() -> None:
     posts_by_source = _posts_written_since(run_start)
     summary = _summarize(outcomes, posts_by_source)
 
+    # Health stamps are isolated from the post inserts (a stamp failure never
+    # rolls back ingested posts), so a persistent stamp failure would otherwise
+    # vanish into a warning log. Surface it as a structured line in the run
+    # summary — visible, but never aborting other sources.
+    stamp_failures = drain_stamp_failures()
+    if stamp_failures:
+        log.error(
+            "ingest_stamp_failures",
+            count=len(stamp_failures),
+            sources=[h for h, _ in stamp_failures],
+            errors=[f"{h}: {e}" for h, e in stamp_failures],
+        )
+
     log.info(
         "ingest_complete",
         posts_written_total=summary.posts_written_total,
         sources_succeeded=summary.sources_succeeded,
         sources_empty=summary.sources_empty,
         sources_failed_with_error=summary.sources_failed_with_error,
+        sources_stamp_failed=len(stamp_failures),
         jobs_enqueued=enqueued,
         jobs_processed=len(outcomes),
         strict_mode=strict,
