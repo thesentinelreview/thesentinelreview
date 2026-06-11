@@ -31,3 +31,26 @@ export function tierForPriceIds(priceIds: readonly string[]): Exclude<Tier, "wat
   }
   return resolved;
 }
+
+// Founding window (W1-1). The founding price occupies the analyst monthly slot
+// while seats remain; at the cap, the slot swaps to the standard price.
+// STRIPE_FOUNDING_PRICE_ID stays constant across that swap, so is_founding
+// derivation and the cap guard never depend on which price the slot holds.
+export const FOUNDING_CAP = 250;
+
+export function foundingPriceId(): string | null {
+  return process.env.STRIPE_FOUNDING_PRICE_ID || null;
+}
+
+export function isFoundingPriceId(priceId: string): boolean {
+  const founding = foundingPriceId();
+  return !!founding && priceId === founding;
+}
+
+export function isFoundingPriceIds(priceIds: readonly string[]): boolean {
+  return priceIds.some((id) => isFoundingPriceId(id));
+}
+
+export function foundingSoldOut(claimedSeats: number): boolean {
+  return claimedSeats >= FOUNDING_CAP;
+}

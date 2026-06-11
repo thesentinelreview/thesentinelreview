@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
-import { tierForPriceId } from "@/lib/stripe";
+import { queryOne } from "@/lib/db";
+import { FOUNDING_CAP, foundingSoldOut, isFoundingPriceId, tierForPriceId } from "@/lib/stripe";
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -19,6 +20,23 @@ export async function POST(req: Request) {
   }
   if (!tierForPriceId(priceId)) {
     return Response.json({ error: "Unknown priceId" }, { status: 400 });
+  }
+
+  // Founding-cap guard: never sell a founding seat past the cap. Server-side
+  // count, no client trust. Cancelled subscriptions free their seat (status
+  // filter), so a refunded self-test doesn't burn one permanently.
+  if (isFoundingPriceId(priceId)) {
+    const row = await queryOne<{ n: number }>(
+      `SELECT count(*)::int AS n
+       FROM user_subscriptions
+       WHERE is_founding AND status IN ('active', 'past_due', 'trialing')`,
+    );
+    if (foundingSoldOut(row?.n ?? 0)) {
+      return Response.json(
+        { error: `The founding window is closed — all ${FOUNDING_CAP} seats are taken.` },
+        { status: 409 },
+      );
+    }
   }
 
   try {
