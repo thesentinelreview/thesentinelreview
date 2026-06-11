@@ -182,7 +182,7 @@ export default async function PricingPage({
                 width={540}
                 height={80}
                 className={s.mastheadLogo}
-                loading="eager"
+                priority
               />
             </Link>
           </div>
