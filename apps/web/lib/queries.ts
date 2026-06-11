@@ -1,4 +1,10 @@
 import { isDatabaseConfigured, query, queryOne } from "./db";
+import {
+  getRequestEntitlements,
+  tierTimeFloor,
+  clampTimeRangeForFloor,
+  isGatedByFloor,
+} from "./entitlements";
 import type {
   Stats,
   SensorStripData,
@@ -105,6 +111,36 @@ function occurredAtClause(window: TimeRange | "all"): string {
     : `AND e.occurred_at > now() - INTERVAL '${SQL_INTERVALS[window]}'`;
 }
 
+// ---------------------------------------------------------------------------
+// Tier time-clamp chokepoint (W1-2)
+//
+// Every event/post/briefing read in this module routes through these helpers.
+// Watch tier (anonymous, no subscription, or non-qualifying status) is floored
+// to 7 days of events/posts and 24 hours of briefings; analyst+ is unbounded.
+// The clamp lives HERE — in the query layer — so pages, RSC payloads, and API
+// routes cannot leak around it. Per-request memoized (one entitlements query
+// per render) via React cache() inside getRequestEntitlements.
+// ---------------------------------------------------------------------------
+
+async function requestFloors(): Promise<{ event: Date | null; briefing: Date | null }> {
+  const ent = await getRequestEntitlements();
+  return {
+    event: tierTimeFloor(ent.tier, "event"),
+    briefing: tierTimeFloor(ent.tier, "briefing"),
+  };
+}
+
+// Cap a requested aggregate window to the viewer's floor (watch: 30d/all → 7d).
+async function clampedRange(timeRange: TimeRange): Promise<TimeRange> {
+  const { event } = await requestFloors();
+  return clampTimeRangeForFloor(timeRange, event) as TimeRange;
+}
+
+async function clampedWindow<T extends TimeRange | "all">(window: T): Promise<T | "7d"> {
+  const { event } = await requestFloors();
+  return clampTimeRangeForFloor(window, event) as T | "7d";
+}
+
 // Theater id accepted by the tie-out functions: the four real theaters plus
 // "all" (Global), which unions the four bboxes. "all" is opt-in by /admin/tieout
 // only — the watchfloor (/) and feed never pass it, so TheaterKey is unchanged.
@@ -163,6 +199,7 @@ function fmtBriefingUTC(ts: Date): string {
 // ---------------------------------------------------------------------------
 
 export async function getStats(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<Stats> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return { events: 0, strikes: 0, contacts: 0, movements: 0, verified_pct: 0, vs_7d_avg_pct: 0 };
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -246,6 +283,7 @@ export async function getKpiSparklines(
   theater: TheaterKey = "ukraine",
   timeRange: TimeRange = "24h",
 ): Promise<KpiSparklines> {
+  timeRange = await clampedRange(timeRange);
   const empty: KpiSparklines = { events: [], strikes: [], verified: [] };
   if (!isDatabaseConfigured()) return empty;
 
@@ -307,6 +345,7 @@ export async function getKpiDeltas(
   theater: TheaterKey = "ukraine",
   timeRange: TimeRange = "24h",
 ): Promise<KpiDeltas> {
+  timeRange = await clampedRange(timeRange);
   const empty: KpiDeltas = {
     events: 0, eventsPrev: 0, strikes: 0, strikesPrev: 0, verifiedPct: 0, verifiedPrevPct: 0, activeSectors: 0, activeSectorsPrev: 0,
   };
@@ -397,6 +436,7 @@ export async function getFusionCounts(
   theater: TieoutTheater = "ukraine",
   timeRange: TimeRange | "all" = "24h",
 ): Promise<FusionCounts | null> {
+  timeRange = await clampedWindow(timeRange);
   if (!isDatabaseConfigured()) return null;
 
   const pred = theaterPredicate(theater);
@@ -460,6 +500,7 @@ export async function getTieoutRows(
   theater: TieoutTheater = "ukraine",
   window: TieoutWindow = "24h",
 ): Promise<TieoutRow[]> {
+  window = await clampedWindow(window);
   if (!isDatabaseConfigured()) return [];
 
   const pred = theaterPredicate(theater);
@@ -532,6 +573,7 @@ export async function getMedianTTV(
   theater: TheaterKey = "ukraine",
   timeRange: TimeRange = "24h",
 ): Promise<number | null> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return null;
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -649,6 +691,7 @@ export async function getSensorStripData(theater: TheaterKey = "ukraine"): Promi
 // ---------------------------------------------------------------------------
 
 export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<MapEvent[]> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -717,6 +760,7 @@ export async function getMapEvents(theater: TheaterKey = "ukraine", timeRange: T
 // ---------------------------------------------------------------------------
 
 export async function getAlerts(theater: TheaterKey = "ukraine", limit: number | null = 3, timeRange: TimeRange = "24h"): Promise<Alert[]> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -825,6 +869,7 @@ export async function getIntensity(theater: TheaterKey = "ukraine"): Promise<Int
 // ---------------------------------------------------------------------------
 
 export async function getSectors(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h", limit = 6): Promise<Sector[]> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return [];
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -906,6 +951,7 @@ export async function getSectors(theater: TheaterKey = "ukraine", timeRange: Tim
 // parallel path). Only classified events (weapon_type IS NOT NULL) are counted;
 // GROUP BY returns present classes only, so empty axes never render.
 export async function getThreatAxes(theater: TheaterKey = "ukraine", timeRange: TimeRange = "24h"): Promise<ThreatAxes> {
+  timeRange = await clampedRange(timeRange);
   if (!isDatabaseConfigured()) return { rows: [], total: 0 };
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
@@ -1033,16 +1079,21 @@ function rowToBriefing(r: BriefingRow, sourceCount: number): BriefingData {
 export async function getLatestBriefing(theater: TheaterKey = "ukraine"): Promise<BriefingData | null> {
   if (!isDatabaseConfigured()) return null;
 
+  // Briefing floor: watch sees the last 24h of briefings only. When the latest
+  // briefing is older than the floor, watch gets the honest empty state.
+  const { briefing: floor } = await requestFloors();
+
   try {
     const row = await queryOne<BriefingRow>(
       `
       SELECT id::text, draft_text, published_text, status, event_ids::text[], published_at, created_at
       FROM briefings
       WHERE theater = $1
+        AND ($2::timestamptz IS NULL OR COALESCE(published_at, created_at) >= $2::timestamptz)
       ORDER BY created_at DESC
       LIMIT 1
       `,
-      [theater],
+      [theater, floor],
     );
 
     if (!row) return null;
@@ -1083,6 +1134,8 @@ export interface FeedPost {
 export interface FeedPage {
   posts:       FeedPost[];
   next_before: string | null;     // ISO timestamp to pass back as `before`
+  /** True when the viewer's tier time floor bounded this page (watch: 7 days). */
+  clamped:     boolean;
 }
 
 const FEED_PAGE_SIZE = 30;
@@ -1097,7 +1150,10 @@ export async function getSourceFeedPosts(
   theater: TheaterKey = "ukraine",
   opts: FeedFilters = {},
 ): Promise<FeedPage> {
-  if (!isDatabaseConfigured()) return { posts: [], next_before: null };
+  if (!isDatabaseConfigured()) return { posts: [], next_before: null, clamped: false };
+
+  // Post floor: watch never paginates past 7 days of posts (posted_at).
+  const { event: floor } = await requestFloors();
 
   const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[theater];
 
@@ -1143,10 +1199,11 @@ export async function getSourceFeedPosts(
         AND ($5::timestamptz IS NULL OR rp.posted_at < $5::timestamptz)
         AND ($6::text[]      IS NULL OR s.platform   = ANY($6::text[]))
         AND ($7::smallint[]  IS NULL OR s.trust_tier = ANY($7::smallint[]))
+        AND ($8::timestamptz IS NULL OR rp.posted_at >= $8::timestamptz)
       ORDER BY rp.posted_at DESC, rp.id DESC
       LIMIT ${FEED_PAGE_SIZE + 1}
       `,
-      [minLng, minLat, maxLng, maxLat, before, platforms, tiers],
+      [minLng, minLat, maxLng, maxLat, before, platforms, tiers, floor],
     );
 
     const hasMore = rows.length > FEED_PAGE_SIZE;
@@ -1170,9 +1227,10 @@ export async function getSourceFeedPosts(
     return {
       posts,
       next_before: hasMore && last ? last.posted_at.toISOString() : null,
+      clamped: floor !== null,
     };
   } catch {
-    return { posts: [], next_before: null };
+    return { posts: [], next_before: null, clamped: floor !== null };
   }
 }
 
@@ -1188,7 +1246,10 @@ export async function getFirehosePosts(
   theater: TheaterKey = "ukraine",
   opts: FeedFilters = {},
 ): Promise<FeedPage> {
-  if (!isDatabaseConfigured()) return { posts: [], next_before: null };
+  if (!isDatabaseConfigured()) return { posts: [], next_before: null, clamped: false };
+
+  // Post floor: same clamp as getSourceFeedPosts (watch: 7 days of posted_at).
+  const { event: floor } = await requestFloors();
 
   type Row = {
     id:               string;
@@ -1226,10 +1287,11 @@ export async function getFirehosePosts(
         AND ($2::timestamptz IS NULL OR rp.posted_at < $2::timestamptz)
         AND ($3::text[]      IS NULL OR s.platform   = ANY($3::text[]))
         AND ($4::smallint[]  IS NULL OR s.trust_tier = ANY($4::smallint[]))
+        AND ($5::timestamptz IS NULL OR rp.posted_at >= $5::timestamptz)
       ORDER BY rp.posted_at DESC, rp.id DESC
       LIMIT ${FEED_PAGE_SIZE + 1}
       `,
-      [theater, before, platforms, tiers],
+      [theater, before, platforms, tiers, floor],
     );
 
     const hasMore = rows.length > FEED_PAGE_SIZE;
@@ -1253,9 +1315,10 @@ export async function getFirehosePosts(
     return {
       posts,
       next_before: hasMore && last ? last.posted_at.toISOString() : null,
+      clamped: floor !== null,
     };
   } catch {
-    return { posts: [], next_before: null };
+    return { posts: [], next_before: null, clamped: floor !== null };
   }
 }
 
@@ -1318,8 +1381,18 @@ export async function getWatchInfo(
 // Event detail
 // ---------------------------------------------------------------------------
 
-export async function getEventDetail(id: string): Promise<EventDetail | null> {
-  if (!isDatabaseConfigured()) return null;
+// Detail reads return a discriminated result so pages MUST handle the gated
+// state explicitly (upgrade prompt, never a 404 and never leaked data). The
+// "gated" variant carries no record fields — nothing enters the RSC payload.
+export type GatedResult<T> =
+  | { kind: "ok"; data: T }
+  | { kind: "gated" }
+  | { kind: "missing" };
+
+export async function getEventDetail(id: string): Promise<GatedResult<EventDetail>> {
+  if (!isDatabaseConfigured()) return { kind: "missing" };
+
+  const { event: floor } = await requestFloors();
 
   try {
     type EventRow = {
@@ -1363,7 +1436,9 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
       [id],
     );
 
-    if (!evt) return null;
+    if (!evt) return { kind: "missing" };
+    // Gate BEFORE fetching sources/excerpts: a gated event loads nothing else.
+    if (isGatedByFloor(evt.occurred_at, floor)) return { kind: "gated" };
 
     type SourceRow = {
       id: string;
@@ -1420,7 +1495,7 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
       trust_tier: (r.trust_tier as 1 | 2 | 3) ?? 2,
     }));
 
-    return {
+    return { kind: "ok", data: {
       id: evt.id,
       event_type: evt.event_type,
       occurred_at: new Date(evt.occurred_at).toISOString(),
@@ -1446,9 +1521,9 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
             }]
           : []),
       ],
-    };
+    } };
   } catch {
-    return null;
+    return { kind: "missing" };
   }
 }
 
@@ -1456,8 +1531,10 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
 // Full briefing
 // ---------------------------------------------------------------------------
 
-export async function getFullBriefing(id: string): Promise<FullBriefing | null> {
-  if (!isDatabaseConfigured()) return null;
+export async function getFullBriefing(id: string): Promise<GatedResult<FullBriefing>> {
+  if (!isDatabaseConfigured()) return { kind: "missing" };
+
+  const { briefing: floor } = await requestFloors();
 
   try {
     const row = await queryOne<BriefingRow>(
@@ -1469,7 +1546,9 @@ export async function getFullBriefing(id: string): Promise<FullBriefing | null> 
       [id],
     );
 
-    if (!row) return null;
+    if (!row) return { kind: "missing" };
+    // Gate BEFORE deriving text or fetching summaries: nothing else loads.
+    if (isGatedByFloor(row.published_at ?? row.created_at, floor)) return { kind: "gated" };
 
     const text = row.status === "published" && row.published_text ? row.published_text : row.draft_text;
     const fullParagraphs = splitParagraphs(text);
@@ -1504,7 +1583,7 @@ export async function getFullBriefing(id: string): Promise<FullBriefing | null> 
       [row.event_ids],
     );
 
-    return {
+    return { kind: "ok", data: {
       id: row.id,
       date: fmtBriefingDate(new Date(ts)),
       utc_time: fmtBriefingUTC(new Date(ts)),
@@ -1514,9 +1593,9 @@ export async function getFullBriefing(id: string): Promise<FullBriefing | null> 
       full_paragraphs: fullParagraphs,
       referenced_event_ids: row.event_ids,
       confidence_summary,
-    };
+    } };
   } catch {
-    return null;
+    return { kind: "missing" };
   }
 }
 

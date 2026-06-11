@@ -7,6 +7,7 @@ import { ExternalLink, Radio, FileText, MapPin } from "lucide-react";
 import SentinelBrand from "./SentinelBrand";
 import SensorStrip from "./SensorStrip";
 import type { SensorStripData } from "@/lib/types";
+import type { Tier } from "@/lib/entitlements-core";
 
 export interface ControlOption {
   label: string;
@@ -62,6 +63,7 @@ export default function HeaderBar({
   currentView = "watchfloor",
   sensorData,
   isAuthed = false,
+  tier,
 }: {
   theaterLabel: string;
   windowLabel?: string;
@@ -72,6 +74,7 @@ export default function HeaderBar({
   currentView?: "watchfloor" | "feed" | "static";
   sensorData: SensorStripData;
   isAuthed?: boolean;
+  tier?: Tier;
 }) {
   const isFeed = currentView === "feed";
   const isStatic = currentView === "static";
@@ -80,7 +83,7 @@ export default function HeaderBar({
       <div className="px-6 py-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Brand cluster — shared SENTINEL INTELLIGENCE block */}
-          <SentinelBrand />
+          <SentinelBrand tier={tier} />
 
           {/* Right cluster — page links, controls, auth */}
           <div className="flex items-center gap-3 flex-wrap justify-end">

@@ -1,11 +1,12 @@
 import SentinelMark from "./SentinelMark";
+import { tierLabel, type Tier } from "@/lib/entitlements-core";
 
 // Shared brand block — red Sentinel mark + "SENTINEL INTELLIGENCE" wordmark,
-// Beta badge, and Watch Tier label. Rendered identically by the dashboard
-// command bar (HeaderBar) and the content/marketing header (SiteHeader) so the
-// product identity stays in lockstep and can't drift between the two. The Watch
-// Tier label is unconditional (matches HeaderBar's signed-out behaviour).
-export default function SentinelBrand() {
+// Beta badge, and the viewer's tier label (W1-6). Rendered identically by the
+// dashboard command bar (HeaderBar) and the content/marketing header
+// (SiteHeader) so the product identity stays in lockstep and can't drift
+// between the two. Signed-out (no tier prop) renders Watch.
+export default function SentinelBrand({ tier }: { tier?: Tier }) {
   return (
     <div className="flex items-center gap-4 min-w-0">
       <div className="p-2.5 bg-gradient-to-br from-red-500/20 to-red-600/10 rounded-xl border border-red-500/30 shadow-lg shadow-red-500/20 flex-none">
@@ -19,7 +20,7 @@ export default function SentinelBrand() {
           </span>
         </div>
         <div className="mt-0.5 text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
-          Watch Tier
+          {tierLabel(tier)}
         </div>
       </div>
     </div>

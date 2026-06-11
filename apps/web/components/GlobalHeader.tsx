@@ -2,12 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import SiteHeader from "./SiteHeader";
+import type { Tier } from "@/lib/entitlements-core";
 
 // Chrome is split by page type. Operational views render their own integrated
 // chrome — "/" (the watchfloor command bar), /app/* (the feed header), and
 // /embed/* (bare iframe widgets) — so the global SiteHeader is mounted on the
 // content / marketing routes only.
-export default function GlobalHeader({ isAuthed = false }: { isAuthed?: boolean }) {
+export default function GlobalHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tier?: Tier }) {
   const pathname = usePathname() || "/";
   const isOperational =
     pathname === "/" || pathname.startsWith("/app/") || pathname.startsWith("/embed/");
@@ -18,7 +19,7 @@ export default function GlobalHeader({ isAuthed = false }: { isAuthed?: boolean 
   // shells (watchfloor) reset the margin in globals.css.
   return (
     <div className="global-site-header">
-      <SiteHeader isAuthed={isAuthed} />
+      <SiteHeader isAuthed={isAuthed} tier={tier} />
     </div>
   );
 }

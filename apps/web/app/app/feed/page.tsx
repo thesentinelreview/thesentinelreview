@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
+import { getRequestEntitlements } from "@/lib/entitlements";
+import UpgradePrompt from "@/components/ds/UpgradePrompt";
 import PostCard from "@/components/ds/PostCard";
 import Panel from "@/components/ds/Panel";
 import PageShell from "@/components/ds/PageShell";
@@ -102,6 +104,7 @@ export default async function SourceFeedPage({
   const tiers     = parseTiers(params.tiers);
   const before    = params.before;
   const { userId } = await auth();
+  const entitlements = await getRequestEntitlements();
 
   const [page, sensorData] = await Promise.all([
     getSourceFeedPosts(theater.id, { platforms, tiers, before }),
@@ -146,6 +149,7 @@ export default async function SourceFeedPage({
         currentView="feed"
         sensorData={sensorData}
         isAuthed={!!userId}
+        tier={entitlements.tier}
       />
 
       {/* FEED CONTENT — full-bleed, scrolling column built from design-system primitives. */}
@@ -239,6 +243,13 @@ export default async function SourceFeedPage({
                 >
                   Load older posts →
                 </Link>
+              </div>
+            )}
+
+            {/* End of the Watch window: labeled upgrade row, no fake rows. */}
+            {page.clamped && !page.next_before && (
+              <div className="pt-3">
+                <UpgradePrompt kind="feed" compact />
               </div>
             )}
           </>
