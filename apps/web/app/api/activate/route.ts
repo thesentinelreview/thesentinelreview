@@ -58,5 +58,5 @@ export async function GET(req: Request) {
     [userId, session.customer, session.subscription, tier, isFounding, periodEnd],
   );
 
-  redirect("/app?checkout=success");
+  redirect("/account?welcome=1");
 }
