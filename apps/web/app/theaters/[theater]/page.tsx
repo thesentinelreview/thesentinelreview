@@ -8,6 +8,7 @@ import {
   getLatestBriefing,
   getSourceFeedPosts,
 } from "@/lib/queries";
+import { getRequestEntitlements, tierTimeFloor } from "@/lib/entitlements";
 import { groupByDay } from "@/lib/day-groups";
 import { cn } from "@/lib/cn";
 import Panel from "@/components/ds/Panel";
@@ -69,6 +70,11 @@ export default async function TheaterDetailPage({
   if (!isTheaterKey(theater)) notFound();
 
   const view    = rawView === "ai" ? "ai" : "sources";
+  // JC2 (no silent clamp): when the viewer's tier floor is active, the 30d
+  // stat would be computed over 7d — never label it 30d. Render the honest
+  // upsell card instead.
+  const entitlements = await getRequestEntitlements();
+  const floored = tierTimeFloor(entitlements.tier) !== null;
   const cfg     = THEATERS[theater];
   const content = THEATER_CONTENT[theater];
 
@@ -183,10 +189,17 @@ export default async function TheaterDetailPage({
                   <div className="font-data text-2xl font-semibold tabular-nums text-slate-100 leading-none">{stats7d!.events}</div>
                   <div className="text-[10px] font-data tracking-[0.12em] uppercase text-slate-400">Events 7d</div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <div className="font-data text-2xl font-semibold tabular-nums text-slate-100 leading-none">{stats30d!.events}</div>
-                  <div className="text-[10px] font-data tracking-[0.12em] uppercase text-slate-400">Events 30d</div>
-                </div>
+                {floored ? (
+                  <Link href="/pricing" className="flex flex-col gap-1 no-underline group">
+                    <div className="font-data text-2xl font-semibold leading-none text-amber-400/90 group-hover:text-amber-300">—</div>
+                    <div className="text-[10px] font-data tracking-[0.12em] uppercase text-amber-500/80">Events 30d · Analyst</div>
+                  </Link>
+                ) : (
+                  <div className="flex flex-col gap-1">
+                    <div className="font-data text-2xl font-semibold tabular-nums text-slate-100 leading-none">{stats30d!.events}</div>
+                    <div className="text-[10px] font-data tracking-[0.12em] uppercase text-slate-400">Events 30d</div>
+                  </div>
+                )}
                 <div className="flex flex-col gap-1">
                   <div className="font-data text-2xl font-semibold tabular-nums text-slate-100 leading-none">
                     {stats7d!.verified_pct}<span className="text-base text-slate-500">%</span>

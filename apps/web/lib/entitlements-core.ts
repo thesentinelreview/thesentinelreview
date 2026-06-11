@@ -39,6 +39,10 @@ export function deriveEntitlements(
   row: SubscriptionRow | null,
   isAdminUser = false,
 ): Entitlements {
+  // TEMPORARY until W1-4: staff access and customer tier are different
+  // concepts. The real grant mechanism (W1-4 admin) replaces this
+  // allowlist→command mapping, and ADMIN_CLERK_USER_IDS goes back to
+  // meaning admin only.
   if (isAdminUser) {
     return {
       tier: "command",

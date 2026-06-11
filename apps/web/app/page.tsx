@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
-import { getRequestEntitlements } from "@/lib/entitlements";
+import { getRequestEntitlements, clampTimeRangeForFloor, tierTimeFloor } from "@/lib/entitlements";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
@@ -81,7 +81,14 @@ export default async function WatchfloorPage({
   const [params, { userId }] = await Promise.all([searchParams, auth()]);
   const entitlements = await getRequestEntitlements();
   const theater = resolveTheater(params.theater);
-  const timeRange = resolveTimeRange(params.window);
+  // The page-level window must match what the query layer actually computes
+  // over: clamp the URL-requested window to the viewer's floor so the header
+  // label and dropdown never claim a wider window than the data (e.g. a
+  // hand-edited ?window=30d as watch renders — and labels — 7D).
+  const timeRange = clampTimeRangeForFloor(
+    resolveTimeRange(params.window),
+    tierTimeFloor(entitlements.tier),
+  ) as TimeRange;
   const threatView = resolveThreatView(params.threat);
   const feedView = resolveFeedView(params.feed);
 
