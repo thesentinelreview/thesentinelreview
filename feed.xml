@@ -6,17 +6,227 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Jun 2026 18:37:07 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 11 Jun 2026 04:19:15 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
-      <title>🌍 Overnight Attacks Rattle U.S.-Iran Ceasefire | The War Zone</title>
+      <title>📍 Silicon Valley’s Bad Bet on the Gulf | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/persian-gulf/silicon-valleys-bad-bet-gulf</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/persian-gulf/silicon-valleys-bad-bet-gulf</guid>
+      <pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.foreignaffairs.com/persian-gulf/silicon-valleys-bad-bet-gulf">Foreign Affairs</source>
+      <description>Why the AI build-out was doomed from the start.</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 The Real Problem With Global Trade | Foreign Affairs</title>
+      <link>https://www.foreignaffairs.com/china/real-problem-global-trade</link>
+      <guid isPermaLink="true">https://www.foreignaffairs.com/china/real-problem-global-trade</guid>
+      <pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.foreignaffairs.com/china/real-problem-global-trade">Foreign Affairs</source>
+      <description>How China’s currency manipulation is warping the world economy.</description>
+      <sentinel:score>5</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ A national-security asset, filed under ‘finance’ | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/a-national-security-asset-filed-under-finance/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/a-national-security-asset-filed-under-finance/</guid>
+      <pubDate>Thu, 11 Jun 2026 02:12:09 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.aspistrategist.org.au/a-national-security-asset-filed-under-finance/">ASPI Strategist</source>
+      <description>Once just a marketplace, the financial system is now a weapon of statecraft. Australia’s financial regulators hold the data that shows where the country is most exposed. That intelligence is a national-security asset but sits ...</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌏 Xi Jinping’s Visit to Pyongyang: Regional Roundup | 38 North</title>
+      <link>https://www.38north.org/2026/06/tbd-kim-xi-regional-roundup/</link>
+      <guid isPermaLink="true">https://www.38north.org/2026/06/tbd-kim-xi-regional-roundup/</guid>
+      <pubDate>Wed, 10 Jun 2026 23:20:48 +0000</pubDate>
+      <category>Indo-Pacific</category>
+      <source url="https://www.38north.org/2026/06/tbd-kim-xi-regional-roundup/">38 North</source>
+      <description>Stimson experts weigh in on Chinese President Xi Jinping’s June 8-9 visit to North Korea ... The post Xi Jinping’s Visit to Pyongyang: Regional Roundup appeared first on 38 North.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Leading bipartisan lawmakers on how to achieve US energy ‘dominance’ | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/blogs/energysource/leading-bipartisan-lawmakers-on-how-to-achieve-us-energy-dominance/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/energysource/leading-bipartisan-lawmakers-on-how-to-achieve-us-energy-dominance/</guid>
+      <pubDate>Wed, 10 Jun 2026 22:30:45 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.atlanticcouncil.org/blogs/energysource/leading-bipartisan-lawmakers-on-how-to-achieve-us-energy-dominance/">Atlantic Council</source>
+      <description>At the 2026 Global Energy Forum, lawmakers leading the charge on US energy security discussed their efforts and the role that allies can play. The post Leading bipartisan lawmakers on how to achieve US energy ‘dominance’ appeared first on Atlantic Council.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 Europe’s route out of this energy crisis, as mapped by Cyprus and Greece | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/blogs/energysource/europes-route-out-of-this-energy-crisis-as-mapped-by-cyprus-and-greece/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/blogs/energysource/europes-route-out-of-this-energy-crisis-as-mapped-by-cyprus-and-greece/</guid>
+      <pubDate>Wed, 10 Jun 2026 22:28:32 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.atlanticcouncil.org/blogs/energysource/europes-route-out-of-this-energy-crisis-as-mapped-by-cyprus-and-greece/">Atlantic Council</source>
+      <description>At the 2026 Global Energy Forum, Greece&apos;s Stavros Papastavrou and Cyprus’s Michael Damianos outlined how the energy system is reshaping around the Eastern Mediterranean. The post Europe’s route out of this energy crisis, as mapped by Cyprus and Greece appeared first on Atlantic…</description>
+      <sentinel:score>5</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Somalia’s Fragile Government May Be on the Verge of Collapse | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/10/somalia-government-fighting-electoral-system-hassan-sheikh-mohamud/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/somalia-government-fighting-electoral-system-hassan-sheikh-mohamud/</guid>
+      <pubDate>Wed, 10 Jun 2026 21:17:02 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://foreignpolicy.com/2026/06/10/somalia-government-fighting-electoral-system-hassan-sheikh-mohamud/">Foreign Policy</source>
+      <description>After disputes culminated in fighting last week, the country’s political system is in doubt.</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Boeing’s New Larger Ghost Bat Can Carry AIM-120 AMRAAMs Internally | The War Zone</title>
+      <link>https://www.twz.com/air/boeings-new-larger-ghost-bat-can-carry-aim-120-amraams-internally</link>
+      <guid isPermaLink="true">https://www.twz.com/air/boeings-new-larger-ghost-bat-can-carry-aim-120-amraams-internally</guid>
+      <pubDate>Wed, 10 Jun 2026 17:12:34 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.twz.com/air/boeings-new-larger-ghost-bat-can-carry-aim-120-amraams-internally">The War Zone</source>
+      <description>The stealthy Ghost Bat is heading into its third iteration, with larger wings, more power, and internal weapons bays. The post Boeing’s New Larger Ghost Bat Can Carry AIM-120 AMRAAMs Internally appeared first on The War Zone.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Trump Says More Strikes on Iran Are Coming | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/10/trump-us-strikes-iran-apache-helicopter-negotiations/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/trump-us-strikes-iran-apache-helicopter-negotiations/</guid>
+      <pubDate>Wed, 10 Jun 2026 21:10:51 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://foreignpolicy.com/2026/06/10/trump-us-strikes-iran-apache-helicopter-negotiations/">Foreign Policy</source>
+      <description>Tehran will “pay the price” for stalling negotiations, the U.S. president warned.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Increasing defense spending isn’t enough. The US and its allies must also guarantee interoperability. | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/dispatches/increasing-defense-spending-isnt-enough-the-us-and-its-allies-must-also-guarantee-interoperability/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/increasing-defense-spending-isnt-enough-the-us-and-its-allies-must-also-guarantee-interoperability/</guid>
+      <pubDate>Wed, 10 Jun 2026 21:09:45 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.atlanticcouncil.org/dispatches/increasing-defense-spending-isnt-enough-the-us-and-its-allies-must-also-guarantee-interoperability/">Atlantic Council</source>
+      <description>Rising defense spending is creating a generational opportunity. But allied interoperability should be built into these new systems from the start. The post Increasing defense spending isn’t enough. The US and its allies must also guarantee interoperability. appeared first on…</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🏴 The future of NATO’s deterrence in the air domain | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/in-depth-research-reports/report/the-future-of-natos-deterrence-in-the-air-domain/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/in-depth-research-reports/report/the-future-of-natos-deterrence-in-the-air-domain/</guid>
+      <pubDate>Wed, 10 Jun 2026 20:41:28 +0000</pubDate>
+      <category>Europe / NATO</category>
+      <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/the-future-of-natos-deterrence-in-the-air-domain/">Atlantic Council</source>
+      <description>European NATO member states need to prepare to deter, and if necessary, defeat Russia—with less US support. When it comes to airpower, here are the actions European states need to take in the short, medium, and long term. The post The future of NATO’s deterrence in the air…</description>
+      <sentinel:score>8</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Overnight Attacks Rattle U.S.-Iran Ceasefire (Updated) | The War Zone</title>
       <link>https://www.twz.com/news-features/overnight-attacks-rattle-u-s-iran-ceasefire</link>
       <guid isPermaLink="true">https://www.twz.com/news-features/overnight-attacks-rattle-u-s-iran-ceasefire</guid>
-      <pubDate>Wed, 10 Jun 2026 13:53:41 +0000</pubDate>
+      <pubDate>Wed, 10 Jun 2026 16:13:32 +0000</pubDate>
       <category>Middle East</category>
       <source url="https://www.twz.com/news-features/overnight-attacks-rattle-u-s-iran-ceasefire">The War Zone</source>
-      <description>The latest round of tit-for-tat attacks between the U.S. and Iran are among the most severe since a ceasefire was reached on April 8. The post Overnight Attacks Rattle U.S.-Iran Ceasefire appeared first on The War Zone.</description>
+      <description>The latest round of tit-for-tat attacks between the U.S. and Iran are among the most severe since a ceasefire was reached on April 8. The post Overnight Attacks Rattle U.S.-Iran Ceasefire (Updated) appeared first on The War Zone.</description>
       <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>📍 CCA showdown and FCAS fallout, as Berlin Air Show gets underway | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/cca-showdown-and-fcas-fallout-as-berlin-air-show-gets-underway/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/cca-showdown-and-fcas-fallout-as-berlin-air-show-gets-underway/</guid>
+      <pubDate>Wed, 10 Jun 2026 20:12:38 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://breakingdefense.com/2026/06/cca-showdown-and-fcas-fallout-as-berlin-air-show-gets-underway/">Breaking Defense</source>
+      <description>Catch what’s new on the first day of the sprawling defense expo outside the German capital.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 Darwin Dialogue 2026: the conversation is over. It’s time for implementation | ASPI Strategist</title>
+      <link>https://www.aspistrategist.org.au/darwin-dialogue-2026-the-conversation-is-over-its-time-for-implementation/</link>
+      <guid isPermaLink="true">https://www.aspistrategist.org.au/darwin-dialogue-2026-the-conversation-is-over-its-time-for-implementation/</guid>
+      <pubDate>Wed, 10 Jun 2026 20:00:55 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.aspistrategist.org.au/darwin-dialogue-2026-the-conversation-is-over-its-time-for-implementation/">ASPI Strategist</source>
+      <description>Today marks the launch of the Darwin Dialogue 2026 report, From Exposure to Endurance: competitive endurance architecture for high-ESG mineral-specific supply chains. Australia and its partners have spent much of the past decade debating why ...</description>
+      <sentinel:score>6</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 Diagnosing the Israeli-Palestinian Conflict Doesn’t Solve It | Foreign Policy</title>
+      <link>https://foreignpolicy.com/2026/06/10/israel-palestine-review-bartov-abu-sarah-inon/</link>
+      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/israel-palestine-review-bartov-abu-sarah-inon/</guid>
+      <pubDate>Wed, 10 Jun 2026 19:47:18 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://foreignpolicy.com/2026/06/10/israel-palestine-review-bartov-abu-sarah-inon/">Foreign Policy</source>
+      <description>Two new books offer fresh explanations for what went wrong—but little on how to make it go right.</description>
+      <sentinel:score>4</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 ‘They got very lucky,’ Trump says of downed Apache helicopter’s crew | Defense News</title>
+      <link>https://www.defensenews.com/news/pentagon-congress/2026/06/10/they-got-very-lucky-trump-says-of-downed-apache-helicopters-crew/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/pentagon-congress/2026/06/10/they-got-very-lucky-trump-says-of-downed-apache-helicopters-crew/</guid>
+      <pubDate>Wed, 10 Jun 2026 19:31:04 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.defensenews.com/news/pentagon-congress/2026/06/10/they-got-very-lucky-trump-says-of-downed-apache-helicopters-crew/">Defense News</source>
+      <description>After a U.S. Army Apache helicopter was downed by an Iranian drone, President Donald Trump said the rescued aviators “got very lucky.”</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ US Navy stands up naval support activity in Western Australia | Defense News</title>
+      <link>https://www.defensenews.com/news/your-navy/2026/06/10/us-navy-stands-up-naval-support-activity-in-western-australia/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-navy/2026/06/10/us-navy-stands-up-naval-support-activity-in-western-australia/</guid>
+      <pubDate>Wed, 10 Jun 2026 19:06:50 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defensenews.com/news/your-navy/2026/06/10/us-navy-stands-up-naval-support-activity-in-western-australia/">Defense News</source>
+      <description>As part of the AUKUS security pact, NSA Stirling will provide support for personnel assigned to Submarine Rotational Force-West.</description>
+      <sentinel:score>9</sentinel:score>
+    </item>
+    <item>
+      <title>🌍 From a gap to a chasm: Diverging US and Israeli interests in the war with Iran | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/dispatches/from-a-gap-to-a-chasm-diverging-us-and-israeli-interests-in-the-war-with-iran/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/from-a-gap-to-a-chasm-diverging-us-and-israeli-interests-in-the-war-with-iran/</guid>
+      <pubDate>Wed, 10 Jun 2026 19:06:11 +0000</pubDate>
+      <category>Middle East</category>
+      <source url="https://www.atlanticcouncil.org/dispatches/from-a-gap-to-a-chasm-diverging-us-and-israeli-interests-in-the-war-with-iran/">Atlantic Council</source>
+      <description>The once-modest gap between Israeli Prime Minister Benjamin Netanyahu and US President Donald Trump has widened in recent weeks. The post From a gap to a chasm: Diverging US and Israeli interests in the war with Iran appeared first on Atlantic Council.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>🏛️ US Army astronaut tapped for NASA’s Artemis III mission | Defense News</title>
+      <link>https://www.defensenews.com/news/your-military/2026/06/10/us-army-astronaut-tapped-for-nasas-artemis-iii-mission/</link>
+      <guid isPermaLink="true">https://www.defensenews.com/news/your-military/2026/06/10/us-army-astronaut-tapped-for-nasas-artemis-iii-mission/</guid>
+      <pubDate>Wed, 10 Jun 2026 18:54:48 +0000</pubDate>
+      <category>Defense Policy</category>
+      <source url="https://www.defensenews.com/news/your-military/2026/06/10/us-army-astronaut-tapped-for-nasas-artemis-iii-mission/">Defense News</source>
+      <description>The U.S. Army is launching into space again by way of Col. Frank Rubio, who will be part of the 2027 Artemis III mission, NASA announced Tuesday.</description>
+      <sentinel:score>4</sentinel:score>
+    </item>
+    <item>
+      <title>🕵️ Is This Secretive Air Force 737 About To Become NASA’s Next ‘Vomit Comet’? | The War Zone</title>
+      <link>https://www.twz.com/air/is-this-secretive-air-force-737-about-to-become-nasas-next-vomit-comet</link>
+      <guid isPermaLink="true">https://www.twz.com/air/is-this-secretive-air-force-737-about-to-become-nasas-next-vomit-comet</guid>
+      <pubDate>Wed, 10 Jun 2026 14:47:41 +0000</pubDate>
+      <category>Intelligence</category>
+      <source url="https://www.twz.com/air/is-this-secretive-air-force-737-about-to-become-nasas-next-vomit-comet">The War Zone</source>
+      <description>NASA wants to hire a very specialized company to see if a &quot;classified&quot; Air Force 737 could be used as a testbed for low-gravity work. The post Is This Secretive Air Force 737 About To Become NASA’s Next ‘Vomit Comet’? appeared first on The War Zone.</description>
+      <sentinel:score>2</sentinel:score>
+    </item>
+    <item>
+      <title>📍 LeoLab’s new, mobile space-watch radar to participate in Valiant Shield exercise | Breaking Defense</title>
+      <link>https://breakingdefense.com/2026/06/leolabs-new-mobile-space-watch-radar-to-participate-in-valiant-shield-exercise/</link>
+      <guid isPermaLink="true">https://breakingdefense.com/2026/06/leolabs-new-mobile-space-watch-radar-to-participate-in-valiant-shield-exercise/</guid>
+      <pubDate>Wed, 10 Jun 2026 18:42:01 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://breakingdefense.com/2026/06/leolabs-new-mobile-space-watch-radar-to-participate-in-valiant-shield-exercise/">Breaking Defense</source>
+      <description>The new Scout-S radar will remain operational after Valiant Shield ends July 1, and already is contributing data to LeoLab’s space monitoring network, the company said.</description>
+      <sentinel:score>7</sentinel:score>
+    </item>
+    <item>
+      <title>📍 How energy could redefine the US role in the Western Balkans | Atlantic Council</title>
+      <link>https://www.atlanticcouncil.org/dispatches/how-energy-could-redefine-the-us-role-in-the-western-balkans/</link>
+      <guid isPermaLink="true">https://www.atlanticcouncil.org/dispatches/how-energy-could-redefine-the-us-role-in-the-western-balkans/</guid>
+      <pubDate>Wed, 10 Jun 2026 18:34:07 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.atlanticcouncil.org/dispatches/how-energy-could-redefine-the-us-role-in-the-western-balkans/">Atlantic Council</source>
+      <description>A new report from the Trump administration redefines the US goal as effectively being “stability … as a means of pursuing economic cooperation.” The post How energy could redefine the US role in the Western Balkans appeared first on Atlantic Council.</description>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🏛️ Qatari-donated Air Force One now sports red, white and blue paint job | Defense News</title>
@@ -26,7 +236,7 @@
       <category>Defense Policy</category>
       <source url="https://www.defensenews.com/news/your-military/2026/06/10/qatari-donated-air-force-one-now-sports-red-white-and-blue-paint-job/">Defense News</source>
       <description>The interim Air Force One VC-25B Bridge aircraft is undergoing its final modifications ahead of a summer rollout.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>📍 ICEYE, Rheinmetall form German joint venture for space-based ISR | Breaking Defense</title>
@@ -69,6 +279,16 @@
       <sentinel:score>2</sentinel:score>
     </item>
     <item>
+      <title>📍 Litigation Tracker: Legal Challenges to Trump Administration Actions | Just Security</title>
+      <link>https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration</link>
+      <guid isPermaLink="true">https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration</guid>
+      <pubDate>Wed, 10 Jun 2026 16:00:19 +0000</pubDate>
+      <category>National Security</category>
+      <source url="https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=tracker-litigation-legal-challenges-trump-administration">Just Security</source>
+      <description>A public resource tracking all the legal challenges to the Trump administration&apos;s executive orders and actions. The post Litigation Tracker: Legal Challenges to Trump Administration Actions appeared first on Just Security.</description>
+      <sentinel:score>1</sentinel:score>
+    </item>
+    <item>
       <title>📍 House appropriators release $1 trillion defense bill for FY27 | Breaking Defense</title>
       <link>https://breakingdefense.com/2026/06/house-appropriators-release-1-trillion-defense-bill-for-fy27/</link>
       <guid isPermaLink="true">https://breakingdefense.com/2026/06/house-appropriators-release-1-trillion-defense-bill-for-fy27/</guid>
@@ -79,234 +299,14 @@
       <sentinel:score>9</sentinel:score>
     </item>
     <item>
-      <title>📍 What Comes After Global Order | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/10/global-order-china-united-states-ordering/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/global-order-china-united-states-ordering/</guid>
-      <pubDate>Wed, 10 Jun 2026 15:22:49 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/06/10/global-order-china-united-states-ordering/">Foreign Policy</source>
-      <description>Rather than a new international framework, we need a system for moving from one framework to the next.</description>
-      <sentinel:score>5</sentinel:score>
-    </item>
-    <item>
-      <title>🕵️ Drone wingmen face off at Berlin Air Show in race for German CCA | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/drone-wingmen-face-off-at-berlin-air-show-in-race-for-german-cca/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/drone-wingmen-face-off-at-berlin-air-show-in-race-for-german-cca/</guid>
-      <pubDate>Wed, 10 Jun 2026 15:19:45 +0000</pubDate>
+      <title>🕵️ Why the India-Oman CEPA is Special | The Diplomat</title>
+      <link>https://thediplomat.com/2026/06/why-the-india-oman-cepa-is-special/</link>
+      <guid isPermaLink="true">https://thediplomat.com/2026/06/why-the-india-oman-cepa-is-special/</guid>
+      <pubDate>Thu, 11 Jun 2026 00:36:00 +0000</pubDate>
       <category>Intelligence</category>
-      <source url="https://breakingdefense.com/2026/06/drone-wingmen-face-off-at-berlin-air-show-in-race-for-german-cca/">Breaking Defense</source>
-      <description>Several full-sized CCA aircraft or models are on display here, with company officials eager to talk up the latest updates.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Germany welcome in GCAP, but new Leonardo boss warns about timing | Defense News</title>
-      <link>https://www.defensenews.com/global/europe/2026/06/10/germany-welcome-in-gcap-but-new-leonardo-boss-warns-about-timing/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/06/10/germany-welcome-in-gcap-but-new-leonardo-boss-warns-about-timing/</guid>
-      <pubDate>Wed, 10 Jun 2026 15:07:30 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.defensenews.com/global/europe/2026/06/10/germany-welcome-in-gcap-but-new-leonardo-boss-warns-about-timing/">Defense News</source>
-      <description>CEO Lorenzo Mariani said that the advantages of a new partner were extra cash and know-how.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ US-Central African Republic Deportation Agreement Escalates Attack on Immigrants and Puts Lives at Risk | Just Security</title>
-      <link>https://www.justsecurity.org/141830/third-country-deportations-immigrants-risk/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=third-country-deportations-immigrants-risk</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/141830/third-country-deportations-immigrants-risk/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=third-country-deportations-immigrants-risk</guid>
-      <pubDate>Wed, 10 Jun 2026 14:33:05 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://www.justsecurity.org/141830/third-country-deportations-immigrants-risk/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=third-country-deportations-immigrants-risk">Just Security</source>
-      <description>Congress should demand transparency and require the U.S. government to publicly release third-country deportation agreements, including with the Central African Republic. The post US-Central African Republic Deportation Agreement Escalates Attack on Immigrants and Puts Lives at…</description>
-      <sentinel:score>2</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Exporting U.S. Military AI Won’t Be Easy | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/10/military-ai-middle-power-anthropic-pentagon-pax-silica/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/military-ai-middle-power-anthropic-pentagon-pax-silica/</guid>
-      <pubDate>Wed, 10 Jun 2026 13:56:41 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://foreignpolicy.com/2026/06/10/military-ai-middle-power-anthropic-pentagon-pax-silica/">Foreign Policy</source>
-      <description>Middle powers have alternatives, and AI labs have opinions.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 Progressives Should Show Real Solidarity With China | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/10/progressives-china-beijing-labor-protests-chinamaxxing/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/progressives-china-beijing-labor-protests-chinamaxxing/</guid>
-      <pubDate>Wed, 10 Jun 2026 13:50:28 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://foreignpolicy.com/2026/06/10/progressives-china-beijing-labor-protests-chinamaxxing/">Foreign Policy</source>
-      <description>Don’t let Chinamaxxing come at the expense of meaningful engagement with Chinese workers and activists.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Will We Know if AI Takes Over? Q&amp;amp;A with Benjamin Boudreaux | RAND</title>
-      <link>https://www.rand.org/pubs/commentary/2026/06/will-we-know-if-ai-takes-over-qa-with-benjamin-boudreaux.html</link>
-      <guid isPermaLink="true">https://www.rand.org/pubs/commentary/2026/06/will-we-know-if-ai-takes-over-qa-with-benjamin-boudreaux.html</guid>
-      <pubDate>Wed, 10 Jun 2026 13:45:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.rand.org/pubs/commentary/2026/06/will-we-know-if-ai-takes-over-qa-with-benjamin-boudreaux.html">RAND</source>
-      <description>What happens if we off-load our ability to make decisions, to shape the future, to machines? In this Q&amp;A, policy researcher Benjamin Boudreaux discusses how AI could erode human agency over time—and what humans can do to stay in control.</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>🏛️ More F-35s? ‘Fifth-gen-plus’? Germany explores fighter options after FCAS collapse | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/more-f-35s-fifth-gen-plus-germany-explores-fighter-options-after-fcas-collapse/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/more-f-35s-fifth-gen-plus-germany-explores-fighter-options-after-fcas-collapse/</guid>
-      <pubDate>Wed, 10 Jun 2026 13:43:37 +0000</pubDate>
-      <category>Defense Policy</category>
-      <source url="https://breakingdefense.com/2026/06/more-f-35s-fifth-gen-plus-germany-explores-fighter-options-after-fcas-collapse/">Breaking Defense</source>
-      <description>At the Berlin Air Show, Germany’s air force chief said Germany will need to “pick up” a fifth-gen-plus system by 2035.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 German air show opens under shadow of Iran war, fighter project collapse | Defense News</title>
-      <link>https://www.defensenews.com/global/europe/2026/06/10/german-air-show-opens-under-shadow-of-iran-war-fighter-project-collapse/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/europe/2026/06/10/german-air-show-opens-under-shadow-of-iran-war-fighter-project-collapse/</guid>
-      <pubDate>Wed, 10 Jun 2026 13:21:24 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.defensenews.com/global/europe/2026/06/10/german-air-show-opens-under-shadow-of-iran-war-fighter-project-collapse/">Defense News</source>
-      <description>Airbus, which represented Germany and Spain in FCAS, is increasingly looking to Sweden’s Saab as a preferred partner, according to sources.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>📍 A Death in Detention Puts Tajikistan’s Police on Trial | The Diplomat</title>
-      <link>https://thediplomat.com/2026/06/a-death-in-detention-puts-tajikistans-police-on-trial/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/06/a-death-in-detention-puts-tajikistans-police-on-trial/</guid>
-      <pubDate>Wed, 10 Jun 2026 22:18:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://thediplomat.com/2026/06/a-death-in-detention-puts-tajikistans-police-on-trial/">The Diplomat</source>
-      <description>Six Dushanbe officers face a rare prosecution over the death of Maksudjon Saidov in custody but none of them is charged with torture.</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>🏴 From diversification to integration: A market-based LNG coordination mechanism in Europe | Atlantic Council</title>
-      <link>https://www.atlanticcouncil.org/in-depth-research-reports/report/from-diversification-to-integration-a-market-based-lng-coordination-mechanism-in-europe/</link>
-      <guid isPermaLink="true">https://www.atlanticcouncil.org/in-depth-research-reports/report/from-diversification-to-integration-a-market-based-lng-coordination-mechanism-in-europe/</guid>
-      <pubDate>Wed, 10 Jun 2026 13:00:00 +0000</pubDate>
-      <category>Europe / NATO</category>
-      <source url="https://www.atlanticcouncil.org/in-depth-research-reports/report/from-diversification-to-integration-a-market-based-lng-coordination-mechanism-in-europe/">Atlantic Council</source>
-      <description>Europe successfully diversified its LNG supply in a short period, but long-term energy security requires a structural redesign of how European gas markets are organized, priced, and supplied. The post From diversification to integration: A market-based LNG coordination mechanism…</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Rebuilding Trust in Global Biosecurity | RAND</title>
-      <link>https://www.rand.org/pubs/commentary/2026/06/rebuilding-trust-in-global-biosecurity.html</link>
-      <guid isPermaLink="true">https://www.rand.org/pubs/commentary/2026/06/rebuilding-trust-in-global-biosecurity.html</guid>
-      <pubDate>Wed, 10 Jun 2026 13:00:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.rand.org/pubs/commentary/2026/06/rebuilding-trust-in-global-biosecurity.html">RAND</source>
-      <description>Global capacity to sequence a new pathogen or deliver a vaccine is greater than ever. But mounting a coordinated response to future biosecurity threats will require a framework designed with geopolitics in mind.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Combatting AI Coercion and the Unexpected Climate Dividend | Just Security</title>
-      <link>https://www.justsecurity.org/139916/ai-coercion-climate-dividend/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ai-coercion-climate-dividend</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/139916/ai-coercion-climate-dividend/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ai-coercion-climate-dividend</guid>
-      <pubDate>Wed, 10 Jun 2026 12:50:19 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.justsecurity.org/139916/ai-coercion-climate-dividend/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=ai-coercion-climate-dividend">Just Security</source>
-      <description>Globally, AI infrastructure is consolidating faster than governments are moving. Governments need to build resilience through diplomatic initiatives and AI partnerships. The post Combatting AI Coercion and the Unexpected Climate Dividend appeared first on Just Security.</description>
-      <sentinel:score>5</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 The US usually sells weapons to Taiwan – with drones, expect the reverse | Defense News</title>
-      <link>https://www.defensenews.com/global/asia-pacific/2026/06/10/the-us-usually-sells-weapons-to-taiwan-with-drones-expect-the-reverse/</link>
-      <guid isPermaLink="true">https://www.defensenews.com/global/asia-pacific/2026/06/10/the-us-usually-sells-weapons-to-taiwan-with-drones-expect-the-reverse/</guid>
-      <pubDate>Wed, 10 Jun 2026 12:00:22 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://www.defensenews.com/global/asia-pacific/2026/06/10/the-us-usually-sells-weapons-to-taiwan-with-drones-expect-the-reverse/">Defense News</source>
-      <description>Taiwan&apos;s biggest appeal is the lack of China in the manufacturing supply chain, one analyst said.</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🌍 Early Edition: June 10, 2026 | Just Security</title>
-      <link>https://www.justsecurity.org/141921/early-edition-june-10-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-10-2026</link>
-      <guid isPermaLink="true">https://www.justsecurity.org/141921/early-edition-june-10-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-10-2026</guid>
-      <pubDate>Wed, 10 Jun 2026 11:58:06 +0000</pubDate>
-      <category>Middle East</category>
-      <source url="https://www.justsecurity.org/141921/early-edition-june-10-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=early-edition-june-10-2026">Just Security</source>
-      <description>Signup to receive the Early Edition in your inbox here. A curated weekday guide to major news and developments over the last 24 hours. Here’s today’s news: IRAN WAR – CEASEFIRE U.S. forces yesterday launched retaliatory strikes against Iran following the downing of an Army…</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 Ethnic Restaurants and Immigrant Entrepreneurs Facing Crisis Under Japan’s New Visa Rules | The Diplomat</title>
-      <link>https://thediplomat.com/2026/06/ethnic-restaurants-and-immigrant-entrepreneurs-facing-crisis-under-japans-new-visa-rules/</link>
-      <guid isPermaLink="true">https://thediplomat.com/2026/06/ethnic-restaurants-and-immigrant-entrepreneurs-facing-crisis-under-japans-new-visa-rules/</guid>
-      <pubDate>Wed, 10 Jun 2026 20:55:00 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://thediplomat.com/2026/06/ethnic-restaurants-and-immigrant-entrepreneurs-facing-crisis-under-japans-new-visa-rules/">The Diplomat</source>
-      <description>While the government views the new rules as a necessary measure to curb abuse, some observers worry that they may also deter genuine entrepreneurs.</description>
-      <sentinel:score>1</sentinel:score>
-    </item>
-    <item>
-      <title>🕵️ PHOTOS: The sights of Berlin Air Show 2026 on Day 1 | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/photos-the-sights-of-berlin-air-show-2026-on-day-1/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/photos-the-sights-of-berlin-air-show-2026-on-day-1/</guid>
-      <pubDate>Wed, 10 Jun 2026 10:18:15 +0000</pubDate>
-      <category>Intelligence</category>
-      <source url="https://breakingdefense.com/2026/06/photos-the-sights-of-berlin-air-show-2026-on-day-1/">Breaking Defense</source>
-      <description>The Berlin Air Show has officially kicked off, with plenty to see.</description>
-      <sentinel:score>3</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Dusting a Dirt Road: How The United States Can Break the Cycle of Failing Military Infrastructure | War on the Rocks</title>
-      <link>https://warontherocks.com/cogs-of-war/dusting-a-dirt-road-how-the-united-states-can-break-the-cycle-of-failing-military-infrastructure/</link>
-      <guid isPermaLink="true">https://warontherocks.com/cogs-of-war/dusting-a-dirt-road-how-the-united-states-can-break-the-cycle-of-failing-military-infrastructure/</guid>
-      <pubDate>Wed, 10 Jun 2026 08:00:20 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://warontherocks.com/cogs-of-war/dusting-a-dirt-road-how-the-united-states-can-break-the-cycle-of-failing-military-infrastructure/">War on the Rocks</source>
-      <description>Winter Storm Uri ripped through Texas in January 2021. The frigid temperatures froze pipes, which then burst and caused flooding in aging barracks at Fort Hood, many of which were overdue for renovations and had vulnerable mechanical and utility systems. The burst pipes, damaged…</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>🔐 Cascading Failure: The Spanish Navy’s Reserve Squadron and the Tragedy of Unpreparedness | War on the Rocks</title>
-      <link>https://warontherocks.com/cascading-failure-the-spanish-navys-reserve-squadron-and-the-tragedy-of-unpreparedness/</link>
-      <guid isPermaLink="true">https://warontherocks.com/cascading-failure-the-spanish-navys-reserve-squadron-and-the-tragedy-of-unpreparedness/</guid>
-      <pubDate>Wed, 10 Jun 2026 07:30:23 +0000</pubDate>
-      <category>Cyber</category>
-      <source url="https://warontherocks.com/cascading-failure-the-spanish-navys-reserve-squadron-and-the-tragedy-of-unpreparedness/">War on the Rocks</source>
-      <description>It is in long periods of peace that victories and defeats are prepared. Peace is the period for men of government, just as war is for men of action. Without the calm preparation carried out by the former, the courage and energy of the latter are of no use. — Captain First Class…</description>
-      <sentinel:score>7</sentinel:score>
-    </item>
-    <item>
-      <title>📍 Lockheed pitches HIMARS for France, with 18-month timeline offer | Breaking Defense</title>
-      <link>https://breakingdefense.com/2026/06/lockheed-pitches-himars-for-france-with-18-month-timeline-offer/</link>
-      <guid isPermaLink="true">https://breakingdefense.com/2026/06/lockheed-pitches-himars-for-france-with-18-month-timeline-offer/</guid>
-      <pubDate>Wed, 10 Jun 2026 06:15:00 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://breakingdefense.com/2026/06/lockheed-pitches-himars-for-france-with-18-month-timeline-offer/">Breaking Defense</source>
-      <description>France has allocated approximately €600 million ($692 million) to replace its legacy LRU launchers.</description>
-      <sentinel:score>9</sentinel:score>
-    </item>
-    <item>
-      <title>📍 How to lose friends and alienate allies: Trump’s approach to Oman | ASPI Strategist</title>
-      <link>https://www.aspistrategist.org.au/how-to-lose-friends-and-alienate-allies-trumps-approach-to-oman/</link>
-      <guid isPermaLink="true">https://www.aspistrategist.org.au/how-to-lose-friends-and-alienate-allies-trumps-approach-to-oman/</guid>
-      <pubDate>Wed, 10 Jun 2026 05:30:08 +0000</pubDate>
-      <category>National Security</category>
-      <source url="https://www.aspistrategist.org.au/how-to-lose-friends-and-alienate-allies-trumps-approach-to-oman/">ASPI Strategist</source>
-      <description>President Donald Trump’s 27 May threat to ‘blow up’ Oman if it didn’t fall into line was strategically self-defeating. With one off-the-cuff remark, the United States risked damaging the one quiet, trusted channel through which ...</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🛡️ Why Cambodia and Thailand’s Peace Is So Uneasy | Foreign Policy</title>
-      <link>https://foreignpolicy.com/2026/06/10/cambodia-thailand-border-maritime-arbitration/</link>
-      <guid isPermaLink="true">https://foreignpolicy.com/2026/06/10/cambodia-thailand-border-maritime-arbitration/</guid>
-      <pubDate>Wed, 10 Jun 2026 04:01:36 +0000</pubDate>
-      <category>Homeland</category>
-      <source url="https://foreignpolicy.com/2026/06/10/cambodia-thailand-border-maritime-arbitration/">Foreign Policy</source>
-      <description>A step forward in the maritime dispute masks dangers on the land border.</description>
-      <sentinel:score>6</sentinel:score>
-    </item>
-    <item>
-      <title>🌏 The Fault Lines in China’s Power | Foreign Affairs</title>
-      <link>https://www.foreignaffairs.com/china/fault-lines-chinas-power-ratner-danby</link>
-      <guid isPermaLink="true">https://www.foreignaffairs.com/china/fault-lines-chinas-power-ratner-danby</guid>
-      <pubDate>Wed, 10 Jun 2026 00:00:00 +0000</pubDate>
-      <category>Indo-Pacific</category>
-      <source url="https://www.foreignaffairs.com/china/fault-lines-chinas-power-ratner-danby">Foreign Affairs</source>
-      <description>America must build—and use—leverage against Beijing.</description>
-      <sentinel:score>6</sentinel:score>
+      <source url="https://thediplomat.com/2026/06/why-the-india-oman-cepa-is-special/">The Diplomat</source>
+      <description>Much of Oman’s coastline lies outside the Strait of Hormuz. With CEPA kicking in on June 1, India will be looking to benefit from the agreement and Oman’s geography.</description>
+      <sentinel:score>4</sentinel:score>
     </item>
   </channel>
 </rss>
