@@ -1,0 +1,197 @@
+name: Sentinel — DB Backup to R2
+
+# Nightly logical backup: pg_dump (custom format, schema public) of the production
+# Supabase DB, uploaded to the Cloudflare R2 bucket in $R2_BACKUP_BUCKET.
+#
+# Deliberate deviations from this repo's other workflows:
+#   - No actions/checkout and no repo code: the backup must not share failure
+#     modes with the app it insures (a broken ingest package must never take
+#     down backups). The DB-identity preflight is therefore inline, stdlib-only,
+#     preserving sentinel-preflight's safety property.
+#   - First concurrency group in the repo: queue runs, never cancel a backup
+#     mid-upload. Timestamped object keys make overwrites impossible regardless.
+#
+# Retention is handled bucket-side by an R2 lifecycle rule on the `pg/` prefix —
+# this workflow never deletes objects, so its R2 token can stay write-only and a
+# leaked secret cannot destroy backup history.
+#
+# Restore procedure: docs/RESTORE.md (extensions, Supabase roles, and pg_cron
+# schedules are NOT in the dump — the runbook covers all three).
+
+on:
+  schedule:
+    # 02:47 UTC daily. Off :00/:30 (GitHub cron congestion + this repo's ingest
+    # cycle). GitHub schedules are best-effort: ticks may lag or skip silently.
+    - cron: '47 2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sentinel-db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Verify DB target (host + port, no secrets printed)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EXPECTED_DB_HOST_SUBSTRING: ${{ vars.EXPECTED_DB_HOST_SUBSTRING }}
+        run: |
+          python3 - <<'EOF'
+          import os, sys
+          from urllib.parse import urlparse
+          url = os.environ.get("DATABASE_URL", "").strip()
+          if not url:
+              print("DATABASE_URL is not set")
+              sys.exit(1)
+          parsed = urlparse(url)  # .hostname/.port never include credentials
+          host = parsed.hostname or ""
+          expected = os.environ.get("EXPECTED_DB_HOST_SUBSTRING", "").strip() or "supabase.co"
+          if expected not in host:
+              print(f"DB IDENTITY MISMATCH: host {host!r} does not contain {expected!r}")
+              sys.exit(1)
+          if parsed.port == 6543:
+              print("DATABASE_URL uses the transaction-mode pooler (port 6543); "
+                    "pg_dump requires a session-mode connection (port 5432)")
+              sys.exit(1)
+          print(f"db target ok: host={host} port={parsed.port}")
+          EOF
+
+      - name: Verify R2 secrets present (presence + key prefix only)
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BACKUP_BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          for v in R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_ACCOUNT_ID R2_BACKUP_BUCKET; do
+            [ -n "${!v}" ] || { echo "missing secret: $v"; exit 1; }
+          done
+          echo "R2_ACCESS_KEY_ID prefix: ${R2_ACCESS_KEY_ID:0:4}..."
+
+      - name: Install postgresql-client-17 (PGDG)
+        run: |
+          sudo install -d -m 0755 /etc/apt/keyrings
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+            | sudo gpg --dearmor -o /etc/apt/keyrings/pgdg.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          # Scoped update: only the pgdg list — faster, and immune to flake in
+          # the runner image's other preconfigured repos.
+          sudo apt-get update \
+            -o Dir::Etc::sourcelist="sources.list.d/pgdg.list" \
+            -o Dir::Etc::sourceparts="-" \
+            -o APT::Get::List-Cleanup="0"
+          sudo apt-get install -y --no-install-recommends postgresql-client-17
+          /usr/lib/postgresql/17/bin/pg_dump --version
+          /usr/lib/postgresql/17/bin/pg_dump --version | grep -Eq ' 17\.' \
+            || { echo "pg_dump is not major version 17"; exit 1; }
+
+      - name: Compute object key
+        id: key
+        run: |
+          # Key prefix MUST stay `pg/` — the bucket's lifecycle (retention) rule
+          # is scoped to that prefix; keys outside it never expire.
+          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+          YEAR="${STAMP:0:4}"
+          MONTH="${STAMP:4:2}"
+          echo "key=pg/17/${YEAR}/${MONTH}/sentinel_public_${STAMP}.dump" >> "$GITHUB_OUTPUT"
+
+      - name: pg_dump (schema public, custom format)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PGSSLMODE: require
+          PGCONNECT_TIMEOUT: '15'
+        run: |
+          # --no-owner/--no-privileges are intentionally absent: they are no-ops
+          # at dump time for custom-format archives; stripping happens at restore
+          # (see docs/RESTORE.md).
+          /usr/lib/postgresql/17/bin/pg_dump \
+            --dbname="$DATABASE_URL" \
+            --format=custom \
+            --schema=public \
+            --file=backup.dump
+          ls -l backup.dump
+
+      - name: Validate dump before upload
+        run: |
+          /usr/lib/postgresql/17/bin/pg_restore --list backup.dump > toc.txt
+          TABLES=$(grep -c 'TABLE DATA' toc.txt || true)
+          SIZE=$(stat -c%s backup.dump)
+          echo "TOC entries: $(wc -l < toc.txt), TABLE DATA entries: ${TABLES}, bytes: ${SIZE}"
+          [ "$TABLES" -ge 10 ] || { echo "only ${TABLES} TABLE DATA entries — wrong DB or empty dump"; exit 1; }
+          [ "$SIZE" -ge 102400 ] || { echo "dump suspiciously small (${SIZE} bytes)"; exit 1; }
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # aws-cli >= 2.23 sends CRC checksum headers R2 rejects; when_required
+          # restores Content-MD5 on single-part PUTs, which R2 validates.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+          KEY: ${{ steps.key.outputs.key }}
+        run: |
+          # Threshold above the dump size forces a single-part PUT, so R2's ETag
+          # is the object's MD5 — enabling the integrity check in the next step.
+          aws configure set default.s3.multipart_threshold 256MB
+          aws s3 cp backup.dump "s3://${BUCKET}/${KEY}" \
+            --endpoint-url "$R2_ENDPOINT" --only-show-errors
+          echo "uploaded: ${KEY}"
+
+      - name: Verify uploaded object (length + MD5)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+          KEY: ${{ steps.key.outputs.key }}
+        run: |
+          LOCAL_SIZE=$(stat -c%s backup.dump)
+          HEAD=$(aws s3api head-object \
+            --bucket "$BUCKET" --key "$KEY" --endpoint-url "$R2_ENDPOINT" \
+            --query '[ContentLength, ETag]' --output text)
+          REMOTE_SIZE=$(echo "$HEAD" | awk '{print $1}')
+          REMOTE_ETAG=$(echo "$HEAD" | awk '{print $2}' | tr -d '"')
+          echo "local=${LOCAL_SIZE} remote=${REMOTE_SIZE} etag=${REMOTE_ETAG}"
+          [ "$LOCAL_SIZE" = "$REMOTE_SIZE" ] || { echo "SIZE MISMATCH"; exit 1; }
+          if [[ "$REMOTE_ETAG" != *-* ]]; then
+            # Single-part upload: ETag is the object MD5. Multipart ETags contain '-'.
+            LOCAL_MD5=$(md5sum backup.dump | cut -d' ' -f1)
+            [ "$LOCAL_MD5" = "$REMOTE_ETAG" ] || { echo "MD5 MISMATCH"; exit 1; }
+            echo "md5 verified"
+          else
+            echo "multipart upload — md5 check skipped, length verified"
+          fi
+
+  notify-failure:
+    needs: [backup]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          BODY="**Workflow:** Sentinel — DB Backup to R2
+          **Run:** ${RUN_URL}
+          **Time:** $(date -u '+%Y-%m-%d %H:%M UTC')
+
+          Fetch the run logs at the link above, identify the failing step, and push a fix."
+          gh issue create \
+            --repo "$REPO" \
+            --title "pipeline failure: Sentinel — DB Backup to R2 ($(date -u '+%Y-%m-%d %H:%M UTC'))" \
+            --body "$BODY"
