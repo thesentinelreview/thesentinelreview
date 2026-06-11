@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { query } from "@/lib/db";
-import { tierForPriceIds } from "@/lib/stripe";
+import { isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 
 export async function GET(req: Request) {
@@ -41,19 +41,21 @@ export async function GET(req: Request) {
 
   const sub = await stripe.subscriptions.retrieve(session.subscription as string);
   const periodEnd = sub.items.data[0]?.current_period_end ?? null;
+  const isFounding = isFoundingPriceIds(priceIds);
 
   await query(
     `INSERT INTO user_subscriptions
-       (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, status, current_period_end)
-     VALUES ($1, $2, $3, $4, 'active', to_timestamp($5))
+       (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, is_founding, status, current_period_end)
+     VALUES ($1, $2, $3, $4, $5, 'active', to_timestamp($6))
      ON CONFLICT (clerk_user_id) DO UPDATE
        SET stripe_customer_id      = EXCLUDED.stripe_customer_id,
            stripe_subscription_id  = EXCLUDED.stripe_subscription_id,
            tier                    = EXCLUDED.tier,
+           is_founding             = EXCLUDED.is_founding,
            status                  = 'active',
            current_period_end      = EXCLUDED.current_period_end,
            updated_at              = now()`,
-    [userId, session.customer, session.subscription, tier, periodEnd],
+    [userId, session.customer, session.subscription, tier, isFounding, periodEnd],
   );
 
   redirect("/app?checkout=success");

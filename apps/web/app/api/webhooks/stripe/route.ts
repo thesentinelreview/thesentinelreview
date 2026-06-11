@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { execute, query } from "@/lib/db";
-import { tierForPriceIds } from "@/lib/stripe";
+import { isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -54,18 +54,20 @@ export async function POST(req: Request) {
         if (!tier) break;
 
         const periodEnd = sub.items.data[0]?.current_period_end ?? null;
+        const isFounding = isFoundingPriceIds(priceIds);
         await query(
           `INSERT INTO user_subscriptions
-             (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, status, current_period_end)
-           VALUES ($1, $2, $3, $4, 'active', to_timestamp($5))
+             (clerk_user_id, stripe_customer_id, stripe_subscription_id, tier, is_founding, status, current_period_end)
+           VALUES ($1, $2, $3, $4, $5, 'active', to_timestamp($6))
            ON CONFLICT (clerk_user_id) DO UPDATE
              SET stripe_customer_id      = EXCLUDED.stripe_customer_id,
                  stripe_subscription_id  = EXCLUDED.stripe_subscription_id,
                  tier                    = EXCLUDED.tier,
+                 is_founding             = EXCLUDED.is_founding,
                  status                  = 'active',
                  current_period_end      = EXCLUDED.current_period_end,
                  updated_at              = now()`,
-          [clerkUserId, session.customer, session.subscription, tier, periodEnd],
+          [clerkUserId, session.customer, session.subscription, tier, isFounding, periodEnd],
         );
         break;
       }
@@ -83,13 +85,17 @@ export async function POST(req: Request) {
         const tier = tierForPriceIds(priceIds);
 
         if (tier) {
+          // is_founding tracks the live price: a subscriber moved off the
+          // founding price is no longer on the founding rate.
           await query(
             `UPDATE user_subscriptions
-             SET status = $1, current_period_end = to_timestamp($2), tier = $3, updated_at = now()
-             WHERE stripe_subscription_id = $4`,
-            [status, periodEnd, tier, sub.id],
+             SET status = $1, current_period_end = to_timestamp($2), tier = $3,
+                 is_founding = $4, updated_at = now()
+             WHERE stripe_subscription_id = $5`,
+            [status, periodEnd, tier, isFoundingPriceIds(priceIds), sub.id],
           );
         } else {
+          // Unknown price set — can't derive tier or founding; leave both as-is.
           await query(
             `UPDATE user_subscriptions
              SET status = $1, current_period_end = to_timestamp($2), updated_at = now()
@@ -102,6 +108,9 @@ export async function POST(req: Request) {
 
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
+        // is_founding is intentionally NOT cleared here: the cap guard and the
+        // seat counter filter on active statuses, so cancellation frees the
+        // seat while the flag preserves the historical record.
         await query(
           `UPDATE user_subscriptions
            SET status = 'cancelled', tier = 'watch', updated_at = now()
