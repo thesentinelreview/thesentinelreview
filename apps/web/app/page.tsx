@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
+import { getRequestEntitlements } from "@/lib/entitlements";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
 import LiveStream from "@/components/watchfloor/LiveStream";
@@ -78,6 +79,7 @@ export default async function WatchfloorPage({
   }>;
 }) {
   const [params, { userId }] = await Promise.all([searchParams, auth()]);
+  const entitlements = await getRequestEntitlements();
   const theater = resolveTheater(params.theater);
   const timeRange = resolveTimeRange(params.window);
   const threatView = resolveThreatView(params.threat);
@@ -169,6 +171,7 @@ export default async function WatchfloorPage({
   return (
     <div className="watchfloor-root flex-1 min-h-0 flex flex-col bg-slate-950 text-slate-100">
       <HeaderBar
+        tier={entitlements.tier}
         theaterLabel={theater.label}
         windowLabel={WINDOW_LABELS[timeRange]}
         theaterOptions={theaterOptions}

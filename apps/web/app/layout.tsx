@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import DemoBanner from "@/components/DemoBanner";
 import GlobalHeader from "@/components/GlobalHeader";
+import { getRequestEntitlements } from "@/lib/entitlements";
 import { getLiveDataStatus } from "@/lib/queries";
 import "./globals.css";
 
@@ -95,6 +96,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const [dataStatus, { userId }] = await Promise.all([getLiveDataStatus(), auth()]);
+  const entitlements = await getRequestEntitlements();
   return (
     <ClerkProvider>
       <html
@@ -103,7 +105,7 @@ export default async function RootLayout({
       >
         <body className="min-h-full">
           <DemoBanner status={dataStatus} />
-          <GlobalHeader isAuthed={!!userId} />
+          <GlobalHeader isAuthed={!!userId} tier={entitlements.tier} />
           {children}
         </body>
       </html>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
 import { ExternalLink } from 'lucide-react';
 import SentinelBrand from './watchfloor/SentinelBrand';
+import type { Tier } from '@/lib/entitlements-core';
 
 const NAV = [
   { label: 'Map', href: '/' },
@@ -16,7 +17,7 @@ const NAV = [
   { label: 'Pricing', href: '/pricing' },
 ];
 
-export function SiteHeader({ isAuthed = false }: { isAuthed?: boolean }) {
+export function SiteHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tier?: Tier }) {
   const pathname = usePathname() || '/';
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -26,7 +27,7 @@ export function SiteHeader({ isAuthed = false }: { isAuthed?: boolean }) {
       <div className="max-w-[1800px] mx-auto px-6 py-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Brand: shared SENTINEL INTELLIGENCE block — pixel-identical to the dashboard command bar */}
-          <SentinelBrand />
+          <SentinelBrand tier={tier} />
 
           {/* Desktop nav (lg and up) */}
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-1">

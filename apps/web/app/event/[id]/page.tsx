@@ -6,6 +6,7 @@ import { getEventDetail } from "@/lib/queries";
 import { cn } from "@/lib/cn";
 import Panel from "@/components/ds/Panel";
 import Badge from "@/components/ds/Badge";
+import UpgradePrompt from "@/components/ds/UpgradePrompt";
 import { EVENT_TYPE_STYLES, CONFIDENCE_STYLES } from "@/components/ds/tokens";
 
 export const dynamic = "force-dynamic";
@@ -36,9 +37,26 @@ export default async function EventDetailPage({
 }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const theater = resolveTheater(sp.theater);
-  const evt = await getEventDetail(id);
-  if (!evt) notFound();
+  const result = await getEventDetail(id);
+  if (result.kind === "missing") notFound();
 
+  // Behind the viewer's 7-day floor: honest upgrade state, no data, no 404.
+  if (result.kind === "gated") {
+    return (
+      <div className="event-root min-h-screen bg-slate-950 text-slate-100 font-ui">
+        <div className="w-full max-w-3xl mx-auto px-5 py-16 flex flex-col gap-4">
+          <nav className="flex items-center gap-2 text-xs font-data text-slate-500">
+            <Link href={`/?theater=${theater.id}`} className="text-slate-400 hover:text-red-400 transition-colors">← Map</Link>
+            <span className="text-slate-700">/</span>
+            <span className="font-data text-slate-600 truncate">{id.slice(0, 8).toUpperCase()}</span>
+          </nav>
+          <UpgradePrompt kind="event" />
+        </div>
+      </div>
+    );
+  }
+
+  const evt = result.data;
   const et = EVENT_TYPE_STYLES[evt.event_type];
   const cf = CONFIDENCE_STYLES[evt.confidence];
 

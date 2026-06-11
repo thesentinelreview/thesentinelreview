@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getFullBriefing, getEventDetail } from "@/lib/queries";
 import { resolveTheater } from "@/data/theaters";
 import Panel from "@/components/ds/Panel";
+import UpgradePrompt from "@/components/ds/UpgradePrompt";
 import { CONFIDENCE_STYLES, EVENT_TYPE_STYLES } from "@/components/ds/tokens";
 
 export const dynamic = "force-dynamic";
@@ -16,12 +17,32 @@ export default async function BriefingPage({
 }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const theater = resolveTheater(sp.theater);
-  const brief = await getFullBriefing(id);
-  if (!brief) notFound();
+  const result = await getFullBriefing(id);
+  if (result.kind === "missing") notFound();
 
-  const referencedEvents = (
-    await Promise.all(brief.referenced_event_ids.map((eid) => getEventDetail(eid)))
-  ).filter((e): e is NonNullable<typeof e> => e !== null);
+  // Behind the viewer's briefing floor: honest upgrade state, no data, no 404.
+  if (result.kind === "gated") {
+    return (
+      <div className="briefing-root min-h-screen bg-slate-950 text-slate-100 font-ui">
+        <div className="w-full max-w-3xl mx-auto px-5 py-16 flex flex-col gap-6">
+          <nav className="flex items-center gap-2 text-xs font-data text-slate-500">
+            <Link href="/" className="text-slate-400 hover:text-red-400 transition-colors">← Map</Link>
+            <span className="text-slate-700">/</span>
+            <span>Briefings</span>
+          </nav>
+          <UpgradePrompt kind="briefing" />
+        </div>
+      </div>
+    );
+  }
+
+  const brief = result.data;
+
+  const referencedResults = await Promise.all(
+    brief.referenced_event_ids.map((eid) => getEventDetail(eid)),
+  );
+  const referencedEvents = referencedResults.flatMap((r) => (r.kind === "ok" ? [r.data] : []));
+  const gatedReferencedCount = referencedResults.filter((r) => r.kind === "gated").length;
 
   const embedIframe = `<iframe src="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/embed/briefing/${id}" width="100%" height="220" frameborder="0" style="border:none;background:#0c0d10"></iframe>`;
 
@@ -134,6 +155,17 @@ export default async function BriefingPage({
                     <span className="font-mono text-[10px] text-slate-500 shrink-0">{evt.id.slice(0, 8).toUpperCase()}</span>
                   </Link>
                 ))}
+                {gatedReferencedCount > 0 && (
+                  <Link
+                    href="/pricing"
+                    className="flex items-center gap-2.5 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 hover:border-amber-500/50 transition-colors no-underline"
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0 bg-amber-500/60" />
+                    <span className="flex-1 text-sm text-amber-400/90">
+                      {gatedReferencedCount} older event{gatedReferencedCount === 1 ? "" : "s"} — Analyst archive
+                    </span>
+                  </Link>
+                )}
               </div>
             </Panel>
           </div>
