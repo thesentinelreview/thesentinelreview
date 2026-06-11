@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   FOUNDING_CAP,
+  foundingSeatsRemaining,
   foundingSoldOut,
   isFoundingPriceId,
   isFoundingPriceIds,
@@ -25,6 +26,27 @@ describe("founding cap guard decision", () => {
 
   it("empty table — window open", () => {
     expect(foundingSoldOut(0)).toBe(false);
+  });
+});
+
+describe("founding seats remaining (pricing-page counter + window-closed branch)", () => {
+  it("empty table — 250 / 250 remaining (the honest zero state)", () => {
+    expect(foundingSeatsRemaining(0)).toBe(250);
+  });
+
+  it("249 claimed — 1 remaining, window open", () => {
+    expect(foundingSeatsRemaining(249)).toBe(1);
+    expect(foundingSeatsRemaining(249) <= 0).toBe(false);
+  });
+
+  it("250 claimed — 0 remaining, window-closed branch renders", () => {
+    expect(foundingSeatsRemaining(250)).toBe(0);
+    expect(foundingSeatsRemaining(250) <= 0).toBe(true);
+  });
+
+  it("251 claimed (over-cap) — clamps to 0, window stays closed", () => {
+    expect(foundingSeatsRemaining(251)).toBe(0);
+    expect(foundingSeatsRemaining(251) <= 0).toBe(true);
   });
 });
 

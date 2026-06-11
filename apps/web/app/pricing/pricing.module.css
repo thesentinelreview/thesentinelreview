@@ -553,6 +553,15 @@
   flex: 1;
 }
 
+/* Honesty note under a card's feature list (archive scope disclosure). */
+.archiveNote {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.5;
+  margin: -16px 0 24px;
+}
+
 .features li {
   font-size: 14px;
   color: var(--text-dark);

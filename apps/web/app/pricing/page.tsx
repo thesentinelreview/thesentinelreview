@@ -2,20 +2,41 @@ import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getSubscriptionDetails } from "@/lib/auth";
+import { isDatabaseConfigured, queryOne } from "@/lib/db";
+import { FOUNDING_CAP, foundingSeatsRemaining } from "@/lib/stripe";
 import CheckoutButton from "./CheckoutButton";
 import ManageBillingButton from "./ManageBillingButton";
 import s from "./pricing.module.css";
 
+// force-dynamic also keeps the founding counter fresh on every request —
+// the page must never cache a stale seat count.
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Membership — The Sentinel Review",
   description:
-    "Sentinel Review membership tiers. Free conflict monitoring for Ukraine and the Middle East, with Founding Analyst pricing locked in for life.",
+    "Sentinel Review membership tiers. Free conflict monitoring across all active theaters, with Founding Analyst pricing locked in while your subscription stays active.",
 };
 
 const ANALYST_PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_MONTHLY ?? "";
-const ANALYST_PRICE_YEARLY  = process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_YEARLY  ?? "";
+
+// Same status filter as the cap guard in /api/checkout/route.ts — deliberately:
+// the page and the 409 backstop must agree on what occupies a founding seat.
+async function getFoundingClaimedCount(): Promise<number> {
+  if (!isDatabaseConfigured()) return 0;
+  try {
+    const row = await queryOne<{ n: number }>(
+      `SELECT count(*)::int AS n
+       FROM user_subscriptions
+       WHERE is_founding AND status IN ('active', 'past_due', 'trialing')`,
+    );
+    return row?.n ?? 0;
+  } catch {
+    // Fail open to "window still available": the page is marketing copy; the
+    // checkout cap guard is the enforcement point.
+    return 0;
+  }
+}
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString("en-US", {
@@ -40,11 +61,10 @@ const TABLE: TableEntry[] = [
   { type: "group", label: "Content & Briefings" },
   { type: "row", label: "Daily morning briefing (email)",  watch: "check",                    analyst: "check",                    bureau: "check" },
   { type: "row", label: "AI theater briefings",            watch: { detail: "Today only" },   analyst: { detail: "Full history" },  bureau: { detail: "Full history" } },
-  { type: "row", label: "Weekly strategic assessment",     watch: "dash",                     analyst: "check",                    bureau: "check" },
   { type: "row", label: "Custom briefings on request",     watch: "dash",                     analyst: "dash",                     bureau: { detail: "1 / month" } },
 
   { type: "group", label: "Dashboard & Data" },
-  { type: "row", label: "Live dashboard access",           watch: { detail: "Ukraine + ME" }, analyst: { detail: "All theaters" }, bureau: { detail: "All theaters" } },
+  { type: "row", label: "Live dashboard access",           watch: { detail: "All theaters" }, analyst: { detail: "All theaters" }, bureau: { detail: "All theaters" } },
   { type: "row", label: "Event history window",            watch: { detail: "7 days" },       analyst: { detail: "Full archive" }, bureau: { detail: "Full archive" } },
   { type: "row", label: "Verification audit trail",        watch: { detail: "Basic state" },  analyst: "check",                   bureau: { detail: "+ peer flags" } },
   { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Rate-limited" }, bureau: { detail: "Higher limits" } },
@@ -60,11 +80,8 @@ const TABLE: TableEntry[] = [
   { type: "row", label: "Shared workspaces / annotations", watch: "dash",                     analyst: "dash",                     bureau: "check" },
   { type: "row", label: "Admin panel / SSO",               watch: "dash",                     analyst: "dash",                     bureau: { detail: "Admin panel" } },
 
-  { type: "group", label: "Community & Support" },
-  { type: "row", label: "Discord community",               watch: "dash",                     analyst: "check",                    bureau: "check" },
-  { type: "row", label: "Quarterly methodology webinars",  watch: "dash",                     analyst: "check",                    bureau: "check" },
-  { type: "row", label: "Workshops / training",            watch: "dash",                     analyst: "dash",                     bureau: { detail: "1 team workshop/yr" } },
-  { type: "row", label: "Support",                         watch: { detail: "Best-effort" },  analyst: { detail: "Priority email" }, bureau: { detail: "Named contact" } },
+  { type: "group", label: "Support" },
+  { type: "row", label: "Support",                         watch: { detail: "Email" },        analyst: { detail: "Email" },        bureau: { detail: "Named contact" } },
 ];
 
 function Cell({ v }: { v: CellValue }) {
@@ -76,8 +93,8 @@ function Cell({ v }: { v: CellValue }) {
 
 const FAQ_ITEMS = [
   {
-    q: "What does “locked in for life” actually mean?",
-    a: "If you become one of the first 250 Analyst subscribers, your rate stays at $12/month (or $99/year) for as long as your subscription remains active and uninterrupted. If you cancel and resubscribe later, the standard rate applies. We honor the founding rate through any future pricing changes.",
+    q: "What does “locked in” actually mean?",
+    a: "If you become one of the first 250 Analyst subscribers, your rate stays at $5.99/month for as long as your subscription remains active and uninterrupted. If you cancel and resubscribe later, the standard rate ($12/month) applies. We honor the founding rate through any future pricing changes.",
   },
   {
     q: "What’s the difference between The Sentinel Review and the Intel Dashboard?",
@@ -86,10 +103,6 @@ const FAQ_ITEMS = [
   {
     q: "Is this for operational or intelligence use?",
     a: "No. Every event on the dashboard carries an explicit disclaimer: AI-generated analysis. Events sourced from open-source reporting; locations and details unverified. Not for operational use. The Sentinel Review is a research and situational-awareness tool for journalists, analysts, researchers, and informed observers.",
-  },
-  {
-    q: "Are there academic or student discounts?",
-    a: "Yes. Graduate students, faculty, and accredited program researchers with a verifiable .edu email can receive 50% off the Analyst tier at the standard price ($12.50/month). Contact us with your university affiliation.",
   },
   {
     q: "When will Bureau launch?",
@@ -116,6 +129,10 @@ export default async function PricingPage({
   const tier         = sub?.status === "active" ? sub.tier : null;
   const hasAnalyst   = tier === "analyst" || tier === "bureau";
   const dateStr      = fmtDate(new Date());
+
+  const claimedSeats   = await getFoundingClaimedCount();
+  const seatsRemaining = foundingSeatsRemaining(claimedSeats);
+  const windowClosed   = seatsRemaining <= 0;
 
   return (
     <div className={s.page}>
@@ -171,7 +188,7 @@ export default async function PricingPage({
           </div>
           <div className={`${s.mastheadAside} ${s.mastheadAsideRight}`}>
             <div className={s.asideLabel}>Membership</div>
-            <div className={s.asideValue}>FOUNDING WINDOW</div>
+            <div className={s.asideValue}>{windowClosed ? "STANDARD RATE" : "FOUNDING WINDOW"}</div>
           </div>
         </div>
       </header>
@@ -203,24 +220,34 @@ export default async function PricingPage({
             Choose Your <span className={s.heroAccent}>Vantage Point</span>
           </h1>
           <p className={s.heroLead}>
-            Free conflict monitoring for Ukraine and the Middle East. Working analyst tools for
+            Free conflict monitoring across all active theaters. Working analyst tools for
             individuals. Team and enterprise tiers arriving as we grow.
           </p>
         </section>
 
-        {/* Founding banner */}
-        <div className={s.foundingBanner}>
-          <span className={s.foundingBadge}>Founding Members</span>
-          <div className={s.foundingText}>
-            The first <strong>250 Analyst subscribers</strong> lock in{" "}
-            <strong>$12/mo</strong> for as long as their subscription stays active. After the
-            founding window, Analyst is $25/mo.
+        {/* Founding banner — live seat count; window-closed state at zero */}
+        {windowClosed ? (
+          <div className={s.foundingBanner}>
+            <span className={s.foundingBadge}>Founding Window Closed</span>
+            <div className={s.foundingText}>
+              All <strong>{FOUNDING_CAP} founding seats</strong> are taken. Analyst is{" "}
+              <strong>$12/mo</strong>.
+            </div>
           </div>
-          <div className={s.foundingCounter}>
-            <span className={s.foundingCount}>247 / 250</span>
-            Spots remaining
+        ) : (
+          <div className={s.foundingBanner}>
+            <span className={s.foundingBadge}>Founding Members</span>
+            <div className={s.foundingText}>
+              The first <strong>{FOUNDING_CAP} Analyst subscribers</strong> lock in{" "}
+              <strong>$5.99/mo</strong> for as long as their subscription stays active. After the
+              founding window, Analyst is $12/mo.
+            </div>
+            <div className={s.foundingCounter}>
+              <span className={s.foundingCount}>{seatsRemaining} / {FOUNDING_CAP}</span>
+              Spots remaining
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ── Pricing grid ──────────────────────────────────────── */}
         <div className={s.grid}>
@@ -242,11 +269,11 @@ export default async function PricingPage({
             </div>
             <ul className={s.features}>
               <li>Daily morning briefing by email</li>
-              <li>Live dashboard: Ukraine + Middle East</li>
+              <li>Live dashboard: all active theaters</li>
               <li>7-day rolling event window</li>
               <li>Today&rsquo;s AI theater briefing</li>
               <li>The Sentinel methodology white paper</li>
-              <li>Best-effort email support</li>
+              <li>Email support</li>
             </ul>
             <div className={s.cardActions}>
               {userId ? (
@@ -259,15 +286,28 @@ export default async function PricingPage({
 
           {/* Analyst (featured) */}
           <div className={`${s.card} ${s.cardFeatured}`}>
-            <span className={s.cardTag}>Founding Tier</span>
+            <span className={s.cardTag}>{windowClosed ? "Standard Rate" : "Founding Tier"}</span>
             <div className={s.tierLabel}>Tier 02</div>
             <div className={s.tierName}>Analyst</div>
-            <div className={s.tierPrice}>
-              <span className={s.priceCurrency}>$</span>12
-              <span className={s.priceUnit}> / month</span>
-            </div>
-            <div className={s.priceSecondary}>OR $99 / YEAR · LOCKED IN</div>
-            <div className={s.priceStrike}>Standard: <s>$25/mo · $249/yr</s></div>
+            {windowClosed ? (
+              <>
+                <div className={s.tierPrice}>
+                  <span className={s.priceCurrency}>$</span>12
+                  <span className={s.priceUnit}> / month</span>
+                </div>
+                <div className={s.priceSecondary}>MONTHLY · CANCEL ANYTIME</div>
+                <div className={s.priceStrike}>&nbsp;</div>
+              </>
+            ) : (
+              <>
+                <div className={s.tierPrice}>
+                  <span className={s.priceCurrency}>$</span>5.99
+                  <span className={s.priceUnit}> / month</span>
+                </div>
+                <div className={s.priceSecondary}>FOUNDING RATE · LOCKED IN</div>
+                <div className={s.priceStrike}>Standard: <s>$12/mo</s></div>
+              </>
+            )}
             {hasAnalyst && sub?.current_period_end && (
               <div className={s.renewalNote}>
                 {sub.status === "active" ? "Renews" : "Access until"}{" "}
@@ -283,17 +323,16 @@ export default async function PricingPage({
             </div>
             <ul className={s.features}>
               <li className={s.everything}>Everything in Watch, plus:</li>
-              <li>All theaters (Indo-Pacific, Africa, more coming)</li>
               <li>Full event history — queryable archive</li>
               <li>Custom alerts: topic, theater, geofence, threshold</li>
-              <li>Weekly strategic assessment from the editor</li>
               <li>CSV / JSON data exports</li>
-              <li>Read API access (1,000 calls/day)</li>
+              <li>Analytics API — intensity, trends, source stats</li>
               <li>Embeddable widget for personal use</li>
-              <li>Quarterly methodology webinars</li>
-              <li>Discord community access</li>
-              <li>Priority email support</li>
             </ul>
+            <div className={s.archiveNote}>
+              The archive contains everything we ingest, confidence-labeled — not everything
+              verified.
+            </div>
             <div className={s.cardActions}>
               {hasAnalyst ? (
                 <>
@@ -307,22 +346,15 @@ export default async function PricingPage({
                   Create Account to Subscribe
                 </Link>
               ) : ANALYST_PRICE_MONTHLY ? (
-                <>
-                  <CheckoutButton
-                    priceId={ANALYST_PRICE_MONTHLY}
-                    className={`${s.tierCta} ${s.tierCtaPrimary}`}
-                  >
-                    Claim Founding Analyst
-                  </CheckoutButton>
-                  {ANALYST_PRICE_YEARLY && (
-                    <CheckoutButton priceId={ANALYST_PRICE_YEARLY} className={s.tierCta}>
-                      Subscribe Yearly — $99/yr (save 31%)
-                    </CheckoutButton>
-                  )}
-                </>
+                <CheckoutButton
+                  priceId={ANALYST_PRICE_MONTHLY}
+                  className={`${s.tierCta} ${s.tierCtaPrimary}`}
+                >
+                  {windowClosed ? "Subscribe to Analyst — $12/mo" : "Claim Founding Analyst"}
+                </CheckoutButton>
               ) : (
                 <Link href="/#newsletter" className={`${s.tierCta} ${s.tierCtaPrimary}`}>
-                  Claim Founding Analyst
+                  {windowClosed ? "Subscribe to Analyst" : "Claim Founding Analyst"}
                 </Link>
               )}
             </div>
@@ -334,10 +366,10 @@ export default async function PricingPage({
             <div className={s.tierLabel}>Tier 03</div>
             <div className={s.tierName}>Bureau</div>
             <div className={s.tierPrice}>
-              <span className={s.priceCurrency}>$</span>129
+              <span className={s.priceCurrency}>$</span>199
               <span className={s.priceUnit}> / month</span>
             </div>
-            <div className={s.priceSecondary}>UP TO 10 SEATS · FROM $129/MO</div>
+            <div className={s.priceSecondary}>UP TO 10 SEATS · FROM $199/MO</div>
             <div className={s.priceStrike}>&nbsp;</div>
             <div className={s.tierDesc}>
               For newsrooms, NGO security teams, and small consultancies. Shared workspaces,
@@ -352,8 +384,7 @@ export default async function PricingPage({
               <li>Webhook support</li>
               <li>Newsroom embed license (unlimited widgets)</li>
               <li>1 custom briefing per month</li>
-              <li>Named support contact + monthly office hours</li>
-              <li>1 private team workshop per year</li>
+              <li>Named support contact</li>
             </ul>
             <div className={s.cardActions}>
               <a
@@ -380,8 +411,8 @@ export default async function PricingPage({
                 <tr>
                   <th>Feature</th>
                   <th>Watch<span className={s.priceMini}>Free</span></th>
-                  <th>Analyst<span className={s.priceMini}>$12/mo founding</span></th>
-                  <th>Bureau<span className={s.priceMini}>$129+/mo · coming</span></th>
+                  <th>Analyst<span className={s.priceMini}>{windowClosed ? "$12/mo" : "$5.99/mo founding"}</span></th>
+                  <th>Bureau<span className={s.priceMini}>$199+/mo · coming</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -423,13 +454,26 @@ export default async function PricingPage({
 
       {/* ── Final CTA ─────────────────────────────────────────────── */}
       <section className={s.finalCta}>
-        <div className={s.finalCtaEyebrow}>Limited Founding Window</div>
+        <div className={s.finalCtaEyebrow}>
+          {windowClosed ? "Membership" : "Limited Founding Window"}
+        </div>
         <h2 className={s.finalCtaTitle}>
           Start with <span className={s.finalCtaAccent}>Watch</span>. Upgrade when you&rsquo;re ready.
         </h2>
         <p className={s.finalCtaP}>
-          Subscribe to the free morning briefing — no credit card, no friction. If the dashboard
-          becomes part of how you work, claim your founding Analyst rate before the 250 spots are gone.
+          {windowClosed ? (
+            <>
+              Subscribe to the free morning briefing — no credit card, no friction. If the
+              dashboard becomes part of how you work, Analyst is $12/mo, cancel anytime.
+            </>
+          ) : (
+            <>
+              Subscribe to the free morning briefing — no credit card, no friction. If the
+              dashboard becomes part of how you work, claim your founding Analyst rate —
+              $5.99/mo for as long as your subscription stays active — before the{" "}
+              {FOUNDING_CAP} spots are gone.
+            </>
+          )}
         </p>
         <div className={s.finalCtaButtons}>
           {userId ? (
@@ -441,10 +485,12 @@ export default async function PricingPage({
             <Link href="/app" className={s.btnSecondary}>Go to Dashboard →</Link>
           ) : ANALYST_PRICE_MONTHLY ? (
             <CheckoutButton priceId={ANALYST_PRICE_MONTHLY} className={s.btnSecondary}>
-              Claim Founding Analyst →
+              {windowClosed ? "Subscribe to Analyst →" : "Claim Founding Analyst →"}
             </CheckoutButton>
           ) : (
-            <Link href="/#newsletter" className={s.btnSecondary}>Claim Founding Analyst →</Link>
+            <Link href="/#newsletter" className={s.btnSecondary}>
+              {windowClosed ? "Subscribe to Analyst →" : "Claim Founding Analyst →"}
+            </Link>
           )}
         </div>
       </section>
