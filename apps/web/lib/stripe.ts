@@ -51,6 +51,10 @@ export function isFoundingPriceIds(priceIds: readonly string[]): boolean {
   return priceIds.some((id) => isFoundingPriceId(id));
 }
 
+export function foundingSeatsRemaining(claimedSeats: number): number {
+  return Math.max(0, FOUNDING_CAP - claimedSeats);
+}
+
 export function foundingSoldOut(claimedSeats: number): boolean {
   return claimedSeats >= FOUNDING_CAP;
 }

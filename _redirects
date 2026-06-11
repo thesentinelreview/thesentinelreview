@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects.
+# Pricing now has a single source of truth: the dashboard. pricing.html was
+# deleted in the same change that added these rules (PR: W1-5).
+/pricing       https://dashboard.thesentinelreview.com/pricing  301
+/pricing.html  https://dashboard.thesentinelreview.com/pricing  301
+/pricing/      https://dashboard.thesentinelreview.com/pricing  301
