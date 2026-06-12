@@ -9,7 +9,9 @@ import { NextResponse } from "next/server";
 // NOTE: this protects /api/admin/* as "signed in" only. A reintroduced admin
 // route must add its own admin-role check on top of this baseline.
 const isApiRoute = createRouteMatcher(["/api/(.*)"]);
-const isPublicApiRoute = createRouteMatcher(["/api/webhooks/stripe(.*)"]);
+// Stripe authenticates by request signature; /api/v1 authenticates by bearer
+// API key inside the handler (lib/api-v1) — neither carries a Clerk session.
+const isPublicApiRoute = createRouteMatcher(["/api/webhooks/stripe(.*)", "/api/v1/(.*)"]);
 
 // The analyst area under /app requires sign-in, except the Source Feed, which
 // is free in beta (Watch tier) even though it lives under /app/.
