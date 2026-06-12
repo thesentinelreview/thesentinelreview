@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { ExternalLink, Radio, FileText, MapPin, Shield } from "lucide-react";
 import SentinelBrand from "./SentinelBrand";
@@ -65,6 +65,7 @@ export default function HeaderBar({
   isAuthed = false,
   tier,
   showAdmin = false,
+  exportControl,
 }: {
   theaterLabel: string;
   windowLabel?: string;
@@ -78,6 +79,9 @@ export default function HeaderBar({
   tier?: Tier;
   /** isAdmin() allowlist result, resolved server-side by the page. */
   showAdmin?: boolean;
+  /** Export control slot (W2-2) — the page passes it only for canExport
+   * viewers, so watch/anonymous never render it. */
+  exportControl?: ReactNode;
 }) {
   const isFeed = currentView === "feed";
   const isStatic = currentView === "static";
@@ -169,6 +173,7 @@ export default function HeaderBar({
                   <HeaderDropdown srLabel="Select time window" current={windowLabel} options={windowOptions} />
                 </>
               )}
+              {exportControl}
             </div>
 
             <a

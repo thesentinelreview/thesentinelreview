@@ -223,6 +223,10 @@ export default async function AccountPage({
                 Read API — 1,000 calls/day on Analyst. Keys are shown once at creation; only a
                 hash is stored. Docs: <Link className="text-amber-400 hover:text-amber-300" href="/docs/api">/docs/api</Link>
               </p>
+              <p className="text-sm text-slate-400">
+                Dashboard exports (CSV / JSON) — 20 per UTC day, 10,000 rows per file, metered
+                separately from API calls.
+              </p>
               <ApiKeyManager keys={apiKeys} />
             </>
           ) : (
