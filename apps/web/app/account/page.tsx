@@ -8,6 +8,8 @@ import { cleanEnv } from "@/lib/stripe";
 import { deriveAccountState, welcomeMessage, type AccountRow } from "@/lib/account";
 import Panel from "@/components/ds/Panel";
 import ManageBillingButton from "@/app/pricing/ManageBillingButton";
+import ApiKeyManager, { type ApiKeyListItem } from "./ApiKeyManager";
+import { query } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +51,28 @@ async function liveRenewalDate(stripeSubscriptionId: string, fallback: Date | nu
 }
 
 // Same status filter as the checkout cap guard and the pricing counter.
+async function getApiKeys(clerkUserId: string): Promise<ApiKeyListItem[]> {
+  if (!isDatabaseConfigured()) return [];
+  try {
+    const rows = await query<{
+      id: string; name: string; key_prefix: string;
+      created_at: Date; last_used_at: Date | null; revoked_at: Date | null;
+    }>(
+      `SELECT id::text, name, key_prefix, created_at, last_used_at, revoked_at
+       FROM api_keys WHERE clerk_user_id = $1 ORDER BY created_at DESC`,
+      [clerkUserId],
+    );
+    return rows.map((r) => ({
+      id: r.id, name: r.name, key_prefix: r.key_prefix,
+      created_at: new Date(r.created_at).toISOString(),
+      last_used_at: r.last_used_at ? new Date(r.last_used_at).toISOString() : null,
+      revoked_at: r.revoked_at ? new Date(r.revoked_at).toISOString() : null,
+    }));
+  } catch {
+    return []; // pre-migration deploy: render an empty list, creation still guarded
+  }
+}
+
 async function foundingClaimedCount(): Promise<number> {
   if (!isDatabaseConfigured()) return 0;
   try {
@@ -77,6 +101,7 @@ export default async function AccountPage({
     getAccountRow(userId),
     getEntitlementsForUser(userId),
   ]);
+  const apiKeys = entitlements.canUseApi ? await getApiKeys(userId) : [];
 
   const email = user?.primaryEmailAddress?.emailAddress ?? user?.emailAddresses?.[0]?.emailAddress ?? null;
 
@@ -188,6 +213,34 @@ export default async function AccountPage({
               </Link>
             )}
           </div>
+        </Panel>
+
+        <Panel padding="md" className="flex flex-col gap-3">
+          <div className={LABEL}>API</div>
+          {entitlements.canUseApi ? (
+            <>
+              <p className="text-sm text-slate-400">
+                Read API — 1,000 calls/day on Analyst. Keys are shown once at creation; only a
+                hash is stored. Docs: <Link className="text-amber-400 hover:text-amber-300" href="/docs/api">/docs/api</Link>
+              </p>
+              <ApiKeyManager keys={apiKeys} />
+            </>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-slate-400">
+                The read API (events, briefings, analytics — 1,000 calls/day) is an Analyst
+                feature.
+              </p>
+              <div>
+                <Link
+                  href="/pricing"
+                  className="inline-block px-4 py-2 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 text-sm font-semibold uppercase tracking-wider hover:bg-amber-500/20"
+                >
+                  See Analyst pricing →
+                </Link>
+              </div>
+            </div>
+          )}
         </Panel>
 
         <div className="text-xs font-data text-slate-500">
