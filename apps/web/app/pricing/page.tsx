@@ -67,7 +67,7 @@ const TABLE: TableEntry[] = [
   { type: "row", label: "Live dashboard access",           watch: { detail: "All theaters" }, analyst: { detail: "All theaters" }, bureau: { detail: "All theaters" } },
   { type: "row", label: "Event history window",            watch: { detail: "7 days" },       analyst: { detail: "Full archive" }, bureau: { detail: "Full archive" } },
   { type: "row", label: "Verification audit trail",        watch: { detail: "Basic state" },  analyst: "check",                   bureau: { detail: "+ peer flags" } },
-  { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Rate-limited" }, bureau: { detail: "Higher limits" } },
+  { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Coming soon" },  bureau: { detail: "Higher limits" } },
 
   { type: "group", label: "Alerts & Integrations" },
   { type: "row", label: "Watchpoint alerts",               watch: "dash",                     analyst: { detail: "Coming soon" },  bureau: { detail: "Coming soon" } },
@@ -325,7 +325,7 @@ export default async function PricingPage({
               <li className={s.everything}>Everything in Watch, plus:</li>
               <li>Full event history — queryable archive</li>
               <li>Watchpoint alerts (coming soon)</li>
-              <li>CSV / JSON data exports</li>
+              <li>CSV / JSON exports (coming soon)</li>
               <li>Analytics API — intensity, trends, source stats</li>
               <li>Embeddable widget for personal use</li>
             </ul>
