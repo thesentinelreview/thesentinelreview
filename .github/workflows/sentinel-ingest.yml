@@ -69,6 +69,28 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: sentinel-run-checks
 
+      - name: Record ingest heartbeat
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Watchdog beat (migration 0034): the in-DB sentinel-watchdog pg_cron
+          # job files a GitHub issue if these beats stop for 75+ minutes —
+          # detection of GitHub-scheduler silences that doesn't live on
+          # GitHub's scheduler. Last step on purpose: a beat means the whole
+          # tick worked (a failed run pages via notify-failure instead). The
+          # table is guaranteed here: "Apply pending migrations" above ran
+          # 0034 before this step on the very first post-merge tick.
+          python3 - <<'EOF'
+          import os, psycopg
+          with psycopg.connect(os.environ["DATABASE_URL"]) as conn:
+              conn.execute(
+                  "INSERT INTO pipeline_heartbeats (kind, beat_at) "
+                  "VALUES ('ingest', now()) "
+                  "ON CONFLICT (kind) DO UPDATE SET beat_at = now()"
+              )
+          print("ingest heartbeat recorded")
+          EOF
+
   notify-failure:
     needs: [ingest]
     if: failure()
