@@ -27,8 +27,8 @@ describe("tierTimeFloor per persona", () => {
     expect(WATCH_BRIEFING_FLOOR_HOURS).toBe(24);
   });
 
-  it("analyst, bureau, command — unbounded", () => {
-    for (const tier of ["analyst", "bureau", "command"] as const) {
+  it("analyst, bureau, admin — unbounded", () => {
+    for (const tier of ["analyst", "bureau", "admin"] as const) {
       expect(tierTimeFloor(tier, "event")).toBeNull();
       expect(tierTimeFloor(tier, "briefing")).toBeNull();
     }
@@ -77,7 +77,7 @@ describe("entitlements fallbacks", () => {
 
   it("precedence: active grant beats subscription beats watch", () => {
     // grant only
-    expect(deriveEntitlements(null, "command").tier).toBe("command");
+    expect(deriveEntitlements(null, "admin").tier).toBe("admin");
     // grant beats an active subscription
     expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, "bureau").tier).toBe("bureau");
     // subscription when no grant
@@ -94,8 +94,8 @@ describe("entitlements fallbacks", () => {
   });
 
   it("granted user keeps founding/status passthrough from their row", () => {
-    const e = deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, "command");
-    expect(e.tier).toBe("command");
+    const e = deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, "admin");
+    expect(e.tier).toBe("admin");
     expect(e.isFounding).toBe(true);
     expect(e.status).toBe("active");
   });
@@ -103,6 +103,14 @@ describe("entitlements fallbacks", () => {
   it("unknown grant tier fails closed to the subscription path", () => {
     expect(deriveEntitlements(null, "vip").tier).toBe("watch");
     expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: false }, "vip").tier).toBe("analyst");
+  });
+
+  it("0033 transitional alias: a 'command' grant row reads as admin until the migration ticks", () => {
+    const e = deriveEntitlements(null, "command");
+    expect(e.tier).toBe("admin");
+    expect(e.canExport).toBe(true);
+    expect(e.canUseApi).toBe(true);
+    expect(e.canCreateAlerts).toBe(true);
   });
 });
 
@@ -136,7 +144,7 @@ describe("tier badge mapping (W1-6)", () => {
     expect(tierLabel("watch")).toBe("Watch Tier");
     expect(tierLabel("analyst")).toBe("Analyst Tier");
     expect(tierLabel("bureau")).toBe("Bureau Tier");
-    expect(tierLabel("command")).toBe("Command Tier");
+    expect(tierLabel("admin")).toBe("Admin Tier");
     expect(tierLabel(null)).toBe("Watch Tier");
     expect(tierLabel(undefined)).toBe("Watch Tier");
   });

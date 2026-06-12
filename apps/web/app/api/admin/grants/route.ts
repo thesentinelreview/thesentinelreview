@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@/lib/auth";
 import { query } from "@/lib/db";
 
-const GRANTABLE_TIERS = new Set(["analyst", "bureau", "command"]);
+const GRANTABLE_TIERS = new Set(["analyst", "bureau", "admin"]);
 
 // Admin-only writes for tier grants. proxy.ts guarantees a signed-in session
 // on /api/*; the admin allowlist check is enforced here (access, not tier).

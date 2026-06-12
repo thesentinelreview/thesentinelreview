@@ -8,11 +8,11 @@ export const KEY_PREFIX_DISPLAY_CHARS = 12;
 
 /** Per-UTC-day call limits. Tier re-derived live per request — never baked
  * into the key. bureau is pre-wired but unreachable until the tier exists;
- * command (staff) gets the bureau ceiling. */
+ * admin (staff) gets the bureau ceiling. */
 export const API_DAILY_LIMITS: Partial<Record<Tier, number>> = {
   analyst: 1_000,
   bureau: 25_000,
-  command: 25_000,
+  admin: 25_000,
 };
 
 export function generateApiKey(): { key: string; hash: string; prefix: string } {

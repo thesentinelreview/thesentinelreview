@@ -2,7 +2,7 @@
 // Server wiring (Clerk auth + DB read + per-request memoization) lives in
 // ./entitlements.ts, which re-exports everything here.
 
-export type Tier = "watch" | "analyst" | "bureau" | "command";
+export type Tier = "watch" | "analyst" | "bureau" | "admin";
 
 export interface Entitlements {
   tier:            Tier;
@@ -21,7 +21,7 @@ export interface SubscriptionRow {
   is_founding: boolean;
 }
 
-const PAID_TIERS: ReadonlySet<string> = new Set(["analyst", "bureau", "command"]);
+const PAID_TIERS: ReadonlySet<string> = new Set(["analyst", "bureau", "admin"]);
 
 export const WATCH_EVENT_FLOOR_HOURS = 7 * 24;
 export const WATCH_BRIEFING_FLOOR_HOURS = 24;
@@ -39,6 +39,11 @@ export function deriveEntitlements(
   row: SubscriptionRow | null,
   grantTier: string | null = null,
 ): Entitlements {
+  // Transitional read alias for the 0033 rename: between the Vercel deploy and
+  // the next pipeline migration tick, tier_grants rows may still say 'command'.
+  // Normalize on read so the staff tier never lapses. Remove once 0033 is
+  // confirmed applied in prod. Subscriptions never held 'command' (0003 CHECK).
+  if (grantTier === "command") grantTier = "admin";
   if (grantTier && PAID_TIERS.has(grantTier)) {
     return {
       tier: grantTier as Tier,
@@ -103,7 +108,7 @@ export function tierLabel(tier: Tier | null | undefined): string {
   switch (tier) {
     case "analyst": return "Analyst Tier";
     case "bureau":  return "Bureau Tier";
-    case "command": return "Command Tier";
+    case "admin":   return "Admin Tier";
     default:        return "Watch Tier";
   }
 }

@@ -83,7 +83,7 @@ export default async function GrantsPage() {
               <select name="tier" required className={INPUT}>
                 <option value="analyst">analyst</option>
                 <option value="bureau">bureau</option>
-                <option value="command">command</option>
+                <option value="admin">admin</option>
               </select>
             </label>
             <label className="flex flex-col gap-1 flex-1 min-w-48">
