@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { query } from "@/lib/db";
-import { isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
+import { cleanEnv, isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 
 export async function GET(req: Request) {
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const sessionId = new URL(req.url).searchParams.get("session_id");
   if (!sessionId) redirect("/pricing");
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const stripe = new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY));
 
   let session: Stripe.Checkout.Session;
   try {

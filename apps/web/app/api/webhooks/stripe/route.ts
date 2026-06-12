@@ -1,9 +1,9 @@
 import Stripe from "stripe";
 import { execute, query } from "@/lib/db";
-import { isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
+import { cleanEnv, isFoundingPriceIds, tierForPriceIds } from "@/lib/stripe";
 
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+  return new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY));
 }
 
 export async function POST(req: Request) {
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(body, sig, cleanEnv(process.env.STRIPE_WEBHOOK_SECRET));
   } catch (err) {
     console.error("[stripe-webhook] invalid signature", err);
     return Response.json({ error: "Invalid signature" }, { status: 400 });

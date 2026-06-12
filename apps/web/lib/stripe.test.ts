@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   FOUNDING_CAP,
+  cleanEnv,
   foundingSeatsRemaining,
   foundingSoldOut,
   isFoundingPriceId,
   isFoundingPriceIds,
+  resolveSiteOrigin,
+  tierForPriceId,
 } from "./stripe";
 
 describe("founding cap guard decision", () => {
@@ -80,5 +83,50 @@ describe("is_founding derivation from STRIPE_FOUNDING_PRICE_ID", () => {
     process.env.STRIPE_FOUNDING_PRICE_ID = "";
     expect(isFoundingPriceId("")).toBe(false);
     expect(isFoundingPriceIds([""])).toBe(false);
+  });
+});
+
+describe("env whitespace hardening (the R2-incident defect class)", () => {
+  afterEach(() => {
+    delete process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_MONTHLY;
+    delete process.env.STRIPE_FOUNDING_PRICE_ID;
+  });
+
+  it("cleanEnv strips pasted whitespace; unset → empty string", () => {
+    expect(cleanEnv("sk_test_abc\n")).toBe("sk_test_abc");
+    expect(cleanEnv("  price_x \t\n")).toBe("price_x");
+    expect(cleanEnv(undefined)).toBe("");
+  });
+
+  it("a price ID pasted with a trailing newline still maps to its tier", () => {
+    process.env.NEXT_PUBLIC_STRIPE_ANALYST_PRICE_MONTHLY = "price_dirty\n";
+    expect(tierForPriceId("price_dirty")).toBe("analyst");
+  });
+
+  it("a founding ID pasted with a trailing newline still derives is_founding", () => {
+    process.env.STRIPE_FOUNDING_PRICE_ID = "price_founding\n";
+    expect(isFoundingPriceId("price_founding")).toBe(true);
+    expect(isFoundingPriceIds(["price_founding"])).toBe(true);
+  });
+});
+
+describe("resolveSiteOrigin (named failure instead of Stripe url_invalid)", () => {
+  it("valid URL → origin; trailing slash neutralized", () => {
+    expect(resolveSiteOrigin("https://dashboard.thesentinelreview.com")).toBe(
+      "https://dashboard.thesentinelreview.com",
+    );
+    expect(resolveSiteOrigin("https://dashboard.thesentinelreview.com/")).toBe(
+      "https://dashboard.thesentinelreview.com",
+    );
+    expect(resolveSiteOrigin("https://dashboard.thesentinelreview.com\n")).toBe(
+      "https://dashboard.thesentinelreview.com",
+    );
+  });
+
+  it("unset or unparseable → null (route returns the named 500)", () => {
+    expect(resolveSiteOrigin(undefined)).toBeNull();
+    expect(resolveSiteOrigin("")).toBeNull();
+    expect(resolveSiteOrigin("dashboard.thesentinelreview.com")).toBeNull();
+    expect(resolveSiteOrigin("not a url")).toBeNull();
   });
 });

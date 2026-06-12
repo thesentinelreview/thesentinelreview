@@ -1,10 +1,17 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { queryOne } from "@/lib/db";
-import { FOUNDING_CAP, foundingSoldOut, isFoundingPriceId, tierForPriceId } from "@/lib/stripe";
+import {
+  FOUNDING_CAP,
+  cleanEnv,
+  foundingSoldOut,
+  isFoundingPriceId,
+  resolveSiteOrigin,
+  tierForPriceId,
+} from "@/lib/stripe";
 
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+  return new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY));
 }
 
 export async function POST(req: Request) {
@@ -39,6 +46,20 @@ export async function POST(req: Request) {
     }
   }
 
+  // Fail loudly and by name when the redirect base is unset/unparseable —
+  // otherwise this surfaces as Stripe's generic url_invalid on the session
+  // call, which is needlessly hard to trace back to env config.
+  const siteOrigin = resolveSiteOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+  if (!siteOrigin) {
+    console.error("[checkout] checkout_misconfigured: NEXT_PUBLIC_SITE_URL", {
+      state: cleanEnv(process.env.NEXT_PUBLIC_SITE_URL) ? "present-but-unparseable" : "unset",
+    });
+    return Response.json(
+      { error: "checkout_misconfigured: NEXT_PUBLIC_SITE_URL" },
+      { status: 500 },
+    );
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -46,12 +67,20 @@ export async function POST(req: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
       customer_email: (sessionClaims?.email as string | undefined) ?? undefined,
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/activate?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+      success_url: `${siteOrigin}/api/activate?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteOrigin}/pricing`,
     });
     return Response.json({ url: session.url });
   } catch (err) {
-    console.error("[checkout] Stripe error", err);
+    // Log the fields that name the failure — the raw object truncates in
+    // Vercel's log table and hides message/param.
+    const e = err as { message?: string; param?: string; code?: string; type?: string };
+    console.error("[checkout] Stripe error", {
+      message: e?.message,
+      param: e?.param,
+      code: e?.code,
+      type: e?.type,
+    });
     return Response.json({ error: "Failed to create checkout session" }, { status: 502 });
   }
 }

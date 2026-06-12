@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
+import { cleanEnv } from "@/lib/stripe";
 import { queryOne } from "@/lib/db";
 
 export async function POST() {
@@ -17,11 +18,11 @@ export async function POST() {
     return Response.json({ error: "No billing account found" }, { status: 404 });
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const stripe = new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY));
   try {
     const session = await stripe.billingPortal.sessions.create({
       customer: row.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+      return_url: `${cleanEnv(process.env.NEXT_PUBLIC_SITE_URL)}/pricing`,
     });
     return Response.json({ url: session.url });
   } catch (err) {
