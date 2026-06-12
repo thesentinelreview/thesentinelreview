@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFullBriefing, getEventDetail } from "@/lib/queries";
 import { resolveTheater } from "@/data/theaters";
+import BriefingBody from "@/components/ds/BriefingBody";
 import Panel from "@/components/ds/Panel";
 import UpgradePrompt from "@/components/ds/UpgradePrompt";
 import { CONFIDENCE_STYLES, EVENT_TYPE_STYLES } from "@/components/ds/tokens";
@@ -91,13 +92,9 @@ export default async function BriefingPage({
 
         {/* Body */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
-          {/* Main — briefing */}
+          {/* Main — briefing (BLUF sections when present, legacy prose otherwise) */}
           <Panel padding="md" className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3 text-sm text-slate-300 leading-relaxed">
-              {brief.full_paragraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
+            <BriefingBody sections={brief.sections} paragraphs={brief.full_paragraphs} />
 
             <div id="embed-this-briefing" className="flex flex-col gap-2 rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <div className="text-[10px] font-data tracking-[0.12em] uppercase text-slate-500">Embed this briefing</div>

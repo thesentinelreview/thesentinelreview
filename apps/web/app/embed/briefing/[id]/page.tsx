@@ -84,14 +84,45 @@ export default async function EmbedBriefingPage({ params }: { params: Promise<{ 
       </div>
 
       <div style={{ flex: 1 }}>
-        {brief.full_paragraphs.map((p, i) => (
-          <p key={i} style={{
-            fontSize: "13px",
-            lineHeight: "1.72",
-            color: i === brief.full_paragraphs.length - 1 ? "var(--text-secondary)" : "var(--text)",
-            marginBottom: "12px",
-          }}>{p}</p>
-        ))}
+        {brief.sections ? (
+          // BLUF briefing (W2-3): section labels + bodies; the trailing
+          // disclaimer paragraph keeps the muted treatment.
+          brief.sections.map((s, i) => (
+            <div key={i} style={{ marginBottom: "14px" }}>
+              {s.heading && (
+                <div style={{
+                  fontFamily: "var(--font-mono-stack)",
+                  fontSize: "9px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  color: "var(--text-tertiary)",
+                  marginBottom: "6px",
+                }}>{s.heading}</div>
+              )}
+              {s.paragraphs.map((p, j) => (
+                <p key={j} style={{
+                  fontSize: "13px",
+                  lineHeight: "1.72",
+                  color:
+                    i === brief.sections!.length - 1 && j === s.paragraphs.length - 1
+                      ? "var(--text-secondary)"
+                      : "var(--text)",
+                  marginBottom: "8px",
+                }}>{p}</p>
+              ))}
+            </div>
+          ))
+        ) : (
+          // Legacy briefing: unchanged paragraph flow.
+          brief.full_paragraphs.map((p, i) => (
+            <p key={i} style={{
+              fontSize: "13px",
+              lineHeight: "1.72",
+              color: i === brief.full_paragraphs.length - 1 ? "var(--text-secondary)" : "var(--text)",
+              marginBottom: "12px",
+            }}>{p}</p>
+          ))
+        )}
       </div>
 
       <div style={{

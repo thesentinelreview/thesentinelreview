@@ -53,6 +53,21 @@ def _briefing_input(events: list[dict] | None = None) -> BriefingInput:
     )
 
 
+_BLUF_DRAFT = (
+    "## BLUF\n\n"
+    "Strike tempo in Donetsk is roughly double the 7-day baseline, concentrated on Pokrovsk.\n\n"
+    "## WHAT CHANGED\n\n"
+    "Donetsk logged 12 events against a 5.2/day baseline; two clusters are corroborated.\n\n"
+    "## WHY IT MATTERS\n\n"
+    "Sustained pressure on the Pokrovsk axis narrows the remaining supply corridors.\n\n"
+    "## OUTLOOK (24–72H)\n\n"
+    "Watch for renewed shelling near Pokrovsk; sustained drone activity would indicate "
+    "follow-on strikes.\n\n"
+    "⚠ AI-generated analysis. Events sourced from open-source reporting; "
+    "locations and details unverified. Not for operational use."
+)
+
+
 def _tool_use_block(raw: dict) -> SimpleNamespace:
     return SimpleNamespace(type="tool_use", input=raw)
 
@@ -161,7 +176,7 @@ class TestBuildUserMessage:
 class TestGenerateBriefingDraft:
     def _make_raw(self, event_ids: list[str]) -> dict:
         return {
-            "draft_text": "Para 1.\n\nPara 2.\n\nWatch: Donetsk axis.",
+            "draft_text": _BLUF_DRAFT,
             "referenced_event_ids": event_ids,
             "confidence_summary": "2 verified, 1 partial, 0 unconfirmed",
         }
@@ -177,7 +192,7 @@ class TestGenerateBriefingDraft:
 
         output, meta = generate_briefing_draft(inp)
 
-        assert "Watch:" in output.draft_text
+        assert output.draft_text.startswith("## BLUF")
         assert output.confidence_summary == "2 verified, 1 partial, 0 unconfirmed"
         assert len(output.referenced_event_ids) == 1
         assert str(output.referenced_event_ids[0]) == eid
@@ -246,3 +261,62 @@ class TestGenerateBriefingDraft:
 
         for ref_id in output.referenced_event_ids:
             assert isinstance(ref_id, uuid.UUID)
+
+
+# ---------------------------------------------------------------------------
+# W2-3 BLUF prompt structure — the system prompt sent to the model carries the
+# four-section instruction and the OUTLOOK monitoring-not-prediction constraints
+# ---------------------------------------------------------------------------
+
+class TestBlufPromptStructure:
+    BLUF_HEADINGS = [
+        "## BLUF",
+        "## WHAT CHANGED",
+        "## WHY IT MATTERS",
+        "## OUTLOOK (24–72H)",
+    ]
+
+    OUTLOOK_CONSTRAINTS = [
+        "Indicators to watch, framed as monitoring priorities.",
+        "Never predictions.",
+        'Use uncertainty language ("watch for", "would indicate").',
+        "No probability claims, no forecasted outcomes.",
+    ]
+
+    def _sent_system_text(self, mock_client: MagicMock) -> str:
+        from sentinel.pipeline.briefing import generate_briefing_draft
+
+        eid = str(uuid.uuid4())
+        raw = {
+            "draft_text": _BLUF_DRAFT,
+            "referenced_event_ids": [eid],
+            "confidence_summary": "1 verified, 0 partial, 0 unconfirmed",
+        }
+        mock_client.messages.create.return_value = _make_response(raw)
+        generate_briefing_draft(_briefing_input(events=[_event(event_id=eid)]))
+        kwargs = mock_client.messages.create.call_args.kwargs
+        return kwargs["system"][0]["text"]
+
+    @patch("sentinel.pipeline.briefing._client")
+    def test_prompt_has_four_section_headings_in_order(self, mock_client: MagicMock) -> None:
+        system_text = self._sent_system_text(mock_client)
+        positions = [system_text.find(h) for h in self.BLUF_HEADINGS]
+        assert all(p != -1 for p in positions), f"missing heading(s): {positions}"
+        assert positions == sorted(positions), "headings out of order"
+
+    @patch("sentinel.pipeline.briefing._client")
+    def test_prompt_has_outlook_constraints_verbatim(self, mock_client: MagicMock) -> None:
+        system_text = self._sent_system_text(mock_client)
+        for constraint in self.OUTLOOK_CONSTRAINTS:
+            assert constraint in system_text
+
+    @patch("sentinel.pipeline.briefing._client")
+    def test_prompt_keeps_carried_over_hard_rules(self, mock_client: MagicMock) -> None:
+        system_text = self._sent_system_text(mock_client)
+        # Standing posture + grounding rules are unchanged by the BLUF restructure.
+        assert (
+            "⚠ AI-generated analysis. Events sourced from open-source reporting; "
+            "locations and details unverified. Not for operational use." in system_text
+        )
+        assert "Never speculate beyond the input event list." in system_text
+        assert "Never reference event IDs in the prose" in system_text

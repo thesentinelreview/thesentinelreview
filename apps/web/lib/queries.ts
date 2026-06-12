@@ -1,5 +1,10 @@
 import { isDatabaseConfigured, query, queryOne } from "./db";
 import {
+  briefingPreviewParagraphs,
+  parseBriefingSections,
+  splitParagraphs,
+} from "./briefing-format";
+import {
   getRequestEntitlements,
   tierTimeFloor,
   clampTimeRangeForFloor,
@@ -197,11 +202,6 @@ function minutesAgo(occurredAt: Date | string): number {
 
 function dayLabel(d: Date): string {
   return d.toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
-}
-
-function splitParagraphs(text: string | null): string[] {
-  if (!text) return [];
-  return text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 }
 
 function fmtBriefingDate(ts: Date): string {
@@ -1109,7 +1109,9 @@ function rowToBriefing(r: BriefingRow, sourceCount: number): BriefingData {
     utc_time: fmtBriefingUTC(new Date(ts)),
     source_count: sourceCount,
     reviewed: r.status === "published",
-    paragraphs: splitParagraphs(text).slice(0, 2),
+    // W2-3: BLUF briefings preview as the BLUF body (headings stripped);
+    // legacy rows keep the first-two-paragraphs preview unchanged.
+    paragraphs: briefingPreviewParagraphs(text),
   };
 }
 
@@ -1626,8 +1628,11 @@ export async function getFullBriefing(id: string): Promise<GatedResult<FullBrief
       utc_time: fmtBriefingUTC(new Date(ts)),
       source_count: Number(sourceCountRow?.count) || 0,
       reviewed: row.status === "published",
-      paragraphs: fullParagraphs.slice(0, 2),
+      // W2-3 preview rule (BLUF body when present), as in rowToBriefing.
+      paragraphs: briefingPreviewParagraphs(text),
       full_paragraphs: fullParagraphs,
+      // Parsed BLUF sections; null keeps legacy rows on today's renderer.
+      sections: parseBriefingSections(text),
       referenced_event_ids: row.event_ids,
       confidence_summary,
     } };
