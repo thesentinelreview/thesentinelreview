@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { isDatabaseConfigured, query } from "@/lib/db";
+import { isUndefinedTableError } from "@/lib/env";
 import Panel from "@/components/ds/Panel";
 import AdminNav from "@/components/ds/AdminNav";
 
@@ -22,17 +23,30 @@ interface GrantRow {
   revoked_at:    Date | null;
 }
 
-async function getGrants(): Promise<GrantRow[] | null> {
-  if (!isDatabaseConfigured()) return [];
+type GrantsResult =
+  | { kind: "ok"; rows: GrantRow[] }
+  | { kind: "missing-table" }
+  | { kind: "error" };
+
+async function getGrants(): Promise<GrantsResult> {
+  if (!isDatabaseConfigured()) return { kind: "ok", rows: [] };
   try {
-    return await query<GrantRow>(
+    const rows = await query<GrantRow>(
       `SELECT id::text, clerk_user_id, tier, note, granted_by, created_at, revoked_at
        FROM tier_grants
        ORDER BY created_at DESC`,
     );
-  } catch {
-    // Table not present yet (deploy ahead of migration) — render honestly.
-    return null;
+    return { kind: "ok", rows };
+  } catch (err) {
+    // Only undefined_table (42P01 — deploy ahead of migration) is benign.
+    // Anything else (connection failure, pooler exhaustion, …) must surface
+    // as a real error, not masquerade as "table isn't present".
+    if (isUndefinedTableError(err)) return { kind: "missing-table" };
+    console.error("[admin/grants] failed to load grants", {
+      message: (err as { message?: string })?.message,
+      code: (err as { code?: string })?.code,
+    });
+    return { kind: "error" };
   }
 }
 
@@ -42,7 +56,7 @@ function fmt(d: Date | null): string {
 
 export default async function GrantsPage() {
   if (!(await isAdmin())) redirect("/sign-in");
-  const grants = await getGrants();
+  const result = await getGrants();
 
   return (
     <div className="admin-root min-h-screen bg-slate-950 text-slate-100 font-ui">
@@ -85,13 +99,18 @@ export default async function GrantsPage() {
 
         <Panel padding="md" className="flex flex-col gap-3">
           <div className={LABEL}>Grants</div>
-          {grants === null ? (
+          {result.kind === "missing-table" ? (
             <div className="text-sm text-slate-400">
               The <span className="font-mono">tier_grants</span> table isn&rsquo;t present yet —
               migration 0031 applies on the next pipeline cycle. Until then, tiers resolve from
               subscriptions only.
             </div>
-          ) : grants.length === 0 ? (
+          ) : result.kind === "error" ? (
+            <div className="text-sm text-red-400">
+              Database error loading grants — this is not a missing table. Check the function
+              logs; grants and entitlements may be degraded until the connection recovers.
+            </div>
+          ) : result.rows.length === 0 ? (
             <div className="text-sm text-slate-500">No grants yet.</div>
           ) : (
             <div className="overflow-x-auto">
@@ -104,7 +123,7 @@ export default async function GrantsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {grants.map((g) => (
+                  {result.rows.map((g) => (
                     <tr key={g.id} className="border-t border-slate-800/60 align-top">
                       <td className="py-2 pr-4 font-mono text-xs text-slate-300">{g.clerk_user_id}</td>
                       <td className="py-2 pr-4 uppercase text-xs font-bold text-amber-400/90">{g.tier}</td>

@@ -141,3 +141,14 @@ describe("tier badge mapping (W1-6)", () => {
     expect(tierLabel(undefined)).toBe("Watch Tier");
   });
 });
+
+describe("undefined-table detection (admin/grants fail-soft narrowing)", () => {
+  it("matches Postgres 42P01 only", async () => {
+    const { isUndefinedTableError } = await import("./env");
+    expect(isUndefinedTableError({ code: "42P01" })).toBe(true);
+    expect(isUndefinedTableError({ code: "ECONNREFUSED" })).toBe(false);
+    expect(isUndefinedTableError({ code: "53300" })).toBe(false); // too_many_connections
+    expect(isUndefinedTableError(new Error("EMAXCONNSESSION"))).toBe(false);
+    expect(isUndefinedTableError(null)).toBe(false);
+  });
+});
