@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
@@ -256,6 +257,11 @@ export default async function WatchfloorPage({
           high-impact events require human editorial review before publication. All data is derived from open-source
           intelligence and may contain inaccuracies.
         </p>
+        <span className="ml-auto flex-none text-[11px] text-slate-500 whitespace-nowrap">
+          <Link href="/terms" className="hover:text-amber-400">Terms</Link>
+          <span className="text-slate-700"> · </span>
+          <Link href="/privacy" className="hover:text-amber-400">Privacy</Link>
+        </span>
       </footer>
     </div>
   );

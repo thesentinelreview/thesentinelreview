@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import DemoBanner from "@/components/DemoBanner";
+import GlobalFooter from "@/components/GlobalFooter";
 import GlobalHeader from "@/components/GlobalHeader";
 import { isAdmin } from "@/lib/auth";
 import { getRequestEntitlements } from "@/lib/entitlements";
@@ -112,6 +113,7 @@ export default async function RootLayout({
           <DemoBanner status={dataStatus} />
           <GlobalHeader isAuthed={!!userId} tier={entitlements.tier} showAdmin={admin} />
           {children}
+          <GlobalFooter />
         </body>
       </html>
     </ClerkProvider>

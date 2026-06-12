@@ -115,8 +115,13 @@ export default function ApiDocsPage() {
             and details unverified; not for operational use.
           </p>
           <p className={P}>
-            Licensing (interim): API data is for personal and internal use; redistribution terms
-            are defined in the Terms of Service.
+            Licensing: API data access is for personal and internal organizational use — no
+            redistribution, republication, resale, or bulk sharing. The full data license is in
+            the{" "}
+            <Link className="text-amber-400" href="/terms">
+              Terms of Service
+            </Link>
+            .
           </p>
         </Panel>
       </div>

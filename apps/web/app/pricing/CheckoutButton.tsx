@@ -46,6 +46,15 @@ export default function CheckoutButton({ priceId, className, children }: Props) 
       <button onClick={handleClick} disabled={loading} className={className}>
         {loading ? "Redirecting…" : children}
       </button>
+      {/* W2-5: agreement notice adjacent to every buy button. v1 is notice-only;
+          a clickwrap checkbox is flagged as an attorney question in the PR. */}
+      <p style={{ marginTop: 8, fontSize: 12, color: "#9aa3b2", lineHeight: 1.4 }}>
+        By subscribing you agree to the{" "}
+        <a href="/terms" style={{ color: "inherit", textDecoration: "underline" }}>
+          Terms of Service
+        </a>
+        .
+      </p>
       {error && (
         <div role="alert" style={{ marginTop: 8, color: "#d05050", fontSize: 13 }}>
           {error}
