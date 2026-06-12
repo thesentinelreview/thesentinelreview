@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
+import ExportControl from "@/components/watchfloor/ExportControl";
 import { isAdmin } from "@/lib/auth";
 import { getRequestEntitlements, clampTimeRangeForFloor, tierTimeFloor } from "@/lib/entitlements";
 import KpiRail from "@/components/watchfloor/KpiRail";
@@ -189,6 +190,13 @@ export default async function WatchfloorPage({
         sensorData={sensorData}
         isAuthed={!!userId}
         showAdmin={admin}
+        exportControl={
+          // Server-side gate (W2-2): watch and anonymous viewers never get the
+          // control in the payload. The route re-checks entitlements anyway.
+          entitlements.canExport ? (
+            <ExportControl theater={theater.id} activeWindow={timeRange} />
+          ) : undefined
+        }
       />
       <KpiRail
         windowLabel={WINDOW_LABELS[timeRange]}

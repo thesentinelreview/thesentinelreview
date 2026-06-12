@@ -107,6 +107,42 @@ export default function ApiDocsPage() {
           />
         </Panel>
 
+        <Panel padding="md" className="flex flex-col gap-3">
+          <h2 className={H2}>Exports</h2>
+          <p className={P}>
+            Analyst and above can download the events in the current dashboard view — the{" "}
+            <strong className="text-slate-300">Export</strong> control next to the theater/window
+            selectors on the{" "}
+            <Link className="text-amber-400" href="/">
+              Sentinel View
+            </Link>
+            . Exports use your signed-in session, not an API key.
+          </p>
+          <p className={P}>
+            <strong className="text-slate-300">Formats:</strong> CSV and JSON. Each row carries the
+            event&rsquo;s id, timestamp (ISO 8601 UTC), type, bbox-derived theater, location,
+            coordinates, source count, confidence, platforms, and summary.
+          </p>
+          <p className={P}>
+            <strong className="text-slate-300">Windows:</strong> 24H / 7D / 30D / 90D, or a custom
+            date range up to 90 days. There is no full-archive export — the archive stays queryable
+            here in the dashboard and via the paginated API.
+          </p>
+          <p className={P}>
+            <strong className="text-slate-300">Caps:</strong> 10,000 rows per file (files at the cap
+            are flagged truncated) and 20 exports per UTC day, metered separately from your API call
+            quota. Over the limit → <code>429</code>, resetting at 00:00 UTC.
+          </p>
+          <p className={P}>
+            Every file carries the data license: confidence-labeled OSINT, not all events verified;
+            personal and internal-org use only; no redistribution. Full terms in the{" "}
+            <Link className="text-amber-400" href="/terms">
+              Terms of Service
+            </Link>
+            .
+          </p>
+        </Panel>
+
         <Panel padding="md" className="flex flex-col gap-2">
           <h2 className={H2}>Honesty notes</h2>
           <p className={P}>
