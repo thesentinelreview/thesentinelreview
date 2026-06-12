@@ -37,7 +37,7 @@ pg_restore --list backup.dump
 
 The dump contains **only schema `public`** (tables, data, indexes, views, the
 `source_reliability` materialized view, functions, sequences, RLS policies, and
-`schema_migrations` bookkeeping). Three things are deliberately NOT in it and
+`schema_migrations` bookkeeping). Four things are deliberately NOT in it and
 must exist on the target first:
 
 1. **Extensions.** `--schema=public` excludes `CREATE EXTENSION`. Before
@@ -59,10 +59,19 @@ must exist on the target first:
 
 3. **pg_cron schedules.** The `cron` schema is outside the dump. After
    restoring, re-run the `DO $$ ... cron.schedule(...) $$` blocks from
-   migrations `0014_schedule_source_reliability_refresh.sql` and
-   `0028_source_health_function.sql`. The `supabase_realtime` publication
-   (publications aren't schema-scoped) is likewise not in the dump; recreate it
-   only if realtime is in use.
+   migrations `0014_schedule_source_reliability_refresh.sql`,
+   `0028_source_health_function.sql`, and `0034_watchdog.sql`. The
+   `supabase_realtime` publication (publications aren't schema-scoped) is
+   likewise not in the dump; recreate it only if realtime is in use.
+
+4. **Watchdog dependencies (migration `0034`).** The staleness watchdog needs
+   `pg_cron` + `pg_net` enabled on the target (Dashboard → Database →
+   Extensions; the function bodies restore fine without them, but alerts stay
+   ledger-only until both exist) and the Supabase Vault secret
+   `github_watchdog_pat` re-created by hand (Dashboard → Vault — the `vault`
+   schema is outside the dump, and the PAT value is never stored anywhere
+   else). Until the secret exists, `watchdog_check()` records `notify_error`
+   in `watchdog_alerts.details` instead of filing GitHub issues.
 
 ## 3. Restore
 

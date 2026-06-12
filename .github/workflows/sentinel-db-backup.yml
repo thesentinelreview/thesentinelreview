@@ -187,6 +187,35 @@ jobs:
             echo "multipart upload — md5 check skipped, length verified"
           fi
 
+      - name: Record backup heartbeat
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PGSSLMODE: require
+          PGCONNECT_TIMEOUT: '15'
+        run: |
+          # Watchdog beat (migration 0034), stamped only after the upload is
+          # verified; the in-DB sentinel-watchdog pg_cron job files a GitHub
+          # issue if beats stop for 26+ hours. Inline SQL via the psql
+          # installed above — this workflow deliberately carries no repo code
+          # (see header). The to_regclass guard covers the one window where a
+          # backup can run before 0034 first applies (migrations apply on
+          # ingest ticks, not here): monitoring must never fail the thing it
+          # monitors.
+          /usr/lib/postgresql/17/bin/psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$
+          BEGIN
+              IF to_regclass('public.pipeline_heartbeats') IS NOT NULL THEN
+                  INSERT INTO pipeline_heartbeats (kind, beat_at)
+                  VALUES ('backup', now())
+                  ON CONFLICT (kind) DO UPDATE SET beat_at = now();
+                  RAISE NOTICE 'backup heartbeat recorded';
+              ELSE
+                  RAISE NOTICE 'pipeline_heartbeats not migrated yet; beat skipped';
+              END IF;
+          END
+          $$;
+          SQL
+
   notify-failure:
     needs: [backup]
     if: failure()
