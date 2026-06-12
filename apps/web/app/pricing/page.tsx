@@ -67,10 +67,10 @@ const TABLE: TableEntry[] = [
   { type: "row", label: "Live dashboard access",           watch: { detail: "All theaters" }, analyst: { detail: "All theaters" }, bureau: { detail: "All theaters" } },
   { type: "row", label: "Event history window",            watch: { detail: "7 days" },       analyst: { detail: "Full archive" }, bureau: { detail: "Full archive" } },
   { type: "row", label: "Verification audit trail",        watch: { detail: "Basic state" },  analyst: "check",                   bureau: { detail: "+ peer flags" } },
-  { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Rate-limited" }, bureau: { detail: "Higher limits" } },
+  { type: "row", label: "CSV / JSON exports",              watch: "dash",                     analyst: { detail: "Coming soon" },  bureau: { detail: "Higher limits" } },
 
   { type: "group", label: "Alerts & Integrations" },
-  { type: "row", label: "Custom alerts (topic / theater / geofence)", watch: "dash", analyst: { detail: "Email + browser" }, bureau: { detail: "+ Slack/Teams" } },
+  { type: "row", label: "Custom alerts (topic / theater / geofence)", watch: "dash", analyst: { detail: "Coming soon" },     bureau: { detail: "+ Slack/Teams" } },
   { type: "row", label: "API access",                      watch: "dash",                     analyst: { detail: "1K calls/day" }, bureau: { detail: "25K calls/day" } },
   { type: "row", label: "Webhooks",                        watch: "dash",                     analyst: "dash",                     bureau: { detail: "Basic" } },
   { type: "row", label: "Embeddable widgets",              watch: "dash",                     analyst: { detail: "Personal (1)" }, bureau: { detail: "Newsroom unlimited" } },
@@ -98,7 +98,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What’s the difference between The Sentinel Review and the Intel Dashboard?",
-    a: "The Sentinel Review is the publication — daily briefings, curated headlines, the morning email. The Intel Dashboard is a separate product for live OSINT conflict monitoring with verification scoring. Watch members get free access to both. Analyst unlocks the full dashboard archive, alerts, and tools.",
+    a: "The Sentinel Review is the publication — daily briefings, curated headlines, the morning email. The Intel Dashboard is a separate product for live OSINT conflict monitoring with verification scoring. Watch members get free access to both. Analyst unlocks the full dashboard archive, the read API, and data tools.",
   },
   {
     q: "Is this for operational or intelligence use?",
@@ -318,15 +318,15 @@ export default async function PricingPage({
               </div>
             )}
             <div className={s.tierDesc}>
-              For working analysts, journalists, and researchers. Real alerts, full history, and
-              the data you need to do your job.
+              For working analysts, journalists, and researchers. Full event history, the read
+              API, and the data you need to do your job.
             </div>
             <ul className={s.features}>
               <li className={s.everything}>Everything in Watch, plus:</li>
               <li>Full event history — queryable archive</li>
-              <li>Custom alerts: topic, theater, geofence, threshold</li>
-              <li>CSV / JSON data exports</li>
-              <li>Analytics API — intensity, trends, source stats</li>
+              <li>Analytics API — intensity, counts, source stats</li>
+              <li>Custom alerts: topic, theater, geofence — coming soon</li>
+              <li>CSV / JSON data exports — coming soon</li>
               <li>Embeddable widget for personal use</li>
             </ul>
             <div className={s.archiveNote}>
