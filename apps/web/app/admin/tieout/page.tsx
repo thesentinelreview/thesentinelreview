@@ -10,12 +10,20 @@ import {
   type TieoutTheater,
   type TieoutWindow,
 } from "@/lib/queries";
-import Kpi from "@/components/watchfloor/Kpi";
+import Panel from "@/components/ds/Panel";
+import FilterChip from "@/components/ds/FilterChip";
+import KpiTile from "@/components/ds/KpiTile";
+import AdminNav from "@/components/ds/AdminNav";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Fusion Tie-out — Sentinel Admin" };
 
-const WINDOWS: TieoutWindow[] = ["24h", "7d", "all"];
-const WINDOW_LABELS: Record<TieoutWindow, string> = { "24h": "24H", "7d": "7D", all: "ALL" };
+const LABEL = "text-[10px] font-data tracking-[0.12em] uppercase text-slate-400";
+const BTN =
+  "px-3 py-1.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 text-xs font-semibold uppercase tracking-wider hover:bg-amber-500/20";
+
+const WINDOWS: TieoutWindow[] = ["24h", "7d", "30d", "all"];
+const WINDOW_LABELS: Record<TieoutWindow, string> = { "24h": "24H", "7d": "7D", "30d": "30D", all: "ALL" };
 
 function buildHref(theater: TieoutTheater, window: TieoutWindow): string {
   const p = new URLSearchParams();
@@ -42,18 +50,12 @@ function fmtRelative(iso: string): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
+// Token confidence semantics: verified = emerald · partial = amber · unconfirmed = slate.
 function confidenceClass(c: string): string {
   if (c === "verified") return "text-emerald-400";
   if (c === "partial") return "text-amber-400";
-  return "text-zinc-500";
+  return "text-slate-500";
 }
-
-const chipClass = (active: boolean) =>
-  `px-3 py-1.5 text-[11px] tracking-[0.08em] rounded-sm border font-data uppercase ${
-    active
-      ? "text-teal-300 bg-teal-400/[0.06] border-teal-400/30"
-      : "text-zinc-300 border-zinc-800 hover:bg-zinc-800"
-  }`;
 
 export default async function TieoutPage({
   searchParams,
@@ -79,42 +81,40 @@ export default async function TieoutPage({
   const generatedAt = new Date().toISOString();
 
   return (
-    <div className="min-h-screen bg-[#05070A] text-zinc-100 font-ui">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 flex flex-col gap-5">
+    <div className="admin-root min-h-screen bg-slate-950 text-slate-100 font-ui">
+      <div className="w-full max-w-5xl mx-auto px-5 py-8 flex flex-col gap-5">
         {/* Title */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-[15px] font-bold tracking-[0.25em] uppercase text-white">
-                Fusion Tie-Out
-              </h1>
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase tracking-[0.2em] font-data">
-                Admin
-              </span>
-            </div>
-            <div className="mt-1 text-[11px] text-zinc-500 font-data">
-              {theater.label} · {WINDOW_LABELS[window]} · generated {generatedAt}
-            </div>
+        <div className="flex flex-col gap-3 pb-3 border-b border-slate-800/60">
+          <div className="flex items-end justify-between gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold tracking-tight">Fusion tie-out</h1>
+            <Link
+              href={`/?theater=${theater.id === "all" ? "ukraine" : theater.id}${window === "24h" ? "" : `&window=${window === "all" ? "7d" : window}`}`}
+              className="text-xs font-data uppercase tracking-wider text-slate-400 hover:text-slate-200"
+            >
+              ← Watchfloor
+            </Link>
           </div>
-          <Link
-            href={`/?theater=${theater.id === "all" ? "ukraine" : theater.id}${window === "24h" ? "" : `&window=${window === "all" ? "7d" : window}`}`}
-            className="text-[11px] text-zinc-400 hover:text-zinc-200 tracking-[0.08em] uppercase font-data self-start sm:self-auto"
-          >
-            ← Watchfloor
-          </Link>
+          <p className="text-sm text-slate-400">
+            Audit page for the Fusion KPI: every published event in the theater bbox with its
+            distinct source count, tied out against the counts behind the value shown on /.
+          </p>
+          <div className="text-xs font-data text-slate-500">
+            {theater.label} · {WINDOW_LABELS[window]} · generated {generatedAt}
+          </div>
+          <AdminNav active="/admin/tieout" />
         </div>
 
         {/* KPI rail */}
-        <div className="flex flex-col sm:flex-row gap-1.5">
-          <Kpi label="Total events" value={b.total} hint="published, in theater bbox" />
-          <Kpi label="Multi-source" value={b.multiSource} hint="≥ 2 distinct sources" />
-          <Kpi
+        <div className="flex flex-col sm:flex-row gap-3">
+          <KpiTile label="Total events" value={b.total} hint="published, in theater bbox" />
+          <KpiTile label="Multi-source" value={b.multiSource} hint="≥ 2 distinct sources" />
+          <KpiTile
             label="Fusion · Method A"
             value={methodA ?? "—"}
             unit={methodA == null ? "" : "%"}
             hint="value shown on /"
           />
-          <Kpi
+          <KpiTile
             label="Fusion · Method B"
             value={methodB ?? "—"}
             unit={methodB == null ? "" : "%"}
@@ -124,16 +124,16 @@ export default async function TieoutPage({
 
         {/* Tie-out status */}
         {mismatch ? (
-          <div className="rounded-sm border border-amber-500/40 bg-amber-500/10 text-amber-300 px-4 py-3 text-[12px]">
-            <span className="font-semibold uppercase tracking-[0.16em] text-[11px]">
+          <Panel padding="sm" className="border-amber-500/40 bg-amber-500/5 text-amber-300 text-sm">
+            <span className="font-semibold uppercase tracking-wider text-xs">
               Tie-out mismatch
             </span>{" "}
             — Method A counts (total {a.total}, multi-source {a.multiSource}) differ from the
             rows below (total {b.total}, multi-source {b.multiSource}). The Fusion KPI on{" "}
             <span className="font-data">/</span> may not reflect this table.
-          </div>
+          </Panel>
         ) : (
-          <div className="text-[11px] text-zinc-500 font-data">
+          <div className="text-xs font-data text-slate-500">
             Methods agree — counts tie out (A {a.multiSource}/{a.total} · B {b.multiSource}/
             {b.total}).
           </div>
@@ -142,87 +142,77 @@ export default async function TieoutPage({
         {/* Controls */}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[10px] uppercase tracking-[0.22em] text-zinc-500 mr-1">
-                Theater
-              </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`${LABEL} mr-1`}>Theater</span>
               {Object.values(THEATERS).map((t) => (
-                <Link key={t.id} href={buildHref(t.id, window)} className={chipClass(t.id === theater.id)}>
+                <FilterChip key={t.id} href={buildHref(t.id, window)} active={t.id === theater.id}>
                   {t.label}
-                </Link>
+                </FilterChip>
               ))}
-              <Link key="all" href={buildHref("all", window)} className={chipClass(theater.id === "all")}>
+              <FilterChip key="all" href={buildHref("all", window)} active={theater.id === "all"}>
                 Global
-              </Link>
+              </FilterChip>
             </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[10px] uppercase tracking-[0.22em] text-zinc-500 mr-1">
-                Window
-              </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`${LABEL} mr-1`}>Window</span>
               {WINDOWS.map((w) => (
-                <Link key={w} href={buildHref(theater.id, w)} className={chipClass(w === window)}>
+                <FilterChip key={w} href={buildHref(theater.id, w)} active={w === window}>
                   {WINDOW_LABELS[w]}
-                </Link>
+                </FilterChip>
               ))}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <a
-              href={exportHref("csv", theater.id, window)}
-              className="px-2.5 py-1.5 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data hover:bg-zinc-800 hover:text-zinc-100"
-            >
+            <a href={exportHref("csv", theater.id, window)} className={BTN}>
               Export CSV
             </a>
-            <a
-              href={exportHref("xlsx", theater.id, window)}
-              className="px-2.5 py-1.5 text-[10px] rounded-sm border border-zinc-700 bg-zinc-900 text-zinc-300 tracking-wider uppercase font-data hover:bg-zinc-800 hover:text-zinc-100"
-            >
+            <a href={exportHref("xlsx", theater.id, window)} className={BTN}>
               Export XLSX
             </a>
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-zinc-950/60 border border-zinc-900 rounded-sm overflow-hidden">
+        <Panel className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-[12px]">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-zinc-500 uppercase tracking-[0.16em] text-[10px] border-b border-zinc-900">
-                  <th className="px-3 py-2 font-medium">Event</th>
-                  <th className="px-3 py-2 font-medium">Occurred (UTC)</th>
-                  <th className="px-3 py-2 font-medium">Type</th>
-                  <th className="px-3 py-2 font-medium">Location</th>
-                  <th className="px-3 py-2 font-medium text-right">Sources</th>
-                  <th className="px-3 py-2 font-medium">Confidence</th>
+                <tr className="text-left border-b border-slate-800/60">
+                  <th className={`${LABEL} px-4 py-2.5 font-medium`}>Event</th>
+                  <th className={`${LABEL} px-4 py-2.5 font-medium`}>Occurred (UTC)</th>
+                  <th className={`${LABEL} px-4 py-2.5 font-medium`}>Type</th>
+                  <th className={`${LABEL} px-4 py-2.5 font-medium`}>Location</th>
+                  <th className={`${LABEL} px-4 py-2.5 font-medium text-right`}>Sources</th>
+                  <th className={`${LABEL} px-4 py-2.5 font-medium`}>Confidence</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.event_id} className="border-b border-zinc-900/60 hover:bg-zinc-900/40">
-                    <td className="px-3 py-2 font-data">
-                      <Link href={`/event/${r.event_id}`} className="text-teal-300 hover:underline">
+                  <tr key={r.event_id} className="border-b border-slate-800/60 last:border-b-0 hover:bg-slate-800/30">
+                    <td className="px-4 py-2 font-data text-xs">
+                      <Link href={`/event/${r.event_id}`} className="text-amber-400 hover:text-amber-300 hover:underline">
                         {r.event_id.slice(0, 8)}
                       </Link>
                     </td>
-                    <td className="px-3 py-2 font-data text-zinc-400 whitespace-nowrap">
-                      <span className="text-zinc-300">{r.occurred_at}</span>
-                      <span className="text-zinc-600 ml-2">{fmtRelative(r.occurred_at)}</span>
+                    <td className="px-4 py-2 font-data text-xs whitespace-nowrap">
+                      <span className="text-slate-300">{r.occurred_at}</span>
+                      <span className="text-slate-600 ml-2">{fmtRelative(r.occurred_at)}</span>
                     </td>
-                    <td className="px-3 py-2 text-zinc-300">{r.event_type}</td>
-                    <td className="px-3 py-2 text-zinc-300">{r.location_name ?? "—"}</td>
-                    <td className="px-3 py-2 text-right tabular-nums">
-                      <span className={r.source_count >= 2 ? "text-teal-300" : "text-zinc-400"}>
+                    <td className="px-4 py-2 text-slate-300">{r.event_type}</td>
+                    <td className="px-4 py-2 text-slate-300">{r.location_name ?? "—"}</td>
+                    <td className="px-4 py-2 text-right tabular-nums">
+                      <span className={r.source_count >= 2 ? "text-emerald-400" : "text-slate-400"}>
                         {r.source_count}
                       </span>
                     </td>
-                    <td className={`px-3 py-2 font-data uppercase tracking-[0.08em] ${confidenceClass(r.confidence)}`}>
+                    <td className={`px-4 py-2 font-data text-xs uppercase tracking-wider ${confidenceClass(r.confidence)}`}>
                       {r.confidence}
                     </td>
                   </tr>
                 ))}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-10 text-center text-zinc-500">
+                    <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
                       No published events in this theater/window.
                     </td>
                   </tr>
@@ -230,7 +220,7 @@ export default async function TieoutPage({
               </tbody>
             </table>
           </div>
-        </div>
+        </Panel>
       </div>
     </div>
   );

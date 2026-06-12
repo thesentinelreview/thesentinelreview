@@ -82,12 +82,13 @@ export function resolveFeedView(raw: string | undefined): FeedView {
   return raw === "sources" ? "sources" : "alerts";
 }
 
-// The /admin/tieout page exposes 24h/7d plus an all-time option. "all" skips the
-// occurred_at lower bound entirely so the page can report lifetime fusion metrics.
-export type TieoutWindow = "24h" | "7d" | "all";
+// The /admin/tieout page exposes 24h/7d/30d plus an all-time option. "all" skips
+// the occurred_at lower bound entirely so the page can report lifetime fusion
+// metrics.
+export type TieoutWindow = "24h" | "7d" | "30d" | "all";
 
 export function resolveTieoutWindow(raw: string | undefined): TieoutWindow {
-  return raw === "7d" ? "7d" : raw === "all" ? "all" : "24h";
+  return raw === "7d" ? "7d" : raw === "30d" ? "30d" : raw === "all" ? "all" : "24h";
 }
 
 const SQL_INTERVALS: Record<TimeRange, string> = {
@@ -166,6 +167,23 @@ function theaterPredicate(theater: TieoutTheater): { sql: string; params: number
     params.push(minLng, minLat, maxLng, maxLat);
   }
   return { sql: parts.length > 1 ? `(${parts.join(" OR ")})` : parts[0], params };
+}
+
+// Per-row theater label for the tie-out rows under the "all" (Global) view.
+// Walks the same bboxes as theaterPredicate; israel is checked first so the
+// iran carve-out (israel's homeland box sits inside the wide iran box) holds
+// without repeating the NOT clause. Where two boxes overlap elsewhere (e.g.
+// the iran/sudan Red Sea corner), the first listed wins — deterministic, and
+// faithful to the same any-box membership the Global filter uses. The bbox
+// coords are hardcoded trusted constants (never user input), as in
+// israelCarveOut above.
+function theaterLabelCase(col: string): string {
+  const keys: TheaterKey[] = ["israel", "ukraine", "iran", "sudan", "myanmar"];
+  const whens = keys.map((k) => {
+    const [a, b, c, d] = THEATER_BBOX[k];
+    return `WHEN ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326)) THEN '${k}'`;
+  });
+  return `CASE ${whens.join(" ")} END`;
 }
 
 // ---------------------------------------------------------------------------
@@ -489,11 +507,15 @@ export async function getFusionRate(
 
 export type TieoutRow = {
   event_id: string;
-  occurred_at: string;       // ISO
+  occurred_at: string;       // ISO 8601 UTC
   event_type: string;
+  theater: string;           // selected theater; bbox-derived per row under "all"
   location_name: string | null;
+  lat: number;
+  lon: number;
   source_count: number;      // distinct source_id
   confidence: string;        // verified | partial | unconfirmed
+  platforms: string[];       // distinct platforms across the linked sources
 };
 
 export async function getTieoutRows(
@@ -510,9 +532,13 @@ export async function getTieoutRows(
       event_id: string;
       occurred_at: Date;
       event_type: EventType;
+      bbox_theater: string | null;
       location_name: string | null;
+      lat: number;
+      lon: number;
       source_count: string | number;
       confidence: Confidence;
+      platforms: string[];
     };
 
     const rows = await query<Row>(
@@ -521,11 +547,16 @@ export async function getTieoutRows(
         e.id::text                        AS event_id,
         e.occurred_at                     AS occurred_at,
         e.event_type                      AS event_type,
+        ${theaterLabelCase("e.location")} AS bbox_theater,
         e.location_name                   AS location_name,
+        ST_Y(e.location)::float8          AS lat,
+        ST_X(e.location)::float8          AS lon,
         COUNT(DISTINCT es.source_id)::int AS source_count,
-        e.confidence                      AS confidence
+        e.confidence                      AS confidence,
+        COALESCE(array_agg(DISTINCT s.platform) FILTER (WHERE s.platform IS NOT NULL), '{}') AS platforms
       FROM events e
       LEFT JOIN event_sources es ON es.event_id = e.id
+      LEFT JOIN sources s ON s.id = es.source_id
       WHERE e.published_at IS NOT NULL
         ${occurredAtClause(window)}
         AND ${pred.sql}
@@ -539,9 +570,15 @@ export async function getTieoutRows(
       event_id: r.event_id,
       occurred_at: new Date(r.occurred_at).toISOString(),
       event_type: r.event_type,
+      // A single-theater selection scopes every row to that theater by
+      // construction; only Global needs the per-row bbox label.
+      theater: theater === "all" ? (r.bbox_theater ?? "all") : theater,
       location_name: r.location_name,
+      lat: r.lat,
+      lon: r.lon,
       source_count: Number(r.source_count) || 0,
       confidence: r.confidence,
+      platforms: r.platforms,
     }));
   } catch {
     return [];

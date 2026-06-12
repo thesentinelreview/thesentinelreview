@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { AlertCircle } from "lucide-react";
 import MapWrapper from "@/components/MapWrapper";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
+import { isAdmin } from "@/lib/auth";
 import { getRequestEntitlements, clampTimeRangeForFloor, tierTimeFloor } from "@/lib/entitlements";
 import KpiRail from "@/components/watchfloor/KpiRail";
 import BriefPane from "@/components/watchfloor/BriefPane";
@@ -78,7 +79,7 @@ export default async function WatchfloorPage({
     zoom?: string;
   }>;
 }) {
-  const [params, { userId }] = await Promise.all([searchParams, auth()]);
+  const [params, { userId }, admin] = await Promise.all([searchParams, auth(), isAdmin()]);
   const entitlements = await getRequestEntitlements();
   const theater = resolveTheater(params.theater);
   // The page-level window must match what the query layer actually computes
@@ -186,6 +187,7 @@ export default async function WatchfloorPage({
         feedHref={`/app/feed?theater=${theater.id}`}
         sensorData={sensorData}
         isAuthed={!!userId}
+        showAdmin={admin}
       />
       <KpiRail
         windowLabel={WINDOW_LABELS[timeRange]}

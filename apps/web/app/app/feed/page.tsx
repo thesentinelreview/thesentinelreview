@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import HeaderBar from "@/components/watchfloor/HeaderBar";
+import { isAdmin } from "@/lib/auth";
 import { getRequestEntitlements } from "@/lib/entitlements";
 import UpgradePrompt from "@/components/ds/UpgradePrompt";
 import PostCard from "@/components/ds/PostCard";
@@ -103,7 +104,7 @@ export default async function SourceFeedPage({
   const platforms = parsePlatforms(params.platforms);
   const tiers     = parseTiers(params.tiers);
   const before    = params.before;
-  const { userId } = await auth();
+  const [{ userId }, admin] = await Promise.all([auth(), isAdmin()]);
   const entitlements = await getRequestEntitlements();
 
   const [page, sensorData] = await Promise.all([
@@ -150,6 +151,7 @@ export default async function SourceFeedPage({
         sensorData={sensorData}
         isAuthed={!!userId}
         tier={entitlements.tier}
+        showAdmin={admin}
       />
 
       {/* FEED CONTENT — full-bleed, scrolling column built from design-system primitives. */}

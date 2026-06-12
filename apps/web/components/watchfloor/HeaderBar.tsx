@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { UserButton } from "@clerk/nextjs";
-import { ExternalLink, Radio, FileText, MapPin } from "lucide-react";
+import { ExternalLink, Radio, FileText, MapPin, Shield } from "lucide-react";
 import SentinelBrand from "./SentinelBrand";
 import SensorStrip from "./SensorStrip";
 import type { SensorStripData } from "@/lib/types";
@@ -64,6 +64,7 @@ export default function HeaderBar({
   sensorData,
   isAuthed = false,
   tier,
+  showAdmin = false,
 }: {
   theaterLabel: string;
   windowLabel?: string;
@@ -75,6 +76,8 @@ export default function HeaderBar({
   sensorData: SensorStripData;
   isAuthed?: boolean;
   tier?: Tier;
+  /** isAdmin() allowlist result, resolved server-side by the page. */
+  showAdmin?: boolean;
 }) {
   const isFeed = currentView === "feed";
   const isStatic = currentView === "static";
@@ -147,6 +150,15 @@ export default function HeaderBar({
               <FileText className="w-4 h-4" />
               Methodology
             </Link>
+            {showAdmin && (
+              <Link
+                href="/admin/grants"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 text-amber-400/90 hover:text-amber-300 text-sm transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                Admin
+              </Link>
+            )}
 
             <div className="flex items-center gap-2">
               <span className="hidden xl:inline text-[10px] text-slate-500 uppercase tracking-wider">Theater</span>

@@ -153,6 +153,26 @@ relative timestamp (absolute on hover), `line-clamp-3` body with Expand/Collapse
 original-language version exists), the auth-gated Watch button, and the
 "Confirmed by Sentinel" link to the event detail.
 
+### `<KpiTile>`
+Stat tile on the canonical `<Panel>` chrome: uppercase `font-data` label, big
+slate-100 value, optional unit / delta (emerald/red) / hint line. Prop shape
+mirrors the watchfloor's bespoke `Kpi` so that rail can adopt this tile when it
+is reskinned. Consumers: `/admin/tieout`.
+
+```tsx
+<KpiTile label="Total events" value={42} hint="published, in theater bbox" />
+<KpiTile label="Fusion" value={87} unit="%" delta="+4" deltaColor="green" />
+```
+
+| Prop | Type | Notes |
+|---|---|---|
+| `label` | `string` | uppercase `font-data` slate-500 |
+| `value` | `string \| number` | big slate-100, `tabular-nums` |
+| `unit` | `string` | small suffix beside the value |
+| `delta` | `string` | optional change figure |
+| `deltaColor` | `'red' \| 'green'` | delta tint (default green/emerald) |
+| `hint` | `string` | one-line `font-data` slate-600 footnote |
+
 ### `<PageShell>`
 The canonical full-bleed page column: full width (no `max-w-*` / `mx-auto`) with the
 standard page gutter (`px-(--gutter)`) and vertical rhythm (`py-6 pb-20`, default
@@ -203,7 +223,6 @@ the watchfloor (`/`) keeps its current bespoke components.
 
 | Primitive | Spec | First consumer |
 |---|---|---|
-| `KpiTile` | Stat tile: label (`font-data` uppercase, slate-500) + big value (slate-100) + optional delta (emerald/red) + optional sparkline. `<Panel>` container. | watchfloor KPI rail |
 | `BriefingPane` | Titled scrollable pane for the daily briefing: header (tag + title + meta), paragraph body, "reviewed" state. | watchfloor brief pane, `/briefing/[id]` |
 | `ReliabilityBar` | Thin track + fill using `RELIABILITY` thresholds; `score` prop. (Tokens exist; component pending.) | source tables |
 | `SourceRow` | Ranked source row: handle + platform `<Badge>` + reliability bar + counts. | `/sources`, TopSources |

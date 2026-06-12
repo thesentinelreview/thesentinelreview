@@ -4,7 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { isDatabaseConfigured, queryOne } from "@/lib/db";
 import { getEntitlementsForUser, tierLabel } from "@/lib/entitlements";
-import { cleanEnv } from "@/lib/stripe";
+import { cleanEnv, FOUNDING_CAP } from "@/lib/stripe";
 import { deriveAccountState, welcomeMessage, type AccountRow } from "@/lib/account";
 import Panel from "@/components/ds/Panel";
 import ManageBillingButton from "@/app/pricing/ManageBillingButton";
@@ -153,8 +153,8 @@ export default async function AccountPage({
                 7 days of events, and the daily briefing.
               </div>
               <div className="text-sm text-slate-400">
-                The founding window is open: the first 250 Analyst subscribers lock in $5.99/mo for
-                as long as their subscription stays active.
+                The founding window is open: the first {FOUNDING_CAP} Analyst subscribers lock in
+                $5.99/mo for as long as their subscription stays active.
               </div>
               <div className="pt-2">
                 <Link

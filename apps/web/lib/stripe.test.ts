@@ -11,20 +11,20 @@ import {
 } from "./stripe";
 
 describe("founding cap guard decision", () => {
-  it("249 claimed seats — window open", () => {
-    expect(foundingSoldOut(249)).toBe(false);
+  it("99 claimed seats — window open", () => {
+    expect(foundingSoldOut(99)).toBe(false);
   });
 
-  it("250 claimed seats — sold out", () => {
-    expect(foundingSoldOut(250)).toBe(true);
+  it("100 claimed seats — sold out", () => {
+    expect(foundingSoldOut(100)).toBe(true);
   });
 
-  it("251 claimed seats — sold out (over-cap stays closed)", () => {
-    expect(foundingSoldOut(251)).toBe(true);
+  it("101 claimed seats — sold out (over-cap stays closed)", () => {
+    expect(foundingSoldOut(101)).toBe(true);
   });
 
-  it("cap is 250 seats", () => {
-    expect(FOUNDING_CAP).toBe(250);
+  it("cap is 100 seats", () => {
+    expect(FOUNDING_CAP).toBe(100);
   });
 
   it("empty table — window open", () => {
@@ -33,23 +33,23 @@ describe("founding cap guard decision", () => {
 });
 
 describe("founding seats remaining (pricing-page counter + window-closed branch)", () => {
-  it("empty table — 250 / 250 remaining (the honest zero state)", () => {
-    expect(foundingSeatsRemaining(0)).toBe(250);
+  it("empty table — 100 / 100 remaining (the honest zero state)", () => {
+    expect(foundingSeatsRemaining(0)).toBe(100);
   });
 
-  it("249 claimed — 1 remaining, window open", () => {
-    expect(foundingSeatsRemaining(249)).toBe(1);
-    expect(foundingSeatsRemaining(249) <= 0).toBe(false);
+  it("99 claimed — 1 remaining, window open", () => {
+    expect(foundingSeatsRemaining(99)).toBe(1);
+    expect(foundingSeatsRemaining(99) <= 0).toBe(false);
   });
 
-  it("250 claimed — 0 remaining, window-closed branch renders", () => {
-    expect(foundingSeatsRemaining(250)).toBe(0);
-    expect(foundingSeatsRemaining(250) <= 0).toBe(true);
+  it("100 claimed — 0 remaining, window-closed branch renders", () => {
+    expect(foundingSeatsRemaining(100)).toBe(0);
+    expect(foundingSeatsRemaining(100) <= 0).toBe(true);
   });
 
-  it("251 claimed (over-cap) — clamps to 0, window stays closed", () => {
-    expect(foundingSeatsRemaining(251)).toBe(0);
-    expect(foundingSeatsRemaining(251) <= 0).toBe(true);
+  it("101 claimed (over-cap) — clamps to 0, window stays closed", () => {
+    expect(foundingSeatsRemaining(101)).toBe(0);
+    expect(foundingSeatsRemaining(101) <= 0).toBe(true);
   });
 });
 

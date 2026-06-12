@@ -94,7 +94,7 @@ function Cell({ v }: { v: CellValue }) {
 const FAQ_ITEMS = [
   {
     q: "What does “locked in” actually mean?",
-    a: "If you become one of the first 250 Analyst subscribers, your rate stays at $5.99/month for as long as your subscription remains active and uninterrupted. If you cancel and resubscribe later, the standard rate ($12/month) applies. We honor the founding rate through any future pricing changes.",
+    a: `If you become one of the first ${FOUNDING_CAP} Analyst subscribers, your rate stays at $5.99/month for as long as your subscription remains active and uninterrupted. If you cancel and resubscribe later, the standard rate ($12/month) applies. We honor the founding rate through any future pricing changes.`,
   },
   {
     q: "What’s the difference between The Sentinel Review and the Intel Dashboard?",

@@ -8,7 +8,15 @@ import type { Tier } from "@/lib/entitlements-core";
 // chrome — "/" (the watchfloor command bar), /app/* (the feed header), and
 // /embed/* (bare iframe widgets) — so the global SiteHeader is mounted on the
 // content / marketing routes only.
-export default function GlobalHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tier?: Tier }) {
+export default function GlobalHeader({
+  isAuthed = false,
+  tier,
+  showAdmin = false,
+}: {
+  isAuthed?: boolean;
+  tier?: Tier;
+  showAdmin?: boolean;
+}) {
   const pathname = usePathname() || "/";
   const isOperational =
     pathname === "/" || pathname.startsWith("/app/") || pathname.startsWith("/embed/");
@@ -19,7 +27,7 @@ export default function GlobalHeader({ isAuthed = false, tier }: { isAuthed?: bo
   // shells (watchfloor) reset the margin in globals.css.
   return (
     <div className="global-site-header">
-      <SiteHeader isAuthed={isAuthed} tier={tier} />
+      <SiteHeader isAuthed={isAuthed} tier={tier} showAdmin={showAdmin} />
     </div>
   );
 }

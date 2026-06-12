@@ -57,7 +57,7 @@ export function tierForPriceIds(priceIds: readonly string[]): Exclude<Tier, "wat
 // while seats remain; at the cap, the slot swaps to the standard price.
 // STRIPE_FOUNDING_PRICE_ID stays constant across that swap, so is_founding
 // derivation and the cap guard never depend on which price the slot holds.
-export const FOUNDING_CAP = 250;
+export const FOUNDING_CAP = 100;
 
 export function foundingPriceId(): string | null {
   return cleanEnv(process.env.STRIPE_FOUNDING_PRICE_ID) || null;
