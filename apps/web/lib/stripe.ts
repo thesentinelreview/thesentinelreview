@@ -1,14 +1,9 @@
 import type { Tier } from "./auth";
+import { cleanEnv } from "./env";
 
-/**
- * Trim env-pasted whitespace. A secret/ID pasted into the Vercel UI with a
- * trailing newline corrupts auth headers, HMAC signatures, and ID equality
- * checks (same defect class as the R2 backup incident, PR #230). Keys, IDs,
- * and URLs never legitimately contain whitespace.
- */
-export function cleanEnv(value: string | undefined): string {
-  return (value ?? "").trim();
-}
+// Re-exported so existing imports (routes, tests) keep working; the
+// implementation moved to lib/env.ts when lib/db.ts gained the same need.
+export { cleanEnv } from "./env";
 
 /**
  * Validate NEXT_PUBLIC_SITE_URL into an origin for Stripe redirect URLs.

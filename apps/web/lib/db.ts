@@ -1,25 +1,37 @@
 import { Pool, type QueryResultRow } from "pg";
+import { cleanEnv } from "./env";
 
-// Store on globalThis so Next.js HMR module re-evaluations don't leak pools.
+// Store on globalThis so Next.js HMR module re-evaluations AND warm lambda
+// re-invocations share one Pool — never one pool per import or per request.
 declare global {
   var __pgPool: Pool | undefined;
 }
 
 export function isDatabaseConfigured(): boolean {
-  return !!process.env.DATABASE_URL;
+  return !!cleanEnv(process.env.DATABASE_URL);
 }
 
 function getPool(): Pool {
   if (!globalThis.__pgPool) {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = cleanEnv(process.env.DATABASE_URL);
+    if (!connectionString) {
       throw new Error("DATABASE_URL is not configured");
     }
-    const isLocal = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL);
+    const isLocal = /localhost|127\.0\.0\.1/.test(connectionString);
+    // Serverless sizing (EMAXCONNSESSION incident, 2026-06-12): each warm
+    // lambda holds its own pool, so per-lambda max must stay small — the
+    // transaction pooler (:6543) multiplexes server-side. max 3 covers the
+    // watchfloor's parallel query fan-out without serializing badly; short
+    // idle + allowExitOnIdle release connections quickly between invocations.
+    // Compatibility audit for Supavisor transaction mode: every call path
+    // uses pool.query(text, values) — unnamed prepared statements, no SET /
+    // LISTEN / advisory locks / multi-statement transactions.
     globalThis.__pgPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      max: 5,
-      idleTimeoutMillis: 30_000,
+      connectionString,
+      max: 3,
+      idleTimeoutMillis: 10_000,
       connectionTimeoutMillis: 5_000,
+      allowExitOnIdle: true,
       ssl: isLocal ? undefined : { rejectUnauthorized: false },
     });
   }
