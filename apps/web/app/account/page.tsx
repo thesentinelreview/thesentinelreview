@@ -4,6 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 import { isDatabaseConfigured, queryOne } from "@/lib/db";
 import { getEntitlementsForUser, tierLabel } from "@/lib/entitlements";
+import { cleanEnv } from "@/lib/stripe";
 import { deriveAccountState, welcomeMessage, type AccountRow } from "@/lib/account";
 import Panel from "@/components/ds/Panel";
 import ManageBillingButton from "@/app/pricing/ManageBillingButton";
@@ -38,7 +39,7 @@ async function getAccountRow(clerkUserId: string): Promise<AccountRow | null> {
 // Live renewal date from Stripe (source of truth), DB value as fallback.
 async function liveRenewalDate(stripeSubscriptionId: string, fallback: Date | null): Promise<Date | null> {
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const stripe = new Stripe(cleanEnv(process.env.STRIPE_SECRET_KEY));
     const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
     const ts = sub.items.data[0]?.current_period_end;
     return ts ? new Date(ts * 1000) : fallback;

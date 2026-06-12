@@ -86,7 +86,7 @@ export async function approveCandidate(formData: FormData): Promise<void> {
     [inserted.id, notes, candidateId],
   );
 
-  revalidatePath("/admin/sources");
+  revalidatePath("/admin/review-queue");
 }
 
 /**
@@ -116,7 +116,7 @@ export async function rejectCandidate(formData: FormData): Promise<void> {
     [reason, candidateId],
   );
 
-  revalidatePath("/admin/sources");
+  revalidatePath("/admin/review-queue");
 }
 
 /**
@@ -143,7 +143,7 @@ export async function deferCandidate(formData: FormData): Promise<void> {
     [candidateId],
   );
 
-  revalidatePath("/admin/sources");
+  revalidatePath("/admin/review-queue");
 }
 
 /**
@@ -152,5 +152,5 @@ export async function deferCandidate(formData: FormData): Promise<void> {
  */
 export async function setFilter(formData: FormData): Promise<void> {
   const status = String(formData.get("status") ?? "discovered");
-  redirect(`/admin/sources?status=${encodeURIComponent(status)}`);
+  redirect(`/admin/review-queue?status=${encodeURIComponent(status)}`);
 }

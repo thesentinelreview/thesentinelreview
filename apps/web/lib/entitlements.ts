@@ -10,35 +10,46 @@ import {
 
 export * from "./entitlements-core";
 
-function isAllowlistedAdmin(clerkUserId: string): boolean {
-  const allowlist = (process.env.ADMIN_CLERK_USER_IDS ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-  return allowlist.includes(clerkUserId);
+// Active (unrevoked) staff-issued tier grant, or null. Fail-soft: a missing
+// table (deploy ahead of migration) or any DB error degrades to "no grant" so
+// the subscription path still resolves.
+async function activeGrantTier(clerkUserId: string): Promise<string | null> {
+  try {
+    const row = await queryOne<{ tier: string }>(
+      `SELECT tier FROM tier_grants
+       WHERE clerk_user_id = $1 AND revoked_at IS NULL`,
+      [clerkUserId],
+    );
+    return row?.tier ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /**
  * Entitlements for a specific user id (or null = anonymous → watch).
- * Per-request memoized via React cache(): a render costs one query, not N.
+ * Precedence: active grant > qualifying subscription > watch.
+ * Per-request memoized via React cache(): a render costs one query pass, not N.
  * Fail-closed: any DB error degrades to watch.
  */
 export const getEntitlementsForUser = cache(
   async (clerkUserId: string | null): Promise<Entitlements> => {
     if (!clerkUserId) return deriveEntitlements(null);
-    const admin = isAllowlistedAdmin(clerkUserId);
-    if (!isDatabaseConfigured()) return deriveEntitlements(null, admin);
+    if (!isDatabaseConfigured()) return deriveEntitlements(null);
     try {
-      const row = await queryOne<SubscriptionRow>(
-        `SELECT tier, status, is_founding
-         FROM user_subscriptions
-         WHERE clerk_user_id = $1
-           AND ${QUALIFYING_STATUS_SQL}`,
-        [clerkUserId],
-      );
-      return deriveEntitlements(row, admin);
+      const [row, grantTier] = await Promise.all([
+        queryOne<SubscriptionRow>(
+          `SELECT tier, status, is_founding
+           FROM user_subscriptions
+           WHERE clerk_user_id = $1
+             AND ${QUALIFYING_STATUS_SQL}`,
+          [clerkUserId],
+        ),
+        activeGrantTier(clerkUserId),
+      ]);
+      return deriveEntitlements(row, grantTier);
     } catch {
-      return deriveEntitlements(null, admin);
+      return deriveEntitlements(null);
     }
   },
 );

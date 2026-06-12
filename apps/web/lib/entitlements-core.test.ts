@@ -75,9 +75,34 @@ describe("entitlements fallbacks", () => {
     expect(deriveEntitlements({ tier: "vip", status: "active", is_founding: false }).tier).toBe("watch");
   });
 
-  it("admin grant — command regardless of row", () => {
-    expect(deriveEntitlements(null, true).tier).toBe("command");
-    expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, true).tier).toBe("command");
+  it("precedence: active grant beats subscription beats watch", () => {
+    // grant only
+    expect(deriveEntitlements(null, "command").tier).toBe("command");
+    // grant beats an active subscription
+    expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, "bureau").tier).toBe("bureau");
+    // subscription when no grant
+    expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: false }, null).tier).toBe("analyst");
+    // neither -> watch
+    expect(deriveEntitlements(null, null).tier).toBe("watch");
+  });
+
+  it("revoked grant arrives as null (SQL revoked_at filter) — subscription path resolves", () => {
+    // A revoked grant never reaches deriveEntitlements: activeGrantTier's SQL
+    // filters revoked_at IS NULL. Equivalent input is grantTier = null.
+    expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: false }, null).tier).toBe("analyst");
+    expect(deriveEntitlements(null, null).tier).toBe("watch");
+  });
+
+  it("granted user keeps founding/status passthrough from their row", () => {
+    const e = deriveEntitlements({ tier: "analyst", status: "active", is_founding: true }, "command");
+    expect(e.tier).toBe("command");
+    expect(e.isFounding).toBe(true);
+    expect(e.status).toBe("active");
+  });
+
+  it("unknown grant tier fails closed to the subscription path", () => {
+    expect(deriveEntitlements(null, "vip").tier).toBe("watch");
+    expect(deriveEntitlements({ tier: "analyst", status: "active", is_founding: false }, "vip").tier).toBe("analyst");
   });
 });
 
