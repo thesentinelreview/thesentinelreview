@@ -1,3 +1,5 @@
+import type { BriefingSection } from "./briefing-format";
+
 export type EventType = "strike" | "clash" | "movement";
 export type Confidence = "verified" | "partial" | "unconfirmed";
 export type Platform = "x" | "telegram" | "rss" | "wire" | "bluesky";
@@ -154,6 +156,8 @@ export interface EventDetail extends MapEvent {
 
 export interface FullBriefing extends BriefingData {
   full_paragraphs: string[];
+  /** Parsed BLUF sections for W2-3 briefings; null for legacy paragraph-prose rows. */
+  sections: BriefingSection[] | null;
   referenced_event_ids: string[];
   confidence_summary: { verified: number; partial: number; unconfirmed: number };
 }
