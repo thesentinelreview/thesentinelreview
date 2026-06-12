@@ -260,7 +260,10 @@ export default async function SourceFeedPage({
         <div className="text-[10px] font-data tracking-[0.04em] text-slate-500 leading-relaxed pt-4 border-t border-slate-800/60">
           ⚠ Raw, unverified source posts — not yet corroborated or geolocated by Sentinel.
           AI-translated where available; original-language text via the &ldquo;Show original&rdquo; toggle on each card.
-          Sourced from open-source reporting. Not for operational use.
+          Sourced from open-source reporting. Not for operational use.{" "}
+          <Link href="/terms" className="hover:text-amber-400">Terms</Link>
+          <span className="text-slate-700"> · </span>
+          <Link href="/privacy" className="hover:text-amber-400">Privacy</Link>
         </div>
       </PageShell>
     </div>
