@@ -27,25 +27,21 @@ export const WATCH_EVENT_FLOOR_HOURS = 7 * 24;
 export const WATCH_BRIEFING_FLOOR_HOURS = 24;
 
 /**
- * Derive an Entitlements object from a qualifying user_subscriptions row (or
- * null) and the admin-allowlist check. The row, when present, has already
- * passed the qualifying-status SQL filter; a non-qualifying or absent row
- * arrives here as null and falls back to watch.
- *
- * Admins get "command" — bureau/command are reachable only via grants for now
- * (command has no purchase path and is not in the DB tier CHECK).
+ * Derive an Entitlements object from, in precedence order:
+ *  1. an active tier grant (tier_grants.revoked_at IS NULL) — staff-issued,
+ *  2. a qualifying user_subscriptions row,
+ *  3. watch.
+ * The row, when present, has already passed the qualifying-status SQL filter;
+ * the grant tier, when present, has already passed the revoked_at filter.
+ * Unknown values fail closed to watch.
  */
 export function deriveEntitlements(
   row: SubscriptionRow | null,
-  isAdminUser = false,
+  grantTier: string | null = null,
 ): Entitlements {
-  // TEMPORARY until W1-4: staff access and customer tier are different
-  // concepts. The real grant mechanism (W1-4 admin) replaces this
-  // allowlist→command mapping, and ADMIN_CLERK_USER_IDS goes back to
-  // meaning admin only.
-  if (isAdminUser) {
+  if (grantTier && PAID_TIERS.has(grantTier)) {
     return {
-      tier: "command",
+      tier: grantTier as Tier,
       isFounding: row?.is_founding ?? false,
       status: row?.status ?? null,
       canExport: true,
