@@ -16,9 +16,13 @@ const COLUMNS = [
   "event_id",
   "occurred_at",
   "event_type",
+  "theater",
   "location_name",
+  "lat",
+  "lon",
   "source_count",
   "confidence",
+  "platforms",
 ] as const;
 
 // RFC 4180: quote a field if it contains a quote, comma, CR or LF; escape " as "".
@@ -32,9 +36,13 @@ function rowValues(r: TieoutRow): (string | number)[] {
     r.event_id,
     r.occurred_at,
     r.event_type,
+    r.theater,
     r.location_name ?? "",
+    r.lat,
+    r.lon,
     r.source_count,
     r.confidence,
+    r.platforms.join(","),
   ];
 }
 
@@ -93,9 +101,13 @@ export async function GET(req: Request) {
         event_id: r.event_id,
         occurred_at: r.occurred_at,
         event_type: r.event_type,
+        theater: r.theater,
         location_name: r.location_name ?? "",
+        lat: r.lat,
+        lon: r.lon,
         source_count: r.source_count,
         confidence: r.confidence,
+        platforms: r.platforms.join(","),
       });
     }
     eventsSheet.views = [{ state: "frozen", ySplit: 1 }];

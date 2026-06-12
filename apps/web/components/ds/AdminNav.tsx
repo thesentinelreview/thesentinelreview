@@ -1,4 +1,4 @@
-import Link from "next/link";
+import FilterChip from "./FilterChip";
 
 const MODULES = [
   { label: "Grants",       href: "/admin/grants" },
@@ -8,22 +8,14 @@ const MODULES = [
   { label: "Tie-out",      href: "/admin/tieout" },
 ];
 
-/** Small nav row shared by the admin modules. */
+/** Small nav row shared by the admin modules — FilterChip in href mode. */
 export default function AdminNav({ active }: { active: string }) {
   return (
-    <nav className="flex flex-wrap items-center gap-2 text-xs font-data">
+    <nav aria-label="Admin modules" className="flex flex-wrap items-center gap-2">
       {MODULES.map((m) => (
-        <Link
-          key={m.href}
-          href={m.href}
-          className={`px-2.5 py-1 rounded border ${
-            m.href === active
-              ? "text-amber-400 border-amber-500/40 bg-amber-500/10"
-              : "text-slate-400 border-slate-700 hover:text-slate-200 hover:border-slate-500"
-          }`}
-        >
+        <FilterChip key={m.href} href={m.href} active={m.href === active}>
           {m.label}
-        </Link>
+        </FilterChip>
       ))}
     </nav>
   );

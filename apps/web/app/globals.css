@@ -203,6 +203,19 @@ body:has(.event-root) .demo-banner {
   margin: 0 !important;
 }
 
+/* ── Admin modules (full-bleed, scroll) ─────────────────────────────────── */
+/* Same full-bleed treatment as the other reskinned pages: drop body padding +
+   grain so /admin/* sits edge-to-edge on the slate-950 page background. */
+body:has(.admin-root) {
+  padding: 0;
+}
+body:has(.admin-root)::before {
+  content: none;
+}
+body:has(.admin-root) .demo-banner {
+  margin: 0 !important;
+}
+
 /* ── Content-page column centering ───────────────────────────────────────── */
 /* Center each full-bleed content root's single inner column the same way
    /methodology does (its scrolling <main> is `flex flex-col items-center`).
@@ -214,7 +227,8 @@ body:has(.event-root) .demo-banner {
 .theaters-root,
 .about-root,
 .briefing-root,
-.event-root {
+.event-root,
+.admin-root {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -233,7 +247,8 @@ body:has(.theater-root) .global-site-header,
 body:has(.theaters-root) .global-site-header,
 body:has(.about-root) .global-site-header,
 body:has(.briefing-root) .global-site-header,
-body:has(.event-root) .global-site-header {
+body:has(.event-root) .global-site-header,
+body:has(.admin-root) .global-site-header {
   margin: 0;
 }
 

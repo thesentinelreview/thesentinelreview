@@ -17,10 +17,27 @@ const NAV = [
   { label: 'Pricing', href: '/pricing' },
 ];
 
-export function SiteHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tier?: Tier }) {
+// Admin entry — appended only for the isAdmin() env allowlist (showAdmin is
+// resolved server-side in the layout; this client component never sees the
+// list). /admin has no index route, so the link lands on the grants module;
+// `match` keeps the entry active across every /admin/* module.
+const ADMIN_NAV = { label: 'Admin', href: '/admin/grants', match: '/admin' };
+
+export function SiteHeader({
+  isAuthed = false,
+  tier,
+  showAdmin = false,
+}: {
+  isAuthed?: boolean;
+  tier?: Tier;
+  showAdmin?: boolean;
+}) {
   const pathname = usePathname() || '/';
-  const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+  const isActive = (href: string, match?: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(match ?? href);
+  const nav: { label: string; href: string; match?: string }[] = showAdmin
+    ? [...NAV, ADMIN_NAV]
+    : NAV;
 
   return (
     <header className="bg-slate-950 border-b border-red-500/20 shadow-lg shadow-red-500/5">
@@ -31,8 +48,8 @@ export function SiteHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tie
 
           {/* Desktop nav (lg and up) */}
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-1">
-            {NAV.map((item) => {
-              const active = isActive(item.href);
+            {nav.map((item) => {
+              const active = isActive(item.href, item.match);
               return (
                 <Link
                   key={item.href}
@@ -95,8 +112,8 @@ export function SiteHeader({ isAuthed = false, tier }: { isAuthed?: boolean; tie
           aria-label="Primary"
           className="flex lg:hidden items-center gap-1 flex-wrap mt-3 pt-3 border-t border-slate-800"
         >
-          {NAV.map((item) => {
-            const active = isActive(item.href);
+          {nav.map((item) => {
+            const active = isActive(item.href, item.match);
             return (
               <Link
                 key={item.href}

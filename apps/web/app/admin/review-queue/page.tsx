@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { query } from "@/lib/db";
+import Panel from "@/components/ds/Panel";
+import Badge from "@/components/ds/Badge";
+import FilterChip from "@/components/ds/FilterChip";
+import AdminNav from "@/components/ds/AdminNav";
 import {
   approveCandidate,
   rejectCandidate,
@@ -9,6 +13,12 @@ import {
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Source Review Queue — Sentinel Admin" };
+
+const LABEL = "text-[10px] font-data tracking-[0.12em] uppercase text-slate-400";
+const INPUT =
+  "rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-slate-500";
+const BTN =
+  "px-3 py-1.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 text-xs font-semibold uppercase tracking-wider hover:bg-amber-500/20";
 
 type CandidateStatus =
   | "discovered"
@@ -88,50 +98,43 @@ export default async function ReviewQueuePage({
   const countMap = Object.fromEntries(counts.map((r) => [r.status, r.n]));
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 font-[family-name:var(--font-plex-sans)]">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Source Review Queue</h1>
-        <p className="mt-1 text-sm text-neutral-400">
-          Candidates discovered by mention-mining from active sources.
-          Approve to promote into the production source list.
-        </p>
-      </header>
+    <div className="admin-root min-h-screen bg-slate-950 text-slate-100 font-ui">
+      <div className="w-full max-w-5xl mx-auto px-5 py-8 flex flex-col gap-5">
+        <div className="flex flex-col gap-3 pb-3 border-b border-slate-800/60">
+          <h1 className="text-2xl font-bold tracking-tight">Source review queue</h1>
+          <p className="text-sm text-slate-400">
+            Candidates discovered by mention-mining from active sources.
+            Approve to promote into the production source list.
+          </p>
+          <AdminNav active="/admin/review-queue" />
+        </div>
 
-      <nav className="mb-6 flex flex-wrap gap-2 text-sm">
-        {FILTER_TABS.map((tab) => {
-          const active = tab.value === status;
-          return (
-            <a
+        <nav aria-label="Queue status" className="flex flex-wrap items-center gap-2">
+          {FILTER_TABS.map((tab) => (
+            <FilterChip
               key={tab.value}
               href={`/admin/review-queue?status=${tab.value}`}
-              className={
-                "rounded-full border px-3 py-1.5 transition " +
-                (active
-                  ? "border-amber-400 bg-amber-400/10 text-amber-200"
-                  : "border-neutral-700 text-neutral-300 hover:border-neutral-500")
-              }
+              active={tab.value === status}
             >
-              {tab.label}{" "}
-              <span className="ml-1 text-xs text-neutral-500">
-                {countMap[tab.value] ?? 0}
-              </span>
-            </a>
-          );
-        })}
-      </nav>
-
-      {candidates.length === 0 ? (
-        <p className="rounded-md border border-neutral-800 bg-neutral-900/40 p-6 text-center text-sm text-neutral-400">
-          No candidates with status &quot;{status}&quot;.
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {candidates.map((c) => (
-            <CandidateCard key={c.id} c={c} canAct={status === "discovered"} />
+              {tab.label}
+              <span className="ml-1.5 opacity-60">{countMap[tab.value] ?? 0}</span>
+            </FilterChip>
           ))}
-        </ul>
-      )}
-    </main>
+        </nav>
+
+        {candidates.length === 0 ? (
+          <Panel padding="md" className="text-center text-sm text-slate-400">
+            No candidates with status &quot;{status}&quot;.
+          </Panel>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {candidates.map((c) => (
+              <CandidateCard key={c.id} c={c} canAct={status === "discovered"} />
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -142,14 +145,6 @@ function CandidateCard({
   c: CandidateRow;
   canAct: boolean;
 }) {
-  const platformBadgeColor: Record<string, string> = {
-    x:        "bg-sky-500/15 text-sky-300",
-    telegram: "bg-blue-500/15 text-blue-300",
-    bluesky:  "bg-indigo-500/15 text-indigo-300",
-    rss:      "bg-orange-500/15 text-orange-300",
-    gdelt:    "bg-emerald-500/15 text-emerald-300",
-  };
-
   const profileLink =
     c.platform === "x"        ? `https://x.com/${c.handle}` :
     c.platform === "telegram" ? `https://t.me/${c.handle}` :
@@ -157,62 +152,59 @@ function CandidateCard({
     c.url ?? null;
 
   return (
-    <li className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
+    <Panel as="li" padding="sm" hover className="flex flex-col gap-2">
       <div className="flex flex-wrap items-baseline gap-2">
-        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${platformBadgeColor[c.platform] ?? "bg-neutral-700 text-neutral-200"}`}>
-          {c.platform}
-        </span>
+        <Badge variant="platform" value={c.platform} />
         {profileLink ? (
           <a
             href={profileLink}
             target="_blank"
             rel="noreferrer noopener"
-            className="font-[family-name:var(--font-plex-mono)] text-base text-amber-200 hover:underline"
+            className="font-data text-base text-amber-400 hover:text-amber-300 hover:underline"
           >
             {c.handle}
           </a>
         ) : (
-          <span className="font-[family-name:var(--font-plex-mono)] text-base text-amber-200">
-            {c.handle}
-          </span>
+          <span className="font-data text-base text-amber-400">{c.handle}</span>
         )}
-        <span className="text-sm text-neutral-500">
+        <span className="text-sm text-slate-500">
           · {c.mention_count} mention{c.mention_count === 1 ? "" : "s"}
         </span>
-        <span className="text-xs text-neutral-600">
+        <span className="text-xs font-data text-slate-600">
           · first seen {relativeTime(c.first_seen_at)}
         </span>
       </div>
 
       {c.mentioning_handles.length > 0 && (
-        <p className="mt-2 text-xs text-neutral-400">
+        <p className="text-xs text-slate-400">
           Mentioned by:{" "}
-          <span className="font-[family-name:var(--font-plex-mono)] text-neutral-300">
+          <span className="font-data text-slate-300">
             {c.mentioning_handles.slice(0, 5).join(", ")}
           </span>
         </p>
       )}
 
       {c.sample_context && (
-        <blockquote className="mt-2 border-l-2 border-neutral-700 pl-3 text-xs italic text-neutral-400">
+        <blockquote className="border-l-2 border-slate-700 pl-3 text-xs italic text-slate-400">
           {c.sample_context}
         </blockquote>
       )}
 
       {canAct && (
-        <div className="mt-4 space-y-3">
+        <div className="mt-2 flex flex-col gap-3">
           {/* Approve */}
-          <form action={approveCandidate} className="rounded border border-neutral-800 bg-neutral-950/60 p-3">
+          <form
+            action={approveCandidate}
+            className="flex flex-col gap-2 rounded-lg border border-slate-800/60 bg-slate-950/60 p-3"
+          >
             <input type="hidden" name="candidate_id" value={c.id} />
 
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              Approve
-            </div>
+            <div className={LABEL}>Approve</div>
 
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="text-neutral-400">Theaters:</span>
+              <span className="text-slate-400">Theaters:</span>
               {KNOWN_THEATERS.map((t) => (
-                <label key={t} className="inline-flex items-center gap-1 text-neutral-300">
+                <label key={t} className="inline-flex items-center gap-1 text-slate-300">
                   <input
                     type="checkbox"
                     name="theaters"
@@ -225,14 +217,10 @@ function CandidateCard({
               ))}
             </div>
 
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-              <label className="text-neutral-400">
-                Trust tier:{" "}
-                <select
-                  name="trust_tier"
-                  defaultValue={2}
-                  className="rounded border border-neutral-700 bg-neutral-900 px-1 py-0.5 text-neutral-200"
-                >
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <label className="flex items-center gap-2 text-slate-400">
+                Trust tier:
+                <select name="trust_tier" defaultValue={2} className={INPUT}>
                   <option value={1}>1 — verified outlet</option>
                   <option value={2}>2 — standard</option>
                   <option value={3}>3 — partisan / monitor only</option>
@@ -244,13 +232,10 @@ function CandidateCard({
               type="text"
               name="notes"
               placeholder="Notes (optional)"
-              className="mt-2 w-full rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-neutral-200 placeholder:text-neutral-600"
+              className={`${INPUT} w-full`}
             />
 
-            <button
-              type="submit"
-              className="mt-2 w-full rounded bg-amber-400 px-3 py-2 text-sm font-semibold text-neutral-900 hover:bg-amber-300"
-            >
+            <button type="submit" className={`${BTN} w-full`}>
               Approve &amp; promote
             </button>
           </form>
@@ -262,11 +247,11 @@ function CandidateCard({
               type="text"
               name="rejection_reason"
               placeholder="Rejection reason (optional)"
-              className="flex-1 rounded border border-neutral-800 bg-neutral-900 px-2 py-1.5 text-sm text-neutral-200 placeholder:text-neutral-600"
+              className={`${INPUT} flex-1`}
             />
             <button
               type="submit"
-              className="rounded border border-red-500/40 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/10"
+              className="px-3 py-1.5 rounded border border-red-500/40 bg-red-500/10 text-red-400 text-xs font-semibold uppercase tracking-wider hover:bg-red-500/20"
             >
               Reject
             </button>
@@ -277,14 +262,14 @@ function CandidateCard({
             <input type="hidden" name="candidate_id" value={c.id} />
             <button
               type="submit"
-              className="w-full rounded border border-neutral-800 px-3 py-1.5 text-xs text-neutral-400 hover:bg-neutral-800/40"
+              className="w-full px-3 py-1.5 rounded border border-slate-700 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 hover:border-slate-500"
             >
               Defer (hide from queue)
             </button>
           </form>
         </div>
       )}
-    </li>
+    </Panel>
   );
 }
 

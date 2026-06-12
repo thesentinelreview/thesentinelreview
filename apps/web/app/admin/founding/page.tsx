@@ -6,6 +6,7 @@ import Panel from "@/components/ds/Panel";
 import AdminNav from "@/components/ds/AdminNav";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Founding Ledger — Sentinel Admin" };
 
 const LABEL = "text-[10px] font-data tracking-[0.12em] uppercase text-slate-400";
 const NUM = "font-data text-2xl font-semibold tabular-nums text-slate-100 leading-none";

@@ -54,6 +54,6 @@ describe("welcome banner", () => {
   });
 
   it("post-window purchase — plain variant, no fabricated seat number", () => {
-    expect(welcomeMessage(false, 250)).toBe("You're in — Analyst access is active.");
+    expect(welcomeMessage(false, 100)).toBe("You're in — Analyst access is active.");
   });
 });
