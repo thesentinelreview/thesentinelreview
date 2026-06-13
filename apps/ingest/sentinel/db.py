@@ -434,17 +434,20 @@ def update_event_weapon_type(
 # keep the two theaters mutually exclusive — Israel/Gaza/West Bank events surface
 # under israel only, never also under iran. Kept in sync with the duplicate in
 # apps/web/lib/queries.ts (THEATER_BBOX + israelCarveOut).
-_ISRAEL_BBOX: tuple[float, float, float, float] = (34.2, 29.4, 35.9, 33.1)
+_UKRAINE_BBOX: tuple[float, float, float, float] = (22, 44, 40, 52)
+_ISRAEL_BBOX:  tuple[float, float, float, float] = (34.2, 29.4, 35.9, 33.1)
 
 _THEATER_BBOX: dict[str, tuple[float, float, float, float]] = {
-    "ukraine": (22, 44, 40, 52),
+    "ukraine":    _UKRAINE_BBOX,
     # iran spans the proxy theater (Lebanon→Yemen), matching the web dashboard
     # and the extraction prompt scope — not just Iran proper. The israel homeland
     # box is carved out of it at query time.
-    "iran":    (32, 10, 64, 42),
-    "sudan":   (21,  8, 42, 23),
-    "myanmar": (92,  9, 102, 29),
-    "israel":  _ISRAEL_BBOX,
+    "iran":       (32, 10, 64, 42),
+    "sudan":      (21,  8, 42, 23),
+    "myanmar":    (92,  9, 102, 29),
+    "israel":     _ISRAEL_BBOX,
+    "russia":     (28, 41, 140, 68),
+    "nato_flank": (19, 53,  29, 60),
 }
 
 
@@ -456,6 +459,16 @@ def _iran_israel_carve_sql(theater: str, col: str = "e.location") -> str:
     if theater != "iran":
         return ""
     a, b, c, d = _ISRAEL_BBOX
+    return f" AND NOT ST_Within({col}, ST_MakeEnvelope({a}, {b}, {c}, {d}, 4326))"
+
+
+def _russia_ukraine_carve_sql(theater: str, col: str = "e.location") -> str:
+    """For the russia theater, exclude the ukraine bbox so border events stay in
+    ukraine (ukraine takes precedence; russia bbox is a superset). Mirrors
+    _iran_israel_carve_sql. Empty for every other theater."""
+    if theater != "russia":
+        return ""
+    a, b, c, d = _UKRAINE_BBOX
     return f" AND NOT ST_Within({col}, ST_MakeEnvelope({a}, {b}, {c}, {d}, 4326))"
 
 
@@ -479,7 +492,7 @@ def get_recent_events(
         log.warning("get_recent_events_unknown_theater", theater=theater)
         return []
     min_lng, min_lat, max_lng, max_lat = bbox
-    carve = _iran_israel_carve_sql(theater, "e.location")
+    carve = _iran_israel_carve_sql(theater, "e.location") + _russia_ukraine_carve_sql(theater, "e.location")
     return conn.execute(
         f"""
         SELECT

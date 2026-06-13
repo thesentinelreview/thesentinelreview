@@ -26,7 +26,7 @@ log = structlog.get_logger()
 
 _client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
 
-THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar", "israel")
+THEATERS: tuple[str, ...] = ("ukraine", "iran", "sudan", "myanmar", "israel", "russia", "nato_flank")
 
 # Returned (not in THEATERS) when the router glitches — a missing/invalid tool
 # call or an exception. The caller still extracts the post under a generic scope

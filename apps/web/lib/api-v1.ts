@@ -97,11 +97,15 @@ export async function authenticateApiRequest(req: Request): Promise<ApiAuth> {
 // deterministic and recomputable. Keep in sync with lib/queries.ts THEATER_BBOX.
 export const THEATER_CASE_SQL = `CASE
   WHEN ST_Within(e.location, ST_MakeEnvelope(34.2, 29.4, 35.9, 33.1, 4326)) THEN 'israel'
-  WHEN ST_Within(e.location, ST_MakeEnvelope(22, 44, 40, 52, 4326))         THEN 'ukraine'
-  WHEN ST_Within(e.location, ST_MakeEnvelope(32, 10, 64, 42, 4326))         THEN 'iran'
-  WHEN ST_Within(e.location, ST_MakeEnvelope(21, 8, 42, 23, 4326))          THEN 'sudan'
-  WHEN ST_Within(e.location, ST_MakeEnvelope(92, 9, 102, 29, 4326))         THEN 'myanmar'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(19, 53, 29, 60, 4326))          THEN 'nato_flank'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(21, 8, 42, 23, 4326))           THEN 'sudan'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(32, 10, 64, 42, 4326))
+       AND NOT ST_Within(e.location, ST_MakeEnvelope(34.2, 29.4, 35.9, 33.1, 4326)) THEN 'iran'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(92, 9, 102, 29, 4326))          THEN 'myanmar'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(22, 44, 40, 52, 4326))          THEN 'ukraine'
+  WHEN ST_Within(e.location, ST_MakeEnvelope(28, 41, 140, 68, 4326))
+       AND NOT ST_Within(e.location, ST_MakeEnvelope(22, 44, 40, 52, 4326))  THEN 'russia'
   ELSE 'other'
 END`;
 
-export const API_THEATERS = ["ukraine", "iran", "sudan", "myanmar", "israel"] as const;
+export const API_THEATERS = ["ukraine", "iran", "sudan", "myanmar", "israel", "russia", "nato_flank"] as const;

@@ -45,6 +45,22 @@ export const THEATERS: Record<TheaterKey, TheaterConfig> = {
     mapSubtitle: "Israel — Gaza, West Bank, and Strikes on Israeli Soil",
     briefingTitle: "Daily Briefing — Israel Theater",
   },
+  russia: {
+    id: "russia",
+    label: "Russia (Rear)",
+    mapCenter: [60, 55],
+    mapZoom: 4,
+    mapSubtitle: "Russia — Deep-Rear Strikes on Russian Soil",
+    briefingTitle: "Daily Briefing — Russia Rear Theater",
+  },
+  nato_flank: {
+    id: "nato_flank",
+    label: "NATO Flank / Baltic",
+    mapCenter: [24, 56],
+    mapZoom: 6,
+    mapSubtitle: "NATO Flank — Baltic, Belarus, Kaliningrad",
+    briefingTitle: "Daily Briefing — NATO Flank / Baltic",
+  },
 };
 
 export function resolveTheater(raw: string | undefined): TheaterConfig {
@@ -157,5 +173,39 @@ export const THEATER_CONTENT: Record<TheaterKey, TheaterDescriptor> = {
     ],
     seoTitle:       "Israel & Gaza Conflict Map — Real-time OSINT Events | Sentinel Review",
     seoDescription: "Live, verified OSINT events in Israel, Gaza, and the West Bank: IDF operations, Hamas activity, and strikes landing on Israeli soil. Geolocated and multi-source confidence scored.",
+  },
+
+  russia: {
+    tagline: "Deep-rear strikes on Russian soil — military-industrial targets, airfields, and fuel depots.",
+    since:   "Coverage active",
+    paragraphs: [
+      "The Russia Rear theater tracks conflict activity physically located on Russian territory outside the Ukraine bounding box: Ukrainian long-range drone and missile strikes on military-industrial facilities, oil refineries, airfields, ammunition depots, and rail infrastructure across European Russia and the Urals. Coverage extends from Bryansk and Belgorod oblasts deep into the Russian interior as far east as the Urals.",
+      "Events in this theater are defined by location on Russian soil, not by actor. The Ukraine war is the proximate cause of virtually all current activity here, but the theater captures the geographic footprint of strikes that fall outside the Ukraine bbox. Confidence scoring reflects the corroboration available from OSINT geolocators, Russian regional Telegram channels, and Ukrainian official statements.",
+    ],
+    keyActors: [
+      "Armed Forces of Ukraine (AFU) — drone and missile strike operations",
+      "Russian air defense (S-300/400, Pantsir, Tor systems)",
+      "Russian regional emergency services and civil defense",
+      "Russian Ministry of Defense (official denial/acknowledgment layer)",
+    ],
+    seoTitle:       "Russia Rear Theater — Deep-Rear Strikes on Russian Soil | Sentinel Review",
+    seoDescription: "OSINT coverage of Ukrainian long-range strikes on Russian territory: airfields, fuel depots, military-industrial targets across European Russia and the Urals. Geolocated and confidence scored.",
+  },
+
+  nato_flank: {
+    tagline: "Baltic states, Belarus, and Kaliningrad — troop movements, incidents, and escalation signals.",
+    since:   "Coverage active",
+    paragraphs: [
+      "The NATO Flank / Baltic theater covers the eastern edge of the NATO alliance: Estonia, Latvia, Lithuania, and Poland's Kaliningrad frontier, plus Belarus as the primary Russian forward-staging theater adjacent to NATO territory. Coverage includes NATO reinforcement movements, Belarusian Armed Forces activity, Russian Kaliningrad garrison developments, and any cross-border incident or airspace violation in the region.",
+      "This is primarily a situational-awareness theater rather than a high-tempo kinetic one. Events skew toward force posture (troop deployments, exercise activity, infrastructure prepositioning) and incident reporting (airspace violations, GPS jamming, border incidents). Confidence scoring here gives weight to official NATO, national MoD, and wire-service sources, as the OSINT milblog ecosystem is thinner than in the Ukraine or Russia theaters.",
+    ],
+    keyActors: [
+      "NATO Enhanced Forward Presence (eFP) battlegroups — Estonia, Latvia, Lithuania, Poland",
+      "Belarusian Armed Forces (BAF)",
+      "Russian Baltic Fleet and Kaliningrad garrison",
+      "Baltic national defense forces (Estonian Defense Forces, Latvian NAF, Lithuanian Armed Forces)",
+    ],
+    seoTitle:       "NATO Flank / Baltic Theater — Troop Movements and Incidents | Sentinel Review",
+    seoDescription: "OSINT coverage of the NATO eastern flank: troop movements, airspace incidents, and escalation signals across the Baltic states, Belarus, and Kaliningrad. Geolocated and confidence scored.",
   },
 };
