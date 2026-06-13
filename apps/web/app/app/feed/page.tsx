@@ -15,7 +15,7 @@ import { type FeedPost, getSourceFeedPosts, getWatchInfo, getSensorStripData } f
 
 export const dynamic = "force-dynamic";
 
-const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky"];
+const ALL_PLATFORMS: Platform[] = ["telegram", "rss", "x", "wire", "bluesky", "gdelt"];
 const ALL_TIERS: Array<1 | 2 | 3> = [1, 2, 3];
 
 function parsePlatforms(raw: string | undefined): Platform[] {
