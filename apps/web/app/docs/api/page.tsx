@@ -65,7 +65,7 @@ export default function ApiDocsPage() {
           <h2 className={H2}>Endpoints</h2>
           <Endpoint
             title="GET /api/v1/events"
-            desc="Published events, newest first. Filters: theater, since/until (ISO 8601), event_type (strike|clash|movement), min_confidence (unconfirmed|partial|verified), verified (true|false). limit ≤ 200 (default 50); keyset pagination via next_cursor. The theater field is derived from event coordinates against the five canonical theater bounding boxes (israel→ukraine→iran→sudan→myanmar precedence); title is the event description when ≤80 chars, otherwise 'Type — location'."
+            desc="Published events, newest first. Filters: theater, since/until (ISO 8601), event_type (strike|clash|movement), min_confidence (unconfirmed|partial|verified), verified (true|false), weapon_type (artillery|drone|missile|armor|infantry|naval|aircraft|other). limit ≤ 200 (default 50); keyset pagination via next_cursor. The theater field is derived from event coordinates against the five canonical theater bounding boxes (israel→ukraine→iran→sudan→myanmar precedence); title is the event description when ≤80 chars, otherwise 'Type — location'. Every event carries weapon_type — coarse kinetic-capability class; null when no kinetic capability is identifiable (null rows are not selectable by the filter)."
             curl={`curl ${K} \\
   "${BASE}/api/v1/events?theater=ukraine&since=2026-06-01T00:00:00Z&min_confidence=partial&limit=50"`}
           />
@@ -95,7 +95,7 @@ export default function ApiDocsPage() {
           />
           <Endpoint
             title="GET /api/v1/analytics/counts"
-            desc="Totals between since and until grouped by event_type, theater, or confidence_band."
+            desc="Totals between since and until grouped by event_type, theater, confidence_band, or weapon_type. weapon_type grouping includes one key:null row for events with no identifiable kinetic capability, so the totals always reconcile with /events over the same window."
             curl={`curl ${K} \\
   "${BASE}/api/v1/analytics/counts?since=2026-06-01T00:00:00Z&until=2026-06-12T00:00:00Z&group_by=event_type"`}
           />
@@ -121,7 +121,9 @@ export default function ApiDocsPage() {
           <p className={P}>
             <strong className="text-slate-300">Formats:</strong> CSV and JSON. Each row carries the
             event&rsquo;s id, timestamp (ISO 8601 UTC), type, bbox-derived theater, location,
-            coordinates, source count, confidence, platforms, and summary.
+            coordinates, source count, confidence, platforms, summary, and weapon_type (coarse
+            kinetic-capability class; null — empty in CSV — when no kinetic capability is
+            identifiable).
           </p>
           <p className={P}>
             <strong className="text-slate-300">Windows:</strong> 24H / 7D / 30D / 90D, or a custom

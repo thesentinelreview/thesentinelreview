@@ -39,6 +39,7 @@ jobs:
           UNTIL="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
           call events "/events?theater=ukraine&limit=3"
+          call events-weapon-type "/events?weapon_type=drone&limit=3"
           EVENT_ID=$(curl -sS -H "Authorization: Bearer $API_KEY" "$BASE/events?limit=1" | jq -r '.events[0].id // empty')
           if [ -n "$EVENT_ID" ]; then call event-detail "/events/$EVENT_ID"; else echo "no events available for detail call"; fi
           call briefings "/briefings?limit=3"
@@ -47,6 +48,7 @@ jobs:
           call sources "/sources"
           call intensity "/analytics/intensity?since=$SINCE&until=$UNTIL"
           call counts "/analytics/counts?since=$SINCE&until=$UNTIL&group_by=event_type"
+          call counts-weapon-type "/analytics/counts?since=$SINCE&until=$UNTIL&group_by=weapon_type"
           call source-stats "/analytics/source-stats?since=$SINCE&until=$UNTIL"
 
           echo "=================================================================="

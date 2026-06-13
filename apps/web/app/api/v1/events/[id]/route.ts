@@ -15,7 +15,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   type Row = {
     id: string; occurred_at: Date; event_type: string; theater: string;
     lat: number; lon: number; confidence: string; title: string; summary: string;
-    source_count: number;
+    source_count: number; weapon_type: string | null;
   };
   const evt = await queryOne<Row>(
     `SELECT e.id::text AS id, e.occurred_at, e.event_type,
@@ -25,7 +25,8 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
             CASE WHEN char_length(e.description) <= 80 THEN e.description
                  ELSE initcap(e.event_type) || ' — ' || e.location_name END AS title,
             e.description AS summary,
-            COUNT(DISTINCT es.source_id)::int AS source_count
+            COUNT(DISTINCT es.source_id)::int AS source_count,
+            e.weapon_type
      FROM events e
      LEFT JOIN event_sources es ON es.event_id = e.id
      WHERE e.id = $1::uuid AND e.published_at IS NOT NULL

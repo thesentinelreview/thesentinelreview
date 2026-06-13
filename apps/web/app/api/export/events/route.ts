@@ -87,13 +87,15 @@ export async function GET(req: Request) {
   }
 
   // The 10 tie-out columns + summary (events.description — the text rendered
-  // on event cards; same value the Read API exposes as `summary`). Theater is
-  // bbox-derived via the shared THEATER_CASE_SQL — the W2-1 API derivation,
-  // not a parallel implementation. No raw post text, no source URLs.
+  // on event cards; same value the Read API exposes as `summary`) + the
+  // weapon_type threat axis. Theater is bbox-derived via the shared
+  // THEATER_CASE_SQL — the W2-1 API derivation, not a parallel implementation.
+  // No raw post text, no source URLs.
   type Row = {
     event_id: string; occurred_at: Date; event_type: string; theater: string;
     location_name: string | null; lat: number; lon: number;
     source_count: number; confidence: string; platforms: string[]; summary: string;
+    weapon_type: string | null;
   };
   const rows = await query<Row>(
     `SELECT e.id::text AS event_id, e.occurred_at, e.event_type,
@@ -103,7 +105,8 @@ export async function GET(req: Request) {
             COUNT(DISTINCT es.source_id)::int AS source_count,
             e.confidence,
             COALESCE(array_agg(DISTINCT s.platform) FILTER (WHERE s.platform IS NOT NULL), '{}') AS platforms,
-            e.description AS summary
+            e.description AS summary,
+            e.weapon_type
      FROM events e
      LEFT JOIN event_sources es ON es.event_id = e.id
      LEFT JOIN sources s        ON s.id = es.source_id
@@ -130,6 +133,7 @@ export async function GET(req: Request) {
     confidence: r.confidence,
     platforms: r.platforms,
     summary: r.summary,
+    weapon_type: r.weapon_type,
   }));
 
   // Audit-first: the log row is written before the file ships. If logging

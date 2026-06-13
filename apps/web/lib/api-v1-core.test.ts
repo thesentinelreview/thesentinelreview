@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   API_DAILY_LIMITS,
+  GROUP_BY_VALUES,
   confidencesAtOrAbove,
   decodeCursor,
   encodeCursor,
@@ -10,10 +11,12 @@ import {
   isWellFormedApiKey,
   parseIsoParam,
   parseLimitParam,
+  parseWeaponTypeParam,
   rateLimitState,
   utcMidnightResetEpoch,
   type EventCursor,
 } from "./api-v1-core";
+import { WEAPON_TYPES } from "./types";
 
 describe("API key generation + hash roundtrip", () => {
   it("format, uniqueness, prefix, hash roundtrip", () => {
@@ -74,6 +77,31 @@ describe("param validation", () => {
     expect(confidencesAtOrAbove("nope")).toHaveProperty("code", "invalid_parameter");
     expect(confidencesAtOrAbove("partial")).toEqual(["partial", "verified"]);
     expect(confidencesAtOrAbove("verified")).toEqual(["verified"]);
+  });
+});
+
+describe("weapon_type filter param (threat axis)", () => {
+  it("every vocabulary value passes; absent param means no filter", () => {
+    for (const w of WEAPON_TYPES) expect(parseWeaponTypeParam(w)).toBe(w);
+    expect(parseWeaponTypeParam(null)).toBeNull();
+    expect(parseWeaponTypeParam("")).toBeNull();
+  });
+
+  it("out-of-vocabulary values rejected with the standard 422 shape", () => {
+    const r = parseWeaponTypeParam("nuke");
+    expect(r).toHaveProperty("code", "invalid_parameter");
+    expect(r).toHaveProperty("message", `weapon_type must be one of ${WEAPON_TYPES.join(", ")}`);
+    // case-sensitive, and "null" is not a filterable class — NULL rows mean
+    // no identifiable kinetic capability and are reachable only unfiltered.
+    expect(parseWeaponTypeParam("DRONE")).toHaveProperty("code", "invalid_parameter");
+    expect(parseWeaponTypeParam("null")).toHaveProperty("code", "invalid_parameter");
+  });
+
+  it("vocabulary is the 8-class canon mirror; group_by gained weapon_type", () => {
+    expect(WEAPON_TYPES).toEqual([
+      "artillery", "drone", "missile", "armor", "infantry", "naval", "aircraft", "other",
+    ]);
+    expect(GROUP_BY_VALUES).toContain("weapon_type");
   });
 });
 
