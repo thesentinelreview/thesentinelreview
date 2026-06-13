@@ -1,0 +1,57 @@
+name: Sentinel — Cadence Watchdog
+
+# GitHub drops/delays */30 scheduled runs (observed 48h baseline: 21 runs where
+# ~96 were expected, max gap 4.6h) — a freshness defect for a live intel
+# product. Every 15 minutes, offset from :00/:30 so it observes mid-cycle, this
+# watchdog measures the age of the NEWEST sentinel-ingest run of any status
+# (cadence measures attempts; failing ingests are checks.py's problem, not this
+# watchdog's) and dispatches sentinel-ingest.yml when the gap exceeds the
+# threshold. When cron is healthy it always SKIPs, so ingest frequency,
+# bot-commit volume, and redeploy volume stay at nominal. A dispatch that
+# overlaps a late cron run queues behind sentinel-ingest's concurrency group
+# instead of double-running. Pure-GitHub: built-in GITHUB_TOKEN, no PATs, no
+# external cron, no new secrets. Distinct from the DB-level staleness watchdog
+# (migration 0034), which alerts on 72h+ data-level silences.
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      threshold_minutes:
+        description: 'Dispatch ingest when the newest run is older than this many minutes'
+        required: false
+        default: '40'
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      # Empty on schedule events (inputs context is unset there) → default 40.
+      THRESHOLD_MINUTES: ${{ inputs.threshold_minutes || '40' }}
+    steps:
+      - name: Measure ingest gap and dispatch if stale
+        run: |
+          set -euo pipefail
+          # Newest run of ANY status/event — the runs endpoint sorts created_at desc.
+          last=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/sentinel-ingest.yml/runs?per_page=1" \
+            --jq '.workflow_runs[0].created_at // empty')
+          if [ -z "$last" ]; then
+            echo "decision: last-run=none gap=inf threshold=${THRESHOLD_MINUTES}m -> DISPATCH"
+            gh workflow run sentinel-ingest.yml --ref main -R "$GITHUB_REPOSITORY"
+            exit 0
+          fi
+          gap_min=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 60 ))
+          if [ "$gap_min" -gt "$THRESHOLD_MINUTES" ]; then
+            echo "decision: last-run=$last gap=${gap_min}m threshold=${THRESHOLD_MINUTES}m -> DISPATCH"
+            gh workflow run sentinel-ingest.yml --ref main -R "$GITHUB_REPOSITORY"
+          else
+            echo "decision: last-run=$last gap=${gap_min}m threshold=${THRESHOLD_MINUTES}m -> SKIP"
+          fi
