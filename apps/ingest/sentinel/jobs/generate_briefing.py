@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone
 import psycopg
 import structlog
 
-from sentinel.db import get_recent_events, insert_briefing, log_llm_call
+from sentinel.db import _THEATER_BBOX, get_recent_events, insert_briefing, log_llm_call
 from sentinel.models import BriefingInput, GenerateBriefingPayload
 from sentinel.pipeline.briefing import generate_briefing_draft
 
@@ -27,6 +27,10 @@ log = structlog.get_logger()
 
 def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
     params = GenerateBriefingPayload.model_validate(payload)
+
+    if params.theater not in _THEATER_BBOX:
+        log.error("generate_briefing_unknown_theater", theater=params.theater)
+        return
 
     period_end = datetime.now(tz=timezone.utc)
 
@@ -110,14 +114,14 @@ def run(conn: psycopg.Connection, *, job_id: uuid.UUID, payload: dict) -> None:
 
 def _compute_baseline(conn: psycopg.Connection, *, theater: str) -> dict:
     """Average events per day per oblast over the last 7 days."""
-    from sentinel.db import _THEATER_BBOX, _iran_israel_carve_sql
+    from sentinel.db import _THEATER_BBOX, _iran_israel_carve_sql, _russia_ukraine_carve_sql
     bbox = _THEATER_BBOX.get(theater)
     if bbox is None:
         # No silent ukraine fallback — surface the misconfiguration instead.
         log.warning("compute_baseline_unknown_theater", theater=theater)
         return {}
     min_lng, min_lat, max_lng, max_lat = bbox
-    carve = _iran_israel_carve_sql(theater, "location")
+    carve = _iran_israel_carve_sql(theater, "location") + _russia_ukraine_carve_sql(theater, "location")
     rows = conn.execute(
         f"""
         SELECT oblast, COUNT(*)::float / 7 AS avg_per_day
