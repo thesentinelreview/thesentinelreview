@@ -210,7 +210,7 @@ export default async function WatchfloorPage({
           underneath). Each right-column panel pins its own header and scrolls its
           body; the min-h-0 chain from here down is what lets those bodies scroll. */}
       <main className="flex-1 min-h-0 grid grid-cols-12 gap-3 px-6 py-3">
-        <div className="col-span-12 lg:col-span-6 h-[480px] lg:h-auto lg:min-h-0 relative rounded-lg overflow-hidden border border-slate-700">
+        <div className="col-span-12 min-[1024px]:max-[1279px]:col-span-6 min-[1280px]:max-[1799px]:col-span-7 min-[1800px]:col-span-6 h-[480px] lg:h-auto lg:min-h-0 relative rounded-lg overflow-hidden border border-slate-700">
           <MapWrapper
             events={mapEvents}
             center={mapCenter}
@@ -221,7 +221,7 @@ export default async function WatchfloorPage({
           <MapLegend items={legendItems} />
         </div>
 
-        <div className="col-span-12 lg:col-span-6 flex flex-col gap-3 min-h-0">
+        <div className="col-span-12 min-[1024px]:max-[1279px]:col-span-6 min-[1280px]:max-[1799px]:col-span-5 min-[1800px]:col-span-6 flex flex-col gap-3 min-h-0">
           {/* Daily Brief — compact at the top: header pinned, summary scrolls. */}
           <div className="lg:flex-1 lg:min-h-0 min-h-0">
             <BriefPane
@@ -233,8 +233,11 @@ export default async function WatchfloorPage({
             />
           </div>
           {/* Active Alerts | Sector Threat — fills the remaining height; each
-              panel pins its header and scrolls its body. */}
-          <div className="lg:flex-[1.6] lg:min-h-0 min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              panel pins its header and scrolls its body. Side-by-side only at the
+              ≥1800 design width where the rail is wide; through the laptop band the
+              rail is a narrower sidebar, so the two panels stack (full rail width,
+              single-line headers) instead of cramping into two columns. */}
+          <div className="lg:flex-[1.6] lg:min-h-0 min-h-0 grid grid-cols-1 grid-rows-2 min-[1800px]:grid-cols-2 min-[1800px]:grid-rows-1 gap-3">
             <LiveStream
               events={mapEvents}
               sources={sources}
