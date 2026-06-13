@@ -47,20 +47,28 @@ def _fetch_meta(
     *,
     transport_error: str | None = None,
     http_status: int | None = None,
+    raw_entries: int | None = None,
+    drops: dict | None = None,
 ) -> dict:
     """Build the last_fetch_meta the ingest_source job reads to stamp source
-    health (see db.record_source_fetch). Mirrors rss.py's _meta. For bluesky a
-    "result" is a captured post, so raw_entries == results: >0 yields healthy
-    with a real last_post_at, 0 yields silent (quiet handle), and
-    transport_error yields erroring/url_broken instead of a false silent.
-    http_status lets _classify_fetch pick 'erroring' (reachable, refused) over
-    'url_broken' for HTTP-level failures where atproto surfaces the status."""
+    health (see db.record_source_fetch). Mirrors rss.py's _meta.
+
+    raw_entries is the count of feed items the API returned (pre-filter); results
+    is the count we actually ingest. When they differ, _classify_fetch reports
+    "{raw} entries, 0 ingestable ({drops})" instead of the misleading "feed
+    reachable but empty (0 entries)" — so a repost-only or parse-failing feed is
+    no longer indistinguishable from a genuinely quiet account. Callers that pass
+    only a results list (the early-exit paths) keep raw_entries == results, which
+    is the prior behavior. http_status lets _classify_fetch pick 'erroring'
+    (reachable, refused) over 'url_broken' for HTTP-level failures where atproto
+    surfaces the status."""
     n = len(results) if results else 0
     return {
         "transport_error": transport_error,
         "http_status": http_status,
-        "raw_entries": n,
+        "raw_entries": raw_entries if raw_entries is not None else n,
         "results": n,
+        "drops": drops or {},
         "newest_posted_at": (
             max((r["posted_at"] for r in results), default=None) if results else None
         ),
@@ -115,6 +123,11 @@ class BlueskyIngestor(BaseIngestor):
         cursor: str | None = None
         transport_error: str | None = None
         http_status: int | None = None
+        # Pre-filter item count + drop-reason counters, so a feed that returned
+        # items we filtered out (all reposts, all stale, all unparseable) is
+        # distinguishable from a genuinely empty feed. Mirrors rss.py's drops.
+        raw_entries = 0
+        drops = {"repost": 0, "too_old": 0, "parse_error": 0}
 
         for page in range(_MAX_PAGES):
             try:
@@ -150,9 +163,11 @@ class BlueskyIngestor(BaseIngestor):
 
             hit_cutoff = False
             for item in feed.feed:
+                raw_entries += 1
                 try:
                     # Skip reposts — only ingest original posts authored by this account
                     if getattr(item, "reason", None) is not None:
+                        drops["repost"] += 1
                         continue
 
                     post = item.post
@@ -161,6 +176,7 @@ class BlueskyIngestor(BaseIngestor):
                         created_at_str.replace("Z", "+00:00")
                     )
                     if posted_at < cutoff:
+                        drops["too_old"] += 1
                         hit_cutoff = True
                         break
 
@@ -184,6 +200,7 @@ class BlueskyIngestor(BaseIngestor):
                         )
                     )
                 except Exception as exc:
+                    drops["parse_error"] += 1
                     log.warning("bluesky_post_parse_error", handle=handle, error=str(exc))
                     continue
 
@@ -191,6 +208,26 @@ class BlueskyIngestor(BaseIngestor):
                 break
             cursor = feed.cursor
 
-        self.last_fetch_meta = _fetch_meta(results, transport_error=transport_error, http_status=http_status)
-        log.debug("bluesky_fetched", handle=handle, count=len(results))
+        self.last_fetch_meta = _fetch_meta(
+            results,
+            transport_error=transport_error,
+            http_status=http_status,
+            raw_entries=raw_entries,
+            drops=drops,
+        )
+        # INFO so the breakdown lands in GitHub Actions logs without a config change.
+        #   raw_entries=0                        → feed genuinely empty / handle resolves empty
+        #   raw_entries=N, results=0, repost=N   → account only reposts (skipped)
+        #   raw_entries=N, results=0, too_old=1  → newest original older than since_hours
+        #   raw_entries=N, results=N             → working normally
+        log.info(
+            "bluesky_fetched",
+            handle=handle,
+            raw_entries=raw_entries,
+            results=len(results),
+            drops_repost=drops["repost"],
+            drops_too_old=drops["too_old"],
+            drops_parse_error=drops["parse_error"],
+            since_hours=since_hours,
+        )
         return results
