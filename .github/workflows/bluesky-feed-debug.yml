@@ -1,0 +1,59 @@
+name: Bluesky — Author Feed Debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      handles:
+        description: 'Comma-separated Bluesky handles to inspect'
+        default: >-
+          osinttechnical.bsky.social,uacontrolmap.bsky.social,
+          defense-of-ukraine.bsky.social,kasperhoffmann.bsky.social,
+          thestudyofwar.bsky.social
+      pages:
+        description: 'Max pages to fetch per handle'
+        default: '3'
+      since_hours:
+        description: 'Recency window in hours'
+        default: '24'
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            "psycopg[binary]>=3.2" \
+            "psycopg-pool>=3.2" \
+            "httpx>=0.27" \
+            "feedparser>=6.0" \
+            "anthropic>=0.40" \
+            "pydantic>=2.9" \
+            "pydantic-settings>=2.5" \
+            "structlog>=24.4" \
+            "tenacity>=9.0" \
+            "atproto>=0.0.51" \
+            "telethon>=1.36"
+          pip install --no-deps -e apps/ingest
+
+      - name: Dump author feeds
+        env:
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python -m sentinel.scripts.debug_author_feed \
+            --handles "${{ inputs.handles }}" \
+            --pages "${{ inputs.pages }}" \
+            --since-hours "${{ inputs.since_hours }}"
