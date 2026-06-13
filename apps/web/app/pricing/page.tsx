@@ -162,7 +162,7 @@ export default async function PricingPage({
       {checkout === "error" && (
         <div className={s.errorBanner}>
           Something went wrong verifying your payment. If you were charged, email{" "}
-          <Link href="mailto:support@thesentinelreview.com">support@thesentinelreview.com</Link>{" "}
+          <Link href="mailto:contact@thesentinelreview.com">contact@thesentinelreview.com</Link>{" "}
           and we&rsquo;ll sort it out.
         </div>
       )}
