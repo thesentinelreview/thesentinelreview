@@ -39,11 +39,13 @@ import { PILL_WINDOW_MINUTES } from "@/lib/types";
 // only, never also under iran. Kept in sync with apps/ingest/sentinel/db.py
 // (_THEATER_BBOX + _iran_israel_carve_sql).
 const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
-  ukraine: [22, 44, 40, 52],
-  iran:    [32, 10, 64, 42],
-  sudan:   [21,  8, 42, 23],
-  myanmar: [92,  9, 102, 29],
-  israel:  [34.2, 29.4, 35.9, 33.1],
+  ukraine:    [22, 44, 40, 52],
+  iran:       [32, 10, 64, 42],
+  sudan:      [21,  8, 42, 23],
+  myanmar:    [92,  9, 102, 29],
+  israel:     [34.2, 29.4, 35.9, 33.1],
+  russia:     [28, 41, 140, 68],
+  nato_flank: [19, 53,  29, 60],
 };
 
 // SQL fragment that, for the iran theater only, excludes the israel homeland box
@@ -53,6 +55,15 @@ const THEATER_BBOX: Record<TheaterKey, [number, number, number, number]> = {
 function israelCarveOut(col: string, theater: TheaterKey | "all"): string {
   if (theater !== "iran") return "";
   const [a, b, c, d] = THEATER_BBOX.israel;
+  return ` AND NOT ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326))`;
+}
+
+// For the russia theater, carve out the ukraine bbox so border events stay in
+// ukraine (ukraine takes precedence; russia bbox is a superset). Mirrors
+// israelCarveOut. Empty for every other theater.
+function russiaCarveOut(col: string, theater: TheaterKey | "all"): string {
+  if (theater !== "russia") return "";
+  const [a, b, c, d] = THEATER_BBOX.ukraine;
   return ` AND NOT ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326))`;
 }
 
@@ -160,14 +171,14 @@ export type TieoutTheater = TheaterKey | "all";
 // never double-counted.
 function theaterPredicate(theater: TieoutTheater): { sql: string; params: number[] } {
   const keys: TheaterKey[] =
-    theater === "all" ? ["ukraine", "iran", "sudan", "myanmar", "israel"] : [theater];
+    theater === "all" ? ["ukraine", "iran", "sudan", "myanmar", "israel", "russia", "nato_flank"] : [theater];
   const parts: string[] = [];
   const params: number[] = [];
   let i = 1;
   for (const key of keys) {
     const [minLng, minLat, maxLng, maxLat] = THEATER_BBOX[key];
     parts.push(
-      `(ST_Within(e.location, ST_MakeEnvelope($${i++}, $${i++}, $${i++}, $${i++}, 4326))${israelCarveOut("e.location", key)})`,
+      `(ST_Within(e.location, ST_MakeEnvelope($${i++}, $${i++}, $${i++}, $${i++}, 4326))${israelCarveOut("e.location", key)}${russiaCarveOut("e.location", key)})`,
     );
     params.push(minLng, minLat, maxLng, maxLat);
   }
@@ -183,7 +194,7 @@ function theaterPredicate(theater: TieoutTheater): { sql: string; params: number
 // coords are hardcoded trusted constants (never user input), as in
 // israelCarveOut above.
 function theaterLabelCase(col: string): string {
-  const keys: TheaterKey[] = ["israel", "ukraine", "iran", "sudan", "myanmar"];
+  const keys: TheaterKey[] = ["israel", "nato_flank", "sudan", "iran", "myanmar", "ukraine", "russia"];
   const whens = keys.map((k) => {
     const [a, b, c, d] = THEATER_BBOX[k];
     return `WHEN ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326)) THEN '${k}'`;
