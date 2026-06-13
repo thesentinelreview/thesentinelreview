@@ -232,12 +232,11 @@ export default async function WatchfloorPage({
               eventCount={stats.events}
             />
           </div>
-          {/* Active Alerts | Sector Threat — fills the remaining height; each
-              panel pins its header and scrolls its body. Side-by-side only at the
-              ≥1800 design width where the rail is wide; through the laptop band the
-              rail is a narrower sidebar, so the two panels stack (full rail width,
-              single-line headers) instead of cramping into two columns. */}
-          <div className="lg:flex-[1.6] lg:min-h-0 min-h-0 grid grid-cols-1 grid-rows-2 min-[1800px]:grid-cols-2 min-[1800px]:grid-rows-1 gap-3">
+          {/* Active Alerts | Sector Threat — side-by-side at all ≥1024 widths so
+              each panel gets a usable scroll body (~180px). At the laptop band
+              the headers may wrap to two lines but the bodies remain scrollable,
+              which is the functional priority. */}
+          <div className="lg:flex-[1.6] lg:min-h-0 min-h-0 grid grid-cols-2 gap-3">
             <LiveStream
               events={mapEvents}
               sources={sources}
