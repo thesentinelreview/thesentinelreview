@@ -199,7 +199,7 @@ function theaterLabelCase(col: string): string {
     const [a, b, c, d] = THEATER_BBOX[k];
     return `WHEN ST_Within(${col}, ST_MakeEnvelope(${a}, ${b}, ${c}, ${d}, 4326)) THEN '${k}'`;
   });
-  return `CASE ${whens.join(" ")} END`;
+  return `CASE ${whens.join(" ")} ELSE 'other' END`;
 }
 
 // ---------------------------------------------------------------------------
