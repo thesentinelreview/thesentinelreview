@@ -2,7 +2,7 @@ import { query } from "@/lib/db";
 import { authenticateApiRequest, jsonError, jsonOk, THEATER_CASE_SQL, API_THEATERS } from "@/lib/api-v1";
 import {
   confidencesAtOrAbove, decodeCursor, encodeCursor,
-  parseIsoParam, parseLimitParam,
+  parseIsoParam, parseLimitParam, parseWeaponTypeParam,
 } from "@/lib/api-v1-core";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +29,10 @@ export async function GET(req: Request) {
   if (eventType && !EVENT_TYPES.includes(eventType)) {
     return jsonError(422, "invalid_parameter", `event_type must be one of ${EVENT_TYPES.join(", ")}`, auth.rate);
   }
+  const weaponType = parseWeaponTypeParam(p.get("weapon_type"));
+  if (weaponType !== null && typeof weaponType !== "string") {
+    return jsonError(422, weaponType.code, weaponType.message, auth.rate);
+  }
   let confidences: string[] | null = null;
   const minConf = p.get("min_confidence");
   if (minConf) {
@@ -51,7 +55,7 @@ export async function GET(req: Request) {
   type Row = {
     id: string; occurred_at: Date; event_type: string; theater: string;
     lat: number; lon: number; confidence: string; title: string; summary: string;
-    source_count: number; platforms: string[];
+    source_count: number; platforms: string[]; weapon_type: string | null;
   };
   // Keyset pagination orders and compares on (occurred_at, id::text) so the
   // cursor predicate and ORDER BY use identical collation.
@@ -64,7 +68,8 @@ export async function GET(req: Request) {
                  ELSE initcap(e.event_type) || ' — ' || e.location_name END AS title,
             e.description AS summary,
             COUNT(DISTINCT es.source_id)::int AS source_count,
-            COALESCE(array_agg(DISTINCT s.platform) FILTER (WHERE s.platform IS NOT NULL), '{}') AS platforms
+            COALESCE(array_agg(DISTINCT s.platform) FILTER (WHERE s.platform IS NOT NULL), '{}') AS platforms,
+            e.weapon_type
      FROM events e
      LEFT JOIN event_sources es ON es.event_id = e.id
      LEFT JOIN sources s        ON s.id = es.source_id
@@ -75,14 +80,15 @@ export async function GET(req: Request) {
        AND ($4::text[] IS NULL OR e.confidence = ANY($4))
        AND ($5::boolean IS NULL OR (e.confidence = 'verified') = $5)
        AND ($6::text IS NULL OR ${THEATER_CASE_SQL} = $6)
-       AND ($7::timestamptz IS NULL OR (e.occurred_at, e.id::text) < ($7::timestamptz, $8::text))
+       AND ($7::text IS NULL OR e.weapon_type = $7)
+       AND ($8::timestamptz IS NULL OR (e.occurred_at, e.id::text) < ($8::timestamptz, $9::text))
      GROUP BY e.id
      ORDER BY e.occurred_at DESC, e.id::text DESC
-     LIMIT $9::int`,
+     LIMIT $10::int`,
     [
       since, until, eventType, confidences,
       verifiedRaw === null ? null : verifiedRaw === "true",
-      theater, cursor?.occurredAt ?? null, cursor?.id ?? null, limit + 1,
+      theater, weaponType, cursor?.occurredAt ?? null, cursor?.id ?? null, limit + 1,
     ],
   );
 
@@ -103,6 +109,7 @@ export async function GET(req: Request) {
         summary: r.summary,
         source_count: r.source_count,
         platforms: r.platforms,
+        weapon_type: r.weapon_type,
       })),
       next_cursor:
         rows.length > limit && last

@@ -24,9 +24,13 @@ export async function GET(req: Request) {
   const groupExpr =
     groupBy === "event_type" ? "e.event_type"
     : groupBy === "confidence_band" ? "e.confidence"
+    : groupBy === "weapon_type" ? "e.weapon_type"
     : THEATER_CASE_SQL;
 
-  type Row = { key: string; total: number };
+  // weapon_type is the only nullable group key: unclassified events surface as
+  // one key:null row so the counts always reconcile with /events totals over
+  // the same window (the watchfloor panel, by contrast, is classified-only).
+  type Row = { key: string | null; total: number };
   const rows = await query<Row>(
     `SELECT ${groupExpr} AS key, COUNT(*)::int AS total
      FROM events e

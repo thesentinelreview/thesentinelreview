@@ -136,11 +136,14 @@ export const EXPORT_COLUMNS = [
   "confidence",
   "platforms",
   "summary",
+  "weapon_type",
 ] as const;
 
 /** One export row. The 10 tie-out columns plus summary — the event text shown
  * on event cards and the event page (schema column: events.description; the
- * Read API exposes the same value as `summary`). */
+ * Read API exposes the same value as `summary`) — plus weapon_type, the coarse
+ * kinetic-capability class (appended last so the original column positions are
+ * unchanged; null/empty when no kinetic capability is identifiable). */
 export interface ExportEventRow {
   event_id: string;
   occurred_at: string; // ISO 8601 UTC
@@ -153,6 +156,7 @@ export interface ExportEventRow {
   confidence: string; // verified | partial | unconfirmed — exported as-is
   platforms: string[];
   summary: string;
+  weapon_type: string | null; // CSV renders null as the empty string
 }
 
 // RFC 4180: quote a field if it contains a quote, comma, CR or LF; escape " as "".
@@ -186,6 +190,7 @@ export function buildCsv(rows: ExportEventRow[], truncated: boolean): string {
         r.confidence,
         r.platforms.join(","),
         r.summary,
+        r.weapon_type ?? "",
       ]
         .map(csvField)
         .join(","),

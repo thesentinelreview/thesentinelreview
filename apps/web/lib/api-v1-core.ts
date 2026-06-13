@@ -1,6 +1,7 @@
 // Read API v1 — pure logic (no I/O). Server wiring in lib/api-v1.ts.
 import { createHash, randomBytes } from "crypto";
 import type { Tier } from "./entitlements-core";
+import { WEAPON_TYPES, type WeaponType } from "./types";
 
 export const API_KEY_PREFIX = "snl_live_";
 export const API_KEY_RANDOM_CHARS = 32;
@@ -75,7 +76,19 @@ export function confidencesAtOrAbove(min: string): ConfidenceBand[] | ParamError
   return CONFIDENCE_ORDER.slice(idx) as unknown as ConfidenceBand[];
 }
 
-export const GROUP_BY_VALUES = ["event_type", "theater", "confidence_band"] as const;
+/** Threat-axis filter. Vocabulary is the WEAPON_TYPES mirror in lib/types.ts
+ * (canon: apps/ingest/sentinel/models.py) — never a third copy. NULL rows are
+ * unfilterable by design: the param selects a kinetic class, and NULL means no
+ * identifiable kinetic capability. */
+export function parseWeaponTypeParam(raw: string | null): WeaponType | null | ParamError {
+  if (raw === null || raw === "") return null;
+  if (!(WEAPON_TYPES as readonly string[]).includes(raw)) {
+    return { code: "invalid_parameter", message: `weapon_type must be one of ${WEAPON_TYPES.join(", ")}` };
+  }
+  return raw as WeaponType;
+}
+
+export const GROUP_BY_VALUES = ["event_type", "theater", "confidence_band", "weapon_type"] as const;
 
 // ---- keyset cursor on (occurred_at desc, id desc) --------------------------
 

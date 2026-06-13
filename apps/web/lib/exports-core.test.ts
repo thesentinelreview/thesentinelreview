@@ -99,10 +99,11 @@ const ROW: ExportEventRow = {
   confidence: "partial",
   platforms: ["telegram", "x"],
   summary: "Strike reported on industrial area,\nmultiple sources",
+  weapon_type: "artillery",
 };
 
 describe("CSV file", () => {
-  it("license/honesty line is the exact first line; header second; 11 columns", () => {
+  it("license/honesty line is the exact first line; header second; 12 columns", () => {
     const lines = buildCsv([ROW], false).split("\r\n");
     expect(lines[0]).toBe(
       "# Sentinel Intelligence export — confidence-labeled OSINT; not all events verified. " +
@@ -110,8 +111,19 @@ describe("CSV file", () => {
         "https://dashboard.thesentinelreview.com/terms",
     );
     expect(lines[1]).toBe(EXPORT_COLUMNS.join(","));
-    expect(EXPORT_COLUMNS).toHaveLength(11);
+    // weapon_type is appended LAST (W2 threat-axis ticket) so the original
+    // 11 column positions are unchanged for anyone parsing positionally.
+    expect(EXPORT_COLUMNS).toHaveLength(12);
     expect(EXPORT_COLUMNS[10]).toBe("summary");
+    expect(EXPORT_COLUMNS[11]).toBe("weapon_type");
+  });
+
+  it("weapon_type: classified value as-is; NULL → empty trailing field", () => {
+    const classified = buildCsv([ROW], false).split("\r\n");
+    expect(classified[2].endsWith(",artillery")).toBe(true);
+    const nullRow: ExportEventRow = { ...ROW, summary: "no kinetic class", weapon_type: null };
+    const lines = buildCsv([nullRow], false).split("\r\n");
+    expect(lines[2].endsWith("no kinetic class,")).toBe(true); // empty 12th field, not "null"
   });
 
   it("RFC 4180 quoting: commas, quotes, newlines; ISO 8601 UTC timestamp as-is", () => {
