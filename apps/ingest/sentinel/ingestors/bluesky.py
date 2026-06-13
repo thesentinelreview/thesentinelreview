@@ -46,15 +46,19 @@ def _fetch_meta(
     results: list[RawPostData] | None = None,
     *,
     transport_error: str | None = None,
+    http_status: int | None = None,
 ) -> dict:
     """Build the last_fetch_meta the ingest_source job reads to stamp source
     health (see db.record_source_fetch). Mirrors rss.py's _meta. For bluesky a
     "result" is a captured post, so raw_entries == results: >0 yields healthy
     with a real last_post_at, 0 yields silent (quiet handle), and
-    transport_error yields erroring/url_broken instead of a false silent."""
+    transport_error yields erroring/url_broken instead of a false silent.
+    http_status lets _classify_fetch pick 'erroring' (reachable, refused) over
+    'url_broken' for HTTP-level failures where atproto surfaces the status."""
     n = len(results) if results else 0
     return {
         "transport_error": transport_error,
+        "http_status": http_status,
         "raw_entries": n,
         "results": n,
         "newest_posted_at": (
@@ -110,6 +114,7 @@ class BlueskyIngestor(BaseIngestor):
         results: list[RawPostData] = []
         cursor: str | None = None
         transport_error: str | None = None
+        http_status: int | None = None
 
         for page in range(_MAX_PAGES):
             try:
@@ -131,6 +136,13 @@ class BlueskyIngestor(BaseIngestor):
                 # zero the error streak and fake a healthy source. Honesty over
                 # a falsely-green count.
                 transport_error = f"{type(exc).__name__}: {exc}"
+                # atproto wraps HTTP errors; extract status if present so
+                # _classify_fetch can distinguish 'erroring' from 'url_broken'.
+                _resp = getattr(exc, "response", None)
+                if _resp is not None:
+                    _status = getattr(_resp, "status_code", None)
+                    if isinstance(_status, int):
+                        http_status = _status
                 break
 
             if not feed.feed:
@@ -179,6 +191,6 @@ class BlueskyIngestor(BaseIngestor):
                 break
             cursor = feed.cursor
 
-        self.last_fetch_meta = _fetch_meta(results, transport_error=transport_error)
+        self.last_fetch_meta = _fetch_meta(results, transport_error=transport_error, http_status=http_status)
         log.debug("bluesky_fetched", handle=handle, count=len(results))
         return results

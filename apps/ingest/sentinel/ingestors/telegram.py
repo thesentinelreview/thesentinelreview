@@ -32,15 +32,20 @@ def _fetch_meta(
     results: list[RawPostData] | None = None,
     *,
     transport_error: str | None = None,
+    http_status: int | None = None,
 ) -> dict:
     """Build the last_fetch_meta the ingest_source job reads to stamp source
     health (see db.record_source_fetch). Mirrors rss.py's _meta. For telegram a
     "result" is a captured message, so raw_entries == results: >0 yields
     healthy with a real last_post_at, 0 yields silent (empty channel this cycle),
-    and transport_error yields erroring/url_broken instead of a false silent."""
+    and transport_error yields erroring/url_broken instead of a false silent.
+    http_status is accepted for API symmetry with other ingestors but Telethon
+    uses MTProto (not HTTP), so callers never populate it — errors map to
+    url_broken, which is correct for MTProto-level transport failures."""
     n = len(results) if results else 0
     return {
         "transport_error": transport_error,
+        "http_status": http_status,
         "raw_entries": n,
         "results": n,
         "newest_posted_at": (
