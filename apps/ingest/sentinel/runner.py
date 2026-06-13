@@ -173,6 +173,18 @@ def run_ingest() -> None:
         outcomes = exc.outcomes
         log.error("ingest_all_jobs_failed", error=str(exc))
 
+    # Belt-and-suspenders bulk health reconcile alongside pg_cron (hourly).
+    # Reconciles last_post_at from max(raw_posts.posted_at) for all sources,
+    # then reclassifies health_status. Non-fatal: a failure here logs a warning
+    # but never aborts the ingest run.
+    try:
+        from sentinel.db import get_conn
+        with get_conn() as conn:
+            conn.execute("SELECT recompute_source_health()")
+        log.info("health_recompute_bulk")
+    except Exception:
+        log.warning("health_recompute_bulk_failed")
+
     posts_by_source = _posts_written_since(run_start)
     summary = _summarize(outcomes, posts_by_source)
 
