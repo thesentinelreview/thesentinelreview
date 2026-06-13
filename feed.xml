@@ -6,7 +6,7 @@
     <atom:link href="https://thesentinelreview.com/feed.xml" rel="self" type="application/rss+xml" />
     <description>Automated national security news aggregation. Updated every 8 hours.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Jun 2026 04:08:56 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jun 2026 10:35:54 +0000</lastBuildDate>
     <generator>The Sentinel Review Aggregator</generator>
     <item>
       <title>🌍 A-10 Warthogs Arrive In England Festooned With Nose Art And Mission Markings From Epic Fury | The War Zone</title>
@@ -56,7 +56,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/06/12/netanyahu-election-iran-war-outcome-us-trump/">Foreign Policy</source>
       <description>He promised Israelis “total victory” but has fallen short on three fronts.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🏛️ Boeing Drops Out Of Navy’s T-45 Jet Trainer Replacement Competition | The War Zone</title>
@@ -76,7 +76,7 @@
       <category>Middle East</category>
       <source url="https://www.atlanticcouncil.org/dispatches/its-not-a-deal-but-trumps-memorandum-with-iran-can-be-the-start-of-something-bigger/">Atlantic Council</source>
       <description>What appears to be emerging now is a rough outline and high-level explanation of the concepts that an eventual deal could include. The post It’s not a ‘deal.’ But Trump’s memorandum with Iran can be the start of something bigger. appeared first on Atlantic Council.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🌍 Trump’s Big Weekend Could Derail the G-7 | Foreign Policy</title>
@@ -86,7 +86,7 @@
       <category>Middle East</category>
       <source url="https://foreignpolicy.com/2026/06/12/trump-iran-war-peace-talks-deal-g7-leaders-summit/">Foreign Policy</source>
       <description>With or without a deal, the Iran war looms large over the three-day leaders’ summit.</description>
-      <sentinel:score>7</sentinel:score>
+      <sentinel:score>6</sentinel:score>
     </item>
     <item>
       <title>📍 How South Africa’s Myopia Is Harming the Entire Continent | Foreign Policy</title>
@@ -106,7 +106,7 @@
       <category>Defense Policy</category>
       <source url="https://www.atlanticcouncil.org/dispatches/the-united-states-needs-more-amphibious-ships-at-the-ready/">Atlantic Council</source>
       <description>A combined Amphibious Ready Group and Marine Expeditionary Unit bring a tremendous capability, but only if there are enough ships available. The post The United States needs more amphibious ships at the ready appeared first on Atlantic Council.</description>
-      <sentinel:score>8</sentinel:score>
+      <sentinel:score>7</sentinel:score>
     </item>
     <item>
       <title>🏴 Russia Building New Infrastructure For Major Troop Deployments Along NATO’s Northern Flank | The War Zone</title>
@@ -136,7 +136,7 @@
       <category>Defense Policy</category>
       <source url="https://breakingdefense.com/2026/06/pentagon-may-sacrifice-traditional-weapons-to-buy-more-drones-if-reconciliation-fails-cto/">Breaking Defense</source>
       <description>“We just make other trade-offs, like against exquisite weapons and systems: How much of those are we willing to sacrifice in place of low-cost autonomous weapons,” Emil Michael said.</description>
-      <sentinel:score>9</sentinel:score>
+      <sentinel:score>8</sentinel:score>
     </item>
     <item>
       <title>🛡️ Somalia is the dark horse in US defense and economic strategy | Atlantic Council</title>
@@ -156,7 +156,7 @@
       <category>Europe / NATO</category>
       <source url="https://www.atlanticcouncil.org/blogs/econographics/as-the-us-targets-brazils-payment-system-europe-should-pay-close-attention/">Atlantic Council</source>
       <description>In its determination on Brazil’s trade practices, the USTR has zeroed in on the instant payment system Pix—raising alarms not only in Brasília but also in Brussels. The post As the US targets Brazil’s payment system, Europe should pay close attention appeared first on Atlantic…</description>
-      <sentinel:score>5</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🕵️ Andrew Giuliani on the White House’s World Cup security playbook | Atlantic Council</title>
@@ -186,7 +186,7 @@
       <category>National Security</category>
       <source url="https://breakingdefense.com/2026/06/tiny-drones-making-a-buzz-at-the-berlin-air-show/">Breaking Defense</source>
       <description>The Breaking Defense team wraps up the last day of the Berlin Air Show.</description>
-      <sentinel:score>6</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🌏 What in the World? | Foreign Policy</title>
@@ -196,7 +196,7 @@
       <category>Indo-Pacific</category>
       <source url="https://foreignpolicy.com/2026/06/12/foreign-policy-news-quiz-peru-earthquake-estonia-xi-taco-world-cup/">Foreign Policy</source>
       <description>Test yourself on the week of June 6: Peru’s presidential race heads for a photo finish, Xi Jinping visits North Korea, and the World Cup kicks off.</description>
-      <sentinel:score>4</sentinel:score>
+      <sentinel:score>3</sentinel:score>
     </item>
     <item>
       <title>🏴 Germany And Spain Launch ‘Team Gen 6’ After Europe’s Next-Gen Fighter Effort Collapses | The War Zone</title>
@@ -216,7 +216,7 @@
       <category>National Security</category>
       <source url="https://foreignpolicy.com/2026/06/12/trump-west-china-rome-civilization-vance-iran-hegseth-russia/">Foreign Policy</source>
       <description>The president’s turn to imperial civilizationalism is destroying what it claims to defend.</description>
-      <sentinel:score>3</sentinel:score>
+      <sentinel:score>4</sentinel:score>
     </item>
     <item>
       <title>🌍 Kroenig interviewed on BBC on Iran negotiations | Atlantic Council</title>
